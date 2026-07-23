@@ -1,0 +1,514 @@
+import { createReadStream } from "node:fs"
+import { stat } from "node:fs/promises"
+import {
+  createServer,
+  type IncomingMessage,
+  type Server,
+  type ServerResponse,
+} from "node:http"
+import { extname, resolve, sep } from "node:path"
+
+const TECHNOLOGY_SCORE_PATH = "/api/v1/technology-risk/score"
+const TECHNOLOGY_BASELINE_QUANTIFY_PATH =
+  "/api/v1/technology-risk/baseline-quantify"
+const DEFAULT_MAX_BODY_BYTES = 1024 * 1024
+
+const contentTypes: Record<string, string> = {
+  ".css": "text/css; charset=utf-8",
+  ".html": "text/html; charset=utf-8",
+  ".ico": "image/x-icon",
+  ".jpeg": "image/jpeg",
+  ".jpg": "image/jpeg",
+  ".js": "text/javascript; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
+  ".map": "application/json; charset=utf-8",
+  ".png": "image/png",
+  ".svg": "image/svg+xml",
+  ".txt": "text/plain; charset=utf-8",
+  ".webp": "image/webp",
+  ".woff": "font/woff",
+  ".woff2": "font/woff2",
+}
+
+export type TechnologyRiskCalculator = (
+  request: unknown
+) => unknown | Promise<unknown>
+export type TechnologyBaselineCalculator = TechnologyRiskCalculator
+
+export interface ProductionServerOptions {
+  staticRoot: string
+  calculateTechnologyRisk: TechnologyRiskCalculator
+  calculateTechnologyBaseline?: TechnologyBaselineCalculator
+  basePath?: string
+  maxBodyBytes?: number
+}
+
+interface HttpErrorShape {
+  code?: unknown
+  message?: unknown
+  statusCode?: unknown
+}
+
+function applySecurityHeaders(response: ServerResponse) {
+  response.setHeader("x-content-type-options", "nosniff")
+  response.setHeader("referrer-policy", "same-origin")
+  response.setHeader("x-frame-options", "SAMEORIGIN")
+}
+
+function sendJson(
+  response: ServerResponse,
+  statusCode: number,
+  payload: unknown,
+  extraHeaders?: Record<string, string>
+) {
+  let body: string
+
+  try {
+    body = JSON.stringify(payload)
+  } catch {
+    statusCode = 500
+    body = JSON.stringify({
+      error: {
+        code: "RESPONSE_SERIALIZATION_FAILED",
+        message: "评分结果无法序列化。",
+      },
+    })
+  }
+
+  applySecurityHeaders(response)
+  response.writeHead(statusCode, {
+    "cache-control": "no-store",
+    "content-length": Buffer.byteLength(body),
+    "content-type": "application/json; charset=utf-8",
+    ...extraHeaders,
+  })
+  response.end(body)
+}
+
+function sendApiError(
+  response: ServerResponse,
+  statusCode: number,
+  code: string,
+  message: string,
+  extraHeaders?: Record<string, string>
+) {
+  sendJson(
+    response,
+    statusCode,
+    {
+      error: {
+        code,
+        message,
+      },
+    },
+    extraHeaders
+  )
+}
+
+function normalizeBasePath(basePath = "") {
+  if (basePath === "" || basePath === "/") {
+    return ""
+  }
+
+  return `/${basePath.replace(/^\/+|\/+$/g, "")}`
+}
+
+function stripBasePath(pathname: string, basePath: string) {
+  if (basePath === "") {
+    return pathname
+  }
+  if (pathname === basePath) {
+    return "/"
+  }
+  if (pathname.startsWith(`${basePath}/`)) {
+    return pathname.slice(basePath.length)
+  }
+  return pathname
+}
+
+function getRequestPath(request: IncomingMessage, basePath: string) {
+  try {
+    const url = new URL(request.url ?? "/", "http://127.0.0.1")
+    return stripBasePath(url.pathname, basePath)
+  } catch {
+    return null
+  }
+}
+
+async function readJsonBody(
+  request: IncomingMessage,
+  maxBodyBytes: number
+): Promise<
+  { kind: "ok"; value: unknown } | { kind: "invalid" } | { kind: "too-large" }
+> {
+  const declaredLength = Number(request.headers["content-length"])
+  if (Number.isFinite(declaredLength) && declaredLength > maxBodyBytes) {
+    request.resume()
+    return { kind: "too-large" }
+  }
+
+  const chunks: Buffer[] = []
+  let receivedBytes = 0
+  let tooLarge = false
+
+  for await (const chunk of request) {
+    const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)
+    receivedBytes += buffer.length
+    if (receivedBytes > maxBodyBytes) {
+      tooLarge = true
+      continue
+    }
+    chunks.push(buffer)
+  }
+
+  if (tooLarge) {
+    return { kind: "too-large" }
+  }
+
+  const source = Buffer.concat(chunks).toString("utf8")
+  if (source.trim() === "") {
+    return { kind: "invalid" }
+  }
+
+  try {
+    return { kind: "ok", value: JSON.parse(source) as unknown }
+  } catch {
+    return { kind: "invalid" }
+  }
+}
+
+function getPublicError(error: unknown) {
+  if (typeof error !== "object" || error === null) {
+    return null
+  }
+
+  const candidate = error as HttpErrorShape
+  if (
+    typeof candidate.statusCode !== "number" ||
+    !Number.isInteger(candidate.statusCode) ||
+    candidate.statusCode < 400 ||
+    candidate.statusCode > 499
+  ) {
+    return null
+  }
+
+  return {
+    statusCode: candidate.statusCode,
+    code:
+      typeof candidate.code === "string"
+        ? candidate.code
+        : "TECHNOLOGY_SCORE_REQUEST_INVALID",
+    message:
+      typeof candidate.message === "string"
+        ? candidate.message
+        : "技术风险评分请求无效。",
+  }
+}
+
+async function handleTechnologyScore(
+  request: IncomingMessage,
+  response: ServerResponse,
+  options: Required<
+    Pick<ProductionServerOptions, "calculateTechnologyRisk" | "maxBodyBytes">
+  >
+) {
+  if (request.method !== "POST") {
+    sendApiError(
+      response,
+      405,
+      "METHOD_NOT_ALLOWED",
+      "该接口仅支持 POST 请求。",
+      { allow: "POST" }
+    )
+    return
+  }
+
+  const body = await readJsonBody(request, options.maxBodyBytes)
+  if (body.kind === "too-large") {
+    sendApiError(
+      response,
+      413,
+      "PAYLOAD_TOO_LARGE",
+      `请求体不能超过 ${options.maxBodyBytes} 字节。`
+    )
+    return
+  }
+  if (body.kind === "invalid") {
+    sendApiError(response, 400, "INVALID_JSON", "请求体必须是有效的 JSON。")
+    return
+  }
+
+  try {
+    const result = await options.calculateTechnologyRisk(body.value)
+    sendJson(response, 200, result)
+  } catch (error) {
+    const publicError = getPublicError(error)
+    if (publicError) {
+      sendApiError(
+        response,
+        publicError.statusCode,
+        publicError.code,
+        publicError.message
+      )
+      return
+    }
+
+    console.error("Technology risk calculation failed", error)
+    sendApiError(
+      response,
+      500,
+      "TECHNOLOGY_SCORE_FAILED",
+      "技术风险评分暂时不可用。"
+    )
+  }
+}
+
+async function handleTechnologyBaseline(
+  request: IncomingMessage,
+  response: ServerResponse,
+  options: {
+    calculateTechnologyBaseline?: TechnologyBaselineCalculator
+    maxBodyBytes: number
+  }
+) {
+  if (request.method !== "POST") {
+    sendApiError(
+      response,
+      405,
+      "METHOD_NOT_ALLOWED",
+      "该接口仅支持 POST 请求。",
+      { allow: "POST" }
+    )
+    return
+  }
+
+  if (!options.calculateTechnologyBaseline) {
+    sendApiError(
+      response,
+      503,
+      "TECHNOLOGY_BASELINE_UNAVAILABLE",
+      "技术基础量化服务尚未配置。"
+    )
+    return
+  }
+
+  const body = await readJsonBody(request, options.maxBodyBytes)
+  if (body.kind === "too-large") {
+    sendApiError(
+      response,
+      413,
+      "PAYLOAD_TOO_LARGE",
+      `请求体不能超过 ${options.maxBodyBytes} 字节。`
+    )
+    return
+  }
+  if (body.kind === "invalid") {
+    sendApiError(response, 400, "INVALID_JSON", "请求体必须是有效的 JSON。")
+    return
+  }
+
+  try {
+    const result = await options.calculateTechnologyBaseline(body.value)
+    sendJson(response, 200, result)
+  } catch (error) {
+    const publicError = getPublicError(error)
+    if (publicError) {
+      sendApiError(
+        response,
+        publicError.statusCode,
+        publicError.code,
+        publicError.message
+      )
+      return
+    }
+
+    console.error("Technology baseline quantification failed", error)
+    sendApiError(
+      response,
+      500,
+      "TECHNOLOGY_BASELINE_FAILED",
+      "技术基础量化暂时不可用。"
+    )
+  }
+}
+
+function isPrivateStaticPath(pathname: string) {
+  const segments = pathname.split("/").filter(Boolean)
+  return (
+    segments[0] === "server" ||
+    segments.some((segment) => segment.startsWith("."))
+  )
+}
+
+function resolveStaticPath(staticRoot: string, pathname: string) {
+  let decodedPath: string
+  try {
+    decodedPath = decodeURIComponent(pathname)
+  } catch {
+    return null
+  }
+
+  if (decodedPath.includes("\0") || isPrivateStaticPath(decodedPath)) {
+    return null
+  }
+
+  const candidate = resolve(staticRoot, `.${decodedPath}`)
+  if (
+    candidate !== staticRoot &&
+    !candidate.startsWith(`${staticRoot}${sep}`)
+  ) {
+    return null
+  }
+  return candidate
+}
+
+function sendStaticNotFound(response: ServerResponse) {
+  const body = "Not Found\n"
+  applySecurityHeaders(response)
+  response.writeHead(404, {
+    "cache-control": "no-store",
+    "content-length": Buffer.byteLength(body),
+    "content-type": "text/plain; charset=utf-8",
+  })
+  response.end(body)
+}
+
+async function sendFile(
+  request: IncomingMessage,
+  response: ServerResponse,
+  filePath: string
+) {
+  const fileStats = await stat(filePath)
+  if (!fileStats.isFile()) {
+    return false
+  }
+
+  const cacheControl = filePath.includes(`${sep}assets${sep}`)
+    ? "public, max-age=31536000, immutable"
+    : "no-cache"
+  applySecurityHeaders(response)
+  response.writeHead(200, {
+    "cache-control": cacheControl,
+    "content-length": fileStats.size,
+    "content-type":
+      contentTypes[extname(filePath).toLowerCase()] ??
+      "application/octet-stream",
+  })
+
+  if (request.method === "HEAD") {
+    response.end()
+    return true
+  }
+
+  createReadStream(filePath).pipe(response)
+  return true
+}
+
+async function handleStaticRequest(
+  request: IncomingMessage,
+  response: ServerResponse,
+  staticRoot: string,
+  pathname: string
+) {
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    const body = "Method Not Allowed\n"
+    applySecurityHeaders(response)
+    response.writeHead(405, {
+      allow: "GET, HEAD",
+      "cache-control": "no-store",
+      "content-length": Buffer.byteLength(body),
+      "content-type": "text/plain; charset=utf-8",
+    })
+    response.end(body)
+    return
+  }
+
+  const requestPath = pathname === "/" ? "/index.html" : pathname
+  const filePath = resolveStaticPath(staticRoot, requestPath)
+  if (!filePath) {
+    sendStaticNotFound(response)
+    return
+  }
+
+  try {
+    if (await sendFile(request, response, filePath)) {
+      return
+    }
+  } catch (error) {
+    const code =
+      typeof error === "object" && error !== null && "code" in error
+        ? error.code
+        : null
+    if (code !== "ENOENT" && code !== "ENOTDIR") {
+      throw error
+    }
+  }
+
+  if (extname(pathname) !== "") {
+    sendStaticNotFound(response)
+    return
+  }
+
+  try {
+    await sendFile(request, response, resolve(staticRoot, "index.html"))
+  } catch {
+    sendStaticNotFound(response)
+  }
+}
+
+export function createProductionServer(
+  options: ProductionServerOptions
+): Server {
+  const staticRoot = resolve(options.staticRoot)
+  const basePath = normalizeBasePath(options.basePath)
+  const maxBodyBytes = options.maxBodyBytes ?? DEFAULT_MAX_BODY_BYTES
+
+  if (!Number.isSafeInteger(maxBodyBytes) || maxBodyBytes <= 0) {
+    throw new TypeError("maxBodyBytes must be a positive safe integer")
+  }
+
+  return createServer(async (request, response) => {
+    try {
+      const pathname = getRequestPath(request, basePath)
+      if (pathname === null) {
+        sendApiError(response, 400, "INVALID_URL", "请求 URL 无效。")
+        return
+      }
+
+      if (pathname === TECHNOLOGY_SCORE_PATH) {
+        await handleTechnologyScore(request, response, {
+          calculateTechnologyRisk: options.calculateTechnologyRisk,
+          maxBodyBytes,
+        })
+        return
+      }
+
+      if (pathname === TECHNOLOGY_BASELINE_QUANTIFY_PATH) {
+        await handleTechnologyBaseline(request, response, {
+          calculateTechnologyBaseline: options.calculateTechnologyBaseline,
+          maxBodyBytes,
+        })
+        return
+      }
+
+      if (pathname.startsWith("/api/")) {
+        sendApiError(response, 404, "API_NOT_FOUND", "未找到该 API。")
+        return
+      }
+
+      await handleStaticRequest(request, response, staticRoot, pathname)
+    } catch (error) {
+      console.error("Production HTTP server failed", error)
+      if (!response.headersSent) {
+        sendApiError(
+          response,
+          500,
+          "INTERNAL_SERVER_ERROR",
+          "服务器暂时不可用。"
+        )
+      } else {
+        response.destroy()
+      }
+    }
+  })
+}

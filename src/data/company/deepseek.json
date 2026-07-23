@@ -1,0 +1,881 @@
+{
+  "id": "deepseek",
+  "name": "DeepSeek",
+  "sector": "通用大模型 / Agent",
+  "description": "官网与 API 文档显示 DeepSeek 围绕通用人工智能底层模型、API 服务、开源生态和自研训练基础设施持续迭代，当前处在模型产品化、开发者商业化与国际审查并行阶段。",
+  "headquarters": "杭州",
+  "stage": "产品化与出海审查并行阶段",
+  "riskIndex": 84,
+  "benchmarkCompanyId": "fourth-paradigm",
+  "snapshotAt": "2026-07-14",
+  "metrics": {
+    "highRiskEvents": 2,
+    "mediumRiskEvents": 1,
+    "responseRate": 55,
+    "evidenceCoverage": 7,
+    "monitoredSources": 5,
+    "currentHighRiskType": "数据合规"
+  },
+  "dimensions": [
+    {
+      "id": "tech",
+      "label": "技术与算法",
+      "score": 82,
+      "level": "high",
+      "weight": "前沿推理模型，更新频率快",
+      "summary": "R1 采用大规模强化学习与长链推理，性能提升显著，但也带来对齐回归、幻觉复发和版本稳定性压力。",
+      "evidenceIds": [
+        "ds-e2",
+        "ds-e3",
+        "ds-e4"
+      ],
+      "indicatorIds": [
+        "ri-016",
+        "ri-017",
+        "ri-018",
+        "ri-019",
+        "ri-020"
+      ]
+    },
+    {
+      "id": "data",
+      "label": "数据合规",
+      "score": 88,
+      "level": "high",
+      "weight": "训练与推理阶段均触及高敏感数据",
+      "summary": "隐私政策明确涉及输入内容、设备信息与第三方服务，叠加训练数据来源透明度挑战，使数据合规成为首要风险。",
+      "evidenceIds": [
+        "ds-e1",
+        "ds-e4",
+        "ds-e5"
+      ],
+      "indicatorIds": [
+        "ri-033",
+        "ri-034",
+        "ri-035",
+        "ri-036",
+        "ri-037"
+      ]
+    },
+    {
+      "id": "ethics",
+      "label": "科技伦理",
+      "score": 80,
+      "level": "high",
+      "weight": "模型能力强，外部影响面大",
+      "summary": "前沿模型在多步推理、代理行为和高影响场景输出中更容易触发偏见、误导和滥用争议。",
+      "evidenceIds": [
+        "ds-e3",
+        "ds-e4",
+        "ds-e5"
+      ],
+      "indicatorIds": [
+        "ri-040",
+        "ri-041",
+        "ri-042",
+        "ri-043",
+        "ri-044"
+      ]
+    },
+    {
+      "id": "ip",
+      "label": "知识产权",
+      "score": 58,
+      "level": "attention",
+      "weight": "开源生态繁荣，但数据与衍生物边界复杂",
+      "summary": "开源权重增强生态扩散能力，也放大训练语料版权、衍生模型责任和许可证边界的管理难度。",
+      "evidenceIds": [
+        "ds-e2",
+        "ds-e3"
+      ],
+      "indicatorIds": [
+        "ri-049",
+        "ri-050",
+        "ri-051",
+        "ri-052",
+        "ri-053"
+      ]
+    },
+    {
+      "id": "finance",
+      "label": "经营财务",
+      "score": 61,
+      "level": "medium-high",
+      "weight": "算力投入重，商业闭环仍在形成",
+      "summary": "高算力训练和推理成本与开放生态并存，意味着获客、定价和毛利弹性都需要持续观察。",
+      "evidenceIds": [
+        "ds-e2",
+        "ds-e3"
+      ],
+      "indicatorIds": [
+        "ri-085",
+        "ri-086",
+        "ri-087",
+        "ri-088",
+        "ri-089"
+      ]
+    },
+    {
+      "id": "external",
+      "label": "外部环境/地缘",
+      "score": 76,
+      "level": "high",
+      "weight": "前沿 AI 天然面临国际关注",
+      "summary": "模型能力越强，越容易受到算力供给、地缘审查、出海规则和国际舆论的共同影响。",
+      "evidenceIds": [
+        "ds-e3",
+        "ds-e5"
+      ],
+      "indicatorIds": [
+        "ri-075",
+        "ri-076",
+        "ri-077",
+        "ri-078",
+        "ri-079"
+      ]
+    },
+    {
+      "id": "cyber",
+      "label": "网络安全",
+      "score": 72,
+      "level": "medium-high",
+      "weight": "开放接口和开源发布扩大攻击面",
+      "summary": "开源仓库、API 与推理链交互让提示注入、越狱和模型窃取成为持续安全议题。",
+      "evidenceIds": [
+        "ds-e2",
+        "ds-e4"
+      ],
+      "indicatorIds": [
+        "ri-029",
+        "ri-030",
+        "ri-031",
+        "ri-032"
+      ]
+    },
+    {
+      "id": "regulatory",
+      "label": "监管政策",
+      "score": 84,
+      "level": "high",
+      "weight": "模型备案、内容治理与跨境要求叠加",
+      "summary": "面向通用模型的政策要求覆盖安全评估、内容责任、数据流转和行业场景适配，监管压力高。",
+      "evidenceIds": [
+        "ds-e1",
+        "ds-e4",
+        "ds-e5"
+      ],
+      "indicatorIds": [
+        "ri-038",
+        "ri-039",
+        "ri-083",
+        "ri-084"
+      ]
+    }
+  ],
+  "lifecycle": [
+    {
+      "id": "rnd",
+      "label": "技术研发阶段",
+      "status": "passed",
+      "riskScore": 76,
+      "summary": "核心风险集中在训练范式选择、算力预算和数据来源组织方式。",
+      "keywords": [
+        "MoE 架构",
+        "强化学习",
+        "训练数据组织"
+      ],
+      "change": "已从纯研发转向高频版本演进，算力与数据台账的重要性提升。",
+      "evidenceIds": [
+        "ds-e2",
+        "ds-e3"
+      ]
+    },
+    {
+      "id": "algo",
+      "label": "算法迭代阶段",
+      "status": "current",
+      "riskScore": 88,
+      "summary": "当前最敏感的是版本更替中的对齐回归、推理链暴露与训练数据合规解释。",
+      "keywords": [
+        "推理链",
+        "红队测试",
+        "数据合规"
+      ],
+      "change": "进入当前高位，所有风险中算法与监管联动最明显。",
+      "evidenceIds": [
+        "ds-e1",
+        "ds-e3",
+        "ds-e4",
+        "ds-e6"
+      ]
+    },
+    {
+      "id": "validation",
+      "label": "产品验证阶段",
+      "status": "next",
+      "riskScore": 83,
+      "summary": "企业试点和高敏场景接入后，模型可靠性、内容责任和 SLA 将迅速放大。",
+      "keywords": [
+        "企业试点",
+        "可靠性",
+        "高敏输出"
+      ],
+      "change": "风险将从内部研发问题转向外部业务可信度问题。",
+      "evidenceIds": [
+        "ds-e4",
+        "ds-e5",
+        "ds-e7"
+      ]
+    },
+    {
+      "id": "deployment",
+      "label": "场景落地阶段",
+      "status": "next",
+      "riskScore": 79,
+      "summary": "面向金融、政务或消费场景时，隐私、内容安全和审计留痕要求会大幅增加。",
+      "keywords": [
+        "审计留痕",
+        "内容安全",
+        "场景适配"
+      ],
+      "change": "需要从模型指标转向业务责任边界管理。",
+      "evidenceIds": [
+        "ds-e1",
+        "ds-e5"
+      ]
+    },
+    {
+      "id": "expansion",
+      "label": "商业化扩张阶段",
+      "status": "next",
+      "riskScore": 73,
+      "summary": "开放 API 与开源生态并行，会同时带来增长机会和毛利压力。",
+      "keywords": [
+        "API 定价",
+        "获客效率",
+        "推理成本"
+      ],
+      "change": "财务与合规压力开始和模型能力同频增长。",
+      "evidenceIds": [
+        "ds-e2",
+        "ds-e3"
+      ]
+    },
+    {
+      "id": "overseas",
+      "label": "出海与国际竞争阶段",
+      "status": "next",
+      "riskScore": 86,
+      "summary": "国际市场会把数据本地化、内容治理和地缘信任问题同步放大。",
+      "keywords": [
+        "跨境合规",
+        "地区部署",
+        "国际审查"
+      ],
+      "change": "一旦进入多地区经营，政策差异将成为风险放大器。",
+      "evidenceIds": [
+        "ds-e1",
+        "ds-e5"
+      ]
+    }
+  ],
+  "trend": [
+    {
+      "month": "2026-01",
+      "riskIndex": 78,
+      "highRiskEvents": 1,
+      "mediumRiskEvents": 2,
+      "newEvents": 2
+    },
+    {
+      "month": "2026-02",
+      "riskIndex": 79,
+      "highRiskEvents": 1,
+      "mediumRiskEvents": 2,
+      "newEvents": 1
+    },
+    {
+      "month": "2026-03",
+      "riskIndex": 81,
+      "highRiskEvents": 1,
+      "mediumRiskEvents": 3,
+      "newEvents": 2
+    },
+    {
+      "month": "2026-04",
+      "riskIndex": 82,
+      "highRiskEvents": 2,
+      "mediumRiskEvents": 3,
+      "newEvents": 2
+    },
+    {
+      "month": "2026-05",
+      "riskIndex": 83,
+      "highRiskEvents": 2,
+      "mediumRiskEvents": 4,
+      "newEvents": 2
+    },
+    {
+      "month": "2026-06",
+      "riskIndex": 84,
+      "highRiskEvents": 2,
+      "mediumRiskEvents": 4,
+      "newEvents": 3
+    }
+  ],
+  "aiCoverage": {
+    "ingestedSourceTypes": [
+      "隐私政策",
+      "开源仓库",
+      "论文",
+      "安全评测论文",
+      "治理研究"
+    ],
+    "extractedSignals": [
+      "训练数据来源表述",
+      "推理链发布方式",
+      "开源许可证",
+      "模型安全评测结论",
+      "跨境数据处理条款"
+    ]
+  },
+  "comparisonNote": "相较第四范式，DeepSeek 的 frontier-model 属性更强，因此技术、数据和监管风险的弹性更大；优势是开源证据和技术迭代信息更丰富，便于持续监测。",
+  "evidence": [
+    {
+      "id": "ds-e1",
+      "type": "官网",
+      "title": "DeepSeek 官网",
+      "sourceName": "DeepSeek",
+      "sourceUrl": "https://www.deepseek.com/",
+      "publishedAt": "2026-07-02",
+      "capturedAt": "2026-07-02",
+      "summary": "官网显示 DeepSeek 成立于 2023 年，专注通用人工智能底层模型与技术。",
+      "citationText": "成立于 2023 年，专注通用人工智能底层模型与技术。",
+      "citationMetric": "成立时间与业务定位",
+      "sourceReliability": "official",
+      "recommendedUse": "支撑企业画像、技术研发风险和叙事风险判断。",
+      "indicatorIds": [
+        "ri-004",
+        "ri-016",
+        "ri-085"
+      ],
+      "relatedRiskDimension": [
+        "技术与算法",
+        "经营财务"
+      ],
+      "relatedStage": [
+        "技术研发阶段"
+      ],
+      "confidence": 0.93
+    },
+    {
+      "id": "ds-e2",
+      "type": "API 文档",
+      "title": "DeepSeek API 文档与模型迁移说明",
+      "sourceName": "DeepSeek API Docs",
+      "sourceUrl": "https://api-docs.deepseek.com/news/news260424/",
+      "publishedAt": "2026-04-24",
+      "capturedAt": "2026-07-02",
+      "summary": "API 文档列出 deepseek-v4-flash、deepseek-v4-pro，并说明 deepseek-chat、deepseek-reasoner 将于 2026/07/24 弃用。",
+      "citationText": "deepseek-v4-flash、deepseek-v4-pro 已列入模型文档；deepseek-chat、deepseek-reasoner 将于 2026/07/24 弃用。",
+      "citationMetric": "模型名与弃用时间",
+      "sourceReliability": "official",
+      "recommendedUse": "支撑模型迭代风险、客户迁移风险和监管审计说明。",
+      "indicatorIds": [
+        "ri-018",
+        "ri-020",
+        "ri-031"
+      ],
+      "relatedRiskDimension": [
+        "技术与算法",
+        "监管政策",
+        "网络安全"
+      ],
+      "relatedStage": [
+        "算法迭代阶段",
+        "产品验证阶段"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "id": "ds-e3",
+      "type": "技术论文",
+      "title": "DeepSeek 技术论文与开源研究",
+      "sourceName": "DeepSeek / arXiv",
+      "sourceUrl": "https://github.com/deepseek-ai",
+      "publishedAt": "2026-07-02",
+      "capturedAt": "2026-07-02",
+      "summary": "公开仓库与论文材料可用于观察模型架构、训练范式、开源扩散和安全评测边界。",
+      "citationText": "GitHub 组织与论文材料展示其开源生态和推理模型研究路线。",
+      "citationMetric": "开源生态与论文证据",
+      "sourceReliability": "paper",
+      "recommendedUse": "支撑技术成熟度、算法安全、开源合规和知识产权风险分析。",
+      "indicatorIds": [
+        "ri-016",
+        "ri-029",
+        "ri-055"
+      ],
+      "relatedRiskDimension": [
+        "技术与算法",
+        "知识产权",
+        "科技伦理"
+      ],
+      "relatedStage": [
+        "技术研发阶段",
+        "算法迭代阶段"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "id": "ds-e4",
+      "type": "平台入口",
+      "title": "DeepSeek 开放平台",
+      "sourceName": "DeepSeek Platform",
+      "sourceUrl": "https://platform.deepseek.com/",
+      "publishedAt": "2026-07-02",
+      "capturedAt": "2026-07-02",
+      "summary": "开放平台和 API 入口显示其面向开发者和企业客户提供推理服务。",
+      "citationText": "开放平台作为 API 服务和商业化入口。",
+      "citationMetric": "产品化入口",
+      "sourceReliability": "official",
+      "recommendedUse": "支撑商业化落地、推理成本、客户迁移和网络安全风险监测。",
+      "indicatorIds": [
+        "ri-065",
+        "ri-071",
+        "ri-031"
+      ],
+      "relatedRiskDimension": [
+        "经营财务",
+        "网络安全",
+        "监管政策"
+      ],
+      "relatedStage": [
+        "产品验证阶段",
+        "商业化扩张阶段"
+      ],
+      "confidence": 0.91
+    },
+    {
+      "id": "ds-e5",
+      "type": "隐私政策",
+      "title": "DeepSeek Privacy Policy",
+      "sourceName": "DeepSeek",
+      "sourceUrl": "https://chat.deepseek.com/downloads/DeepSeek%20Privacy%20Policy.html",
+      "publishedAt": "2025-06-13",
+      "capturedAt": "2026-07-02",
+      "summary": "隐私政策列明账户信息、输入内容、设备信息与第三方服务条款，直接影响训练和推理阶段的数据合规边界。",
+      "citationText": "账户信息、输入内容、设备信息与第三方服务条款。",
+      "citationMetric": "数据处理范围",
+      "sourceReliability": "official",
+      "recommendedUse": "支撑数据合规、跨境合规、监管政策和客户采购尽调。",
+      "indicatorIds": [
+        "ri-033",
+        "ri-036",
+        "ri-038"
+      ],
+      "relatedRiskDimension": [
+        "数据合规",
+        "监管政策"
+      ],
+      "relatedStage": [
+        "算法迭代阶段",
+        "场景落地阶段"
+      ],
+      "confidence": 0.92
+    },
+    {
+      "id": "ds-e6",
+      "type": "官网产品公告",
+      "title": "DeepSeek-V4 预览版与多端上线说明",
+      "sourceName": "DeepSeek API Docs",
+      "sourceUrl": "https://api-docs.deepseek.com/news/news260424/",
+      "publishedAt": "2026-04-24",
+      "capturedAt": "2026-07-14",
+      "summary": "官方公告披露 DeepSeek-V4 预览版本已开源，并已在网页端与 API 上线。",
+      "citationText": "DeepSeek-V4 预览版本发布，已开放权重并在网页端与 API 上线。",
+      "citationMetric": "模型发布渠道与产品化覆盖",
+      "sourceReliability": "official",
+      "recommendedUse": "用于验证模型版本变化是否同步完成产品发布、客户迁移与安全回归。",
+      "indicatorIds": ["ri-018", "ri-020", "ri-065"],
+      "relatedRiskDimension": ["技术与算法", "经营财务", "监管政策"],
+      "relatedStage": ["算法迭代阶段", "产品验证阶段", "商业化扩张阶段"],
+      "confidence": 0.96
+    },
+    {
+      "id": "ds-e7",
+      "type": "API 技术文档",
+      "title": "DeepSeek API 兼容与 Agent 工具集成说明",
+      "sourceName": "DeepSeek API Docs",
+      "sourceUrl": "https://api-docs.deepseek.com/",
+      "publishedAt": "2026-07-14",
+      "capturedAt": "2026-07-14",
+      "summary": "API 文档说明服务兼容 OpenAI 与 Anthropic API 格式，并提供 Agent 工具集成入口。",
+      "citationText": "通过修改配置，可使用兼容 OpenAI/Anthropic API 的 SDK 或软件访问 DeepSeek API。",
+      "citationMetric": "接口兼容性与集成边界",
+      "sourceReliability": "official",
+      "recommendedUse": "用于跟踪企业客户迁移、第三方集成、权限控制与版本兼容风险。",
+      "indicatorIds": ["ri-020", "ri-031", "ri-038"],
+      "relatedRiskDimension": ["技术与算法", "网络安全", "监管政策"],
+      "relatedStage": ["产品验证阶段", "场景落地阶段"],
+      "confidence": 0.95
+    }
+  ],
+  "events": [
+    {
+      "id": "ds-ev1",
+      "companyId": "deepseek",
+      "riskType": "数据合规",
+      "severity": "high",
+      "status": "in-progress",
+      "sourceType": "隐私政策 + 研究评估",
+      "stage": "算法迭代阶段",
+      "description": "训练与交互数据的来源、用途和跨境处理条款需要持续解释，否则会直接影响企业级客户采购与场景准入。",
+      "evidenceIds": [
+        "ds-e1",
+        "ds-e4"
+      ],
+      "aiSummary": "合规风险由政策文本与第三方评测共同抬升，属于当前最需要解释的高危项。",
+      "recommendedAction": "建立训练数据来源台账、客户输入分区存储与区域化部署说明包。",
+      "identifiedAt": "2026-06-13",
+      "indicatorIds": [
+        "ri-033",
+        "ri-036"
+      ],
+      "investmentImpact": "high"
+    },
+    {
+      "id": "ds-ev2",
+      "companyId": "deepseek",
+      "riskType": "科技伦理",
+      "severity": "high",
+      "status": "pending",
+      "sourceType": "论文 / 治理研究",
+      "stage": "产品验证阶段",
+      "description": "前沿推理模型在代理化场景中的幻觉、越权调用和高敏输出，可能触发伦理争议与监管关注。",
+      "evidenceIds": [
+        "ds-e4",
+        "ds-e5"
+      ],
+      "aiSummary": "该风险不是单一内容安全问题，而是模型能力增强后对责任分配与可解释性的系统性挑战。",
+      "recommendedAction": "对高风险任务启用人工复核、拒答策略和红队场景回放。",
+      "identifiedAt": "2026-05-18",
+      "indicatorIds": [
+        "ri-040",
+        "ri-043"
+      ],
+      "investmentImpact": "high"
+    },
+    {
+      "id": "ds-ev3",
+      "companyId": "deepseek",
+      "riskType": "外部环境/地缘",
+      "severity": "medium",
+      "status": "in-progress",
+      "sourceType": "论文 / 开源仓库",
+      "stage": "商业化扩张阶段",
+      "description": "高性能推理模型对算力、系统优化与供应稳定性高度敏感，容易受到外部供给约束影响。",
+      "evidenceIds": [
+        "ds-e2",
+        "ds-e3"
+      ],
+      "aiSummary": "开源扩散提升了品牌势能，但算力依赖使其在商业化阶段暴露出更高的韧性风险。",
+      "recommendedAction": "建立多供应路线、推理成本监控和重点客户容量预案。",
+      "identifiedAt": "2026-04-23",
+      "indicatorIds": [
+        "ri-075",
+        "ri-078"
+      ],
+      "investmentImpact": "medium"
+    },
+    {
+      "id": "ds-ev4",
+      "companyId": "deepseek",
+      "riskType": "知识产权许可合规",
+      "severity": "watch",
+      "status": "done",
+      "sourceType": "开源仓库",
+      "stage": "商业化扩张阶段",
+      "description": "开源权重与二次开发生态活跃，需要持续监控许可证要求和衍生责任边界。",
+      "evidenceIds": [
+        "ds-e2"
+      ],
+      "aiSummary": "IP 风险当前可控，但在生态扩散加速后应从‘观察项’升级为制度化审查。",
+      "recommendedAction": "补齐模型许可证 FAQ、商用边界说明和衍生分发审批单。",
+      "identifiedAt": "2026-03-12",
+      "indicatorIds": [
+        "ri-049",
+        "ri-053"
+      ],
+      "investmentImpact": "low"
+    }
+  ],
+  "transmissionGraph": {
+    "keyInsight": "DeepSeek 的风险传导核心不在单一模型指标，而在“训练数据与推理链不透明”如何迅速放大为合规审查、采购迟疑和国际信任问题。",
+    "nodes": [
+      {
+        "id": "ds-t1",
+        "label": "训练数据来源不透明",
+        "layer": "source",
+        "description": "数据来源和授权边界越难解释，后续合规压力越大。",
+        "evidenceIds": [
+          "ds-e1",
+          "ds-e4"
+        ]
+      },
+      {
+        "id": "ds-t2",
+        "label": "推理链与能力外溢",
+        "layer": "source",
+        "description": "高能力推理模型更容易在代理化场景放大责任问题。",
+        "evidenceIds": [
+          "ds-e3",
+          "ds-e5"
+        ]
+      },
+      {
+        "id": "ds-t3",
+        "label": "算力依赖",
+        "layer": "source",
+        "description": "训练和推理成本对扩张节奏构成刚性约束。",
+        "evidenceIds": [
+          "ds-e2",
+          "ds-e3"
+        ]
+      },
+      {
+        "id": "ds-t4",
+        "label": "合规复核升级",
+        "layer": "mediator",
+        "description": "客户与监管的问询频率上升，会拉长项目推进周期。",
+        "evidenceIds": [
+          "ds-e1",
+          "ds-e4"
+        ]
+      },
+      {
+        "id": "ds-t5",
+        "label": "模型安全争议",
+        "layer": "mediator",
+        "description": "越权调用、幻觉和不当输出会转化为伦理与舆情问题。",
+        "evidenceIds": [
+          "ds-e4",
+          "ds-e5"
+        ]
+      },
+      {
+        "id": "ds-t6",
+        "label": "企业采购放缓",
+        "layer": "impact",
+        "description": "高价值客户更关注合规证明与责任边界。",
+        "evidenceIds": [
+          "ds-e1",
+          "ds-e5"
+        ]
+      },
+      {
+        "id": "ds-t7",
+        "label": "基础设施成本承压",
+        "layer": "impact",
+        "description": "算力和交付压力会侵蚀商业化效率。",
+        "evidenceIds": [
+          "ds-e2",
+          "ds-e3"
+        ]
+      },
+      {
+        "id": "ds-t8",
+        "label": "数据台账与区域化部署",
+        "layer": "response",
+        "description": "用来源账本、审计留痕和地域化部署切断合规传导。",
+        "evidenceIds": [
+          "ds-e1"
+        ]
+      },
+      {
+        "id": "ds-t9",
+        "label": "红队评测与高敏人工复核",
+        "layer": "response",
+        "description": "用连续评测与人工升级审批抑制安全与伦理事件扩散。",
+        "evidenceIds": [
+          "ds-e4",
+          "ds-e5"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "ds-t1",
+        "target": "ds-t4",
+        "strength": "strong"
+      },
+      {
+        "source": "ds-t2",
+        "target": "ds-t5",
+        "strength": "strong"
+      },
+      {
+        "source": "ds-t3",
+        "target": "ds-t7",
+        "strength": "strong"
+      },
+      {
+        "source": "ds-t4",
+        "target": "ds-t6",
+        "strength": "strong"
+      },
+      {
+        "source": "ds-t5",
+        "target": "ds-t6",
+        "strength": "medium"
+      },
+      {
+        "source": "ds-t4",
+        "target": "ds-t8",
+        "strength": "medium"
+      },
+      {
+        "source": "ds-t5",
+        "target": "ds-t9",
+        "strength": "strong"
+      },
+      {
+        "source": "ds-t7",
+        "target": "ds-t8",
+        "strength": "medium"
+      }
+    ]
+  },
+  "governance": [
+    {
+      "id": "ds-g1",
+      "riskType": "数据合规",
+      "title": "训练数据来源与客户输入台账",
+      "priority": "P0",
+      "stage": "算法迭代阶段",
+      "problem": "数据来源和输入处理边界解释不足，会直接影响企业级落地。",
+      "action": "为训练语料、日志、提示词和客户上传内容建立来源、授权和保留期限台账。",
+      "dataSupport": "隐私政策、数据目录、区域部署清单、审计日志。",
+      "evidenceIds": [
+        "ds-e1"
+      ]
+    },
+    {
+      "id": "ds-g2",
+      "riskType": "科技伦理",
+      "title": "高敏任务红队回归闸门",
+      "priority": "P0",
+      "stage": "产品验证阶段",
+      "problem": "模型能力快速提升，但伦理和安全回归速度跟不上。",
+      "action": "围绕越权调用、敏感输出和代理任务建立红队集、回归集与人工升级审批。",
+      "dataSupport": "安全评测报告、用户反馈、失败案例、版本变更记录。",
+      "evidenceIds": [
+        "ds-e4",
+        "ds-e5"
+      ]
+    },
+    {
+      "id": "ds-g3",
+      "riskType": "外部环境/地缘",
+      "title": "推理容量与区域化部署预案",
+      "priority": "P1",
+      "stage": "商业化扩张阶段",
+      "problem": "算力与地区规则变化会同时冲击交付能力。",
+      "action": "建立容量看板、多供应路线和重点行业的区域化部署模板。",
+      "dataSupport": "算力使用曲线、客户容量承诺、地区合规要求。",
+      "evidenceIds": [
+        "ds-e2",
+        "ds-e3"
+      ]
+    },
+    {
+      "id": "ds-g4",
+      "riskType": "监管政策",
+      "title": "模型备案与场景说明材料标准化",
+      "priority": "P1",
+      "stage": "场景落地阶段",
+      "problem": "不同场景对模型责任和合规材料要求差异大。",
+      "action": "将隐私、内容治理、输出审计和风险承诺整理为标准化合规包。",
+      "dataSupport": "政策库、问询清单、场景分类、审计留痕样例。",
+      "evidenceIds": [
+        "ds-e1",
+        "ds-e5"
+      ]
+    }
+  ],
+  "disclosureMetrics": [
+    {
+      "label": "成立时间",
+      "value": "2023",
+      "unit": "年",
+      "period": "官网披露",
+      "sourceId": "ds-e1",
+      "riskImplication": "年轻企业快速成为高关注样本，叙事热度与治理成熟度需要同步验证。"
+    },
+    {
+      "label": "当前模型",
+      "value": "deepseek-v4-flash / deepseek-v4-pro",
+      "unit": "",
+      "period": "API 文档",
+      "sourceId": "ds-e2",
+      "riskImplication": "模型切换带来客户迁移、接口兼容和安全评估更新压力。"
+    },
+    {
+      "label": "弃用时间",
+      "value": "2026-07-24",
+      "unit": "",
+      "period": "API 文档",
+      "sourceId": "ds-e2",
+      "riskImplication": "旧模型弃用构成产品路线图兑现率和客户稳定性的观察点。"
+    },
+    {
+      "label": "V4 覆盖端",
+      "value": "网页 / App / API",
+      "unit": "",
+      "period": "官网公告",
+      "sourceId": "ds-e6",
+      "riskImplication": "多端同步上线扩大商业化覆盖，也要求版本、评测和安全说明保持一致。"
+    },
+    {
+      "label": "API 兼容",
+      "value": "OpenAI / Anthropic",
+      "unit": "",
+      "period": "API 文档",
+      "sourceId": "ds-e7",
+      "riskImplication": "跨生态兼容降低客户接入门槛，但增加第三方调用、权限和迁移治理要求。"
+    }
+  ],
+  "investmentView": {
+    "stance": "进入下一轮研究前需补齐合规与商业化证据",
+    "riskAppetite": "适用于高不确定性技术项目尽调；在合规、安全与收入留存证据不足时不升级结论。",
+    "summary": "当前研究重点是模型能力、开源生态和 API 商业化的可核验性，以及数据合规、模型安全与国际审查能否形成可审计机制。",
+    "preInvestmentChecks": [
+      "核查训练数据、用户输入和第三方服务的数据边界。",
+      "确认 API 迁移计划、弃用时间和企业客户兼容方案。",
+      "要求提供安全评测、红队测试和内容治理机制。"
+    ],
+    "dueDiligenceFocus": [
+      "模型能力是否能转化为稳定付费客户。",
+      "开源生态与商业 API 是否存在许可证和衍生责任冲突。",
+      "国际审查、算力供给和数据跨境要求是否影响出海。"
+    ],
+    "valuationConstraints": [
+      "将 API 收入、客户留存与合规审计进展设为阶段评审条件。",
+      "高关注度与生态扩张不直接视为经营质量证据，需单独核验付费转化和现金流。"
+    ],
+    "postInvestmentMonitoring": [
+      "月度跟踪模型版本、服务稳定性、安全评测和合规披露。",
+      "监测旧模型弃用后的客户投诉、迁移成本和舆情变化。"
+    ],
+    "stopLossTriggers": [
+      "出现重大数据合规处罚或关键市场禁用。",
+      "模型安全事件导致企业客户大规模暂停采购。"
+    ],
+    "evidenceIds": [
+      "ds-e1",
+      "ds-e2",
+      "ds-e5",
+      "ds-e6",
+      "ds-e7"
+    ]
+  }
+}

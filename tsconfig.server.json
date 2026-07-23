@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.node.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.server.tsbuildinfo",
+    "strict": true,
+    "resolveJsonModule": true
+  },
+  "include": ["server/http-server.ts", "server/production-server.ts"]
+}

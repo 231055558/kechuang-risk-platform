@@ -1,0 +1,858 @@
+{
+  "id": "unitree",
+  "name": "宇树科技",
+  "sector": "具身智能 / 机器人",
+  "description": "上交所 IPO 项目页和注册批复显示宇树科技进入注册生效阶段，招股书披露其收入、利润与毛利率表现，当前核心矛盾从产品展示转向量产交付、上市规范和机器人安全责任。",
+  "headquarters": "杭州",
+  "stage": "注册生效 / 上市前商业化扩张阶段",
+  "riskIndex": 78,
+  "benchmarkCompanyId": "robosense",
+  "snapshotAt": "2026-07-14",
+  "metrics": {
+    "highRiskEvents": 2,
+    "mediumRiskEvents": 1,
+    "responseRate": 40,
+    "evidenceCoverage": 7,
+    "monitoredSources": 5,
+    "currentHighRiskType": "外部环境/地缘"
+  },
+  "dimensions": [
+    {
+      "id": "tech",
+      "label": "技术与算法",
+      "score": 78,
+      "level": "high",
+      "weight": "高动态控制 + 真实物理环境",
+      "summary": "机器人在真实物理世界中工作，高速运动、视觉感知和控制闭环都对鲁棒性提出更高要求。",
+      "evidenceIds": [
+        "ut-e1",
+        "ut-e3",
+        "ut-e4"
+      ],
+      "indicatorIds": [
+        "ri-016",
+        "ri-017",
+        "ri-018",
+        "ri-019",
+        "ri-020"
+      ]
+    },
+    {
+      "id": "data",
+      "label": "数据合规",
+      "score": 45,
+      "level": "attention",
+      "weight": "非第一矛盾，但现场采集数据增多",
+      "summary": "现阶段数据风险不如大模型企业突出，但随着现场视频、动作日志和用户交互积累，合规要求会持续升高。",
+      "evidenceIds": [
+        "ut-e2",
+        "ut-e4"
+      ],
+      "indicatorIds": [
+        "ri-033",
+        "ri-034",
+        "ri-035",
+        "ri-036",
+        "ri-037"
+      ]
+    },
+    {
+      "id": "ethics",
+      "label": "科技伦理",
+      "score": 74,
+      "level": "medium-high",
+      "weight": "人机交互与公共场景责任",
+      "summary": "人形机器人进入更开放场景后，误动作、误识别和人机接触责任会迅速转化为伦理与监管议题。",
+      "evidenceIds": [
+        "ut-e1",
+        "ut-e4"
+      ],
+      "indicatorIds": [
+        "ri-040",
+        "ri-041",
+        "ri-042",
+        "ri-043",
+        "ri-044"
+      ]
+    },
+    {
+      "id": "ip",
+      "label": "知识产权",
+      "score": 71,
+      "level": "medium-high",
+      "weight": "整机、控制和零部件均涉及竞争壁垒",
+      "summary": "整机结构、核心执行部件与控制算法同步演进，意味着专利布局与 FTO 审查都不能缺位。",
+      "evidenceIds": [
+        "ut-e1",
+        "ut-e2"
+      ],
+      "indicatorIds": [
+        "ri-049",
+        "ri-050",
+        "ri-051",
+        "ri-052",
+        "ri-053"
+      ]
+    },
+    {
+      "id": "finance",
+      "label": "经营财务",
+      "score": 63,
+      "level": "medium-high",
+      "weight": "量产、售后和渠道扩张带来资金占用",
+      "summary": "硬件企业的库存、售后和渠道扩张比软件企业更重，规模化阶段的现金周转压力更明显。",
+      "evidenceIds": [
+        "ut-e1",
+        "ut-e2"
+      ],
+      "indicatorIds": [
+        "ri-085",
+        "ri-086",
+        "ri-087",
+        "ri-088",
+        "ri-089"
+      ]
+    },
+    {
+      "id": "external",
+      "label": "外部环境/地缘",
+      "score": 80,
+      "level": "high",
+      "weight": "国际运输、售后与地区准入耦合",
+      "summary": "售后条款、跨境运输、关键部件供给与地区监管都可能直接影响交付与海外扩张节奏。",
+      "evidenceIds": [
+        "ut-e2"
+      ],
+      "indicatorIds": [
+        "ri-075",
+        "ri-076",
+        "ri-077",
+        "ri-078",
+        "ri-079"
+      ]
+    },
+    {
+      "id": "cyber",
+      "label": "网络安全",
+      "score": 68,
+      "level": "medium-high",
+      "weight": "机器人具备真实攻击面",
+      "summary": "从感知链路到控制接口，机器人系统一旦被攻击，后果会比普通 SaaS 更直接地映射到物理安全。",
+      "evidenceIds": [
+        "ut-e3",
+        "ut-e4"
+      ],
+      "indicatorIds": [
+        "ri-029",
+        "ri-030",
+        "ri-031",
+        "ri-032"
+      ]
+    },
+    {
+      "id": "regulatory",
+      "label": "监管政策",
+      "score": 72,
+      "level": "medium-high",
+      "weight": "场景规范与安全责任持续收紧",
+      "summary": "在演示、教育、文旅、工业等不同场景，机器人安全规范和事故责任界定都需要更细化的制度支撑。",
+      "evidenceIds": [
+        "ut-e1",
+        "ut-e2",
+        "ut-e4"
+      ],
+      "indicatorIds": [
+        "ri-038",
+        "ri-039",
+        "ri-083",
+        "ri-084"
+      ]
+    }
+  ],
+  "lifecycle": [
+    {
+      "id": "rnd",
+      "label": "技术研发阶段",
+      "status": "passed",
+      "riskScore": 72,
+      "summary": "早期主要关注执行器、控制器和整机结构的可行性与成本。",
+      "keywords": [
+        "执行器",
+        "控制器",
+        "机身结构"
+      ],
+      "change": "已跨过实验室验证，风险开始从能不能做转向能不能稳定交付。",
+      "evidenceIds": [
+        "ut-e1"
+      ]
+    },
+    {
+      "id": "algo",
+      "label": "算法迭代阶段",
+      "status": "passed",
+      "riskScore": 75,
+      "summary": "算法与控制参数迭代会直接影响稳定性和动作安全。",
+      "keywords": [
+        "步态控制",
+        "视觉感知",
+        "鲁棒性"
+      ],
+      "change": "从单点实验逐步转向复杂环境中的安全回归。",
+      "evidenceIds": [
+        "ut-e3",
+        "ut-e4"
+      ]
+    },
+    {
+      "id": "validation",
+      "label": "产品验证阶段",
+      "status": "passed",
+      "riskScore": 73,
+      "summary": "产品验证阶段重点转向现场可靠性、维护便利性和售后责任边界。",
+      "keywords": [
+        "现场验证",
+        "售后条款",
+        "责任边界"
+      ],
+      "change": "硬件企业开始承受履约与保修约束。",
+      "evidenceIds": [
+        "ut-e2"
+      ]
+    },
+    {
+      "id": "deployment",
+      "label": "场景落地阶段",
+      "status": "next",
+      "riskScore": 77,
+      "summary": "机器人进入教育、文旅、工业等场景后，事故责任和人机协作安全将变成显性问题。",
+      "keywords": [
+        "现场作业",
+        "安全围栏",
+        "人机协作"
+      ],
+      "change": "风险将从设备问题升级为场景责任问题。",
+      "evidenceIds": [
+        "ut-e1",
+        "ut-e4"
+      ]
+    },
+    {
+      "id": "expansion",
+      "label": "商业化扩张阶段",
+      "status": "current",
+      "riskScore": 83,
+      "summary": "当前最核心的是交付、售后、地区服务与供应链韧性的耦合风险。",
+      "keywords": [
+        "量产交付",
+        "售后网络",
+        "供应链韧性"
+      ],
+      "change": "进入高位，来自现场和海外的要求开始同步增多。",
+      "evidenceIds": [
+        "ut-e1",
+        "ut-e2",
+        "ut-e3",
+        "ut-e6",
+        "ut-e7"
+      ]
+    },
+    {
+      "id": "overseas",
+      "label": "出海与国际竞争阶段",
+      "status": "next",
+      "riskScore": 81,
+      "summary": "出海阶段将同时面对运输、售后、场景准入和潜在地缘限制。",
+      "keywords": [
+        "海外售后",
+        "地区准入",
+        "物流限制"
+      ],
+      "change": "商业机会与合规负担同步增加。",
+      "evidenceIds": [
+        "ut-e2"
+      ]
+    }
+  ],
+  "trend": [
+    {
+      "month": "2026-01",
+      "riskIndex": 73,
+      "highRiskEvents": 1,
+      "mediumRiskEvents": 2,
+      "newEvents": 1
+    },
+    {
+      "month": "2026-02",
+      "riskIndex": 74,
+      "highRiskEvents": 1,
+      "mediumRiskEvents": 2,
+      "newEvents": 1
+    },
+    {
+      "month": "2026-03",
+      "riskIndex": 75,
+      "highRiskEvents": 1,
+      "mediumRiskEvents": 2,
+      "newEvents": 2
+    },
+    {
+      "month": "2026-04",
+      "riskIndex": 76,
+      "highRiskEvents": 2,
+      "mediumRiskEvents": 2,
+      "newEvents": 2
+    },
+    {
+      "month": "2026-05",
+      "riskIndex": 77,
+      "highRiskEvents": 2,
+      "mediumRiskEvents": 2,
+      "newEvents": 1
+    },
+    {
+      "month": "2026-06",
+      "riskIndex": 78,
+      "highRiskEvents": 2,
+      "mediumRiskEvents": 1,
+      "newEvents": 2
+    }
+  ],
+  "aiCoverage": {
+    "ingestedSourceTypes": [
+      "产品页",
+      "售后条款",
+      "安全研究论文",
+      "机器人攻击向量论文"
+    ],
+    "extractedSignals": [
+      "速度与负载参数",
+      "保修与退货边界",
+      "控制链路漏洞",
+      "视觉攻击面"
+    ]
+  },
+  "comparisonNote": "与速腾聚创相比，宇树科技面向开放物理场景的机器人交互更复杂，安全责任和售后服务的压力更直接；但其产品节奏更灵活，技术迭代证据也更密集。",
+  "evidence": [
+    {
+      "id": "ut-e1",
+      "type": "IPO 项目页",
+      "title": "上交所 IPO 项目页",
+      "sourceName": "上交所",
+      "sourceUrl": "https://www.sse.com.cn/listing/renewal/ipo/index_listing_detail.shtml?auditId=2178",
+      "publishedAt": "2026-07-02",
+      "capturedAt": "2026-07-02",
+      "summary": "上交所项目页显示宇树科技 IPO 已注册生效，受理日期为 2026-03-20，拟融资 42.02 亿元。",
+      "citationText": "注册生效；受理日期 2026-03-20；拟融资 42.02 亿元。",
+      "citationMetric": "IPO 阶段与拟融资额",
+      "sourceReliability": "exchange",
+      "recommendedUse": "支撑融资环境、估值风险和监管政策风险判断。",
+      "indicatorIds": [
+        "ri-087",
+        "ri-088",
+        "ri-038"
+      ],
+      "relatedRiskDimension": [
+        "经营财务",
+        "监管政策"
+      ],
+      "relatedStage": [
+        "商业化扩张阶段"
+      ],
+      "confidence": 0.96
+    },
+    {
+      "id": "ut-e2",
+      "type": "注册批复",
+      "title": "中国证监会注册批复",
+      "sourceName": "中国证监会 / 上交所",
+      "sourceUrl": "https://static.sse.com.cn/stock/disclosure/announcement/c/202606/002178_20260602_VI1W.pdf",
+      "publishedAt": "2026-06-02",
+      "capturedAt": "2026-07-02",
+      "summary": "证监会批复同意宇树科技首次公开发行股票注册申请，上市进程进入关键阶段。",
+      "citationText": "同意首次公开发行股票注册申请。",
+      "citationMetric": "注册批复",
+      "sourceReliability": "filing",
+      "recommendedUse": "支撑监管政策、上市进度和融资确定性分析。",
+      "indicatorIds": [
+        "ri-038",
+        "ri-087"
+      ],
+      "relatedRiskDimension": [
+        "监管政策",
+        "经营财务"
+      ],
+      "relatedStage": [
+        "商业化扩张阶段"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "id": "ut-e3",
+      "type": "招股书",
+      "title": "宇树科技招股说明书",
+      "sourceName": "上交所",
+      "sourceUrl": "https://static.sse.com.cn/stock/disclosure/announcement/c/202603/002178_20260320_QY8F.pdf",
+      "publishedAt": "2026-03-20",
+      "capturedAt": "2026-07-02",
+      "summary": "招股书披露 2025 年营收 169,926.93 万元、净利润 27,821.05 万元、扣非归母净利润 59,075.28 万元、主营业务毛利率 60.13%。",
+      "citationText": "2025 年营收 169,926.93 万元；净利润 27,821.05 万元；主营业务毛利率 60.13%。",
+      "citationMetric": "营收、利润、毛利率",
+      "sourceReliability": "filing",
+      "recommendedUse": "支撑商业化落地、财务质量、估值和量产交付风险判断。",
+      "indicatorIds": [
+        "ri-068",
+        "ri-085",
+        "ri-086"
+      ],
+      "relatedRiskDimension": [
+        "经营财务",
+        "技术与算法"
+      ],
+      "relatedStage": [
+        "商业化扩张阶段"
+      ],
+      "confidence": 0.96
+    },
+    {
+      "id": "ut-e4",
+      "type": "官网",
+      "title": "宇树科技官网",
+      "sourceName": "Unitree",
+      "sourceUrl": "https://www.unitree.com/",
+      "publishedAt": "2026-07-02",
+      "capturedAt": "2026-07-02",
+      "summary": "官网展示四足机器人、人形机器人和运动控制产品，是观察产品路线、场景覆盖和技术叙事的重要入口。",
+      "citationText": "机器人产品矩阵与场景展示。",
+      "citationMetric": "产品矩阵",
+      "sourceReliability": "official",
+      "recommendedUse": "支撑技术路线、场景应用夸大度和机器人安全责任分析。",
+      "indicatorIds": [
+        "ri-006",
+        "ri-007",
+        "ri-043"
+      ],
+      "relatedRiskDimension": [
+        "技术与算法",
+        "科技伦理"
+      ],
+      "relatedStage": [
+        "场景落地阶段"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "id": "ut-e5",
+      "type": "技术论文",
+      "title": "Unitree H1 人形机器人运动控制第三方研究",
+      "sourceName": "arXiv",
+      "sourceUrl": "https://arxiv.org/abs/2406.10759",
+      "publishedAt": "2024-06-16",
+      "capturedAt": "2026-07-02",
+      "summary": "第三方论文以 Unitree H1 为实验平台，报告强化学习驱动的跑步、跨越沟隙与登台测试，可用于观察运动控制研究边界，但不等同于企业量产产品的统一性能承诺。",
+      "citationText": "第三方研究对象为 Unitree H1，不是 G1；论文报告 1.8 m/s 跑步、0.8 m 沟隙与 0.42 m 平台测试。",
+      "citationMetric": "技术路线证据",
+      "sourceReliability": "paper",
+      "recommendedUse": "支撑技术可行性、算法鲁棒性和科技伦理风险。",
+      "indicatorIds": [
+        "ri-016",
+        "ri-029",
+        "ri-043"
+      ],
+      "relatedRiskDimension": [
+        "技术与算法",
+        "科技伦理"
+      ],
+      "relatedStage": [
+        "技术研发阶段",
+        "算法迭代阶段"
+      ],
+      "confidence": 0.86
+    },
+    {
+      "id": "ut-e6",
+      "type": "招股书经营披露",
+      "title": "宇树科技招股书：2025 年 1—9 月经营与产品销售",
+      "sourceName": "上海证券交易所",
+      "sourceUrl": "https://static.sse.com.cn/stock/disclosure/announcement/c/202603/002178_20260320_QY8F.pdf",
+      "publishedAt": "2026-03-20",
+      "capturedAt": "2026-07-14",
+      "summary": "招股书披露 2025 年 1—9 月营业收入为 116,749.01 万元；同期四足机器人销量 17,946 台、人形机器人销量 3,551 台。",
+      "citationText": "2025 年 1—9 月营业收入 116,749.01 万元；四足机器人销量 17,946 台、人形机器人销量 3,551 台。",
+      "citationMetric": "收入与机器人产品销量",
+      "sourceReliability": "filing",
+      "recommendedUse": "用于验证量产增长、产品结构与订单可持续性，避免以赛道热度代替经营数据。",
+      "indicatorIds": ["ri-065", "ri-068", "ri-085"],
+      "relatedRiskDimension": ["经营财务", "技术与算法", "供应链风险"],
+      "relatedStage": ["场景落地阶段", "商业化扩张阶段"],
+      "confidence": 0.96
+    },
+    {
+      "id": "ut-e7",
+      "type": "招股书供应链披露",
+      "title": "宇树科技招股书：材料采购与量产成本构成",
+      "sourceName": "上海证券交易所",
+      "sourceUrl": "https://static.sse.com.cn/stock/disclosure/announcement/c/202603/002178_20260320_QY8F.pdf",
+      "publishedAt": "2026-03-20",
+      "capturedAt": "2026-07-14",
+      "summary": "招股书披露 2025 年 1—9 月直接材料为 37,518.66 万元，占营业成本 80.12%，核心采购涵盖机械零部件、电子元器件与电气材料。",
+      "citationText": "直接材料占营业成本 80.12%。",
+      "citationMetric": "直接材料占比与关键采购类别",
+      "sourceReliability": "filing",
+      "recommendedUse": "用于量化机器人硬件的材料成本敏感性、供应链替代和毛利韧性。",
+      "indicatorIds": ["ri-073", "ri-075", "ri-088"],
+      "relatedRiskDimension": ["供应链风险", "外部环境/地缘", "经营财务"],
+      "relatedStage": ["商业化扩张阶段", "出海与国际竞争阶段"],
+      "confidence": 0.95
+    }
+  ],
+  "events": [
+    {
+      "id": "ut-ev1",
+      "companyId": "unitree",
+      "riskType": "技术与算法",
+      "severity": "high",
+      "status": "in-progress",
+      "sourceType": "产品页 + 攻击研究",
+      "stage": "商业化扩张阶段",
+      "description": "高速运动机器人在真实交付环境中的安全冗余、故障回退和视觉稳定性尚需更体系化证明。",
+      "evidenceIds": [
+        "ut-e1",
+        "ut-e4"
+      ],
+      "aiSummary": "机器人从展示走向交付后，控制鲁棒性风险会直接转化为物理安全责任，不适合仅以演示效果衡量。",
+      "recommendedAction": "将场景灰度、急停策略、现场围栏和失败回放纳入标准交付包。",
+      "identifiedAt": "2026-06-20",
+      "indicatorIds": [
+        "ri-016",
+        "ri-029"
+      ],
+      "investmentImpact": "high"
+    },
+    {
+      "id": "ut-ev2",
+      "companyId": "unitree",
+      "riskType": "网络安全",
+      "severity": "high",
+      "status": "pending",
+      "sourceType": "安全论文",
+      "stage": "商业化扩张阶段",
+      "description": "控制接口和视觉链路的攻击面说明，机器人安全不仅是 IT 风险，更是 OT 与物理伤害风险。",
+      "evidenceIds": [
+        "ut-e3",
+        "ut-e4"
+      ],
+      "aiSummary": "该项风险具备明确传导路径：接口暴露 -> 控制偏移 -> 现场事故 -> 品牌与合规双重损失。",
+      "recommendedAction": "补齐 SBOM、漏洞接收窗口、固件签名与关键控制接口访问控制。",
+      "identifiedAt": "2026-05-16",
+      "indicatorIds": [
+        "ri-031",
+        "ri-032"
+      ],
+      "investmentImpact": "high"
+    },
+    {
+      "id": "ut-ev3",
+      "companyId": "unitree",
+      "riskType": "外部环境/地缘",
+      "severity": "medium",
+      "status": "in-progress",
+      "sourceType": "售后条款",
+      "stage": "出海与国际竞争阶段",
+      "description": "跨境运输、地区售后与保修限制意味着海外业务一旦扩张，服务稳定性与责任分界会迅速变复杂。",
+      "evidenceIds": [
+        "ut-e2"
+      ],
+      "aiSummary": "当前风险尚未转化为公开事故，但已经是制约业务规模放大的前置瓶颈。",
+      "recommendedAction": "建立区域配件仓、当地维修伙伴和国家别合规 FAQ。",
+      "identifiedAt": "2026-04-28",
+      "indicatorIds": [
+        "ri-075",
+        "ri-078"
+      ],
+      "investmentImpact": "medium"
+    }
+  ],
+  "transmissionGraph": {
+    "keyInsight": "宇树科技的传导链条具有典型的具身智能特征：算法和控制问题不会停留在软件层，而是会迅速通过现场交付演变为物理安全、售后责任与地区准入问题。",
+    "nodes": [
+      {
+        "id": "ut-t1",
+        "label": "高速执行与控制鲁棒性",
+        "layer": "source",
+        "description": "动作能力越强，对控制稳定性和故障回退要求越高。",
+        "evidenceIds": [
+          "ut-e1",
+          "ut-e4"
+        ]
+      },
+      {
+        "id": "ut-t2",
+        "label": "控制接口与视觉攻击面",
+        "layer": "source",
+        "description": "攻击面一旦存在，会直接映射到物理系统。",
+        "evidenceIds": [
+          "ut-e3",
+          "ut-e4"
+        ]
+      },
+      {
+        "id": "ut-t3",
+        "label": "售后与跨境限制",
+        "layer": "source",
+        "description": "地区差异和保修边界增加了交付摩擦。",
+        "evidenceIds": [
+          "ut-e2"
+        ]
+      },
+      {
+        "id": "ut-t4",
+        "label": "现场安全事故风险",
+        "layer": "mediator",
+        "description": "人机接触与动作偏差会快速升级为事故风险。",
+        "evidenceIds": [
+          "ut-e1",
+          "ut-e4"
+        ]
+      },
+      {
+        "id": "ut-t5",
+        "label": "客户服务争议",
+        "layer": "mediator",
+        "description": "交付后的保修、维修与责任认定容易形成纠纷。",
+        "evidenceIds": [
+          "ut-e2"
+        ]
+      },
+      {
+        "id": "ut-t6",
+        "label": "项目验收延迟",
+        "layer": "impact",
+        "description": "事故或服务争议会直接拖累项目推进和回款。",
+        "evidenceIds": [
+          "ut-e2",
+          "ut-e4"
+        ]
+      },
+      {
+        "id": "ut-t7",
+        "label": "保险与合规成本上升",
+        "layer": "impact",
+        "description": "一旦事故频发，保险、准入与品牌成本都会抬升。",
+        "evidenceIds": [
+          "ut-e2",
+          "ut-e3"
+        ]
+      },
+      {
+        "id": "ut-t8",
+        "label": "急停/围栏/飞行记录改造",
+        "layer": "response",
+        "description": "通过产品级安全组件来切断风险继续传导。",
+        "evidenceIds": [
+          "ut-e1",
+          "ut-e4"
+        ]
+      },
+      {
+        "id": "ut-t9",
+        "label": "区域售后与配件仓体系",
+        "layer": "response",
+        "description": "通过服务网络改造缓解海外与量产交付摩擦。",
+        "evidenceIds": [
+          "ut-e2"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "ut-t1",
+        "target": "ut-t4",
+        "strength": "strong"
+      },
+      {
+        "source": "ut-t2",
+        "target": "ut-t4",
+        "strength": "strong"
+      },
+      {
+        "source": "ut-t3",
+        "target": "ut-t5",
+        "strength": "strong"
+      },
+      {
+        "source": "ut-t4",
+        "target": "ut-t6",
+        "strength": "strong"
+      },
+      {
+        "source": "ut-t5",
+        "target": "ut-t6",
+        "strength": "medium"
+      },
+      {
+        "source": "ut-t4",
+        "target": "ut-t7",
+        "strength": "medium"
+      },
+      {
+        "source": "ut-t6",
+        "target": "ut-t8",
+        "strength": "medium"
+      },
+      {
+        "source": "ut-t5",
+        "target": "ut-t9",
+        "strength": "strong"
+      }
+    ]
+  },
+  "governance": [
+    {
+      "id": "ut-g1",
+      "riskType": "技术与算法",
+      "title": "场景分级交付与安全回退标准",
+      "priority": "P0",
+      "stage": "商业化扩张阶段",
+      "problem": "交付环境从可控演示转向真实复杂场景，动作失败的代价更高。",
+      "action": "按场景建立急停、围栏、速度上限和故障回退标准，交付前必须通过回放与签核。",
+      "dataSupport": "现场日志、动作回放、故障工单、灰度测试记录。",
+      "evidenceIds": [
+        "ut-e1",
+        "ut-e4"
+      ]
+    },
+    {
+      "id": "ut-g2",
+      "riskType": "网络安全",
+      "title": "控制链路 PSIRT 与固件签名闭环",
+      "priority": "P0",
+      "stage": "商业化扩张阶段",
+      "problem": "机器人一旦暴露控制接口漏洞，会直接变成物理安全事件。",
+      "action": "建立漏洞接收邮箱、漏洞分级、固件签名和关键接口鉴权机制。",
+      "dataSupport": "SBOM、固件版本、漏洞报告、渗透测试记录。",
+      "evidenceIds": [
+        "ut-e3",
+        "ut-e4"
+      ]
+    },
+    {
+      "id": "ut-g3",
+      "riskType": "外部环境/地缘",
+      "title": "区域服务能力与出口条款映射",
+      "priority": "P1",
+      "stage": "出海与国际竞争阶段",
+      "problem": "跨境运输与售后限制会在出海阶段迅速暴露。",
+      "action": "为重点区域建立配件仓、维修伙伴和出口限制说明模板。",
+      "dataSupport": "订单地区分布、维修时效、条款差异、配件库存。",
+      "evidenceIds": [
+        "ut-e2"
+      ]
+    },
+    {
+      "id": "ut-g4",
+      "riskType": "知识产权许可合规",
+      "title": "核心部件专利地图",
+      "priority": "P1",
+      "stage": "场景落地阶段",
+      "problem": "整机结构、执行部件与控制算法都存在潜在专利交叉。",
+      "action": "对执行器、关节、平衡控制和核心外观件建立专利地图与 FTO 巡检。",
+      "dataSupport": "专利数据库、BOM、结构变更记录、竞品情报。",
+      "evidenceIds": [
+        "ut-e1",
+        "ut-e2"
+      ]
+    }
+  ],
+  "disclosureMetrics": [
+    {
+      "label": "IPO 状态",
+      "value": "注册生效",
+      "unit": "",
+      "period": "上交所项目页",
+      "sourceId": "ut-e1",
+      "riskImplication": "上市进程提高融资确定性，也提高信息披露和治理规范压力。"
+    },
+    {
+      "label": "拟融资额",
+      "value": "42.02",
+      "unit": "亿元",
+      "period": "上交所项目页",
+      "sourceId": "ut-e1",
+      "riskImplication": "融资规模对应扩产、研发和商业化投入，需关注资金用途兑现率。"
+    },
+    {
+      "label": "2025 营收",
+      "value": "169,926.93",
+      "unit": "万元",
+      "period": "招股书",
+      "sourceId": "ut-e3",
+      "riskImplication": "收入已具规模，后续重点转向毛利维持和交付质量。"
+    },
+    {
+      "label": "主营毛利率",
+      "value": "60.13",
+      "unit": "%",
+      "period": "招股书",
+      "sourceId": "ut-e3",
+      "riskImplication": "高毛利需要验证量产降价和售后责任后的可持续性。"
+    },
+    {
+      "label": "2025年1—9月营收",
+      "value": "116,749.01",
+      "unit": "万元",
+      "period": "招股书",
+      "sourceId": "ut-e6",
+      "riskImplication": "公开期内收入与产品销量可交叉验证，投研需继续核验全年结转与客户结构。"
+    },
+    {
+      "label": "人形机器人销量",
+      "value": "3,551",
+      "unit": "台",
+      "period": "2025年1—9月",
+      "sourceId": "ut-e6",
+      "riskImplication": "具身智能放量需要同时跟踪产品可靠性、售后能力与物理安全责任。"
+    },
+    {
+      "label": "直接材料占比",
+      "value": "80.12",
+      "unit": "%",
+      "period": "2025年1—9月",
+      "sourceId": "ut-e7",
+      "riskImplication": "材料成本占比较高，关键部件采购、替代 BOM 与供应链波动是量产估值的重要约束。"
+    }
+  ],
+  "investmentView": {
+    "stance": "进入下一轮研究前需分阶段验证",
+    "riskAppetite": "适用于机器人量产与治理项目尽调，需重点核验交付、售后和物理安全责任。",
+    "summary": "宇树科技具备机器人赛道关注度和财务披露基础，后续需重点验证量产、售后、安全责任和治理规范。",
+    "preInvestmentChecks": [
+      "核查招股书中收入结构、客户结构和资金用途。",
+      "确认机器人产品在开放物理场景中的安全边界和责任划分。",
+      "把上市后产能和交付节点作为阶段评审里程碑。"
+    ],
+    "dueDiligenceFocus": [
+      "高毛利率是否能在量产降价后保持。",
+      "拟融资项目是否对应真实产能和研发瓶颈。",
+      "出口、供应链和物理安全事件对品牌的冲击。"
+    ],
+    "valuationConstraints": [
+      "将收入质量、订单可见度、产能兑现与上市后治理披露设为阶段评审条件。",
+      "热点关注度不作为证据，需通过交付、售后和安全记录复核。"
+    ],
+    "postInvestmentMonitoring": [
+      "跟踪 IPO 进度、产能扩张、重大客户和安全事件。",
+      "监控毛利率、售后费用和海外渠道变化。"
+    ],
+    "stopLossTriggers": [
+      "出现重大机器人安全事故或召回。",
+      "上市进程延迟且核心财务指标明显恶化。"
+    ],
+    "evidenceIds": [
+      "ut-e1",
+      "ut-e2",
+      "ut-e3",
+      "ut-e6",
+      "ut-e7"
+    ]
+  }
+}

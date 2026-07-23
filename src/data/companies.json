@@ -1,0 +1,122 @@
+[
+  {
+    "id": "deepseek",
+    "name": "DeepSeek",
+    "sector": "通用大模型 / Agent",
+    "stage": "产品化与出海审查并行阶段",
+    "riskIndex": 84,
+    "topRisks": [
+      "数据合规",
+      "监管政策",
+      "技术与算法"
+    ],
+    "snapshotAt": "2026-07-14",
+    "evidenceCount": 7,
+    "highRiskEvents": 2,
+    "mediumRiskEvents": 1,
+    "responseRate": 55,
+    "trendDelta": 6,
+    "benchmarkCompanyId": "fourth-paradigm",
+    "currentHighRiskEvent": "训练与交互数据的来源、用途和跨境处理条款需要持续解释，否则会直接影响企业级客户采购与场景准入。"
+  },
+  {
+    "id": "unitree",
+    "name": "宇树科技",
+    "sector": "具身智能 / 机器人",
+    "stage": "注册生效 / 上市前商业化扩张阶段",
+    "riskIndex": 78,
+    "topRisks": [
+      "外部环境/地缘",
+      "技术与算法",
+      "知识产权"
+    ],
+    "snapshotAt": "2026-07-14",
+    "evidenceCount": 7,
+    "highRiskEvents": 2,
+    "mediumRiskEvents": 1,
+    "responseRate": 40,
+    "trendDelta": 5,
+    "benchmarkCompanyId": "robosense",
+    "currentHighRiskEvent": "高速运动机器人在真实交付环境中的安全冗余、故障回退和视觉稳定性尚需更体系化证明。"
+  },
+  {
+    "id": "horizon",
+    "name": "地平线",
+    "sector": "自动驾驶芯片 / 车载计算",
+    "stage": "上市后量产扩张阶段",
+    "riskIndex": 71,
+    "topRisks": [
+      "监管政策",
+      "知识产权",
+      "网络安全"
+    ],
+    "snapshotAt": "2026-07-14",
+    "evidenceCount": 7,
+    "highRiskEvents": 1,
+    "mediumRiskEvents": 2,
+    "responseRate": 53,
+    "trendDelta": 2,
+    "benchmarkCompanyId": "cambricon",
+    "currentHighRiskEvent": "随着车型定点与量产合作密度提升，自动驾驶监管、功能安全与责任界定要求同步抬升。"
+  },
+  {
+    "id": "cambricon",
+    "name": "寒武纪",
+    "sector": "AI 芯片 / 算力基础设施",
+    "stage": "上市后盈利与供应链韧性验证阶段",
+    "riskIndex": 82,
+    "topRisks": [
+      "外部环境/地缘",
+      "经营财务",
+      "知识产权"
+    ],
+    "snapshotAt": "2026-07-14",
+    "evidenceCount": 7,
+    "highRiskEvents": 2,
+    "mediumRiskEvents": 1,
+    "responseRate": 40,
+    "trendDelta": 3,
+    "benchmarkCompanyId": "horizon",
+    "currentHighRiskEvent": "先进制程、EDA 与生态工具链依赖仍然是最关键的外部约束，一旦链路受扰将直接影响交付连续性。"
+  },
+  {
+    "id": "fourth-paradigm",
+    "name": "第四范式",
+    "sector": "企业级 AI 平台",
+    "stage": "企业级 AI 平台商业化质量验证阶段",
+    "riskIndex": 69,
+    "topRisks": [
+      "数据合规",
+      "经营财务",
+      "监管政策"
+    ],
+    "snapshotAt": "2026-07-14",
+    "evidenceCount": 7,
+    "highRiskEvents": 1,
+    "mediumRiskEvents": 2,
+    "responseRate": 53,
+    "trendDelta": 1,
+    "benchmarkCompanyId": "deepseek",
+    "currentHighRiskEvent": "客户集中和项目制交付意味着回款、续约和经营质量对少数关键客户更敏感。"
+  },
+  {
+    "id": "robosense",
+    "name": "速腾聚创",
+    "sector": "智能驾驶感知 / 激光雷达",
+    "stage": "智能驾驶与机器人感知量产扩张阶段",
+    "riskIndex": 74,
+    "topRisks": [
+      "监管政策",
+      "经营财务",
+      "技术与算法"
+    ],
+    "snapshotAt": "2026-07-14",
+    "evidenceCount": 7,
+    "highRiskEvents": 2,
+    "mediumRiskEvents": 1,
+    "responseRate": 20,
+    "trendDelta": 4,
+    "benchmarkCompanyId": "horizon",
+    "currentHighRiskEvent": "量产规模上升有利于摊薄成本，但 OEM 集中和价格竞争会显著影响经营质量和议价空间。"
+  }
+]

@@ -1,0 +1,867 @@
+{
+  "id": "fourth-paradigm",
+  "name": "第四范式",
+  "sector": "企业级 AI 平台",
+  "description": "第四范式官网、投资者关系和业绩材料显示其以企业级 AI 平台与技术服务为主，2025 年收入增长并出现经调整盈利，当前核心是客户质量、数据授权、交付效率和 Agentic AI 商业化。",
+  "headquarters": "北京",
+  "stage": "企业级 AI 平台商业化质量验证阶段",
+  "riskIndex": 69,
+  "benchmarkCompanyId": "deepseek",
+  "snapshotAt": "2026-07-14",
+  "metrics": {
+    "highRiskEvents": 1,
+    "mediumRiskEvents": 2,
+    "responseRate": 53,
+    "evidenceCoverage": 7,
+    "monitoredSources": 5,
+    "currentHighRiskType": "数据合规"
+  },
+  "dimensions": [
+    {
+      "id": "tech",
+      "label": "技术与算法",
+      "score": 66,
+      "level": "medium-high",
+      "weight": "平台能力强，但技术更强调行业交付",
+      "summary": "第四范式的技术风险更多体现在平台稳定性、行业适配和交付能力，而非 frontier 模型本身的不确定性。",
+      "evidenceIds": [
+        "fp-e1",
+        "fp-e4"
+      ],
+      "indicatorIds": [
+        "ri-016",
+        "ri-017",
+        "ri-018",
+        "ri-019",
+        "ri-020"
+      ]
+    },
+    {
+      "id": "data",
+      "label": "数据合规",
+      "score": 79,
+      "level": "high",
+      "weight": "企业级客户数据边界复杂",
+      "summary": "企业级 AI 平台直接接触客户业务数据和流程数据，授权边界、处理目的和跨境要求必须被解释清楚。",
+      "evidenceIds": [
+        "fp-e1",
+        "fp-e4",
+        "fp-e5"
+      ],
+      "indicatorIds": [
+        "ri-033",
+        "ri-034",
+        "ri-035",
+        "ri-036",
+        "ri-037"
+      ]
+    },
+    {
+      "id": "ethics",
+      "label": "科技伦理",
+      "score": 61,
+      "level": "medium-high",
+      "weight": "更多体现在业务决策透明度",
+      "summary": "面向金融、制造等行业时，模型结果如何影响业务决策与员工流程，是其伦理议题的主要表现形式。",
+      "evidenceIds": [
+        "fp-e1",
+        "fp-e4"
+      ],
+      "indicatorIds": [
+        "ri-040",
+        "ri-041",
+        "ri-042",
+        "ri-043",
+        "ri-044"
+      ]
+    },
+    {
+      "id": "ip",
+      "label": "知识产权",
+      "score": 58,
+      "level": "attention",
+      "weight": "平台型公司 IP 压力相对可控",
+      "summary": "相较芯片和机器人企业，知识产权不是最核心短板，但开源组件、模型接口和行业模板仍需持续审查。",
+      "evidenceIds": [
+        "fp-e1",
+        "fp-e3"
+      ],
+      "indicatorIds": [
+        "ri-049",
+        "ri-050",
+        "ri-051",
+        "ri-052",
+        "ri-053"
+      ]
+    },
+    {
+      "id": "finance",
+      "label": "经营财务",
+      "score": 72,
+      "level": "medium-high",
+      "weight": "项目制交付影响现金周转",
+      "summary": "项目制交付、长销售周期和客户集中都会影响回款与经营质量，是平台型 AI 企业的典型挑战。",
+      "evidenceIds": [
+        "fp-e2",
+        "fp-e3",
+        "fp-e5",
+        "fp-e6",
+        "fp-e7"
+      ],
+      "indicatorIds": [
+        "ri-085",
+        "ri-086",
+        "ri-087",
+        "ri-088",
+        "ri-089"
+      ]
+    },
+    {
+      "id": "external",
+      "label": "外部环境/地缘",
+      "score": 48,
+      "level": "attention",
+      "weight": "相对依赖国内企业客户",
+      "summary": "外部环境风险低于硬科技制造类企业，但在国际合规和客户出海场景中仍需同步适配地区要求。",
+      "evidenceIds": [
+        "fp-e1",
+        "fp-e4"
+      ],
+      "indicatorIds": [
+        "ri-075",
+        "ri-076",
+        "ri-077",
+        "ri-078",
+        "ri-079"
+      ]
+    },
+    {
+      "id": "cyber",
+      "label": "网络安全",
+      "score": 64,
+      "level": "medium-high",
+      "weight": "平台接入企业流程，权限面广",
+      "summary": "企业级平台承载客户业务流程和数据接口，权限管理、审计与账户安全成为基础盘风险。",
+      "evidenceIds": [
+        "fp-e1",
+        "fp-e4"
+      ],
+      "indicatorIds": [
+        "ri-029",
+        "ri-030",
+        "ri-031",
+        "ri-032"
+      ]
+    },
+    {
+      "id": "regulatory",
+      "label": "监管政策",
+      "score": 75,
+      "level": "high",
+      "weight": "受行业合规要求影响显著",
+      "summary": "平台服务面向金融、制造等行业时，监管约束会通过客户需求和采购标准反馈到产品设计与交付方式。",
+      "evidenceIds": [
+        "fp-e1",
+        "fp-e2",
+        "fp-e3"
+      ],
+      "indicatorIds": [
+        "ri-038",
+        "ri-039",
+        "ri-083",
+        "ri-084"
+      ]
+    }
+  ],
+  "lifecycle": [
+    {
+      "id": "rnd",
+      "label": "技术研发阶段",
+      "status": "passed",
+      "riskScore": 60,
+      "summary": "研发重点更多在平台能力、行业模板和工程化组件上。",
+      "keywords": [
+        "平台底座",
+        "行业模板",
+        "工程化"
+      ],
+      "change": "技术本身已相对成熟，风险转向客户交付与合规。",
+      "evidenceIds": [
+        "fp-e1"
+      ]
+    },
+    {
+      "id": "algo",
+      "label": "算法迭代阶段",
+      "status": "passed",
+      "riskScore": 62,
+      "summary": "算法迭代要兼顾泛化能力和行业客户的可解释需求。",
+      "keywords": [
+        "行业适配",
+        "可解释性",
+        "稳定性"
+      ],
+      "change": "算法指标不再是唯一目标，交付适配更关键。",
+      "evidenceIds": [
+        "fp-e1",
+        "fp-e4"
+      ]
+    },
+    {
+      "id": "validation",
+      "label": "产品验证阶段",
+      "status": "passed",
+      "riskScore": 68,
+      "summary": "试点项目阶段会暴露真实的数据授权边界和组织协同难题。",
+      "keywords": [
+        "试点项目",
+        "数据授权",
+        "组织协同"
+      ],
+      "change": "合规和业务流程嵌入成为显性问题。",
+      "evidenceIds": [
+        "fp-e3",
+        "fp-e4"
+      ]
+    },
+    {
+      "id": "deployment",
+      "label": "场景落地阶段",
+      "status": "next",
+      "riskScore": 72,
+      "summary": "平台深入到客户生产和决策流程后，权限、审计和责任边界的重要性迅速抬升。",
+      "keywords": [
+        "流程嵌入",
+        "权限",
+        "审计"
+      ],
+      "change": "风险从项目试点转向规模化治理。",
+      "evidenceIds": [
+        "fp-e1",
+        "fp-e4"
+      ]
+    },
+    {
+      "id": "expansion",
+      "label": "商业化扩张阶段",
+      "status": "current",
+      "riskScore": 76,
+      "summary": "当前最核心的是客户集中、回款质量和数据授权边界能否支撑持续扩张。",
+      "keywords": [
+        "客户集中",
+        "回款质量",
+        "授权边界"
+      ],
+      "change": "进入当前高位，经营质量与合规治理几乎同步决定增长速度。",
+      "evidenceIds": [
+        "fp-e2",
+        "fp-e3",
+        "fp-e5",
+        "fp-e6",
+        "fp-e7"
+      ]
+    },
+    {
+      "id": "overseas",
+      "label": "出海与国际竞争阶段",
+      "status": "next",
+      "riskScore": 64,
+      "summary": "如果客户全球化程度提升，平台需要同步处理跨境数据与地区法规差异。",
+      "keywords": [
+        "跨境数据",
+        "地区法规",
+        "本地化部署"
+      ],
+      "change": "外部环境风险会随客户结构变化而抬升。",
+      "evidenceIds": [
+        "fp-e1",
+        "fp-e4"
+      ]
+    }
+  ],
+  "trend": [
+    {
+      "month": "2026-01",
+      "riskIndex": 67,
+      "highRiskEvents": 1,
+      "mediumRiskEvents": 1,
+      "newEvents": 1
+    },
+    {
+      "month": "2026-02",
+      "riskIndex": 67,
+      "highRiskEvents": 1,
+      "mediumRiskEvents": 1,
+      "newEvents": 1
+    },
+    {
+      "month": "2026-03",
+      "riskIndex": 68,
+      "highRiskEvents": 1,
+      "mediumRiskEvents": 2,
+      "newEvents": 1
+    },
+    {
+      "month": "2026-04",
+      "riskIndex": 68,
+      "highRiskEvents": 1,
+      "mediumRiskEvents": 2,
+      "newEvents": 1
+    },
+    {
+      "month": "2026-05",
+      "riskIndex": 69,
+      "highRiskEvents": 1,
+      "mediumRiskEvents": 2,
+      "newEvents": 2
+    },
+    {
+      "month": "2026-06",
+      "riskIndex": 69,
+      "highRiskEvents": 1,
+      "mediumRiskEvents": 2,
+      "newEvents": 1
+    }
+  ],
+  "aiCoverage": {
+    "ingestedSourceTypes": [
+      "官网",
+      "投资者关系页",
+      "招股书 PDF",
+      "合规说明"
+    ],
+    "extractedSignals": [
+      "客户结构描述",
+      "GDPR/ISO 合规披露",
+      "销售与交付周期",
+      "项目制回款压力"
+    ]
+  },
+  "comparisonNote": "与 DeepSeek 相比，第四范式的模型前沿风险较低，但企业级客户数据、项目交付和客户集中度问题更突出，因此治理重点更偏经营质量与合规边界。",
+  "evidence": [
+    {
+      "id": "fp-e1",
+      "type": "官网",
+      "title": "第四范式官网",
+      "sourceName": "第四范式",
+      "sourceUrl": "https://www.4paradigm.com/",
+      "publishedAt": "2026-07-02",
+      "capturedAt": "2026-07-02",
+      "summary": "官网展示其人工智能平台与技术服务能力，覆盖金融、零售、制造、医疗、能源、政府等行业。",
+      "citationText": "人工智能平台与技术服务，覆盖多行业。",
+      "citationMetric": "业务定位与行业覆盖",
+      "sourceReliability": "official",
+      "recommendedUse": "支撑企业级 AI 商业化、客户数据和场景落地风险。",
+      "indicatorIds": [
+        "ri-065",
+        "ri-068",
+        "ri-036"
+      ],
+      "relatedRiskDimension": [
+        "经营财务",
+        "数据合规"
+      ],
+      "relatedStage": [
+        "场景落地阶段"
+      ],
+      "confidence": 0.91
+    },
+    {
+      "id": "fp-e2",
+      "type": "投资者关系",
+      "title": "第四范式投资者关系页",
+      "sourceName": "第四范式 IR",
+      "sourceUrl": "https://ir.4paradigm.com/sc/index.html",
+      "publishedAt": "2026-07-02",
+      "capturedAt": "2026-07-02",
+      "summary": "投资者关系页显示公司成立于 2014 年底，是人工智能平台与技术服务提供商。",
+      "citationText": "成立于 2014 年底；人工智能平台与技术服务提供商。",
+      "citationMetric": "公司定位",
+      "sourceReliability": "official",
+      "recommendedUse": "支撑企业画像、经营质量和治理透明度。",
+      "indicatorIds": [
+        "ri-004",
+        "ri-085",
+        "ri-038"
+      ],
+      "relatedRiskDimension": [
+        "经营财务",
+        "监管政策"
+      ],
+      "relatedStage": [
+        "商业化扩张阶段"
+      ],
+      "confidence": 0.92
+    },
+    {
+      "id": "fp-e3",
+      "type": "业绩新闻稿",
+      "title": "第四范式 2025 年业绩新闻稿",
+      "sourceName": "第四范式",
+      "sourceUrl": "https://www.4paradigm.com/content/details_10_50984.html",
+      "publishedAt": "2026-07-02",
+      "capturedAt": "2026-07-02",
+      "summary": "公司披露 2025 年总营收 71.35 亿元，同比增长 35.6%，经调整归母净利润 1784 万元；AI Platform 收入 65.52 亿元，API 收入 0.8 亿元，Agentic AI 收入 5.03 亿元。",
+      "citationText": "2025 年总营收 71.35 亿元；经调整归母净利润 1784 万元；AI Platform 65.52 亿元。",
+      "citationMetric": "收入与业务拆分",
+      "sourceReliability": "official",
+      "recommendedUse": "支撑商业化质量、盈利质量和业务结构风险判断。",
+      "indicatorIds": [
+        "ri-068",
+        "ri-085",
+        "ri-086"
+      ],
+      "relatedRiskDimension": [
+        "经营财务"
+      ],
+      "relatedStage": [
+        "商业化扩张阶段"
+      ],
+      "confidence": 0.94
+    },
+    {
+      "id": "fp-e4",
+      "type": "港交所公告",
+      "title": "第四范式港交所业绩公告",
+      "sourceName": "港交所披露易",
+      "sourceUrl": "https://www1.hkexnews.hk/listedco/listconews/sehk/2025/0821/2025082100374.pdf",
+      "publishedAt": "2025-08-21",
+      "capturedAt": "2026-07-02",
+      "summary": "港交所披露材料用于跟踪收入、客户、现金流和治理事项。",
+      "citationText": "港交所持续披露材料。",
+      "citationMetric": "持续披露",
+      "sourceReliability": "filing",
+      "recommendedUse": "支撑上市后治理、财务和投后监测。",
+      "indicatorIds": [
+        "ri-085",
+        "ri-087",
+        "ri-038"
+      ],
+      "relatedRiskDimension": [
+        "经营财务",
+        "监管政策"
+      ],
+      "relatedStage": [
+        "商业化扩张阶段"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "id": "fp-e5",
+      "type": "招股书",
+      "title": "第四范式招股书",
+      "sourceName": "港交所披露易",
+      "sourceUrl": "https://www1.hkexnews.hk/listedco/listconews/sehk/2023/0918/2023091800009.pdf",
+      "publishedAt": "2023-09-18",
+      "capturedAt": "2026-07-02",
+      "summary": "招股书披露企业级 AI 平台业务、客户结构和风险因素，是评估商业化质量和客户集中度的重要材料。",
+      "citationText": "企业级 AI 平台业务、客户结构与风险因素。",
+      "citationMetric": "招股书风险因素",
+      "sourceReliability": "filing",
+      "recommendedUse": "支撑客户集中、数据授权和企业级 AI 合规风险分析。",
+      "indicatorIds": [
+        "ri-036",
+        "ri-069",
+        "ri-085"
+      ],
+      "relatedRiskDimension": [
+        "数据合规",
+        "经营财务"
+      ],
+      "relatedStage": [
+        "商业化扩张阶段"
+      ],
+      "confidence": 0.93
+    },
+    {
+      "id": "fp-e6",
+      "type": "业绩新闻稿",
+      "title": "范式集团 2025 年三条业务线收入结构",
+      "sourceName": "第四范式",
+      "sourceUrl": "https://www.4paradigm.com/content/details_10_50984.html",
+      "publishedAt": "2026-03-31",
+      "capturedAt": "2026-07-14",
+      "summary": "2025 年业绩新闻稿披露 AI Platform、API 及 Agentic AI 收入分别为 65.52 亿元、0.80 亿元及 5.03 亿元；经调整归母净利润为 1,784 万元。",
+      "citationText": "AI Platform、API、Agentic AI 三大业务收入分别为 65.52 亿元、0.80 亿元及 5.03 亿元。",
+      "citationMetric": "业务线收入与经调整盈利",
+      "sourceReliability": "official",
+      "recommendedUse": "用于区分平台基本盘、新业务增量与盈利质量，避免仅用总营收评估商业化。",
+      "indicatorIds": ["ri-065", "ri-067", "ri-085"],
+      "relatedRiskDimension": ["经营财务", "技术与算法", "数据合规"],
+      "relatedStage": ["商业化扩张阶段"],
+      "confidence": 0.97
+    },
+    {
+      "id": "fp-e7",
+      "type": "投资者关系与行业覆盖",
+      "title": "第四范式企业级 AI 的行业覆盖与治理入口",
+      "sourceName": "第四范式 IR",
+      "sourceUrl": "https://ir.4paradigm.com/sc/index.html",
+      "publishedAt": "2026-07-14",
+      "capturedAt": "2026-07-14",
+      "summary": "投资者关系页展示企业管治、公告、招股书与财务报告入口；官网产品面向银行、保险、证券、零售、能源、医疗和制造等行业。",
+      "citationText": "企业管治、公告、招股书与财务报告可持续获取；业务覆盖多个强监管和复杂行业。",
+      "citationMetric": "行业覆盖与持续披露入口",
+      "sourceReliability": "official",
+      "recommendedUse": "用于识别跨行业数据授权、审计要求与项目交付复杂度。",
+      "indicatorIds": ["ri-033", "ri-036", "ri-038"],
+      "relatedRiskDimension": ["数据合规", "监管政策", "经营财务"],
+      "relatedStage": ["场景落地阶段", "商业化扩张阶段"],
+      "confidence": 0.94
+    }
+  ],
+  "events": [
+    {
+      "id": "fp-ev1",
+      "companyId": "fourth-paradigm",
+      "riskType": "经营财务",
+      "severity": "high",
+      "status": "pending",
+      "sourceType": "招股书 + 投资者关系",
+      "stage": "商业化扩张阶段",
+      "description": "客户集中和项目制交付意味着回款、续约和经营质量对少数关键客户更敏感。",
+      "evidenceIds": [
+        "fp-e2",
+        "fp-e3",
+        "fp-e5"
+      ],
+      "aiSummary": "该项风险不一定立刻表现为财务恶化，但会决定扩张阶段的韧性与估值稳定性。",
+      "recommendedAction": "设定客户集中度红线、复购率监测和重点客户回款预警模型。",
+      "identifiedAt": "2026-06-10",
+      "indicatorIds": [
+        "ri-085",
+        "ri-088"
+      ],
+      "investmentImpact": "high"
+    },
+    {
+      "id": "fp-ev2",
+      "companyId": "fourth-paradigm",
+      "riskType": "数据合规",
+      "severity": "medium",
+      "status": "in-progress",
+      "sourceType": "官网",
+      "stage": "场景落地阶段",
+      "description": "平台接入企业级业务数据后，授权范围、处理目的与审计留痕需要更加细化，否则会影响大客户签约和上线进度。",
+      "evidenceIds": [
+        "fp-e1",
+        "fp-e4"
+      ],
+      "aiSummary": "数据合规是平台型 AI 企业的结构性问题，往往通过客户采购与审计要求传导出来。",
+      "recommendedAction": "建立数据来源账本、私有化部署模板和行业别审计清单。",
+      "identifiedAt": "2026-05-26",
+      "indicatorIds": [
+        "ri-033",
+        "ri-036"
+      ],
+      "investmentImpact": "medium"
+    },
+    {
+      "id": "fp-ev3",
+      "companyId": "fourth-paradigm",
+      "riskType": "监管政策",
+      "severity": "medium",
+      "status": "done",
+      "sourceType": "官网 + IR",
+      "stage": "场景落地阶段",
+      "description": "不同行业客户对模型审计、权限控制与记录留存的要求持续提高，需要在平台层做统一能力封装。",
+      "evidenceIds": [
+        "fp-e1",
+        "fp-e2",
+        "fp-e4"
+      ],
+      "aiSummary": "这是可以通过平台能力前置治理的风险，关键在于产品化程度。",
+      "recommendedAction": "把权限、留痕、审批和解释组件做成标准化模块。",
+      "identifiedAt": "2026-03-29",
+      "indicatorIds": [
+        "ri-038",
+        "ri-083"
+      ],
+      "investmentImpact": "medium"
+    }
+  ],
+  "transmissionGraph": {
+    "keyInsight": "第四范式的风险传导路径更像典型的企业软件公司：客户集中与数据边界先影响项目推进，再传导到回款质量和持续扩张能力。",
+    "nodes": [
+      {
+        "id": "fp-t1",
+        "label": "客户集中度较高",
+        "layer": "source",
+        "description": "重点客户变化会放大经营波动。",
+        "evidenceIds": [
+          "fp-e3",
+          "fp-e5"
+        ]
+      },
+      {
+        "id": "fp-t2",
+        "label": "企业数据授权边界复杂",
+        "layer": "source",
+        "description": "场景越深入，授权和审计要求越高。",
+        "evidenceIds": [
+          "fp-e1",
+          "fp-e4"
+        ]
+      },
+      {
+        "id": "fp-t3",
+        "label": "项目制交付周期长",
+        "layer": "source",
+        "description": "平台型项目常常伴随长售前和长交付。",
+        "evidenceIds": [
+          "fp-e2",
+          "fp-e5"
+        ]
+      },
+      {
+        "id": "fp-t4",
+        "label": "签约与上线放缓",
+        "layer": "mediator",
+        "description": "一旦审计或授权解释不足，项目推进会显著变慢。",
+        "evidenceIds": [
+          "fp-e1",
+          "fp-e4"
+        ]
+      },
+      {
+        "id": "fp-t5",
+        "label": "回款质量承压",
+        "layer": "mediator",
+        "description": "客户集中叠加项目制交付，会抬高经营波动。",
+        "evidenceIds": [
+          "fp-e2",
+          "fp-e5"
+        ]
+      },
+      {
+        "id": "fp-t6",
+        "label": "经营韧性下降",
+        "layer": "impact",
+        "description": "签约放缓和回款问题会直接传导到扩张能力。",
+        "evidenceIds": [
+          "fp-e2",
+          "fp-e3"
+        ]
+      },
+      {
+        "id": "fp-t7",
+        "label": "客户信任下降",
+        "layer": "impact",
+        "description": "合规和审计不充分会影响大客户续约。",
+        "evidenceIds": [
+          "fp-e1",
+          "fp-e4"
+        ]
+      },
+      {
+        "id": "fp-t8",
+        "label": "授权台账与行业审计模板",
+        "layer": "response",
+        "description": "先把合规证明能力产品化。",
+        "evidenceIds": [
+          "fp-e1",
+          "fp-e4"
+        ]
+      },
+      {
+        "id": "fp-t9",
+        "label": "客户集中与回款预警模型",
+        "layer": "response",
+        "description": "把结构性经营风险提前量化。",
+        "evidenceIds": [
+          "fp-e2",
+          "fp-e5"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "fp-t1",
+        "target": "fp-t5",
+        "strength": "strong"
+      },
+      {
+        "source": "fp-t2",
+        "target": "fp-t4",
+        "strength": "strong"
+      },
+      {
+        "source": "fp-t3",
+        "target": "fp-t5",
+        "strength": "medium"
+      },
+      {
+        "source": "fp-t4",
+        "target": "fp-t7",
+        "strength": "strong"
+      },
+      {
+        "source": "fp-t5",
+        "target": "fp-t6",
+        "strength": "strong"
+      },
+      {
+        "source": "fp-t4",
+        "target": "fp-t8",
+        "strength": "medium"
+      },
+      {
+        "source": "fp-t5",
+        "target": "fp-t9",
+        "strength": "medium"
+      }
+    ]
+  },
+  "governance": [
+    {
+      "id": "fp-g1",
+      "riskType": "经营财务",
+      "title": "客户集中红线与复购率预警",
+      "priority": "P0",
+      "stage": "商业化扩张阶段",
+      "problem": "客户结构过于集中会削弱扩张韧性。",
+      "action": "按行业和客户级别设定集中度阈值，并同步监控复购率与回款质量。",
+      "dataSupport": "合同台账、回款记录、客户画像、项目状态。",
+      "evidenceIds": [
+        "fp-e2",
+        "fp-e3",
+        "fp-e5"
+      ]
+    },
+    {
+      "id": "fp-g2",
+      "riskType": "数据合规",
+      "title": "企业数据授权与部署模板化",
+      "priority": "P0",
+      "stage": "场景落地阶段",
+      "problem": "企业数据授权边界一旦解释不清，会拖慢签约和上线。",
+      "action": "按行业建立授权模板、私有化部署模板和审计留痕配置模板。",
+      "dataSupport": "授权合同、数据目录、审计日志、部署方式清单。",
+      "evidenceIds": [
+        "fp-e1",
+        "fp-e4"
+      ]
+    },
+    {
+      "id": "fp-g3",
+      "riskType": "监管政策",
+      "title": "行业别合规能力产品化",
+      "priority": "P1",
+      "stage": "场景落地阶段",
+      "problem": "不同监管行业会把不同要求传导给平台。",
+      "action": "把权限、留痕、解释、审批等能力做成标准化组件，减少项目级重复定制。",
+      "dataSupport": "客户审计问卷、行业政策、功能使用日志。",
+      "evidenceIds": [
+        "fp-e1",
+        "fp-e2",
+        "fp-e4"
+      ]
+    },
+    {
+      "id": "fp-g4",
+      "riskType": "技术与算法",
+      "title": "行业模板的质量回归机制",
+      "priority": "P1",
+      "stage": "算法迭代阶段",
+      "problem": "平台型产品容易因行业差异而出现交付质量波动。",
+      "action": "对行业模板、流程编排和关键模型建立统一回归集和版本闸门。",
+      "dataSupport": "交付缺陷、行业模板版本、客户反馈。",
+      "evidenceIds": [
+        "fp-e1",
+        "fp-e4"
+      ]
+    }
+  ],
+  "disclosureMetrics": [
+    {
+      "label": "成立时间",
+      "value": "2014 年底",
+      "unit": "",
+      "period": "投资者关系页",
+      "sourceId": "fp-e2",
+      "riskImplication": "经营历史较长，适合观察企业级 AI 商业化沉淀。"
+    },
+    {
+      "label": "2025 总营收",
+      "value": "71.35",
+      "unit": "亿元",
+      "period": "业绩新闻稿",
+      "sourceId": "fp-e3",
+      "riskImplication": "收入规模支持企业级 AI 平台商业化判断。"
+    },
+    {
+      "label": "同比增长",
+      "value": "35.6",
+      "unit": "%",
+      "period": "业绩新闻稿",
+      "sourceId": "fp-e3",
+      "riskImplication": "增长性较强，但需关注回款和客户质量。"
+    },
+    {
+      "label": "AI Platform 收入",
+      "value": "65.52",
+      "unit": "亿元",
+      "period": "业绩新闻稿",
+      "sourceId": "fp-e3",
+      "riskImplication": "核心收入高度依赖平台业务，需要评估可持续交付效率。"
+    },
+    {
+      "label": "Agentic AI 收入",
+      "value": "5.03",
+      "unit": "亿元",
+      "period": "业绩新闻稿",
+      "sourceId": "fp-e3",
+      "riskImplication": "新业务贡献初显，但商业化稳定性仍需观察。"
+    },
+    {
+      "label": "API 收入",
+      "value": "0.80",
+      "unit": "亿元",
+      "period": "2025 年业绩",
+      "sourceId": "fp-e6",
+      "riskImplication": "API 规模仍小于平台业务，需验证产品化复用率和单位交付成本能否持续改善。"
+    },
+    {
+      "label": "经调整归母净利润",
+      "value": "1,784",
+      "unit": "万元",
+      "period": "2025 年业绩",
+      "sourceId": "fp-e6",
+      "riskImplication": "盈利转正需要与经营现金流、客户回款及项目交付质量共同验证。"
+    }
+  ],
+  "investmentView": {
+    "stance": "进入下一轮研究前需验证盈利与回款质量",
+    "riskAppetite": "适用于企业软件与 AI 平台项目尽调，需重点核验客户集中、交付成本和回款周期。",
+    "summary": "公开证据显示其具备企业级 AI 收入规模和行业覆盖，后续需核验客户数据授权、项目交付、回款周期和新业务商业化质量。",
+    "preInvestmentChecks": [
+      "核查收入拆分、客户集中度和回款周期。",
+      "确认企业客户数据授权边界和合规责任。",
+      "评估 Agentic AI 收入的可持续性和交付成本。"
+    ],
+    "dueDiligenceFocus": [
+      "AI Platform 是否依赖少数大客户。",
+      "经调整盈利是否能转化为经营现金流。",
+      "API 与 Agentic AI 是否形成第二增长曲线。"
+    ],
+    "valuationConstraints": [
+      "将企业软件收入质量、续约和现金回款设为阶段评审条件，不以大模型叙事替代经营证据。",
+      "项目制收入需单独核验交付成本、验收节点和回款不确定性。"
+    ],
+    "postInvestmentMonitoring": [
+      "跟踪年度/中期业绩、客户结构、合同负债和现金流。",
+      "监测行业客户数据合规和项目延期事件。"
+    ],
+    "stopLossTriggers": [
+      "大客户流失或回款周期显著拉长。",
+      "新业务收入无法覆盖交付和研发投入。"
+    ],
+    "evidenceIds": [
+      "fp-e2",
+      "fp-e3",
+      "fp-e5",
+      "fp-e6",
+      "fp-e7"
+    ]
+  }
+}

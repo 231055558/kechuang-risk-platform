@@ -1,0 +1,33 @@
+{
+  "snapshotAt": "2026-07-14",
+  "version": "2026.07-governed-assessment-v5",
+  "coverage": [
+    "DeepSeek",
+    "宇树科技",
+    "地平线",
+    "寒武纪",
+    "第四范式",
+    "速腾聚创"
+  ],
+  "totalEvidence": 42,
+  "totalEvents": 19,
+  "sourceStats": [
+    {
+      "type": "官方 / 官网 / 投资者关系",
+      "count": 24
+    },
+    {
+      "type": "交易所 / 招股书 / 年报 / 季报",
+      "count": 16
+    },
+    {
+      "type": "论文 / 开源仓库 / 技术文档",
+      "count": 2
+    }
+  ],
+  "note": "本版本采用带截止日期的公开信息快照，不做浏览器实时抓源。风险结论仅使用口径准入指标，以及直接披露或具备明确推导链的证据；背景材料和待授权候选来源不进入评分覆盖率。",
+  "officialSourceCount": 24,
+  "filingSourceCount": 16,
+  "indicatorVersion": "KCR-2026.07-v2 / 风险指标更新版1.xlsx",
+  "disclaimer": "本平台输出用于企业风险研究与辅助研判，不构成监管认定、证券投资建议、收益承诺或对人工尽调的替代。"
+}

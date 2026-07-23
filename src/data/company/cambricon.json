@@ -1,0 +1,856 @@
+{
+  "id": "cambricon",
+  "name": "寒武纪",
+  "sector": "AI 芯片 / 算力基础设施",
+  "description": "寒武纪公告和 2026 年一季报显示收入与利润高速增长，当前从研发投入和国产替代叙事进入盈利质量、先进制程、EDA 工具和供应链韧性验证阶段。",
+  "headquarters": "北京",
+  "stage": "上市后盈利与供应链韧性验证阶段",
+  "riskIndex": 82,
+  "benchmarkCompanyId": "horizon",
+  "snapshotAt": "2026-07-14",
+  "metrics": {
+    "highRiskEvents": 2,
+    "mediumRiskEvents": 1,
+    "responseRate": 40,
+    "evidenceCoverage": 7,
+    "monitoredSources": 5,
+    "currentHighRiskType": "外部环境/地缘"
+  },
+  "dimensions": [
+    {
+      "id": "tech",
+      "label": "技术与算法",
+      "score": 77,
+      "level": "high",
+      "weight": "芯片、算子与软件生态共同决定竞争力",
+      "summary": "AI 芯片风险不仅在硬件性能，还在算子兼容、软件栈成熟度与客户迁移成本是否同步到位。",
+      "evidenceIds": [
+        "cb-e1",
+        "cb-e2",
+        "cb-e3",
+        "cb-e6",
+        "cb-e7"
+      ],
+      "indicatorIds": [
+        "ri-016",
+        "ri-017",
+        "ri-018",
+        "ri-019",
+        "ri-020"
+      ]
+    },
+    {
+      "id": "data",
+      "label": "数据合规",
+      "score": 34,
+      "level": "low",
+      "weight": "数据并非主风险源",
+      "summary": "寒武纪并非直接以数据处理为主业，数据合规不是核心矛盾，但客户项目中的日志与测试数据仍需规范。",
+      "evidenceIds": [
+        "cb-e1"
+      ],
+      "indicatorIds": [
+        "ri-033",
+        "ri-034",
+        "ri-035",
+        "ri-036",
+        "ri-037"
+      ]
+    },
+    {
+      "id": "ethics",
+      "label": "科技伦理",
+      "score": 42,
+      "level": "attention",
+      "weight": "伦理更多体现为产业安全与公平接入",
+      "summary": "其伦理议题主要体现为算力资源可得性、产业公平接入和关键基础设施稳定性，而非直接内容输出风险。",
+      "evidenceIds": [
+        "cb-e2",
+        "cb-e3"
+      ],
+      "indicatorIds": [
+        "ri-040",
+        "ri-041",
+        "ri-042",
+        "ri-043",
+        "ri-044"
+      ]
+    },
+    {
+      "id": "ip",
+      "label": "知识产权",
+      "score": 73,
+      "level": "medium-high",
+      "weight": "芯片 IP 与软件栈专利密集",
+      "summary": "在 AI 芯片赛道，IP、EDA、指令集兼容和软件生态授权均属于高密度知识产权风险区。",
+      "evidenceIds": [
+        "cb-e1",
+        "cb-e2"
+      ],
+      "indicatorIds": [
+        "ri-049",
+        "ri-050",
+        "ri-051",
+        "ri-052",
+        "ri-053"
+      ]
+    },
+    {
+      "id": "finance",
+      "label": "经营财务",
+      "score": 85,
+      "level": "high",
+      "weight": "研发重、回报慢、需求波动大",
+      "summary": "AI 芯片需要重研发和长期市场培育，即便行业需求提升，盈利质量和经营韧性仍需持续监测。",
+      "evidenceIds": [
+        "cb-e1",
+        "cb-e3"
+      ],
+      "indicatorIds": [
+        "ri-085",
+        "ri-086",
+        "ri-087",
+        "ri-088",
+        "ri-089"
+      ]
+    },
+    {
+      "id": "external",
+      "label": "外部环境/地缘",
+      "score": 89,
+      "level": "high",
+      "weight": "先进制程与 EDA 依赖高",
+      "summary": "先进制程、封测、EDA 和生态工具链的外部依赖，使其成为外部环境风险最敏感的企业之一。",
+      "evidenceIds": [
+        "cb-e1",
+        "cb-e2",
+        "cb-e3"
+      ],
+      "indicatorIds": [
+        "ri-075",
+        "ri-076",
+        "ri-077",
+        "ri-078",
+        "ri-079"
+      ]
+    },
+    {
+      "id": "cyber",
+      "label": "网络安全",
+      "score": 61,
+      "level": "medium-high",
+      "weight": "基础设施软件栈需要持续防护",
+      "summary": "作为算力基础设施的一环，驱动、管理平台和软件栈的安全性会影响客户对大规模部署的信任。",
+      "evidenceIds": [
+        "cb-e2",
+        "cb-e3"
+      ],
+      "indicatorIds": [
+        "ri-029",
+        "ri-030",
+        "ri-031",
+        "ri-032"
+      ]
+    },
+    {
+      "id": "regulatory",
+      "label": "监管政策",
+      "score": 67,
+      "level": "medium-high",
+      "weight": "产业政策与信创节奏影响大",
+      "summary": "监管和产业政策更多通过信创、采购、国产替代和披露要求影响其业务节奏。",
+      "evidenceIds": [
+        "cb-e1",
+        "cb-e3"
+      ],
+      "indicatorIds": [
+        "ri-038",
+        "ri-039",
+        "ri-083",
+        "ri-084"
+      ]
+    }
+  ],
+  "lifecycle": [
+    {
+      "id": "rnd",
+      "label": "技术研发阶段",
+      "status": "passed",
+      "riskScore": 78,
+      "summary": "前期关键在于架构、算子与编译工具链是否跑通。",
+      "keywords": [
+        "芯片架构",
+        "算子适配",
+        "编译工具链"
+      ],
+      "change": "已越过纯研发验证，风险转向生态与供给韧性。",
+      "evidenceIds": [
+        "cb-e1",
+        "cb-e2"
+      ]
+    },
+    {
+      "id": "algo",
+      "label": "芯片/软件栈迭代阶段",
+      "status": "passed",
+      "riskScore": 80,
+      "summary": "软件栈成熟度与客户迁移门槛决定了芯片能否真正进入规模应用。",
+      "keywords": [
+        "软件栈",
+        "迁移门槛",
+        "开发者体验"
+      ],
+      "change": "从硬件问题逐步演化为生态问题。",
+      "evidenceIds": [
+        "cb-e2",
+        "cb-e3"
+      ]
+    },
+    {
+      "id": "validation",
+      "label": "产品验证阶段",
+      "status": "passed",
+      "riskScore": 76,
+      "summary": "验证重点在于性能、稳定性与客户现有工作负载兼容度。",
+      "keywords": [
+        "性能验证",
+        "稳定性",
+        "兼容度"
+      ],
+      "change": "客户试点转化效率开始决定经营压力。",
+      "evidenceIds": [
+        "cb-e1",
+        "cb-e3"
+      ]
+    },
+    {
+      "id": "deployment",
+      "label": "场景落地阶段",
+      "status": "next",
+      "riskScore": 81,
+      "summary": "一旦进入更多客户环境，交付与生态适配会成为主要掣肘。",
+      "keywords": [
+        "场景适配",
+        "工程服务",
+        "软件生态"
+      ],
+      "change": "风险开始从供给问题转向交付问题。",
+      "evidenceIds": [
+        "cb-e2",
+        "cb-e3"
+      ]
+    },
+    {
+      "id": "expansion",
+      "label": "商业化扩张阶段",
+      "status": "current",
+      "riskScore": 88,
+      "summary": "当前最关键的是先进制程与工具链依赖、盈利质量和客户扩张是否同步改善。",
+      "keywords": [
+        "EDA 依赖",
+        "经营质量",
+        "客户扩张"
+      ],
+      "change": "已进入当前高位，外部环境与财务压力叠加明显。",
+      "evidenceIds": [
+        "cb-e1",
+        "cb-e2",
+        "cb-e3",
+        "cb-e6",
+        "cb-e7"
+      ]
+    },
+    {
+      "id": "overseas",
+      "label": "出海与国际竞争阶段",
+      "status": "next",
+      "riskScore": 85,
+      "summary": "国际竞争阶段会放大工具链、知识产权和市场准入约束。",
+      "keywords": [
+        "工具链限制",
+        "专利壁垒",
+        "国际准入"
+      ],
+      "change": "风险高度依赖外部政策变化。",
+      "evidenceIds": [
+        "cb-e1",
+        "cb-e3"
+      ]
+    }
+  ],
+  "trend": [
+    {
+      "month": "2026-01",
+      "riskIndex": 79,
+      "highRiskEvents": 2,
+      "mediumRiskEvents": 1,
+      "newEvents": 1
+    },
+    {
+      "month": "2026-02",
+      "riskIndex": 80,
+      "highRiskEvents": 2,
+      "mediumRiskEvents": 1,
+      "newEvents": 1
+    },
+    {
+      "month": "2026-03",
+      "riskIndex": 80,
+      "highRiskEvents": 2,
+      "mediumRiskEvents": 1,
+      "newEvents": 1
+    },
+    {
+      "month": "2026-04",
+      "riskIndex": 81,
+      "highRiskEvents": 2,
+      "mediumRiskEvents": 1,
+      "newEvents": 2
+    },
+    {
+      "month": "2026-05",
+      "riskIndex": 82,
+      "highRiskEvents": 2,
+      "mediumRiskEvents": 1,
+      "newEvents": 1
+    },
+    {
+      "month": "2026-06",
+      "riskIndex": 82,
+      "highRiskEvents": 2,
+      "mediumRiskEvents": 1,
+      "newEvents": 2
+    }
+  ],
+  "aiCoverage": {
+    "ingestedSourceTypes": [
+      "投资者关系页",
+      "公司官网",
+      "行业媒体",
+      "产品说明"
+    ],
+    "extractedSignals": [
+      "经营披露",
+      "产业链依赖",
+      "需求变化",
+      "生态成熟度"
+    ]
+  },
+  "comparisonNote": "与地平线相比，寒武纪更偏算力基础设施，量产场景压力稍弱，但先进制程、EDA 和盈利韧性问题更尖锐，因此外部环境与财务风险明显更高。",
+  "evidence": [
+    {
+      "id": "cb-e1",
+      "type": "上交所公告",
+      "title": "寒武纪上交所公告页",
+      "sourceName": "上交所",
+      "sourceUrl": "https://www.sse.com.cn/star/market/stocklist/info/announcement/index.shtml?COMPANY_CODE=688256",
+      "publishedAt": "2026-07-02",
+      "capturedAt": "2026-07-02",
+      "summary": "上交所公告页可查寒武纪 2026 年第一季度报告等持续披露材料。",
+      "citationText": "上交所公告页汇总定期报告与公告。",
+      "citationMetric": "持续披露入口",
+      "sourceReliability": "exchange",
+      "recommendedUse": "支撑财务、监管和上市后风险监测。",
+      "indicatorIds": [
+        "ri-085",
+        "ri-087",
+        "ri-038"
+      ],
+      "relatedRiskDimension": [
+        "经营财务",
+        "监管政策"
+      ],
+      "relatedStage": [
+        "商业化扩张阶段"
+      ],
+      "confidence": 0.94
+    },
+    {
+      "id": "cb-e2",
+      "type": "一季报",
+      "title": "寒武纪 2026 年第一季度报告",
+      "sourceName": "巨潮资讯",
+      "sourceUrl": "https://static.cninfo.com.cn/finalpage/2026-04-30/1225264337.PDF",
+      "publishedAt": "2026-04-30",
+      "capturedAt": "2026-07-02",
+      "summary": "一季报披露 2026Q1 营业收入 28.85 亿元，同比增长 159.56%，归母净利润 10.13 亿元，同比增长 185.04%，扣非净利润 9.34 亿元，同比增长 238.56%。",
+      "citationText": "2026Q1 营业收入 28.85 亿元；归母净利润 10.13 亿元；扣非净利润 9.34 亿元。",
+      "citationMetric": "收入和利润高增长",
+      "sourceReliability": "filing",
+      "recommendedUse": "支撑财务质量、估值风险和盈利可持续性判断。",
+      "indicatorIds": [
+        "ri-085",
+        "ri-086",
+        "ri-088"
+      ],
+      "relatedRiskDimension": [
+        "经营财务"
+      ],
+      "relatedStage": [
+        "商业化扩张阶段"
+      ],
+      "confidence": 0.96
+    },
+    {
+      "id": "cb-e3",
+      "type": "官网",
+      "title": "寒武纪官网",
+      "sourceName": "Cambricon",
+      "sourceUrl": "https://www.cambricon.com/",
+      "publishedAt": "2026-07-02",
+      "capturedAt": "2026-07-02",
+      "summary": "官网展示智能芯片、基础系统软件和生态信息，是观察技术路线和产品生态的重要入口。",
+      "citationText": "智能芯片与基础系统软件生态。",
+      "citationMetric": "产品生态",
+      "sourceReliability": "official",
+      "recommendedUse": "支撑技术研发、知识产权和生态依赖风险分析。",
+      "indicatorIds": [
+        "ri-016",
+        "ri-049",
+        "ri-055"
+      ],
+      "relatedRiskDimension": [
+        "技术与算法",
+        "知识产权"
+      ],
+      "relatedStage": [
+        "技术研发阶段",
+        "场景落地阶段"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "id": "cb-e4",
+      "type": "产品生态",
+      "title": "寒武纪产品与生态信息",
+      "sourceName": "Cambricon",
+      "sourceUrl": "https://www.cambricon.com/",
+      "publishedAt": "2026-07-02",
+      "capturedAt": "2026-07-02",
+      "summary": "产品生态信息可用于评估软件栈、开发者生态和客户迁移成本。",
+      "citationText": "产品与生态布局。",
+      "citationMetric": "生态能力",
+      "sourceReliability": "official",
+      "recommendedUse": "支撑商业化落地、技术可行性和客户依赖风险分析。",
+      "indicatorIds": [
+        "ri-018",
+        "ri-067",
+        "ri-071"
+      ],
+      "relatedRiskDimension": [
+        "技术与算法",
+        "经营财务"
+      ],
+      "relatedStage": [
+        "场景落地阶段"
+      ],
+      "confidence": 0.88
+    },
+    {
+      "id": "cb-e5",
+      "type": "行业披露入口",
+      "title": "巨潮资讯公告入口",
+      "sourceName": "巨潮资讯",
+      "sourceUrl": "https://www.cninfo.com.cn/new/index",
+      "publishedAt": "2026-07-02",
+      "capturedAt": "2026-07-02",
+      "summary": "巨潮资讯是跟踪上市公司定期报告、临时公告和监管问询的重要入口。",
+      "citationText": "上市公司披露入口。",
+      "citationMetric": "公告查询入口",
+      "sourceReliability": "exchange",
+      "recommendedUse": "支撑事件驱动监测和投后风险跟踪。",
+      "indicatorIds": [
+        "ri-011",
+        "ri-038",
+        "ri-087"
+      ],
+      "relatedRiskDimension": [
+        "监管政策",
+        "经营财务"
+      ],
+      "relatedStage": [
+        "商业化扩张阶段"
+      ],
+      "confidence": 0.86
+    },
+    {
+      "id": "cb-e6",
+      "type": "季度报告",
+      "title": "寒武纪 2026 年第一季度：研发投入与经营现金流",
+      "sourceName": "巨潮资讯",
+      "sourceUrl": "https://static.cninfo.com.cn/finalpage/2026-04-30/1225264337.PDF",
+      "publishedAt": "2026-04-30",
+      "capturedAt": "2026-07-14",
+      "summary": "2026Q1 披露研发投入 3.24 亿元，同比增长 18.88%；经营活动现金流净额 8.34 亿元，上年同期为净流出。",
+      "citationText": "研发投入 324,039,549.09 元；经营活动现金流净额 833,967,832.10 元。",
+      "citationMetric": "研发投入与经营现金流",
+      "sourceReliability": "filing",
+      "recommendedUse": "用于判断高增长是否同步形成现金回收能力，并跟踪研发投入强度变化。",
+      "indicatorIds": ["ri-067", "ri-073", "ri-085"],
+      "relatedRiskDimension": ["经营财务", "技术与算法", "外部环境/地缘"],
+      "relatedStage": ["商业化扩张阶段"],
+      "confidence": 0.98
+    },
+    {
+      "id": "cb-e7",
+      "type": "官网产品与开发者生态",
+      "title": "寒武纪云边端产品与软件开发平台",
+      "sourceName": "Cambricon",
+      "sourceUrl": "https://www.cambricon.com/",
+      "publishedAt": "2026-07-14",
+      "capturedAt": "2026-07-14",
+      "summary": "官网展示思元 370 云端 AI 芯片、MLU370 系列加速卡、思元 220 边缘产品，以及 NeuWare 与 MagicMind 软件开发平台。",
+      "citationText": "云端训练/推理、边缘端智能与软件开发平台共同构成产品与开发者生态。",
+      "citationMetric": "云边端产品栈与软件生态",
+      "sourceReliability": "official",
+      "recommendedUse": "用于评估芯片产品、工具链和开发者迁移成本的联动风险。",
+      "indicatorIds": ["ri-016", "ri-055", "ri-079"],
+      "relatedRiskDimension": ["技术与算法", "知识产权", "外部环境/地缘"],
+      "relatedStage": ["芯片/软件栈迭代阶段", "场景落地阶段"],
+      "confidence": 0.93
+    }
+  ],
+  "events": [
+    {
+      "id": "cb-ev1",
+      "companyId": "cambricon",
+      "riskType": "外部环境/地缘",
+      "severity": "high",
+      "status": "pending",
+      "sourceType": "官网 + 披露材料",
+      "stage": "商业化扩张阶段",
+      "description": "先进制程、EDA 与生态工具链依赖仍然是最关键的外部约束，一旦链路受扰将直接影响交付连续性。",
+      "evidenceIds": [
+        "cb-e1",
+        "cb-e2",
+        "cb-e4"
+      ],
+      "aiSummary": "这是寒武纪当前最强的系统性风险，具有典型的供应链与技术生态耦合特征。",
+      "recommendedAction": "建立关键工具链替代清单、分层 BOM 监控和重点客户容量缓冲机制。",
+      "identifiedAt": "2026-06-18",
+      "indicatorIds": [
+        "ri-075",
+        "ri-078"
+      ],
+      "investmentImpact": "high"
+    },
+    {
+      "id": "cb-ev2",
+      "companyId": "cambricon",
+      "riskType": "经营财务",
+      "severity": "high",
+      "status": "in-progress",
+      "sourceType": "披露材料 + 行业媒体",
+      "stage": "商业化扩张阶段",
+      "description": "需求增长并不自动等于经营质量改善，研发投入、客户验证周期和回款质量仍需持续跟踪。",
+      "evidenceIds": [
+        "cb-e1",
+        "cb-e3"
+      ],
+      "aiSummary": "收入弹性正在改善，但财务风险尚未出清，经营质量和项目回款应继续作为核心监测项。",
+      "recommendedAction": "建立研发费用率、交付周期、客户回款与毛利弹性的联动看板。",
+      "identifiedAt": "2026-05-21",
+      "indicatorIds": [
+        "ri-085",
+        "ri-088"
+      ],
+      "investmentImpact": "high"
+    },
+    {
+      "id": "cb-ev3",
+      "companyId": "cambricon",
+      "riskType": "知识产权许可合规",
+      "severity": "medium",
+      "status": "in-progress",
+      "sourceType": "官网",
+      "stage": "芯片/软件栈迭代阶段",
+      "description": "芯片、算子和工具链位于高密度专利带，软件兼容与 IP 风险需要跟随生态扩张同步治理。",
+      "evidenceIds": [
+        "cb-e2",
+        "cb-e4"
+      ],
+      "aiSummary": "IP 风险不是孤立法律问题，而是会反馈到客户迁移成本和生态建设速度。",
+      "recommendedAction": "做专利地图、开源许可证台账和工具链接口变更审查。",
+      "identifiedAt": "2026-04-11",
+      "indicatorIds": [
+        "ri-049",
+        "ri-053"
+      ],
+      "investmentImpact": "medium"
+    }
+  ],
+  "transmissionGraph": {
+    "keyInsight": "寒武纪的风险传导并不从单一事件爆发，而是从“工具链与制程依赖”慢慢演化为供给韧性、盈利质量和客户信任的问题。",
+    "nodes": [
+      {
+        "id": "cb-t1",
+        "label": "先进制程 / EDA 依赖",
+        "layer": "source",
+        "description": "外部约束一旦增强，会直接影响开发和生产。",
+        "evidenceIds": [
+          "cb-e1",
+          "cb-e2"
+        ]
+      },
+      {
+        "id": "cb-t2",
+        "label": "软件生态成熟度不足",
+        "layer": "source",
+        "description": "硬件能力如果无法被开发者和客户快速使用，商业化效率会受限。",
+        "evidenceIds": [
+          "cb-e2",
+          "cb-e4"
+        ]
+      },
+      {
+        "id": "cb-t3",
+        "label": "高研发投入",
+        "layer": "source",
+        "description": "持续高投入使财务韧性更依赖项目兑现。",
+        "evidenceIds": [
+          "cb-e1",
+          "cb-e3"
+        ]
+      },
+      {
+        "id": "cb-t4",
+        "label": "供给不确定性上升",
+        "layer": "mediator",
+        "description": "制程和工具链波动会转化为交付节奏问题。",
+        "evidenceIds": [
+          "cb-e1",
+          "cb-e2"
+        ]
+      },
+      {
+        "id": "cb-t5",
+        "label": "客户迁移成本高",
+        "layer": "mediator",
+        "description": "生态不足会拖慢客户从试点到规模部署的速度。",
+        "evidenceIds": [
+          "cb-e2",
+          "cb-e4"
+        ]
+      },
+      {
+        "id": "cb-t6",
+        "label": "回款与毛利波动",
+        "layer": "impact",
+        "description": "交付不稳和生态建设慢都会反映到经营质量。",
+        "evidenceIds": [
+          "cb-e1",
+          "cb-e3"
+        ]
+      },
+      {
+        "id": "cb-t7",
+        "label": "项目推进放缓",
+        "layer": "impact",
+        "description": "供给和生态问题会同步影响客户导入节奏。",
+        "evidenceIds": [
+          "cb-e3",
+          "cb-e4"
+        ]
+      },
+      {
+        "id": "cb-t8",
+        "label": "关键工具链替代预案",
+        "layer": "response",
+        "description": "优先切断最脆弱的供给环节。",
+        "evidenceIds": [
+          "cb-e1",
+          "cb-e2"
+        ]
+      },
+      {
+        "id": "cb-t9",
+        "label": "生态兼容与经营质量双看板",
+        "layer": "response",
+        "description": "同步观测生态成熟度与财务健康度。",
+        "evidenceIds": [
+          "cb-e3",
+          "cb-e4"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "cb-t1",
+        "target": "cb-t4",
+        "strength": "strong"
+      },
+      {
+        "source": "cb-t2",
+        "target": "cb-t5",
+        "strength": "strong"
+      },
+      {
+        "source": "cb-t3",
+        "target": "cb-t6",
+        "strength": "medium"
+      },
+      {
+        "source": "cb-t4",
+        "target": "cb-t7",
+        "strength": "strong"
+      },
+      {
+        "source": "cb-t5",
+        "target": "cb-t7",
+        "strength": "medium"
+      },
+      {
+        "source": "cb-t6",
+        "target": "cb-t9",
+        "strength": "medium"
+      },
+      {
+        "source": "cb-t4",
+        "target": "cb-t8",
+        "strength": "strong"
+      }
+    ]
+  },
+  "governance": [
+    {
+      "id": "cb-g1",
+      "riskType": "外部环境/地缘",
+      "title": "关键工具链与制程替代清单",
+      "priority": "P0",
+      "stage": "商业化扩张阶段",
+      "problem": "外部依赖一旦受扰，会同时影响研发与交付连续性。",
+      "action": "围绕制程、EDA、封测和关键 IP 形成替代路线图与季度压测机制。",
+      "dataSupport": "供应链清单、替代 BOM、工具链使用率、项目影响评估。",
+      "evidenceIds": [
+        "cb-e1",
+        "cb-e2"
+      ]
+    },
+    {
+      "id": "cb-g2",
+      "riskType": "经营财务",
+      "title": "研发投入与回款质量联动看板",
+      "priority": "P0",
+      "stage": "商业化扩张阶段",
+      "problem": "增长很快，但经营质量是否同步改善仍不确定。",
+      "action": "把研发费用率、试点转量产率、回款周期和毛利弹性统一监控。",
+      "dataSupport": "财报、项目状态、客户结构、回款记录。",
+      "evidenceIds": [
+        "cb-e1",
+        "cb-e3"
+      ]
+    },
+    {
+      "id": "cb-g3",
+      "riskType": "知识产权许可合规",
+      "title": "芯片与工具链专利巡检",
+      "priority": "P1",
+      "stage": "芯片/软件栈迭代阶段",
+      "problem": "芯片和软件生态均位于高密度专利带。",
+      "action": "对 IP 模块、算子库和关键工具链接口开展定期 FTO 与授权审查。",
+      "dataSupport": "专利数据库、接口文档、开源许可证清单。",
+      "evidenceIds": [
+        "cb-e2",
+        "cb-e4"
+      ]
+    },
+    {
+      "id": "cb-g4",
+      "riskType": "技术与算法",
+      "title": "生态兼容优先级矩阵",
+      "priority": "P1",
+      "stage": "场景落地阶段",
+      "problem": "技术指标好并不等于客户能快速迁移。",
+      "action": "按客户工作负载、框架支持和算子兼容度排序投入优先级。",
+      "dataSupport": "客户工作负载画像、框架兼容清单、交付工单。",
+      "evidenceIds": [
+        "cb-e2",
+        "cb-e4"
+      ]
+    }
+  ],
+  "disclosureMetrics": [
+    {
+      "label": "2026Q1 营收",
+      "value": "28.85",
+      "unit": "亿元",
+      "period": "一季报",
+      "sourceId": "cb-e2",
+      "riskImplication": "收入高增长提升产业地位，也要求验证订单和客户持续性。"
+    },
+    {
+      "label": "营收同比",
+      "value": "159.56",
+      "unit": "%",
+      "period": "一季报",
+      "sourceId": "cb-e2",
+      "riskImplication": "高增长容易推升估值叙事，需要关注基本面持续性。"
+    },
+    {
+      "label": "归母净利润",
+      "value": "10.13",
+      "unit": "亿元",
+      "period": "一季报",
+      "sourceId": "cb-e2",
+      "riskImplication": "盈利转强改善财务风险，但需观察毛利和现金流质量。"
+    },
+    {
+      "label": "扣非净利润同比",
+      "value": "238.56",
+      "unit": "%",
+      "period": "一季报",
+      "sourceId": "cb-e2",
+      "riskImplication": "扣非高增长支持盈利质量，但也提高市场预期反转风险。"
+    },
+    {
+      "label": "2026Q1 研发投入",
+      "value": "3.24",
+      "unit": "亿元",
+      "period": "一季报",
+      "sourceId": "cb-e6",
+      "riskImplication": "研发投入保持增长，需与产品迭代、开发者生态和收入转化效率一并评估。"
+    },
+    {
+      "label": "经营现金流净额",
+      "value": "8.34",
+      "unit": "亿元",
+      "period": "2026Q1",
+      "sourceId": "cb-e6",
+      "riskImplication": "现金流改善支撑增长质量，但仍应跟踪应收、客户集中与供应链扰动下的持续性。"
+    }
+  ],
+  "investmentView": {
+    "stance": "进入下一轮研究前需验证供应链韧性",
+    "riskAppetite": "适用于国产算力基础设施的高波动情景尽调，需单独核验外部限制与交付连续性。",
+    "summary": "当前研究重点是收入和利润高增长的可持续性，以及先进制程、EDA、软件生态与客户持续性是否形成闭环证据。",
+    "preInvestmentChecks": [
+      "核查收入高增长的客户来源、订单持续性和回款质量。",
+      "评估先进制程、EDA 和关键供应链的可替代方案。",
+      "拆分盈利改善中规模效应、价格和费用控制的贡献。"
+    ],
+    "dueDiligenceFocus": [
+      "高增长是否来自少数大客户或短期订单。",
+      "供应链限制是否影响后续交付。",
+      "软件生态和开发者迁移成本是否足够低。"
+    ],
+    "valuationConstraints": [
+      "将可持续利润、订单能见度和供应链确定性设为进入下一阶段评审的共同门槛。",
+      "短期高增速仅作为观察信号，需通过客户集中、回款和现金流复核后升级判断。"
+    ],
+    "postInvestmentMonitoring": [
+      "季度跟踪收入、毛利、现金流、客户集中度和供应链政策。",
+      "监测公告和问询中的产能、采购和合同信息。"
+    ],
+    "stopLossTriggers": [
+      "外部限制导致关键产品交付中断。",
+      "收入高增长无法转化为现金流和持续利润。"
+    ],
+    "evidenceIds": [
+      "cb-e1",
+      "cb-e2",
+      "cb-e3",
+      "cb-e6",
+      "cb-e7"
+    ]
+  }
+}

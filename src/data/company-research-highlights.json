@@ -1,0 +1,490 @@
+[
+  {
+    "companyId": "deepseek",
+    "highlights": [
+      {
+        "id": "ds-research-v4",
+        "type": "新闻动态",
+        "title": "DeepSeek-V4 预览模型参数与上下文披露",
+        "value": "V4-Pro 1.6T / 49B 激活 · 1M 上下文",
+        "asOf": "2026-04-24",
+        "methodology": "仅记录官方模型公告中的参数与上下文口径，不据此推导模型安全性、收入或市场份额。",
+        "summary": "官方公告同时披露 V4-Flash 为 284B 总参数、13B 激活参数。参数规模用于识别算力、部署和版本迁移研究问题，不直接转化为风险分数。",
+        "sourceStatus": "located",
+        "scoringEligible": false,
+        "source": {
+          "sourceName": "DeepSeek API Docs",
+          "sourceUrl": "https://api-docs.deepseek.com/news/news260424/",
+          "publishedAt": "2026-04-24",
+          "capturedAt": "2026-07-14",
+          "locator": "官方公告正文的 V4-Flash、V4-Pro 参数表及模型迁移说明",
+          "reliability": "official"
+        }
+      },
+      {
+        "id": "ds-research-v3-paper",
+        "type": "论文研究",
+        "title": "DeepSeek-V3 技术报告",
+        "value": "671B 总参数 · 37B 激活参数",
+        "asOf": "2024-12-27",
+        "methodology": "论文参数、训练语料和算力消耗按作者披露记录，属于技术路线证据，不代表第三方复现实验结论。",
+        "summary": "技术报告披露 14.8T 训练 token 与约 2.788M H800 GPU 小时，可用于研究训练效率、算力依赖和迭代成本边界。",
+        "sourceStatus": "located",
+        "scoringEligible": false,
+        "source": {
+          "sourceName": "arXiv · DeepSeek-V3 Technical Report",
+          "sourceUrl": "https://arxiv.org/abs/2412.19437",
+          "publishedAt": "2024-12-27",
+          "capturedAt": "2026-07-14",
+          "locator": "arXiv 摘要页及论文正文的模型架构、训练语料与训练成本披露",
+          "reliability": "paper"
+        }
+      },
+      {
+        "id": "ds-research-patent",
+        "type": "专利披露",
+        "title": "核心模型与系统专利公开情况",
+        "value": "暂无可核验统一总量",
+        "asOf": "2026-07-17",
+        "methodology": "需按申请人别名、发明人、同族专利和法律状态复核；未将商业数据库估算值写入正式档案。",
+        "summary": "公开检索尚未形成申请人、公开文本与法律状态的完整闭环，因此不展示候选申请数量，也不参与知识产权覆盖率或评分计算。",
+        "sourceStatus": "pending",
+        "scoringEligible": false,
+        "source": {
+          "sourceName": "国家知识产权局专利审查信息查询",
+          "sourceUrl": "https://cpquery.cponline.cnipa.gov.cn/",
+          "publishedAt": null,
+          "publicationNote": "官方查询系统持续更新，未提供单一发布日期",
+          "capturedAt": "2026-07-17",
+          "locator": "国家知识产权局官方查询入口；尚未完成申请人别名、公开文本与法律状态的逐项闭环",
+          "reliability": "official"
+        }
+      },
+      {
+        "id": "ds-research-software",
+        "type": "软件著作权",
+        "title": "软件著作权公开登记情况",
+        "value": "暂无可核验统一总量",
+        "asOf": "2026-07-17",
+        "methodology": "开源仓库、模型权重与软件著作权是不同权利载体；不以 GitHub 项目数替代登记总量。",
+        "summary": "当前未找到可公开复核的企业登记清单或正式总量披露，后续需按登记主体、软件名称和取得方式逐项复核。",
+        "sourceStatus": "pending",
+        "scoringEligible": false,
+        "source": {
+          "sourceName": "中国版权保护中心",
+          "sourceUrl": "https://www.ccopyright.com.cn/",
+          "publishedAt": null,
+          "publicationNote": "登记服务持续更新，未提供单一发布日期",
+          "capturedAt": "2026-07-17",
+          "locator": "中国版权保护中心登记服务入口；公开页面未提供可直接复核的企业完整登记清单",
+          "reliability": "official"
+        }
+      }
+    ]
+  },
+  {
+    "companyId": "unitree",
+    "highlights": [
+      {
+        "id": "ut-research-delivery",
+        "type": "新闻动态",
+        "title": "2025 年人形机器人生产与交付澄清",
+        "value": "交付 5,500+ 台 · 生产 6,500+ 台",
+        "asOf": "2026-01-22",
+        "methodology": "采用企业官方澄清口径，并区分量产产出与实际销售交付；数据仅覆盖纯人形机器人，不包含订单量和其他机器人品类。",
+        "summary": "规模化数据可作为产能、售后和质量追溯研究入口，但仍需结合订单、回款与现场运行数据判断商业化质量。",
+        "sourceStatus": "located",
+        "scoringEligible": false,
+        "source": {
+          "sourceName": "Unitree 官方澄清",
+          "sourceUrl": "https://shop.unitree.com/blogs/news/clarification-regarding-unitrees-2025-sales-data",
+          "publishedAt": "2026-01-30",
+          "capturedAt": "2026-07-17",
+          "locator": "官方澄清正文及落款中关于 2025 年纯人形机器人量产产出、销售交付和排除口径的段落",
+          "reliability": "official"
+        }
+      },
+      {
+        "id": "ut-research-h1-paper",
+        "type": "论文研究",
+        "title": "第三方 H1 人形机器人运动控制研究",
+        "value": "1.8 m/s 跑步 · 0.8 m 沟隙",
+        "asOf": "2024-06-16",
+        "methodology": "论文实验对象为 Unitree H1，不是 G1；第三方研究结果不等同于企业量产产品的统一性能承诺。",
+        "summary": "论文还报告 0.42 m 平台测试，可用于观察硬件平台的研究适配度和运动控制边界。",
+        "sourceStatus": "located",
+        "scoringEligible": false,
+        "source": {
+          "sourceName": "arXiv · Humanoid Parkour Learning",
+          "sourceUrl": "https://arxiv.org/abs/2406.10759",
+          "publishedAt": "2024-06-16",
+          "capturedAt": "2026-07-14",
+          "locator": "arXiv 摘要页及论文实验结果中的跑步、跨沟与登台测试",
+          "reliability": "paper"
+        }
+      },
+      {
+        "id": "ut-research-patent",
+        "type": "专利披露",
+        "title": "招股书披露的公司自有专利",
+        "value": "专利权 262 项 · 境内 169 · 境外 93",
+        "asOf": "2026-01-31",
+        "methodology": "采用招股书“公司拥有”的专利权口径，不与申请中专利、第三方许可或同族估算混合；境内与境外数量均按披露原值展示。",
+        "summary": "境内专利包括发明专利 20 项、实用新型 76 项和外观设计 73 项。总量用于描述公司自有知识产权资产，不直接替代自由实施分析。",
+        "sourceStatus": "located",
+        "scoringEligible": false,
+        "source": {
+          "sourceName": "宇树科技招股说明书",
+          "sourceUrl": "https://static.sse.com.cn/stock/disclosure/announcement/c/202603/002178_20260320_QY8F.pdf",
+          "publishedAt": "2026-03-20",
+          "capturedAt": "2026-07-14",
+          "locator": "招股说明书知识产权章节的境内、境外专利权分类表",
+          "reliability": "filing"
+        }
+      },
+      {
+        "id": "ut-research-software",
+        "type": "软件著作权",
+        "title": "招股书披露的软件著作权",
+        "value": "软件著作权 8 项",
+        "asOf": "2026-01-31",
+        "methodology": "采用招股书列示的公司自有软件著作权登记口径，不以 SDK、代码仓库、产品模块或软件版本数量替代。",
+        "summary": "八项登记均披露为原始取得。登记数量用于确认权利资产底稿，仍需结合当前软件版本、开源依赖和第三方组件许可复核。",
+        "sourceStatus": "located",
+        "scoringEligible": false,
+        "source": {
+          "sourceName": "宇树科技招股说明书",
+          "sourceUrl": "https://static.sse.com.cn/stock/disclosure/announcement/c/202603/002178_20260320_QY8F.pdf",
+          "publishedAt": "2026-03-20",
+          "capturedAt": "2026-07-14",
+          "locator": "招股说明书知识产权章节的软件著作权登记清单",
+          "reliability": "filing"
+        }
+      }
+    ]
+  },
+  {
+    "companyId": "horizon",
+    "highlights": [
+      {
+        "id": "hz-research-hsd",
+        "type": "新闻动态",
+        "title": "HSD V2.0 版本发布",
+        "value": "6 个维度 · 18 项新增功能 · 25 项体验优化",
+        "asOf": "2026-06-29",
+        "methodology": "按企业发布口径记录功能更新，不将产品公告中的体验描述直接视为安全测试或量产验收结果。",
+        "summary": "版本变更可用于建立功能边界、车型适配和 OTA 治理台账，后续仍需车型级测试与责任材料支撑。",
+        "sourceStatus": "located",
+        "scoringEligible": false,
+        "source": {
+          "sourceName": "地平线官方新闻",
+          "sourceUrl": "https://www.horizon.auto/news/press/276",
+          "publishedAt": "2026-06-29",
+          "capturedAt": "2026-07-14",
+          "locator": "官方新闻正文的 HSD V2.0 新增功能与体验优化清单",
+          "reliability": "official"
+        }
+      },
+      {
+        "id": "hz-research-holomotion",
+        "type": "论文研究",
+        "title": "HoloMotion-1 端到端驾驶研究",
+        "value": "公开论文 · 可追溯研究路线",
+        "asOf": "2026-05-14",
+        "methodology": "论文用于核验研究方向、方法和实验披露，不替代道路测试、功能安全认证或客户量产结论。",
+        "summary": "该记录为辅助驾驶研究路线提供原始论文入口，便于后续关联模型版本、训练数据和部署边界。",
+        "sourceStatus": "located",
+        "scoringEligible": false,
+        "source": {
+          "sourceName": "arXiv · HoloMotion-1",
+          "sourceUrl": "https://arxiv.org/abs/2605.15336",
+          "publishedAt": "2026-05-14",
+          "capturedAt": "2026-07-17",
+          "locator": "arXiv 摘要页及论文正文的 HoloMotion-1 方法与实验披露",
+          "reliability": "paper"
+        }
+      },
+      {
+        "id": "hz-research-patent",
+        "type": "专利披露",
+        "title": "招股书披露的授权专利",
+        "value": "授权专利 673 项 · 其中 585 项与发明相关",
+        "asOf": "2024-06-30",
+        "methodology": "按招股书原文保留“granted patents”和“invention related patents”的口径，不将 585 项改写为发明专利授权量，也不推算去重后的专利族数量。",
+        "summary": "授权数量用于描述知识产权资产背景；车规 SoC、算法软件栈和工具链仍需核验权利要求、剩余保护期及许可依赖。",
+        "sourceStatus": "located",
+        "scoringEligible": false,
+        "source": {
+          "sourceName": "地平线招股书",
+          "sourceUrl": "https://www1.hkexnews.hk/listedco/listconews/sehk/2024/1016/11405812/2024101600041.pdf",
+          "publishedAt": "2024-10-16",
+          "capturedAt": "2026-07-17",
+          "locator": "招股书 Intellectual Property 章节截至 2024 年 6 月 30 日的 granted patents 及 invention related patents 披露",
+          "reliability": "filing"
+        }
+      },
+      {
+        "id": "hz-research-copyright",
+        "type": "软件著作权",
+        "title": "软件著作权未单独披露",
+        "value": "100+ 项著作权 · 含软件与设计著作权",
+        "asOf": "2024-06-30",
+        "methodology": "招股书披露的是 100+ 项著作权合并数量，包含软件与设计著作权，不能全部标记为软件著作权；本页保留原始边界。",
+        "summary": "如需判断软件资产覆盖，应进一步取得登记清单、软件版本、权利主体和第三方组件许可材料。",
+        "sourceStatus": "limited",
+        "scoringEligible": false,
+        "source": {
+          "sourceName": "地平线招股书",
+          "sourceUrl": "https://www1.hkexnews.hk/listedco/listconews/sehk/2024/1016/11405812/2024101600041.pdf",
+          "publishedAt": "2024-10-16",
+          "capturedAt": "2026-07-17",
+          "locator": "招股书 Intellectual Property 章节截至 2024 年 6 月 30 日的 100+ copyrights 合并口径披露",
+          "reliability": "filing"
+        }
+      }
+    ]
+  },
+  {
+    "companyId": "cambricon",
+    "highlights": [
+      {
+        "id": "cb-research-results",
+        "type": "新闻动态",
+        "title": "2025 年度经营与盈利披露",
+        "value": "营收 64.97 亿元 · 归母净利润 20.59 亿元",
+        "asOf": "2025-12-31",
+        "methodology": "金额按年度报告记录并四舍五入展示；经营结果与技术、专利资产分开呈现，不据此直接判断估值。",
+        "summary": "年度经营披露可用于跟踪商业化兑现、研发投入和现金流质量，并与供应链和客户集中度联合研究。",
+        "sourceStatus": "located",
+        "scoringEligible": false,
+        "source": {
+          "sourceName": "上交所 · 寒武纪 2025 年年度报告",
+          "sourceUrl": "https://static.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-03-13/688256_20260313_GWH3.pdf",
+          "publishedAt": "2026-03-13",
+          "capturedAt": "2026-07-17",
+          "locator": "2025 年年度报告的主要会计数据和财务指标表",
+          "reliability": "filing"
+        }
+      },
+      {
+        "id": "cb-research-diannao",
+        "type": "论文研究",
+        "title": "DianNao 神经网络加速器研究",
+        "value": "DOI 原始论文可追溯",
+        "asOf": "2014",
+        "methodology": "历史论文用于追溯技术路线来源，不等同于当前在售芯片架构、性能或知识产权法律状态。",
+        "summary": "该论文是企业技术脉络的重要公开研究材料，可辅助理解加速器架构方向和后续产品演进。",
+        "sourceStatus": "located",
+        "scoringEligible": false,
+        "source": {
+          "sourceName": "ACM Digital Library · DianNao",
+          "sourceUrl": "https://doi.org/10.1145/2541940.2541967",
+          "publishedAt": "2014",
+          "capturedAt": "2026-07-14",
+          "locator": "ACM DOI 记录的 DianNao 论文标题、摘要与全文入口",
+          "reliability": "paper"
+        }
+      },
+      {
+        "id": "cb-research-patent",
+        "type": "专利披露",
+        "title": "截至 2025 年末的累计专利申请与授权",
+        "value": "申请 2,846 项 · 授权 1,734 项",
+        "asOf": "2025-12-31",
+        "methodology": "使用年度报告的累计申请与累计授权口径，不进一步推断有效专利、海外同族、法律状态或产品对应关系。",
+        "summary": "总量可支持研发资产背景判断；核心架构、指令集、编译器和工具链仍需进行自由实施与许可核验。",
+        "sourceStatus": "located",
+        "scoringEligible": false,
+        "source": {
+          "sourceName": "上交所 · 寒武纪 2025 年年度报告",
+          "sourceUrl": "https://static.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-03-13/688256_20260313_GWH3.pdf",
+          "publishedAt": "2026-03-13",
+          "capturedAt": "2026-07-17",
+          "locator": "2025 年年度报告研发与知识产权相关章节的专利数量披露",
+          "reliability": "filing"
+        }
+      },
+      {
+        "id": "cb-research-software",
+        "type": "软件著作权",
+        "title": "软件与集成电路知识产权披露",
+        "value": "软件著作权 65 项 · 布图设计 6 项",
+        "asOf": "2025-12-31",
+        "methodology": "软件著作权与集成电路布图设计分项展示，不与专利数量合并计算。",
+        "summary": "分项数据有助于识别软件工具链与芯片设计资产，但仍需结合版本、权利主体和第三方许可进行尽调。",
+        "sourceStatus": "located",
+        "scoringEligible": false,
+        "source": {
+          "sourceName": "上交所 · 寒武纪 2025 年年度报告",
+          "sourceUrl": "https://static.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-03-13/688256_20260313_GWH3.pdf",
+          "publishedAt": "2026-03-13",
+          "capturedAt": "2026-07-17",
+          "locator": "2025 年年度报告研发与知识产权相关章节的软件及集成电路权利披露",
+          "reliability": "filing"
+        }
+      }
+    ]
+  },
+  {
+    "companyId": "fourth-paradigm",
+    "highlights": [
+      {
+        "id": "fp-research-results",
+        "type": "新闻动态",
+        "title": "2025 年度业绩披露",
+        "value": "营收 71.35 亿元 · 经调整归母利润 1,784.2 万元",
+        "asOf": "2025-12-31",
+        "methodology": "收入按年度报告原值折算为亿元展示；经调整归母利润属于非国际财务报告准则指标，与法定财务报表利润保持区分。",
+        "summary": "经营结果为研究商业化质量和收入结构提供公开锚点，仍需结合回款、客户集中和项目交付成本复核。",
+        "sourceStatus": "located",
+        "scoringEligible": false,
+        "source": {
+          "sourceName": "港交所 · 第四范式 2025 年年度报告",
+          "sourceUrl": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0429/2026042900039.pdf",
+          "publishedAt": "2026-04-29",
+          "capturedAt": "2026-07-17",
+          "locator": "2025 年年度报告 Financial Highlights 与 Consolidated Results 的收入及经调整利润披露",
+          "reliability": "filing"
+        }
+      },
+      {
+        "id": "fp-research-papers",
+        "type": "论文研究",
+        "title": "公开论文累计数量",
+        "value": "暂无可核验统一总量",
+        "asOf": "2026-07-17",
+        "methodology": "已复核 2025 年年度报告，但未定位到支持累计 400+ 篇 AI 论文的原文；不以博客、白皮书或会议演讲数量替代论文总量。",
+        "summary": "后续应按作者机构、论文载体和发表日期建立可复核清单；在找到企业正式披露或完整论文目录前不展示累计数字。",
+        "sourceStatus": "limited",
+        "scoringEligible": false,
+        "source": {
+          "sourceName": "第四范式 2025 年年度报告",
+          "sourceUrl": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0429/2026042900039.pdf",
+          "publishedAt": "2026-04-29",
+          "capturedAt": "2026-07-17",
+          "locator": "2025 年年度报告研发相关章节；未定位到可支持累计 400+ 篇论文的统一数量披露",
+          "reliability": "filing"
+        }
+      },
+      {
+        "id": "fp-research-patent",
+        "type": "专利披露",
+        "title": "ESG 报告披露的公司自有专利",
+        "value": "610 项 · 发明 388 · 实用新型 32 · 外观 190",
+        "asOf": "2025 年度 ESG 报告",
+        "methodology": "采用 ESG 报告“拥有专利”分项口径，不将年度新申请、年度授权或未披露法律状态的外部估算混入总量。",
+        "summary": "分项数量能够描述公司自有知识产权结构；具体产品覆盖、海外同族、剩余保护期与自由实施空间仍需专利清单支持。",
+        "sourceStatus": "located",
+        "scoringEligible": false,
+        "source": {
+          "sourceName": "第四范式 2025 年 ESG 报告",
+          "sourceUrl": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0429/2026042900043.pdf",
+          "publishedAt": "2026-04-29",
+          "capturedAt": "2026-07-14",
+          "locator": "2025 年 ESG 报告知识产权保护章节的公司自有专利分类表",
+          "reliability": "filing"
+        }
+      },
+      {
+        "id": "fp-research-software",
+        "type": "软件著作权",
+        "title": "ESG 报告披露的软件著作权",
+        "value": "软件著作权 215 项",
+        "asOf": "2025 年度 ESG 报告",
+        "methodology": "采用 ESG 报告“拥有的软件著作权”独立口径，与另行披露的 35 项其他著作权、专利和产品模块分开统计。",
+        "summary": "登记总量可用于确认软件资产规模；版本对应、开源依赖、客户定制成果和第三方组件许可仍需进一步核验。",
+        "sourceStatus": "located",
+        "scoringEligible": false,
+        "source": {
+          "sourceName": "第四范式 2025 年 ESG 报告",
+          "sourceUrl": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0429/2026042900043.pdf",
+          "publishedAt": "2026-04-29",
+          "capturedAt": "2026-07-14",
+          "locator": "2025 年 ESG 报告知识产权保护章节的软件著作权数量披露",
+          "reliability": "filing"
+        }
+      }
+    ]
+  },
+  {
+    "companyId": "robosense",
+    "highlights": [
+      {
+        "id": "rs-research-report",
+        "type": "新闻动态",
+        "title": "2026 年上半年激光雷达销量更新",
+        "value": "合计约 719,200 台 · ADAS 约 436,600 · 机器人及其他约 282,600",
+        "asOf": "2026-06-30",
+        "methodology": "采用港交所业务更新中的上半年销量口径；该数据未经审计，不等同于收入确认、客户交付验收或市场份额。",
+        "summary": "第二季度销量约 388,900 台，其中 ADAS 约 291,800 台、机器人及其他约 97,100 台，可用于跟踪产品结构变化与量产治理压力。",
+        "sourceStatus": "located",
+        "scoringEligible": false,
+        "source": {
+          "sourceName": "RoboSense 港交所业务更新",
+          "sourceUrl": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0709/2026070900031.pdf",
+          "publishedAt": "2026-07-09",
+          "capturedAt": "2026-07-17",
+          "locator": "截至 2026 年 6 月 30 日止六个月业务更新中的上半年及第二季度销量分项",
+          "reliability": "filing"
+        }
+      },
+      {
+        "id": "rs-research-publications",
+        "type": "论文研究",
+        "title": "Airy 激光雷达测绘性能外部对比研究",
+        "value": "外部研究覆盖 4 款激光扫描设备",
+        "asOf": "2025",
+        "methodology": "记录包含 RoboSense Airy 的四款设备第三方对比研究，不将其表述为企业自主论文，也不据此推算公司论文总量。",
+        "summary": "论文为 Airy 在移动测绘场景中的外部实验入口，可用于核验产品适配与测量边界；结论仍需结合实验配置和样本环境解读。",
+        "sourceStatus": "located",
+        "scoringEligible": false,
+        "source": {
+          "sourceName": "ISPRS Archives · Airy LiDAR 对比研究",
+          "sourceUrl": "https://doi.org/10.5194/isprs-archives-XLVIII-1-W6-2025-219-2025",
+          "publishedAt": "2025",
+          "capturedAt": "2026-07-17",
+          "locator": "论文摘要、设备清单与实验章节中包含 RoboSense Airy 在内的四款激光扫描设备对比测试",
+          "reliability": "paper"
+        }
+      },
+      {
+        "id": "rs-research-patent",
+        "type": "专利披露",
+        "title": "ESG 报告披露的累计授权专利",
+        "value": "累计授权 759 项 · 2025 年新增 176 项",
+        "asOf": "2025-12-31",
+        "methodology": "采用 ESG 报告全球累计授权专利口径，区分累计数量与 2025 年度新增授权，不混入申请中专利或网络估算值。",
+        "summary": "授权规模能够描述知识产权积累速度；专利质量、产品对应、海外同族和诉讼影响仍需结合专利清单与法律状态复核。",
+        "sourceStatus": "located",
+        "scoringEligible": false,
+        "source": {
+          "sourceName": "RoboSense 2025 年 ESG 报告",
+          "sourceUrl": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0424/2026042400990.pdf",
+          "publishedAt": "2026-04-24",
+          "capturedAt": "2026-07-14",
+          "locator": "2025 年 ESG 报告创新与知识产权章节的累计授权及年度新增专利披露",
+          "reliability": "filing"
+        }
+      },
+      {
+        "id": "rs-research-software",
+        "type": "软件著作权",
+        "title": "软件著作权未单独披露",
+        "value": "暂无可核验独立总量",
+        "asOf": "2026-07-17",
+        "methodology": "正式 ESG 报告披露了授权专利，但未提供可独立引用的软件著作权总量；不以软件产品、代码仓库或专利数量替代。",
+        "summary": "软件资产仍需按登记主体、版本、开源依赖和第三方组件许可补充底稿，在完成核验前不展示估算值。",
+        "sourceStatus": "limited",
+        "scoringEligible": false,
+        "source": {
+          "sourceName": "RoboSense 2025 年 ESG 报告",
+          "sourceUrl": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0424/2026042400990.pdf",
+          "publishedAt": "2026-04-24",
+          "capturedAt": "2026-07-17",
+          "locator": "2025 年 ESG 报告创新与知识产权章节；未单列软件著作权数量",
+          "reliability": "filing"
+        }
+      }
+    ]
+  }
+]

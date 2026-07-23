@@ -1,0 +1,858 @@
+{
+  "id": "horizon",
+  "name": "地平线",
+  "sector": "自动驾驶芯片 / 车载计算",
+  "description": "地平线投资者关系和港交所披露材料显示其作为 9660.HK 已进入规模化量产扩张期，车企采用、车型定点、车主覆盖和征程芯片出货量构成关键商业化证据。",
+  "headquarters": "北京",
+  "stage": "上市后量产扩张阶段",
+  "riskIndex": 71,
+  "benchmarkCompanyId": "cambricon",
+  "snapshotAt": "2026-07-14",
+  "metrics": {
+    "highRiskEvents": 1,
+    "mediumRiskEvents": 2,
+    "responseRate": 53,
+    "evidenceCoverage": 7,
+    "monitoredSources": 4,
+    "currentHighRiskType": "监管政策"
+  },
+  "dimensions": [
+    {
+      "id": "tech",
+      "label": "技术与算法",
+      "score": 74,
+      "level": "medium-high",
+      "weight": "芯片、工具链与软件栈耦合",
+      "summary": "车载芯片风险不仅在算力指标，更在于软件栈适配、功能安全和量产稳定性共同兑现。",
+      "evidenceIds": [
+        "hz-e1",
+        "hz-e4"
+      ],
+      "indicatorIds": [
+        "ri-016",
+        "ri-017",
+        "ri-018",
+        "ri-019",
+        "ri-020"
+      ]
+    },
+    {
+      "id": "data",
+      "label": "数据合规",
+      "score": 49,
+      "level": "attention",
+      "weight": "数据更多来自车端与合作方",
+      "summary": "相较大模型企业，地平线的数据风险权重较低，但车端采集与合作方数据治理仍需制度化管理。",
+      "evidenceIds": [
+        "hz-e2",
+        "hz-e3"
+      ],
+      "indicatorIds": [
+        "ri-033",
+        "ri-034",
+        "ri-035",
+        "ri-036",
+        "ri-037"
+      ]
+    },
+    {
+      "id": "ethics",
+      "label": "科技伦理",
+      "score": 63,
+      "level": "medium-high",
+      "weight": "自动驾驶决策责任天然敏感",
+      "summary": "一旦进入高等级辅助驾驶与更复杂场景，决策解释和事故责任认定会迅速抬升为伦理问题。",
+      "evidenceIds": [
+        "hz-e1",
+        "hz-e2"
+      ],
+      "indicatorIds": [
+        "ri-040",
+        "ri-041",
+        "ri-042",
+        "ri-043",
+        "ri-044"
+      ]
+    },
+    {
+      "id": "ip",
+      "label": "知识产权",
+      "score": 76,
+      "level": "high",
+      "weight": "芯片与软件堆栈专利密集",
+      "summary": "车规芯片与自动驾驶软件栈都处于高密度专利带，IP 风险会伴随客户拓展和产品迭代同步放大。",
+      "evidenceIds": [
+        "hz-e1",
+        "hz-e4"
+      ],
+      "indicatorIds": [
+        "ri-049",
+        "ri-050",
+        "ri-051",
+        "ri-052",
+        "ri-053"
+      ]
+    },
+    {
+      "id": "finance",
+      "label": "经营财务",
+      "score": 58,
+      "level": "attention",
+      "weight": "长验证周期拖慢回款",
+      "summary": "从定点到 SOP 的周期长、投入重、回款慢，意味着商业化兑现节奏需要持续跟踪。",
+      "evidenceIds": [
+        "hz-e1",
+        "hz-e3",
+        "hz-e6",
+        "hz-e7"
+      ],
+      "indicatorIds": [
+        "ri-085",
+        "ri-086",
+        "ri-087",
+        "ri-088",
+        "ri-089"
+      ]
+    },
+    {
+      "id": "external",
+      "label": "外部环境/地缘",
+      "score": 69,
+      "level": "medium-high",
+      "weight": "车规器件与政策变化相关",
+      "summary": "自动驾驶产业链对车规器件、国际政策与供应稳定性较敏感，风险更多表现为长期韧性压力。",
+      "evidenceIds": [
+        "hz-e3",
+        "hz-e4"
+      ],
+      "indicatorIds": [
+        "ri-075",
+        "ri-076",
+        "ri-077",
+        "ri-078",
+        "ri-079"
+      ]
+    },
+    {
+      "id": "cyber",
+      "label": "网络安全",
+      "score": 71,
+      "level": "medium-high",
+      "weight": "量产上车后漏洞治理要求显著提高",
+      "summary": "车载智能平台一旦规模化上车，漏洞接收、补丁修复和安全披露将直接影响客户信任与准入。",
+      "evidenceIds": [
+        "hz-e2",
+        "hz-e4"
+      ],
+      "indicatorIds": [
+        "ri-029",
+        "ri-030",
+        "ri-031",
+        "ri-032"
+      ]
+    },
+    {
+      "id": "regulatory",
+      "label": "监管政策",
+      "score": 79,
+      "level": "high",
+      "weight": "自动驾驶监管与功能安全叠加",
+      "summary": "自动驾驶功能上线涉及法规、路测、功能安全与责任划分，监管适配是当前最敏感板块之一。",
+      "evidenceIds": [
+        "hz-e1",
+        "hz-e2",
+        "hz-e3"
+      ],
+      "indicatorIds": [
+        "ri-038",
+        "ri-039",
+        "ri-083",
+        "ri-084"
+      ]
+    }
+  ],
+  "lifecycle": [
+    {
+      "id": "rnd",
+      "label": "技术研发阶段",
+      "status": "passed",
+      "riskScore": 68,
+      "summary": "早期主要挑战在于芯片架构、工具链和车规设计的可行性。",
+      "keywords": [
+        "芯片架构",
+        "工具链",
+        "车规设计"
+      ],
+      "change": "风险已从技术可行性转向量产兑现能力。",
+      "evidenceIds": [
+        "hz-e3",
+        "hz-e4"
+      ]
+    },
+    {
+      "id": "algo",
+      "label": "算法迭代阶段",
+      "status": "passed",
+      "riskScore": 70,
+      "summary": "芯片和软件栈需要与客户场景持续联调，算法迭代强依赖真实车端反馈。",
+      "keywords": [
+        "软件栈联调",
+        "车端反馈",
+        "兼容性"
+      ],
+      "change": "算法风险与车规稳定性开始耦合。",
+      "evidenceIds": [
+        "hz-e1",
+        "hz-e4"
+      ]
+    },
+    {
+      "id": "validation",
+      "label": "车规验证阶段",
+      "status": "passed",
+      "riskScore": 73,
+      "summary": "功能安全、可靠性和软硬一体验证决定能否进入大规模定点。",
+      "keywords": [
+        "功能安全",
+        "可靠性",
+        "软硬验证"
+      ],
+      "change": "验证失败的成本显著上升。",
+      "evidenceIds": [
+        "hz-e2",
+        "hz-e3"
+      ]
+    },
+    {
+      "id": "deployment",
+      "label": "场景落地阶段",
+      "status": "current",
+      "riskScore": 79,
+      "summary": "当前处在定点与量产合作高密度兑现阶段，监管适配、产品安全与客户集中同步升温。",
+      "keywords": [
+        "车型定点",
+        "量产兑现",
+        "车规安全"
+      ],
+      "change": "进入当前高位，是全生命周期中最需要风控解释的一段。",
+      "evidenceIds": [
+        "hz-e1",
+        "hz-e2",
+        "hz-e3"
+      ]
+    },
+    {
+      "id": "expansion",
+      "label": "商业化扩张阶段",
+      "status": "next",
+      "riskScore": 74,
+      "summary": "更多客户导入会降低集中度，但也会显著提高交付和服务复杂度。",
+      "keywords": [
+        "客户扩张",
+        "项目并行",
+        "回款质量"
+      ],
+      "change": "财务与项目管理的重要性会进一步上升。",
+      "evidenceIds": [
+        "hz-e1",
+        "hz-e3",
+        "hz-e6",
+        "hz-e7"
+      ]
+    },
+    {
+      "id": "overseas",
+      "label": "出海与国际竞争阶段",
+      "status": "next",
+      "riskScore": 71,
+      "summary": "海外阶段更依赖地区法规、合作生态与长期供应稳定性。",
+      "keywords": [
+        "地区法规",
+        "供应韧性",
+        "生态合作"
+      ],
+      "change": "竞争压力会从单一客户成功转向全球生态位竞争。",
+      "evidenceIds": [
+        "hz-e3",
+        "hz-e4"
+      ]
+    }
+  ],
+  "trend": [
+    {
+      "month": "2026-01",
+      "riskIndex": 69,
+      "highRiskEvents": 1,
+      "mediumRiskEvents": 1,
+      "newEvents": 1
+    },
+    {
+      "month": "2026-02",
+      "riskIndex": 69,
+      "highRiskEvents": 1,
+      "mediumRiskEvents": 1,
+      "newEvents": 1
+    },
+    {
+      "month": "2026-03",
+      "riskIndex": 70,
+      "highRiskEvents": 1,
+      "mediumRiskEvents": 2,
+      "newEvents": 1
+    },
+    {
+      "month": "2026-04",
+      "riskIndex": 70,
+      "highRiskEvents": 1,
+      "mediumRiskEvents": 2,
+      "newEvents": 1
+    },
+    {
+      "month": "2026-05",
+      "riskIndex": 71,
+      "highRiskEvents": 1,
+      "mediumRiskEvents": 2,
+      "newEvents": 2
+    },
+    {
+      "month": "2026-06",
+      "riskIndex": 71,
+      "highRiskEvents": 1,
+      "mediumRiskEvents": 2,
+      "newEvents": 1
+    }
+  ],
+  "aiCoverage": {
+    "ingestedSourceTypes": [
+      "市场进展页",
+      "产品安全页面",
+      "投资者关系页",
+      "公司官网"
+    ],
+    "extractedSignals": [
+      "量产合作密度",
+      "漏洞接收机制",
+      "产品安全联络方式",
+      "客户与阶段披露"
+    ]
+  },
+  "comparisonNote": "与寒武纪相比，地平线的供应链外部风险稍低，但更早、更深地进入汽车量产场景，因此监管适配、产品安全和客户兑现节奏更加关键。",
+  "evidence": [
+    {
+      "id": "hz-e1",
+      "type": "投资者关系",
+      "title": "地平线投资者关系页",
+      "sourceName": "Horizon Robotics",
+      "sourceUrl": "https://www.horizon.auto/investor-relations",
+      "publishedAt": "2026-07-02",
+      "capturedAt": "2026-07-02",
+      "summary": "投资者关系页显示股票代码 9660.HK，并披露产品被全球 27 家车企、42 个品牌采用，定点车型超 400 款，服务超 600 万车主，征程芯片累计量产出货突破 1000 万。",
+      "citationText": "9660.HK；27 家车企、42 个品牌、超 400 款定点车型、服务超 600 万车主、征程芯片出货突破 1000 万。",
+      "citationMetric": "量产采用与出货",
+      "sourceReliability": "official",
+      "recommendedUse": "支撑商业化落地、客户集中、车规安全和供应链风险判断。",
+      "indicatorIds": [
+        "ri-068",
+        "ri-069",
+        "ri-073"
+      ],
+      "relatedRiskDimension": [
+        "经营财务",
+        "监管政策",
+        "技术与算法"
+      ],
+      "relatedStage": [
+        "商业化扩张阶段"
+      ],
+      "confidence": 0.96
+    },
+    {
+      "id": "hz-e2",
+      "type": "港交所公告",
+      "title": "地平线 2025 年业绩公告",
+      "sourceName": "港交所披露易",
+      "sourceUrl": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0319/2026031900928_c.pdf",
+      "publishedAt": "2026-03-19",
+      "capturedAt": "2026-07-02",
+      "summary": "公司披露 2025 年营收达 37.6 亿元人民币，支撑商业化规模判断。",
+      "citationText": "2025 年营收 37.6 亿元人民币。",
+      "citationMetric": "年度营收",
+      "sourceReliability": "filing",
+      "recommendedUse": "支撑财务质量、估值和商业化兑现风险判断。",
+      "indicatorIds": [
+        "ri-085",
+        "ri-086",
+        "ri-068"
+      ],
+      "relatedRiskDimension": [
+        "经营财务",
+        "商业化落地"
+      ],
+      "relatedStage": [
+        "商业化扩张阶段"
+      ],
+      "confidence": 0.94
+    },
+    {
+      "id": "hz-e3",
+      "type": "港交所公告",
+      "title": "地平线港交所中期/公告材料",
+      "sourceName": "港交所披露易",
+      "sourceUrl": "https://www1.hkexnews.hk/listedco/listconews/sehk/2025/0929/2025092901222_c.pdf",
+      "publishedAt": "2025-09-29",
+      "capturedAt": "2026-07-02",
+      "summary": "港交所披露材料用于跟踪订单、客户、研发投入和经营质量变化。",
+      "citationText": "港交所披露材料提供持续财务和业务进展。",
+      "citationMetric": "持续披露",
+      "sourceReliability": "filing",
+      "recommendedUse": "支撑上市后监管、财务与商业化监测。",
+      "indicatorIds": [
+        "ri-085",
+        "ri-087",
+        "ri-038"
+      ],
+      "relatedRiskDimension": [
+        "经营财务",
+        "监管政策"
+      ],
+      "relatedStage": [
+        "商业化扩张阶段"
+      ],
+      "confidence": 0.91
+    },
+    {
+      "id": "hz-e4",
+      "type": "官网",
+      "title": "地平线官网",
+      "sourceName": "Horizon Robotics",
+      "sourceUrl": "https://www.horizon.auto/",
+      "publishedAt": "2026-07-02",
+      "capturedAt": "2026-07-02",
+      "summary": "官网展示智能驾驶计算方案与征程系列产品，是观察技术路线和客户场景的重要入口。",
+      "citationText": "智能驾驶计算方案与征程系列产品。",
+      "citationMetric": "产品路线",
+      "sourceReliability": "official",
+      "recommendedUse": "支撑技术路线、车规芯片和智能驾驶监管风险判断。",
+      "indicatorIds": [
+        "ri-016",
+        "ri-068",
+        "ri-038"
+      ],
+      "relatedRiskDimension": [
+        "技术与算法",
+        "监管政策"
+      ],
+      "relatedStage": [
+        "场景落地阶段"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "id": "hz-e5",
+      "type": "安全合规",
+      "title": "地平线安全与法律页面",
+      "sourceName": "Horizon Robotics",
+      "sourceUrl": "https://www.horizon.auto/en/legal/security",
+      "publishedAt": "2026-07-02",
+      "capturedAt": "2026-07-02",
+      "summary": "安全页面可用于观察产品安全、漏洞响应和车端数据治理要求。",
+      "citationText": "安全与漏洞响应信息。",
+      "citationMetric": "产品安全",
+      "sourceReliability": "official",
+      "recommendedUse": "支撑网络安全、监管政策和车规安全责任分析。",
+      "indicatorIds": [
+        "ri-031",
+        "ri-032",
+        "ri-038"
+      ],
+      "relatedRiskDimension": [
+        "网络安全",
+        "监管政策"
+      ],
+      "relatedStage": [
+        "场景落地阶段"
+      ],
+      "confidence": 0.88
+    },
+    {
+      "id": "hz-e6",
+      "type": "投资者关系披露",
+      "title": "地平线量产覆盖、客户生态与 2025 年营收",
+      "sourceName": "Horizon Robotics",
+      "sourceUrl": "https://www.horizon.auto/investor-relations",
+      "publishedAt": "2026-07-14",
+      "capturedAt": "2026-07-14",
+      "summary": "投资者关系页披露，公司产品已被全球 27 家车企、42 个品牌采用，定点车型超 400 款，服务超 600 万车主；2025 年营收为 37.6 亿元。",
+      "citationText": "27 家车企、42 个品牌、超 400 款定点车型、超 600 万车主；2025 年营收 37.6 亿元。",
+      "citationMetric": "量产覆盖、客户生态与营收",
+      "sourceReliability": "official",
+      "recommendedUse": "用于交叉核验车型定点能否转化为量产收入，并评估客户覆盖下的交付治理负荷。",
+      "indicatorIds": ["ri-065", "ri-068", "ri-085"],
+      "relatedRiskDimension": ["经营财务", "监管政策", "技术与算法"],
+      "relatedStage": ["场景落地阶段", "商业化扩张阶段"],
+      "confidence": 0.96
+    },
+    {
+      "id": "hz-e7",
+      "type": "官网产品路线",
+      "title": "地平线车载智能计算与辅助驾驶产品路线",
+      "sourceName": "Horizon Robotics",
+      "sourceUrl": "https://www.horizon.auto/",
+      "publishedAt": "2026-07-14",
+      "capturedAt": "2026-07-14",
+      "summary": "官网展示征程车载智能计算方案、Horizon Mono 基础辅助驾驶与 Horizon SuperDrive 全场景辅助驾驶系统。",
+      "citationText": "征程车载智能计算、Horizon Mono 与 Horizon SuperDrive 产品路径。",
+      "citationMetric": "产品栈与场景责任边界",
+      "sourceReliability": "official",
+      "recommendedUse": "用于识别软硬一体产品扩张中的功能安全、版本回归和责任划分风险。",
+      "indicatorIds": ["ri-016", "ri-031", "ri-083"],
+      "relatedRiskDimension": ["技术与算法", "网络安全", "监管政策"],
+      "relatedStage": ["算法迭代阶段", "场景落地阶段"],
+      "confidence": 0.93
+    }
+  ],
+  "events": [
+    {
+      "id": "hz-ev1",
+      "companyId": "horizon",
+      "riskType": "监管政策",
+      "severity": "high",
+      "status": "in-progress",
+      "sourceType": "市场进展 + 投资者关系",
+      "stage": "场景落地阶段",
+      "description": "随着车型定点与量产合作密度提升，自动驾驶监管、功能安全与责任界定要求同步抬升。",
+      "evidenceIds": [
+        "hz-e1",
+        "hz-e3"
+      ],
+      "aiSummary": "这是当前最核心的阶段性风险：不是产品能力不足，而是业务兑现对法规适配的要求明显提高。",
+      "recommendedAction": "按车型和地区建立监管矩阵，形成 SOP 前的法规闸门和场景说明包。",
+      "identifiedAt": "2026-06-08",
+      "indicatorIds": [
+        "ri-038",
+        "ri-083"
+      ],
+      "investmentImpact": "high"
+    },
+    {
+      "id": "hz-ev2",
+      "companyId": "horizon",
+      "riskType": "网络安全",
+      "severity": "medium",
+      "status": "pending",
+      "sourceType": "产品安全页面",
+      "stage": "场景落地阶段",
+      "description": "量产上车后，漏洞接收与补丁修复的时效要求更高，产品安全能力将直接影响客户信任。",
+      "evidenceIds": [
+        "hz-e2",
+        "hz-e4"
+      ],
+      "aiSummary": "安全机制已经搭建，但随着装车规模扩大，需要把被动接收升级为主动巡检与补丁 SLA。",
+      "recommendedAction": "建立 PSIRT 周期看板、SBOM 管理和关键客户联合演练。",
+      "identifiedAt": "2026-05-19",
+      "indicatorIds": [
+        "ri-031",
+        "ri-032"
+      ],
+      "investmentImpact": "medium"
+    },
+    {
+      "id": "hz-ev3",
+      "companyId": "horizon",
+      "riskType": "知识产权许可合规",
+      "severity": "medium",
+      "status": "done",
+      "sourceType": "官网 + 市场进展",
+      "stage": "算法迭代阶段",
+      "description": "芯片、工具链和软件栈同时迭代，意味着 IP 巡检要前置到立项与客户导入阶段。",
+      "evidenceIds": [
+        "hz-e1",
+        "hz-e4"
+      ],
+      "aiSummary": "当前风险可控，但应保持‘项目引入即审查’的制度节奏。",
+      "recommendedAction": "更新专利雷达和 FTO 清单，把合作方接口文档纳入审查范围。",
+      "identifiedAt": "2026-03-22",
+      "indicatorIds": [
+        "ri-049",
+        "ri-053"
+      ],
+      "investmentImpact": "medium"
+    }
+  ],
+  "transmissionGraph": {
+    "keyInsight": "地平线的典型传导路径是：量产合作与客户集中提升业务确定性，同时也把车规安全、监管适配和项目兑现风险推到最前面。",
+    "nodes": [
+      {
+        "id": "hz-t1",
+        "label": "车型定点密度提升",
+        "layer": "source",
+        "description": "合作越多，兑现节奏越复杂。",
+        "evidenceIds": [
+          "hz-e1"
+        ]
+      },
+      {
+        "id": "hz-t2",
+        "label": "车规安全与漏洞治理压力",
+        "layer": "source",
+        "description": "量产上车后，安全披露要求明显提高。",
+        "evidenceIds": [
+          "hz-e2"
+        ]
+      },
+      {
+        "id": "hz-t3",
+        "label": "软硬栈耦合复杂",
+        "layer": "source",
+        "description": "芯片、工具链和软件栈同时演进。",
+        "evidenceIds": [
+          "hz-e4"
+        ]
+      },
+      {
+        "id": "hz-t4",
+        "label": "监管适配成本上升",
+        "layer": "mediator",
+        "description": "不同客户和地区带来不同的审核要求。",
+        "evidenceIds": [
+          "hz-e1",
+          "hz-e3"
+        ]
+      },
+      {
+        "id": "hz-t5",
+        "label": "漏洞处置窗口缩短",
+        "layer": "mediator",
+        "description": "客户对补丁 SLA 的要求更严。",
+        "evidenceIds": [
+          "hz-e2"
+        ]
+      },
+      {
+        "id": "hz-t6",
+        "label": "项目交付延迟",
+        "layer": "impact",
+        "description": "任何一个环节失速都会影响 SOP 节奏。",
+        "evidenceIds": [
+          "hz-e1",
+          "hz-e3"
+        ]
+      },
+      {
+        "id": "hz-t7",
+        "label": "客户信任波动",
+        "layer": "impact",
+        "description": "安全与法规压力会传导到新增合作判断。",
+        "evidenceIds": [
+          "hz-e2",
+          "hz-e3"
+        ]
+      },
+      {
+        "id": "hz-t8",
+        "label": "法规闸门与 PSIRT 联合演练",
+        "layer": "response",
+        "description": "用流程化治理切断监管与安全风险扩散。",
+        "evidenceIds": [
+          "hz-e2",
+          "hz-e3"
+        ]
+      },
+      {
+        "id": "hz-t9",
+        "label": "客户集中度与回款看板",
+        "layer": "response",
+        "description": "让项目兑现、回款和合作密度形成统一监测视图。",
+        "evidenceIds": [
+          "hz-e1",
+          "hz-e3"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "hz-t1",
+        "target": "hz-t4",
+        "strength": "strong"
+      },
+      {
+        "source": "hz-t2",
+        "target": "hz-t5",
+        "strength": "strong"
+      },
+      {
+        "source": "hz-t3",
+        "target": "hz-t4",
+        "strength": "medium"
+      },
+      {
+        "source": "hz-t4",
+        "target": "hz-t6",
+        "strength": "strong"
+      },
+      {
+        "source": "hz-t5",
+        "target": "hz-t7",
+        "strength": "medium"
+      },
+      {
+        "source": "hz-t6",
+        "target": "hz-t9",
+        "strength": "medium"
+      },
+      {
+        "source": "hz-t7",
+        "target": "hz-t8",
+        "strength": "strong"
+      }
+    ]
+  },
+  "governance": [
+    {
+      "id": "hz-g1",
+      "riskType": "监管政策",
+      "title": "车型/地区监管矩阵",
+      "priority": "P0",
+      "stage": "场景落地阶段",
+      "problem": "量产落地越深，法规适配越容易成为进度瓶颈。",
+      "action": "把车型阶段、地区法规、功能安全要求和客户问询整理为统一矩阵并设闸门。",
+      "dataSupport": "法规文本、客户审核单、项目节点评审、量产计划。",
+      "evidenceIds": [
+        "hz-e1",
+        "hz-e3"
+      ]
+    },
+    {
+      "id": "hz-g2",
+      "riskType": "网络安全",
+      "title": "PSIRT 与补丁 SLA 看板",
+      "priority": "P1",
+      "stage": "场景落地阶段",
+      "problem": "量产规模放大后，被动接收漏洞已不够。",
+      "action": "建立漏洞接收、修复、回归、客户通报全链路 SLA，并做联合演练。",
+      "dataSupport": "SBOM、漏洞工单、补丁版本、客户通报记录。",
+      "evidenceIds": [
+        "hz-e2"
+      ]
+    },
+    {
+      "id": "hz-g3",
+      "riskType": "经营财务",
+      "title": "SOP 节奏与回款联动监控",
+      "priority": "P1",
+      "stage": "商业化扩张阶段",
+      "problem": "长验证周期和多项目并行会拖慢经营质量判断。",
+      "action": "把项目里程碑、定点转量产率、回款和客户集中度统一到同一经营看板。",
+      "dataSupport": "项目台账、回款记录、车型节奏、客户结构。",
+      "evidenceIds": [
+        "hz-e1",
+        "hz-e3"
+      ]
+    },
+    {
+      "id": "hz-g4",
+      "riskType": "知识产权许可合规",
+      "title": "车规芯片专利与接口审查",
+      "priority": "P1",
+      "stage": "算法迭代阶段",
+      "problem": "芯片、工具链和软件接口都处在高密度专利带。",
+      "action": "对核心 IP、工具链和合作方接口建立定期 FTO 巡检与变更审查。",
+      "dataSupport": "专利库、接口文档、工具链清单、客户定制需求。",
+      "evidenceIds": [
+        "hz-e4"
+      ]
+    }
+  ],
+  "disclosureMetrics": [
+    {
+      "label": "股票代码",
+      "value": "9660.HK",
+      "unit": "",
+      "period": "投资者关系页",
+      "sourceId": "hz-e1",
+      "riskImplication": "上市公司身份提高披露透明度，也带来持续监管要求。"
+    },
+    {
+      "label": "车企采用",
+      "value": "27",
+      "unit": "家",
+      "period": "投资者关系页",
+      "sourceId": "hz-e1",
+      "riskImplication": "客户覆盖度高，但也需观察客户集中和项目兑现。"
+    },
+    {
+      "label": "定点车型",
+      "value": "400+",
+      "unit": "款",
+      "period": "投资者关系页",
+      "sourceId": "hz-e1",
+      "riskImplication": "车型定点证明量产能力，同时放大交付和车规责任。"
+    },
+    {
+      "label": "征程芯片出货",
+      "value": "1000万+",
+      "unit": "颗",
+      "period": "投资者关系页",
+      "sourceId": "hz-e1",
+      "riskImplication": "规模出货提高商业确定性，也提高供应链和质量风险暴露。"
+    },
+    {
+      "label": "2025 营收",
+      "value": "37.6",
+      "unit": "亿元",
+      "period": "港交所公告",
+      "sourceId": "hz-e2",
+      "riskImplication": "营收规模支持商业化判断，需结合毛利和现金流评估质量。"
+    },
+    {
+      "label": "服务车主",
+      "value": "600万+",
+      "unit": "人",
+      "period": "投资者关系页",
+      "sourceId": "hz-e6",
+      "riskImplication": "终端覆盖扩大了量产验证样本，也放大产品质量、功能安全和售后响应的风险敞口。"
+    },
+    {
+      "label": "产品路线",
+      "value": "征程 / Mono / HSD",
+      "unit": "",
+      "period": "官网产品页",
+      "sourceId": "hz-e7",
+      "riskImplication": "芯片、软件与高阶方案并行推进，需要关注研发资源配置、接口兼容和量产兑现节奏。"
+    }
+  ],
+  "investmentView": {
+    "stance": "进入下一轮研究前需验证量产质量",
+    "riskAppetite": "适用于智能驾驶产业链项目尽调，需重点核验车规安全、客户集中和供应链连续性。",
+    "summary": "地平线具备量产与上市披露基础，后续研究需核验量产质量、车企项目节奏、供应链和监管适配。",
+    "preInvestmentChecks": [
+      "核查前五大客户和车型定点转量产比例。",
+      "验证征程芯片出货与收入确认、毛利变化是否匹配。",
+      "评估车规安全、漏洞响应和数据治理体系。"
+    ],
+    "dueDiligenceFocus": [
+      "定点车型是否转化为持续收入。",
+      "车企合作是否形成集中依赖。",
+      "芯片供应链和车规认证是否存在瓶颈。"
+    ],
+    "valuationConstraints": [
+      "将出货量、毛利率、客户质量和现金流设为阶段评审的共同门槛。",
+      "车型数量不单独作为经营质量证据，需核验定点转量产、收入确认和回款。"
+    ],
+    "postInvestmentMonitoring": [
+      "季度跟踪出货、车型量产、车企客户和安全事件。",
+      "监测港交所披露中的收入质量和研发投入变化。"
+    ],
+    "stopLossTriggers": [
+      "重大车规安全事故或核心客户车型取消。",
+      "出货增长与收入/现金流长期背离。"
+    ],
+    "evidenceIds": [
+      "hz-e1",
+      "hz-e2",
+      "hz-e5",
+      "hz-e6",
+      "hz-e7"
+    ]
+  }
+}

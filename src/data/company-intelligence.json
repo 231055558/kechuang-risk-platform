@@ -1,0 +1,926 @@
+[
+  {
+    "companyId": "deepseek",
+    "snapshotAt": "2026-07-14",
+    "profileFacts": [
+      {
+        "id": "ds-profile-founded",
+        "label": "成立与定位",
+        "value": "2023 年 · 通用人工智能底层模型",
+        "period": "官网快照",
+        "summary": "公开资料将企业定位为通用人工智能底层模型与技术研发主体，需将技术扩张与数据、模型治理能力同时核验。",
+        "status": "verified",
+        "evidenceIds": ["ds-e1"]
+      },
+      {
+        "id": "ds-profile-release",
+        "label": "产品覆盖",
+        "value": "网页 / App / API",
+        "period": "V4 预览版公告",
+        "summary": "多端产品化扩张增加客户触点，也扩大日志、输入内容、接口安全与场景责任的治理范围。",
+        "status": "verified",
+        "evidenceIds": ["ds-e6"]
+      },
+      {
+        "id": "ds-profile-finance",
+        "label": "财务披露可得性",
+        "value": "未见公开完整财务报表",
+        "period": "本轮公开快照",
+        "summary": "当前研究不使用未经证实的估值或收入数据；如进入实质性投资尽调，应补充订单、成本、现金流与算力合同材料。",
+        "status": "partial",
+        "evidenceIds": ["ds-e1", "ds-e4"]
+      }
+    ],
+    "technologyAssets": [
+      {
+        "id": "ds-tech-v4",
+        "type": "模型与算法",
+        "name": "DeepSeek-V4 预览模型",
+        "maturity": "产品化",
+        "summary": "模型已进入多端产品化展示阶段；研发效率、推理质量、对齐与红队评测需要与版本迭代同步记录。",
+        "riskDimensionIds": ["tech", "ethics", "regulatory"],
+        "evidenceIds": ["ds-e6", "ds-e3"]
+      },
+      {
+        "id": "ds-tech-api",
+        "type": "模型与算法",
+        "name": "API 兼容与 Agent 工具接入",
+        "maturity": "产品化",
+        "summary": "兼容性降低开发者迁移成本，但工具调用、权限边界、提示词注入与敏感输出会形成新的安全责任面。",
+        "riskDimensionIds": ["tech", "cyber", "regulatory"],
+        "evidenceIds": ["ds-e2", "ds-e7"]
+      },
+      {
+        "id": "ds-tech-open",
+        "type": "模型与算法",
+        "name": "推理研究与开源生态",
+        "maturity": "生态建设",
+        "summary": "论文与开源材料有利于验证技术路线，同时需要持续复核开源许可证、权重使用边界与衍生服务责任。",
+        "riskDimensionIds": ["tech", "ip", "ethics"],
+        "evidenceIds": ["ds-e3"]
+      }
+    ],
+    "patentWatch": [
+      {
+        "id": "ds-patent-training",
+        "technicalTheme": "大模型训练、推理优化与系统架构",
+        "riskFocus": "关注训练框架、推理加速与算力调度相关权利要求的 FTO 覆盖，而不是以公开宣传替代专利检索。",
+        "verificationStatus": "pending",
+        "countDisclosure": "待授权数据接入",
+        "summary": "当前页面不展示未经授权的专利总量；后续应以申请人别名、核心发明人和同族专利为口径进行复核。",
+        "riskDimensionIds": ["ip", "tech", "external"],
+        "evidenceIds": ["ds-e1", "ds-e3"],
+        "source": {
+          "sourceName": "国家知识产权局专利检索与分析入口",
+          "sourceUrl": "https://pss-system.cponline.cnipa.gov.cn/conventionalSearch",
+          "publishedAt": "2026-07-14",
+          "capturedAt": "2026-07-14",
+          "reliability": "official"
+        }
+      },
+      {
+        "id": "ds-patent-agent",
+        "technicalTheme": "Agent 工具调用与 API 接口",
+        "riskFocus": "复核工具调用、函数接口、工作流编排与第三方 SDK 的许可、专利及安全责任边界。",
+        "verificationStatus": "partial",
+        "countDisclosure": "未披露",
+        "summary": "开放接口已可由文档确认，但权利归属、第三方组件清单及实际使用范围仍需尽调材料补充。",
+        "riskDimensionIds": ["ip", "cyber", "regulatory"],
+        "evidenceIds": ["ds-e2", "ds-e7"],
+        "source": {
+          "sourceName": "DeepSeek API Docs",
+          "sourceUrl": "https://api-docs.deepseek.com/",
+          "publishedAt": "2026-07-14",
+          "capturedAt": "2026-07-14",
+          "reliability": "official"
+        }
+      },
+      {
+        "id": "ds-patent-open-source",
+        "technicalTheme": "开源模型、代码与许可证",
+        "riskFocus": "跟踪开源仓库、模型权重与依赖组件的许可证变化，避免开源扩散与企业客户合规要求出现断层。",
+        "verificationStatus": "partial",
+        "countDisclosure": "未披露",
+        "summary": "该项是知识产权与数据治理的共同观察点，应以版本、许可证文本和商业化部署方式作为复核口径。",
+        "riskDimensionIds": ["ip", "data", "regulatory"],
+        "evidenceIds": ["ds-e3", "ds-e4"],
+        "source": {
+          "sourceName": "DeepSeek GitHub 组织",
+          "sourceUrl": "https://github.com/deepseek-ai",
+          "publishedAt": "2026-07-14",
+          "capturedAt": "2026-07-14",
+          "reliability": "paper"
+        }
+      }
+    ],
+    "policyFunding": [
+      {
+        "id": "ds-policy-data",
+        "category": "监管政策",
+        "title": "训练与交互数据合规核验",
+        "status": "partial",
+        "impact": "隐私政策已列明输入内容、设备信息与第三方服务边界，企业级采购会进一步要求来源、用途、留存与跨境说明。",
+        "nextCheck": "补充数据目录、授权链路、区域部署与审计留痕材料。",
+        "riskDimensionIds": ["data", "regulatory"],
+        "evidenceIds": ["ds-e5"]
+      },
+      {
+        "id": "ds-policy-api",
+        "category": "资本与披露",
+        "title": "模型迁移与服务连续性观察",
+        "status": "verified",
+        "impact": "旧模型弃用计划会影响客户迁移、接口兼容、安全评估与服务承诺，是商业化质量的重要信号。",
+        "nextCheck": "跟踪迁移窗口、客户兼容测试、SLA 与安全评估的闭环情况。",
+        "riskDimensionIds": ["finance", "cyber", "regulatory"],
+        "evidenceIds": ["ds-e2", "ds-e7"]
+      },
+      {
+        "id": "ds-policy-cross-border",
+        "category": "跨境与供应链",
+        "title": "多地区服务与算力韧性",
+        "status": "pending",
+        "impact": "出海或多地区部署时，数据本地化、模型安全评估与算力供应将共同影响客户准入和交付连续性。",
+        "nextCheck": "核验区域部署、算力合同、出口管制暴露及跨境数据路径。",
+        "riskDimensionIds": ["external", "data", "regulatory"],
+        "evidenceIds": ["ds-e1", "ds-e4"]
+      }
+    ],
+    "coverage": {
+      "profile": 3,
+      "technology": 3,
+      "patent": 3,
+      "policyFunding": 3,
+      "note": "技术与产品信息可由官网、API 文档和开源材料核验；财务、专利数量与区域部署范围需在实质尽调中补充。"
+    }
+  },
+  {
+    "companyId": "unitree",
+    "snapshotAt": "2026-07-14",
+    "profileFacts": [
+      {
+        "id": "ut-profile-ipo",
+        "label": "上市进程",
+        "value": "IPO 注册生效 · 拟融资 42.02 亿元",
+        "period": "上交所项目页",
+        "summary": "融资确定性增强，但资金用途、产能建设、信息披露与治理质量将成为市场化扩张的约束。",
+        "status": "verified",
+        "evidenceIds": ["ut-e1", "ut-e2"]
+      },
+      {
+        "id": "ut-profile-scale",
+        "label": "经营规模",
+        "value": "2025 年营收 169,926.93 万元",
+        "period": "招股书",
+        "summary": "收入规模可由招股书核验，后续更应观察客户结构、回款、售后成本与产能爬坡。",
+        "status": "verified",
+        "evidenceIds": ["ut-e3"]
+      },
+      {
+        "id": "ut-profile-humanoid",
+        "label": "人形机器人交付",
+        "value": "3,551 台",
+        "period": "2025 年 1—9 月",
+        "summary": "产品放量增加真实场景验证样本，同时放大故障回退、责任界定与售后服务压力。",
+        "status": "verified",
+        "evidenceIds": ["ut-e6"]
+      }
+    ],
+    "technologyAssets": [
+      {
+        "id": "ut-tech-humanoid",
+        "type": "机器人产品",
+        "name": "人形机器人产品线",
+        "maturity": "量产扩张",
+        "summary": "人形机器人进入交付观察期，需把运动稳定、可靠性、售后与高敏感场景控制放到同一套风险评价中。",
+        "riskDimensionIds": ["tech", "ethics", "finance"],
+        "evidenceIds": ["ut-e4", "ut-e6"]
+      },
+      {
+        "id": "ut-tech-quadruped",
+        "type": "机器人产品",
+        "name": "四足机器人与运动控制",
+        "maturity": "产品化",
+        "summary": "四足机器人是具身智能产品与控制能力的公开入口，核心关注结构件、执行器与环境适应性的交付一致性。",
+        "riskDimensionIds": ["tech", "ip", "external"],
+        "evidenceIds": ["ut-e4", "ut-e5"]
+      },
+      {
+        "id": "ut-tech-delivery",
+        "type": "机器人产品",
+        "name": "量产交付与部件协同",
+        "maturity": "量产扩张",
+        "summary": "直接材料占比较高，产品规模化不能只看销量，还需同步评估关键零部件替代、BOM 波动与质量追溯。",
+        "riskDimensionIds": ["finance", "external", "tech"],
+        "evidenceIds": ["ut-e6", "ut-e7"]
+      }
+    ],
+    "patentWatch": [
+      {
+        "id": "ut-patent-actuator",
+        "technicalTheme": "关节执行器、减速器与整机结构",
+        "riskFocus": "围绕核心执行部件建立同族专利、竞品权利要求和供应商许可的 FTO 复核清单。",
+        "verificationStatus": "pending",
+        "countDisclosure": "待授权数据接入",
+        "summary": "当前不以非授权平台的专利数量作为结论；优先复核量产部件、结构变更与供应商技术来源。",
+        "riskDimensionIds": ["ip", "external", "finance"],
+        "evidenceIds": ["ut-e3", "ut-e7"],
+        "source": {
+          "sourceName": "国家知识产权局专利检索与分析入口",
+          "sourceUrl": "https://pss-system.cponline.cnipa.gov.cn/conventionalSearch",
+          "publishedAt": "2026-07-14",
+          "capturedAt": "2026-07-14",
+          "reliability": "official"
+        }
+      },
+      {
+        "id": "ut-patent-control",
+        "technicalTheme": "平衡控制、运动规划与具身算法",
+        "riskFocus": "关注控制算法与训练数据的专利、开源及安全责任边界，避免产品扩展后出现交叉风险。",
+        "verificationStatus": "partial",
+        "countDisclosure": "未披露",
+        "summary": "公开论文可用于观察研究方向，不能替代产品算法、代码来源和部署场景的法律核验。",
+        "riskDimensionIds": ["ip", "tech", "ethics"],
+        "evidenceIds": ["ut-e5", "ut-e4"],
+        "source": {
+          "sourceName": "arXiv 公开论文入口",
+          "sourceUrl": "https://arxiv.org/abs/2406.10759",
+          "publishedAt": "2024-06-16",
+          "capturedAt": "2026-07-14",
+          "reliability": "paper"
+        }
+      },
+      {
+        "id": "ut-patent-product",
+        "technicalTheme": "人形机器人产品外观与安全设计",
+        "riskFocus": "对高频迭代的外观件、机械安全设计、售后改造件与海外销售版本设置检索与版本留痕。",
+        "verificationStatus": "pending",
+        "countDisclosure": "待授权数据接入",
+        "summary": "该项属于产品交付前的知识产权与质量风险联动点，应纳入版本冻结和供应商变更流程。",
+        "riskDimensionIds": ["ip", "tech", "regulatory"],
+        "evidenceIds": ["ut-e4", "ut-e6"],
+        "source": {
+          "sourceName": "国家知识产权局专利检索与分析入口",
+          "sourceUrl": "https://pss-system.cponline.cnipa.gov.cn/conventionalSearch",
+          "publishedAt": "2026-07-14",
+          "capturedAt": "2026-07-14",
+          "reliability": "official"
+        }
+      }
+    ],
+    "policyFunding": [
+      {
+        "id": "ut-policy-ipo",
+        "category": "资本与披露",
+        "title": "IPO 募资用途与产能兑现",
+        "status": "verified",
+        "impact": "注册生效和拟融资额可核验，但募投项目是否匹配真实研发、产能和交付瓶颈仍是投前关键问题。",
+        "nextCheck": "逐项核验募集资金用途、产能爬坡节点、关联交易与现金使用效率。",
+        "riskDimensionIds": ["finance", "regulatory"],
+        "evidenceIds": ["ut-e1", "ut-e2", "ut-e3"]
+      },
+      {
+        "id": "ut-policy-supply",
+        "category": "跨境与供应链",
+        "title": "关键部件供应与材料成本敏感度",
+        "status": "verified",
+        "impact": "直接材料成本占比较高，意味着关键部件价格、供应商集中和替代 BOM 会直接影响毛利与扩产节奏。",
+        "nextCheck": "获取关键器件清单、第二来源策略、供应商集中度与质量追溯资料。",
+        "riskDimensionIds": ["external", "finance"],
+        "evidenceIds": ["ut-e7"]
+      },
+      {
+        "id": "ut-policy-safety",
+        "category": "监管政策",
+        "title": "具身智能高风险场景准入",
+        "status": "pending",
+        "impact": "进入工业、公共空间或高敏感场景后，机器人安全、人机交互、事故责任与人工接管机制将成为准入前提。",
+        "nextCheck": "核验场景白名单、故障回退、保险安排、事故复盘和人工干预 SOP。",
+        "riskDimensionIds": ["ethics", "regulatory", "tech"],
+        "evidenceIds": ["ut-e4", "ut-e5"]
+      }
+    ],
+    "coverage": {
+      "profile": 3,
+      "technology": 3,
+      "patent": 3,
+      "policyFunding": 3,
+      "note": "IPO 与经营披露的可验证性较高；核心专利族、供应商技术来源和高风险场景安全材料需要授权数据或尽调文件补齐。"
+    }
+  },
+  {
+    "companyId": "horizon",
+    "snapshotAt": "2026-07-14",
+    "profileFacts": [
+      {
+        "id": "hz-profile-listing",
+        "label": "上市与披露身份",
+        "value": "9660.HK",
+        "period": "投资者关系页",
+        "summary": "上市公司披露提高了收入与业务信息的可验证性，也要求将量产进度、客户结构和监管责任纳入持续跟踪。",
+        "status": "verified",
+        "evidenceIds": ["hz-e1", "hz-e2"]
+      },
+      {
+        "id": "hz-profile-coverage",
+        "label": "车企与车型覆盖",
+        "value": "27 家车企 · 400+ 定点车型",
+        "period": "投资者关系页",
+        "summary": "客户与车型覆盖证明商业化广度，同时提高车规交付、功能安全、数据责任和售后响应的复杂度。",
+        "status": "verified",
+        "evidenceIds": ["hz-e1", "hz-e6"]
+      },
+      {
+        "id": "hz-profile-revenue",
+        "label": "2025 年营收",
+        "value": "37.6 亿元",
+        "period": "港交所公告",
+        "summary": "收入规模应与毛利、现金流、客户集中和车型量产兑现共同评估，而非独立作为投资结论。",
+        "status": "verified",
+        "evidenceIds": ["hz-e2"]
+      }
+    ],
+    "technologyAssets": [
+      {
+        "id": "hz-tech-journey",
+        "type": "车载计算",
+        "name": "征程车载智能计算芯片",
+        "maturity": "量产扩张",
+        "summary": "累计量产出货反映产品化能力，仍需观察车规可靠性、供货连续性和版本升级的质量闭环。",
+        "riskDimensionIds": ["tech", "external", "finance"],
+        "evidenceIds": ["hz-e1", "hz-e6"]
+      },
+      {
+        "id": "hz-tech-hsd",
+        "type": "车载计算",
+        "name": "辅助驾驶软件与 HSD 路线",
+        "maturity": "产品化",
+        "summary": "软件栈与高阶方案并行推进，风险重点在算法更新、场景边界、安全责任与车企集成质量。",
+        "riskDimensionIds": ["tech", "cyber", "regulatory"],
+        "evidenceIds": ["hz-e7", "hz-e5"]
+      },
+      {
+        "id": "hz-tech-ecosystem",
+        "type": "车载计算",
+        "name": "芯片、软件与车企生态协同",
+        "maturity": "生态建设",
+        "summary": "大规模合作扩展了技术应用范围，也让接口兼容、项目治理和客户依赖成为重要观察变量。",
+        "riskDimensionIds": ["finance", "ip", "cyber"],
+        "evidenceIds": ["hz-e1", "hz-e7"]
+      }
+    ],
+    "patentWatch": [
+      {
+        "id": "hz-patent-soc",
+        "technicalTheme": "车规 SoC、芯片架构与工具链",
+        "riskFocus": "复核芯片架构、开发工具、第三方 IP 核与 EDA 依赖的许可及出口限制暴露。",
+        "verificationStatus": "pending",
+        "countDisclosure": "待授权数据接入",
+        "summary": "车载芯片处于专利密集与供应链敏感交叉区，专利检索必须结合工具链和关键器件来源。",
+        "riskDimensionIds": ["ip", "external", "tech"],
+        "evidenceIds": ["hz-e1", "hz-e7"],
+        "source": {
+          "sourceName": "国家知识产权局专利检索与分析入口",
+          "sourceUrl": "https://pss-system.cponline.cnipa.gov.cn/conventionalSearch",
+          "publishedAt": "2026-07-14",
+          "capturedAt": "2026-07-14",
+          "reliability": "official"
+        }
+      },
+      {
+        "id": "hz-patent-adas",
+        "technicalTheme": "辅助驾驶算法与软件栈",
+        "riskFocus": "对感知、规划、控制和模型训练相关技术主题进行竞品专利、开源组件及客户定制接口的并行复核。",
+        "verificationStatus": "partial",
+        "countDisclosure": "未披露",
+        "summary": "公开产品路线可说明技术边界，但不能替代对算法来源、软件许可和客户定制条款的尽调。",
+        "riskDimensionIds": ["ip", "tech", "cyber"],
+        "evidenceIds": ["hz-e4", "hz-e7"],
+        "source": {
+          "sourceName": "Horizon Robotics 产品与安全页面",
+          "sourceUrl": "https://www.horizon.auto/",
+          "publishedAt": "2026-07-14",
+          "capturedAt": "2026-07-14",
+          "reliability": "official"
+        }
+      },
+      {
+        "id": "hz-patent-interface",
+        "technicalTheme": "车端接口、网络安全与数据边界",
+        "riskFocus": "将接口文档、车端数据流、OTA 更新与网络安全要求纳入专利和合规双重审查。",
+        "verificationStatus": "partial",
+        "countDisclosure": "未披露",
+        "summary": "功能安全与网络安全不是独立模块，需与软件版本、车型项目和供应链责任一起形成可追溯清单。",
+        "riskDimensionIds": ["cyber", "regulatory", "ip"],
+        "evidenceIds": ["hz-e5", "hz-e7"],
+        "source": {
+          "sourceName": "Horizon Robotics 安全与法律页面",
+          "sourceUrl": "https://www.horizon.auto/en/legal/security",
+          "publishedAt": "2026-07-14",
+          "capturedAt": "2026-07-14",
+          "reliability": "official"
+        }
+      }
+    ],
+    "policyFunding": [
+      {
+        "id": "hz-policy-safety",
+        "category": "监管政策",
+        "title": "自动驾驶功能安全与责任界定",
+        "status": "pending",
+        "impact": "车型与车主覆盖扩大后，产品安全、功能边界、事故响应和软件更新机制会直接影响客户采购与项目延续。",
+        "nextCheck": "按车型核验安全评测、OTA 变更、事件复盘和责任分工。",
+        "riskDimensionIds": ["regulatory", "tech", "cyber"],
+        "evidenceIds": ["hz-e5", "hz-e7"]
+      },
+      {
+        "id": "hz-policy-listing",
+        "category": "资本与披露",
+        "title": "量产扩张下的披露质量",
+        "status": "verified",
+        "impact": "港交所公告与投资者关系材料可用于核验营收和客户生态，但需继续判断订单兑现、毛利和现金流质量。",
+        "nextCheck": "持续追踪定点到量产转化、前五客户、应收账款和经营现金流。",
+        "riskDimensionIds": ["finance", "regulatory"],
+        "evidenceIds": ["hz-e1", "hz-e2", "hz-e3"]
+      },
+      {
+        "id": "hz-policy-supply",
+        "category": "跨境与供应链",
+        "title": "芯片工具链与关键器件韧性",
+        "status": "pending",
+        "impact": "车规芯片依赖工具链和器件生态，外部政策或关键供给变化会放大研发与量产连续性风险。",
+        "nextCheck": "核验关键工具、替代方案、区域供应安排和客户项目缓冲机制。",
+        "riskDimensionIds": ["external", "finance", "ip"],
+        "evidenceIds": ["hz-e1", "hz-e7"]
+      }
+    ],
+    "coverage": {
+      "profile": 3,
+      "technology": 3,
+      "patent": 3,
+      "policyFunding": 3,
+      "note": "上市披露与量产生态信息可核验；芯片 IP、关键工具链及车型级安全材料需要在授权数据或项目尽调中进一步确认。"
+    }
+  },
+  {
+    "companyId": "cambricon",
+    "snapshotAt": "2026-07-14",
+    "profileFacts": [
+      {
+        "id": "cb-profile-revenue",
+        "label": "2026Q1 营收",
+        "value": "28.85 亿元 · 同比 159.56%",
+        "period": "一季报",
+        "summary": "高增长可由一季报核验，但增长质量仍需结合订单、毛利、现金流、客户集中和可持续供货判断。",
+        "status": "verified",
+        "evidenceIds": ["cb-e2"]
+      },
+      {
+        "id": "cb-profile-profit",
+        "label": "2026Q1 归母净利润",
+        "value": "10.13 亿元",
+        "period": "一季报",
+        "summary": "盈利改善需要与收入确认、研发投入、经营现金流和供应链稳定性共同解释。",
+        "status": "verified",
+        "evidenceIds": ["cb-e2", "cb-e6"]
+      },
+      {
+        "id": "cb-profile-rd",
+        "label": "研发与经营现金流",
+        "value": "研发 3.24 亿元 · 经营现金流 8.34 亿元",
+        "period": "2026Q1",
+        "summary": "研发投入和现金流是芯片企业技术兑现与财务韧性的重要交叉指标。",
+        "status": "verified",
+        "evidenceIds": ["cb-e6"]
+      }
+    ],
+    "technologyAssets": [
+      {
+        "id": "cb-tech-cloud-edge",
+        "type": "AI 芯片",
+        "name": "云边端 AI 芯片产品布局",
+        "maturity": "生态建设",
+        "summary": "云、边、端产品覆盖拓展应用场景，但研发资源分配、产品代际与客户适配应形成可追溯路线图。",
+        "riskDimensionIds": ["tech", "finance", "external"],
+        "evidenceIds": ["cb-e3", "cb-e7"]
+      },
+      {
+        "id": "cb-tech-platform",
+        "type": "AI 芯片",
+        "name": "软件开发平台与生态工具",
+        "maturity": "产品化",
+        "summary": "软件生态决定芯片落地效率，兼容性、开发者迁移成本和工具链稳定性是商业化验证重点。",
+        "riskDimensionIds": ["tech", "ip", "cyber"],
+        "evidenceIds": ["cb-e4", "cb-e7"]
+      },
+      {
+        "id": "cb-tech-rd",
+        "type": "AI 芯片",
+        "name": "高强度研发投入与产品迭代",
+        "maturity": "研发验证",
+        "summary": "技术迭代依赖长期研发投入，需同时评估先进制程、工具链和生态伙伴是否形成可持续的产品转化。",
+        "riskDimensionIds": ["tech", "finance", "external"],
+        "evidenceIds": ["cb-e2", "cb-e6"]
+      }
+    ],
+    "patentWatch": [
+      {
+        "id": "cb-patent-architecture",
+        "technicalTheme": "AI 芯片架构、指令集与加速器设计",
+        "riskFocus": "对核心架构、加速单元、存储与互连技术开展同族专利、无效宣告和海外权利要求复核。",
+        "verificationStatus": "pending",
+        "countDisclosure": "待授权数据接入",
+        "summary": "芯片 IP 风险无法以企业专利数量单独判断，应同时看产品代际、关键发明人与竞争专利覆盖。",
+        "riskDimensionIds": ["ip", "tech", "external"],
+        "evidenceIds": ["cb-e3", "cb-e7"],
+        "source": {
+          "sourceName": "国家知识产权局专利检索与分析入口",
+          "sourceUrl": "https://pss-system.cponline.cnipa.gov.cn/conventionalSearch",
+          "publishedAt": "2026-07-14",
+          "capturedAt": "2026-07-14",
+          "reliability": "official"
+        }
+      },
+      {
+        "id": "cb-patent-toolchain",
+        "technicalTheme": "编译器、运行时与开发工具链",
+        "riskFocus": "审查软件栈、第三方组件、接口兼容和开源许可证，避免工具链依赖转化为交付中断风险。",
+        "verificationStatus": "partial",
+        "countDisclosure": "未披露",
+        "summary": "开发平台是生态黏性的来源，也是知识产权、网络安全和供应链风险的共同入口。",
+        "riskDimensionIds": ["ip", "cyber", "external"],
+        "evidenceIds": ["cb-e4", "cb-e7"],
+        "source": {
+          "sourceName": "寒武纪官网产品与开发者生态",
+          "sourceUrl": "https://www.cambricon.com/",
+          "publishedAt": "2026-07-14",
+          "capturedAt": "2026-07-14",
+          "reliability": "official"
+        }
+      },
+      {
+        "id": "cb-patent-ecosystem",
+        "technicalTheme": "国产化替代与生态兼容",
+        "riskFocus": "关注自主研发技术与外部授权技术的边界，以及关键软硬件依赖变化对产品连续性的影响。",
+        "verificationStatus": "pending",
+        "countDisclosure": "待授权数据接入",
+        "summary": "该项与地缘、供应链和产品生态耦合，必须结合合同、工具清单和客户迁移成本核验。",
+        "riskDimensionIds": ["ip", "external", "finance"],
+        "evidenceIds": ["cb-e1", "cb-e7"],
+        "source": {
+          "sourceName": "上交所公告与国家知识产权局公开检索入口",
+          "sourceUrl": "https://www.sse.com.cn/star/market/stocklist/info/announcement/index.shtml?COMPANY_CODE=688256",
+          "publishedAt": "2026-07-14",
+          "capturedAt": "2026-07-14",
+          "reliability": "exchange"
+        }
+      }
+    ],
+    "policyFunding": [
+      {
+        "id": "cb-policy-finance",
+        "category": "资本与披露",
+        "title": "高增长后的盈利质量复核",
+        "status": "verified",
+        "impact": "收入、利润、研发投入和经营现金流均已公开披露，应进一步复核收入确认、客户集中、应收与订单可持续性。",
+        "nextCheck": "按季度跟踪经营现金流、应收账款、研发资本化、前五客户和毛利波动。",
+        "riskDimensionIds": ["finance", "regulatory"],
+        "evidenceIds": ["cb-e2", "cb-e6"]
+      },
+      {
+        "id": "cb-policy-supply",
+        "category": "跨境与供应链",
+        "title": "先进制程、EDA 与生态依赖",
+        "status": "pending",
+        "impact": "芯片研发和交付依赖关键工具链与器件生态，外部限制会直接影响产品迭代和供货节奏。",
+        "nextCheck": "获取 EDA、IP 核、代工、封测和关键软件的替代路线与应急库存材料。",
+        "riskDimensionIds": ["external", "ip", "tech"],
+        "evidenceIds": ["cb-e3", "cb-e7"]
+      },
+      {
+        "id": "cb-policy-security",
+        "category": "监管政策",
+        "title": "算力产品部署与安全责任",
+        "status": "partial",
+        "impact": "云边端部署扩大了客户场景覆盖，需同步核验数据安全、软件更新、行业准入和安全响应机制。",
+        "nextCheck": "按行业场景收集安全开发、漏洞响应、数据处理和客户验收材料。",
+        "riskDimensionIds": ["cyber", "regulatory", "tech"],
+        "evidenceIds": ["cb-e4", "cb-e7"]
+      }
+    ],
+    "coverage": {
+      "profile": 3,
+      "technology": 3,
+      "patent": 3,
+      "policyFunding": 3,
+      "note": "季度财务披露较完整；关键芯片 IP、工具链许可、供应商替代与客户项目材料需要在授权数据或尽调阶段补齐。"
+    }
+  },
+  {
+    "companyId": "fourth-paradigm",
+    "snapshotAt": "2026-07-14",
+    "profileFacts": [
+      {
+        "id": "fp-profile-history",
+        "label": "企业定位与历史",
+        "value": "2014 年底成立 · 企业级 AI 平台",
+        "period": "投资者关系页",
+        "summary": "经营历史和行业覆盖为企业级 AI 的商业化提供观察基础，仍需核验客户留存、交付效率与数据授权边界。",
+        "status": "verified",
+        "evidenceIds": ["fp-e2", "fp-e7"]
+      },
+      {
+        "id": "fp-profile-revenue",
+        "label": "2025 年总营收",
+        "value": "71.35 亿元 · 同比 35.6%",
+        "period": "业绩新闻稿",
+        "summary": "平台业务增长可核验，需避免只以规模增速替代对回款、续约、交付成本和客户集中度的判断。",
+        "status": "verified",
+        "evidenceIds": ["fp-e3", "fp-e4"]
+      },
+      {
+        "id": "fp-profile-profit",
+        "label": "经调整归母净利润",
+        "value": "1,784 万元",
+        "period": "2025 年业绩",
+        "summary": "盈利改善是正向信号，但需结合经营现金流、合同质量和项目型收入可复制性进行审慎研判。",
+        "status": "verified",
+        "evidenceIds": ["fp-e6"]
+      }
+    ],
+    "technologyAssets": [
+      {
+        "id": "fp-tech-platform",
+        "type": "企业 AI 平台",
+        "name": "AI Platform 企业级平台业务",
+        "maturity": "产品化",
+        "summary": "平台收入占主要部分，投研应关注标准化能力与行业项目交付之间的边界，以及单项目定制对毛利的影响。",
+        "riskDimensionIds": ["tech", "finance", "data"],
+        "evidenceIds": ["fp-e3", "fp-e6"]
+      },
+      {
+        "id": "fp-tech-agentic",
+        "type": "企业 AI 平台",
+        "name": "Agentic AI 业务",
+        "maturity": "产品化",
+        "summary": "新业务收入已被公开披露，需重点核验 Agent 权限、企业数据隔离、可解释性和交付复用率。",
+        "riskDimensionIds": ["tech", "data", "ethics"],
+        "evidenceIds": ["fp-e6", "fp-e7"]
+      },
+      {
+        "id": "fp-tech-api",
+        "type": "企业 AI 平台",
+        "name": "API 产品化入口",
+        "maturity": "生态建设",
+        "summary": "API 收入可反映产品化进展，但接口安全、调用计费、模型更新与客户迁移成本均需持续监测。",
+        "riskDimensionIds": ["finance", "cyber", "regulatory"],
+        "evidenceIds": ["fp-e6", "fp-e1"]
+      }
+    ],
+    "patentWatch": [
+      {
+        "id": "fp-patent-platform",
+        "technicalTheme": "机器学习平台、知识图谱与企业智能决策",
+        "riskFocus": "对平台能力、模型编排、知识图谱与行业解决方案中的核心技术主题开展同族专利和竞品权利要求复核。",
+        "verificationStatus": "pending",
+        "countDisclosure": "待授权数据接入",
+        "summary": "企业软件专利风险更多体现为核心模块、客户定制和交付成果的权属边界，不能用数量代替 FTO 判断。",
+        "riskDimensionIds": ["ip", "tech", "finance"],
+        "evidenceIds": ["fp-e1", "fp-e5"],
+        "source": {
+          "sourceName": "国家知识产权局专利检索与分析入口",
+          "sourceUrl": "https://pss-system.cponline.cnipa.gov.cn/conventionalSearch",
+          "publishedAt": "2026-07-14",
+          "capturedAt": "2026-07-14",
+          "reliability": "official"
+        }
+      },
+      {
+        "id": "fp-patent-industry",
+        "technicalTheme": "金融、零售、制造等行业解决方案",
+        "riskFocus": "审查行业客户项目中的数据、模型、交付物与二次开发成果归属，避免客户合同边界与平台资产混淆。",
+        "verificationStatus": "partial",
+        "countDisclosure": "未披露",
+        "summary": "行业覆盖可由 IR 资料确认，但真正的可复制性和知识产权归属需要项目合同与交付材料佐证。",
+        "riskDimensionIds": ["ip", "data", "finance"],
+        "evidenceIds": ["fp-e2", "fp-e7"],
+        "source": {
+          "sourceName": "第四范式投资者关系页",
+          "sourceUrl": "https://ir.4paradigm.com/sc/index.html",
+          "publishedAt": "2026-07-14",
+          "capturedAt": "2026-07-14",
+          "reliability": "official"
+        }
+      },
+      {
+        "id": "fp-patent-data",
+        "technicalTheme": "企业数据、模型与 API 使用边界",
+        "riskFocus": "把数据授权、模型输出、接口调用和第三方组件许可纳入企业级 AI 产品的知识产权复核。",
+        "verificationStatus": "pending",
+        "countDisclosure": "待授权数据接入",
+        "summary": "该项与数据合规和监管政策高度耦合，应作为金融、医疗等敏感行业项目的投前准入问题。",
+        "riskDimensionIds": ["ip", "data", "regulatory"],
+        "evidenceIds": ["fp-e5", "fp-e7"],
+        "source": {
+          "sourceName": "港交所招股书与国家知识产权局公开检索入口",
+          "sourceUrl": "https://www1.hkexnews.hk/listedco/listconews/sehk/2023/0918/2023091800009.pdf",
+          "publishedAt": "2023-09-18",
+          "capturedAt": "2026-07-14",
+          "reliability": "filing"
+        }
+      }
+    ],
+    "policyFunding": [
+      {
+        "id": "fp-policy-data",
+        "category": "监管政策",
+        "title": "企业数据授权与场景合规",
+        "status": "pending",
+        "impact": "金融、零售、制造等行业项目的高价值在于数据和场景，授权边界、数据隔离和审计留痕决定客户准入质量。",
+        "nextCheck": "核验数据处理协议、行业合规清单、模型调用日志和客户安全审计结果。",
+        "riskDimensionIds": ["data", "regulatory", "cyber"],
+        "evidenceIds": ["fp-e5", "fp-e7"]
+      },
+      {
+        "id": "fp-policy-quality",
+        "category": "资本与披露",
+        "title": "业务结构与盈利质量观察",
+        "status": "verified",
+        "impact": "平台、API 与 Agentic AI 的业务拆分为商业化研判提供依据，但需要继续验证收入结构、回款周期和项目复用率。",
+        "nextCheck": "按半年跟踪分业务毛利、经营现金流、客户留存与重大项目交付。",
+        "riskDimensionIds": ["finance", "regulatory"],
+        "evidenceIds": ["fp-e3", "fp-e4", "fp-e6"]
+      },
+      {
+        "id": "fp-policy-industry",
+        "category": "产业支持",
+        "title": "行业场景准入与交付边界",
+        "status": "partial",
+        "impact": "行业覆盖越广，越需要在高敏感行业中区分平台能力、客户责任和人工复核责任。",
+        "nextCheck": "形成按行业划分的模型治理、人工审批、数据安全和输出审计基线。",
+        "riskDimensionIds": ["ethics", "regulatory", "finance"],
+        "evidenceIds": ["fp-e2", "fp-e7"]
+      }
+    ],
+    "coverage": {
+      "profile": 3,
+      "technology": 3,
+      "patent": 3,
+      "policyFunding": 3,
+      "note": "业绩披露和行业覆盖可直接核验；客户合同、行业数据授权、平台核心模块及项目交付物权属需在尽调中补充。"
+    }
+  },
+  {
+    "companyId": "robosense",
+    "snapshotAt": "2026-07-14",
+    "profileFacts": [
+      {
+        "id": "rs-profile-revenue",
+        "label": "2026Q1 营收",
+        "value": "约 4.6 亿元 · 同比约 40%",
+        "period": "一季度业绩材料",
+        "summary": "收入增长可核验，需和销量结构、毛利、现金流以及客户项目的可持续性共同阅读。",
+        "status": "verified",
+        "evidenceIds": ["rs-e3"]
+      },
+      {
+        "id": "rs-profile-sales",
+        "label": "激光雷达销量",
+        "value": "33.03 万台 · 同比 204.1%",
+        "period": "一季度业绩材料",
+        "summary": "量产规模扩大同时提高产品质量、供应链、售后和功能安全的风险敞口。",
+        "status": "verified",
+        "evidenceIds": ["rs-e3"]
+      },
+      {
+        "id": "rs-profile-robot",
+        "label": "机器人领域销量",
+        "value": "18.55 万台 · 同比 1458.8%",
+        "period": "一季度业绩材料",
+        "summary": "机器人场景快速扩张，需要单独观察价格、可靠性、交付能力和场景适配质量。",
+        "status": "verified",
+        "evidenceIds": ["rs-e3"]
+      }
+    ],
+    "technologyAssets": [
+      {
+        "id": "rs-tech-lidar",
+        "type": "智能感知",
+        "name": "智能驾驶激光雷达产品",
+        "maturity": "量产扩张",
+        "summary": "高销量证明产品进入规模交付，但感知性能、场景边界、失效模式和售后数据应持续回流风险模型。",
+        "riskDimensionIds": ["tech", "regulatory", "finance"],
+        "evidenceIds": ["rs-e1", "rs-e3"]
+      },
+      {
+        "id": "rs-tech-robotics",
+        "type": "智能感知",
+        "name": "机器人感知业务",
+        "maturity": "量产扩张",
+        "summary": "机器人领域增量快，但不同于乘用车场景，应重新评估产品可靠性、价格压力和客户集中。",
+        "riskDimensionIds": ["tech", "finance", "ethics"],
+        "evidenceIds": ["rs-e1", "rs-e3"]
+      },
+      {
+        "id": "rs-tech-quality",
+        "type": "智能感知",
+        "name": "车规质量与智能制造体系",
+        "maturity": "产品化",
+        "summary": "安全体系和制造自动化是量产质量的积极信号，仍需结合良率、质量追溯、漏洞响应和事故数据验证。",
+        "riskDimensionIds": ["cyber", "regulatory", "external"],
+        "evidenceIds": ["rs-e6", "rs-e7"]
+      }
+    ],
+    "patentWatch": [
+      {
+        "id": "rs-patent-lidar",
+        "technicalTheme": "激光雷达发射、接收与扫描架构",
+        "riskFocus": "优先复核核心光学、芯片、扫描和封装技术的专利同族、无效宣告与供应商授权。",
+        "verificationStatus": "pending",
+        "countDisclosure": "待授权数据接入",
+        "summary": "硬件感知产品的专利风险应结合关键部件供应、制造工艺和产品代际，而非只展示申请数量。",
+        "riskDimensionIds": ["ip", "tech", "external"],
+        "evidenceIds": ["rs-e1", "rs-e7"],
+        "source": {
+          "sourceName": "国家知识产权局专利检索与分析入口",
+          "sourceUrl": "https://pss-system.cponline.cnipa.gov.cn/conventionalSearch",
+          "publishedAt": "2026-07-14",
+          "capturedAt": "2026-07-14",
+          "reliability": "official"
+        }
+      },
+      {
+        "id": "rs-patent-perception",
+        "technicalTheme": "感知算法、点云处理与场景适配",
+        "riskFocus": "核验感知算法、数据集、软件组件和客户场景定制的权属、许可和模型更新责任。",
+        "verificationStatus": "partial",
+        "countDisclosure": "未披露",
+        "summary": "算法和硬件产品高度耦合，需将数据与软件版本纳入专利和合规的共同台账。",
+        "riskDimensionIds": ["ip", "tech", "data"],
+        "evidenceIds": ["rs-e1", "rs-e6"],
+        "source": {
+          "sourceName": "RoboSense 官网",
+          "sourceUrl": "https://www.robosense.ai/",
+          "publishedAt": "2026-07-14",
+          "capturedAt": "2026-07-14",
+          "reliability": "official"
+        }
+      },
+      {
+        "id": "rs-patent-vehicle",
+        "technicalTheme": "车规安全、网络安全与产品更新",
+        "riskFocus": "把功能安全、网络安全和 OTA/版本管理材料与专利检索结果一起纳入车型项目的交付核验。",
+        "verificationStatus": "partial",
+        "countDisclosure": "未披露",
+        "summary": "量产安全体系可公开确认，但车型级验证、漏洞修复和事故责任材料仍需要客户项目文件支撑。",
+        "riskDimensionIds": ["cyber", "regulatory", "ip"],
+        "evidenceIds": ["rs-e6", "rs-e4"],
+        "source": {
+          "sourceName": "RoboSense 投资者关系页",
+          "sourceUrl": "https://ir.robosense.ai/",
+          "publishedAt": "2026-07-14",
+          "capturedAt": "2026-07-14",
+          "reliability": "official"
+        }
+      }
+    ],
+    "policyFunding": [
+      {
+        "id": "rs-policy-scale",
+        "category": "资本与披露",
+        "title": "高增长销量下的交付质量",
+        "status": "verified",
+        "impact": "销量和收入增长可由披露材料核验，但快速扩张会同时带来产品良率、售后、客户集中和现金流压力。",
+        "nextCheck": "按季度跟踪毛利、经营现金流、客户集中、质量费用和召回/售后指标。",
+        "riskDimensionIds": ["finance", "regulatory", "tech"],
+        "evidenceIds": ["rs-e3", "rs-e4"]
+      },
+      {
+        "id": "rs-policy-safety",
+        "category": "监管政策",
+        "title": "车规与机器人场景安全准入",
+        "status": "partial",
+        "impact": "质量体系是基础，但不同场景的功能安全、网络安全、软件更新和责任界定需要逐项目复核。",
+        "nextCheck": "获取车型及机器人场景的安全评估、漏洞响应、版本管理和事故处理资料。",
+        "riskDimensionIds": ["regulatory", "cyber", "ethics"],
+        "evidenceIds": ["rs-e6", "rs-e1"]
+      },
+      {
+        "id": "rs-policy-supply",
+        "category": "跨境与供应链",
+        "title": "核心硬件与制造韧性",
+        "status": "partial",
+        "impact": "制造自动化有助于规模交付，但关键器件、芯片和海外客户要求仍可能改变交付连续性和成本结构。",
+        "nextCheck": "核验关键器件双来源、库存策略、质量追溯和区域合规安排。",
+        "riskDimensionIds": ["external", "finance", "ip"],
+        "evidenceIds": ["rs-e5", "rs-e7"]
+      }
+    ],
+    "coverage": {
+      "profile": 3,
+      "technology": 3,
+      "patent": 3,
+      "policyFunding": 3,
+      "note": "销量、营收、质量体系与制造能力有公开依据；专利同族、关键器件来源、车型级安全材料和客户合同仍需授权数据或尽调补充。"
+    }
+  }
+]

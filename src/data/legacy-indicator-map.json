@@ -1,0 +1,338 @@
+[
+  {
+    "legacyId": "ri-004",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧指标衡量宣传 TRL 与实际 TRL 的相对落差，新版 kci-011 仅表示实际 TRL 等级，口径与风险方向不一致，取消一一映射。"
+  },
+  {
+    "legacyId": "ri-006",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧指标定义与新版指标无法建立可靠的一一对应关系。"
+  },
+  {
+    "legacyId": "ri-007",
+    "indicatorId": "kci-005",
+    "status": "mapped",
+    "reason": "保留为场景应用夸大度候选指标，不进入评分。"
+  },
+  {
+    "legacyId": "ri-011",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧指标缺少新版口径与阈值对应项。"
+  },
+  {
+    "legacyId": "ri-016",
+    "indicatorId": "kci-010",
+    "status": "mapped",
+    "reason": "旧技术成熟度引用归并到技术成熟与阶段兑现度（TRL 等级）。"
+  },
+  {
+    "legacyId": "ri-017",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "无法在新版指标中形成可审计映射。"
+  },
+  {
+    "legacyId": "ri-018",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "无法在新版指标中形成可审计映射。"
+  },
+  {
+    "legacyId": "ri-019",
+    "indicatorId": "kci-009",
+    "status": "mapped",
+    "reason": "旧指标关注研发投入与持续迭代能力，与新版持续创新能力的投入趋势和有效更新周期口径一致。"
+  },
+  {
+    "legacyId": "ri-020",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧产品能力指标不等同于新版风险指标。"
+  },
+  {
+    "legacyId": "ri-022",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧接口能力指标不具备新版风险口径。"
+  },
+  {
+    "legacyId": "ri-026",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧监管适配指标缺少新版明确对应项。"
+  },
+  {
+    "legacyId": "ri-029",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧网络安全引用不能直接替代新版安全合规指标。"
+  },
+  {
+    "legacyId": "ri-030",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧网络安全引用不能直接替代新版安全合规指标。"
+  },
+  {
+    "legacyId": "ri-031",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧网络安全引用不能直接替代新版安全合规指标。"
+  },
+  {
+    "legacyId": "ri-032",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧网络安全引用不能直接替代新版安全合规指标。"
+  },
+  {
+    "legacyId": "ri-033",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧数据治理指标与新版合规口径不完全一致。"
+  },
+  {
+    "legacyId": "ri-034",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧数据治理指标与新版合规口径不完全一致。"
+  },
+  {
+    "legacyId": "ri-035",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧指标评估数据安全制度建立与执行的六维完善度，新版 kci-016 仅记录制度披露状态，治理实质与披露口径不等价。"
+  },
+  {
+    "legacyId": "ri-036",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧指标统计数据泄露事件数量及影响规模，新版 kci-013 计算年报安全关键词负面情感概率，事件度量与文本情感口径不等价。"
+  },
+  {
+    "legacyId": "ri-037",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧指标缺少新版定义和阈值对应项。"
+  },
+  {
+    "legacyId": "ri-038",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "宽泛监管引用无法映射到单一新版指标。"
+  },
+  {
+    "legacyId": "ri-039",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "宽泛监管引用无法映射到单一新版指标。"
+  },
+  {
+    "legacyId": "ri-040",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "伦理判断缺少新版可核验企业值。"
+  },
+  {
+    "legacyId": "ri-041",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "伦理判断缺少新版可核验企业值。"
+  },
+  {
+    "legacyId": "ri-042",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "伦理判断缺少新版可核验企业值。"
+  },
+  {
+    "legacyId": "ri-043",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "伦理判断缺少新版可核验企业值。"
+  },
+  {
+    "legacyId": "ri-044",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "伦理判断缺少新版可核验企业值。"
+  },
+  {
+    "legacyId": "ri-046",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧伦理指标无法形成新版可审计映射。"
+  },
+  {
+    "legacyId": "ri-049",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧指标综合核心有效发明专利数量、被引次数与专利族大小，新版 kci-008 仅计算专利授权率，专利质量与授权率不可互换。"
+  },
+  {
+    "legacyId": "ri-050",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧知识产权指标缺少新版对应口径。"
+  },
+  {
+    "legacyId": "ri-051",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧知识产权指标缺少新版对应口径。"
+  },
+  {
+    "legacyId": "ri-052",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧指标为核心人员竞业限制协议覆盖率，新版 kci-042 定义缺失且公式混入协议无效概率与逆向工程难度，目标口径尚未锁定。"
+  },
+  {
+    "legacyId": "ri-053",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧指标统计商业秘密泄露或窃取事件数量，新版 kci-042 衡量竞业协议覆盖及知识泄露风险，结果事件与制度或概率指标不等价。"
+  },
+  {
+    "legacyId": "ri-055",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "开源治理引用不等同于新版具名指标。"
+  },
+  {
+    "legacyId": "ri-056",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "开源治理引用不等同于新版具名指标。"
+  },
+  {
+    "legacyId": "ri-065",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧商业化指标与新版风险口径不兼容。"
+  },
+  {
+    "legacyId": "ri-066",
+    "indicatorId": "kci-011",
+    "status": "mapped",
+    "reason": "旧量产与商业化完成度引用归并到工程化与商业转化率。"
+  },
+  {
+    "legacyId": "ri-067",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧指标为前五大客户收入占比，新版 kci-036 同时混用客户集中度与高风险客户占比两套口径，无法建立唯一映射。"
+  },
+  {
+    "legacyId": "ri-068",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧交付或监管指标无法形成新版单一口径。"
+  },
+  {
+    "legacyId": "ri-069",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧交付或监管指标无法形成新版单一口径。"
+  },
+  {
+    "legacyId": "ri-071",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧生态指标与新版指标体系不兼容。"
+  },
+  {
+    "legacyId": "ri-072",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧产能指标缺少新版明确阈值。"
+  },
+  {
+    "legacyId": "ri-073",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧指标为经营现金流净额对净利润的覆盖率，新版 kci-026 为经营现金流同比趋势，分母、时间维度与经济含义不同。"
+  },
+  {
+    "legacyId": "ri-075",
+    "indicatorId": "kci-034",
+    "status": "mapped",
+    "reason": "旧核心零部件国产化率与新版核心零部件国产化率口径一致。"
+  },
+  {
+    "legacyId": "ri-076",
+    "indicatorId": "kci-035",
+    "status": "mapped",
+    "reason": "旧供应商集中度与新版前五大供应商采购额占比口径一致。"
+  },
+  {
+    "legacyId": "ri-077",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧外部风险指标缺少新版可核验对应项。"
+  },
+  {
+    "legacyId": "ri-078",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "旧指标为财务恶化或评级下调的核心客户占比，新版 kci-036 同时混用客户信用风险与客户集中度两套口径，无法建立唯一映射。"
+  },
+  {
+    "legacyId": "ri-079",
+    "indicatorId": "kci-037",
+    "status": "mapped",
+    "reason": "旧出口管制受影响度与新版受管制核心零部件或技术占比口径一致。"
+  },
+  {
+    "legacyId": "ri-082",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "行业背景信号不直接映射企业级指标。"
+  },
+  {
+    "legacyId": "ri-083",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "宽泛政策引用无法映射到单一新版指标。"
+  },
+  {
+    "legacyId": "ri-084",
+    "indicatorId": null,
+    "status": "removed",
+    "reason": "宽泛政策引用无法映射到单一新版指标。"
+  },
+  {
+    "legacyId": "ri-085",
+    "indicatorId": "kci-026",
+    "status": "mapped",
+    "reason": "旧经营性现金流趋势与新版经营活动现金流同比变化口径一致。"
+  },
+  {
+    "legacyId": "ri-086",
+    "indicatorId": "kci-027",
+    "status": "mapped",
+    "reason": "旧融资性现金流依赖度与新版融资活动现金流依赖口径一致。"
+  },
+  {
+    "legacyId": "ri-087",
+    "indicatorId": "kci-028",
+    "status": "mapped",
+    "reason": "旧现金储备消耗周期与新版按月均经营性现金净流出计算的可维持月数口径一致。"
+  },
+  {
+    "legacyId": "ri-088",
+    "indicatorId": "kci-029",
+    "status": "mapped",
+    "reason": "旧估值变动幅度与新版近 12 个月市值最大回撤口径一致。"
+  },
+  {
+    "legacyId": "ri-089",
+    "indicatorId": "kci-030",
+    "status": "mapped",
+    "reason": "旧破发风险与新版当前股价相对 IPO 发行价的口径一致。"
+  }
+]

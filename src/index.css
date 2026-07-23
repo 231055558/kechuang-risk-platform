@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "./styles/theme.css";
+@import "./styles/shell.css";
+@import "./styles/business.css";
+@import "./styles/pages.css";
+@import "./styles/apple-design.css";

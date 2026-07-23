@@ -1,0 +1,143 @@
+{
+  "sourceFile": "风险指标更新版1.xlsx",
+  "methodVersion": "KCR-2026.07-v2",
+  "admissionGovernance": {
+    "decisionVersion": "ADM-2026.07-v1",
+    "decisionDate": "2026-07-17",
+    "reviewerRole": "平台研究人员",
+    "basis": "准入状态由平台依据口径完整性、公开可核验性、跨企业可比性和授权依赖进行人工治理，不是 Excel 原生字段。"
+  },
+  "primaryCount": 6,
+  "secondaryCount": 17,
+  "tertiaryCount": 43,
+  "admissionCounts": {
+    "validated": 18,
+    "observation": 19,
+    "candidate": 6
+  },
+  "note": "依据新版 Excel 治理形成 6 类一级、17 组二级和 43 项具名三级指标；空白、重复、错列或未定稿内容不进入正式指标清单。已验证指标可进入研判，观察指标用于补充观察，候选指标仅在方法库展示。",
+  "groups": [
+    {
+      "primary": "叙事风险",
+      "secondaryCount": 2,
+      "tertiaryCount": 5,
+      "secondaryLabels": ["估值叙事风险", "技术叙事风险"],
+      "metricSamples": [
+        {
+          "secondary": "技术叙事风险",
+          "name": "概念股标签关联度",
+          "definition": "热门概念标签与实际相关业务收入的匹配程度。",
+          "threshold": "低风险：>30%；中风险：10%-30%；高风险：<10%",
+          "source": "企业分业务收入明细 + 交易所概念板块分类",
+          "frequency": "季度",
+          "entityType": "业务风险指标"
+        }
+      ]
+    },
+    {
+      "primary": "技术",
+      "secondaryCount": 3,
+      "tertiaryCount": 8,
+      "secondaryLabels": ["技术先进性", "技术成熟度", "技术可靠和安全性"],
+      "modelVersion": "KTR-2026.07-v1",
+      "weightTotal": 100,
+      "metricWeights": {
+        "kci-006": 10,
+        "kci-007": 8,
+        "kci-008": 9,
+        "kci-009": 8,
+        "kci-010": 20,
+        "kci-011": 15,
+        "kci-012": 18,
+        "kci-013": 12
+      },
+      "metricSamples": [
+        {
+          "secondary": "技术成熟度",
+          "name": "技术成熟与阶段兑现度（TRL 等级）",
+          "definition": "衡量技术成熟度是否与企业当前阶段相匹配，并考察关键技术节点是否按期兑现。",
+          "threshold": "低风险：综合成熟得分≥80；中低风险：65-79；中高风险：50-64；高风险：<50",
+          "source": "企业公开研发计划、测试报告、样机中试与示范项目材料",
+          "frequency": "季度",
+          "entityType": "技术成熟度指标"
+        }
+      ]
+    },
+    {
+      "primary": "合规",
+      "secondaryCount": 3,
+      "tertiaryCount": 11,
+      "secondaryLabels": [
+        "监管合规（包含技术伦理道德）",
+        "安全合规",
+        "诉讼仲裁"
+      ],
+      "metricSamples": [
+        {
+          "secondary": "监管合规（包含技术伦理道德）",
+          "name": "监管处罚次数",
+          "definition": "近 3 年相关行政处罚累计次数。",
+          "threshold": "低风险：0次；中风险：1-2次；高风险：≥3次",
+          "source": "监管部门公开处罚公告",
+          "frequency": "年度",
+          "entityType": "合规风险指标"
+        }
+      ]
+    },
+    {
+      "primary": "财务与融资风险",
+      "secondaryCount": 3,
+      "tertiaryCount": 9,
+      "secondaryLabels": ["现金流风险", "估值风险", "融资环境风险"],
+      "metricSamples": [
+        {
+          "secondary": "现金流风险",
+          "name": "现金储备消耗周期",
+          "definition": "按当前月均经营性现金消耗速度可维持的月数。",
+          "threshold": "低风险：>24个月；中风险：12-24个月；高风险：<12个月",
+          "source": "资产负债表与现金流量表",
+          "frequency": "季度",
+          "entityType": "财务风险指标"
+        }
+      ]
+    },
+    {
+      "primary": "外部风险",
+      "secondaryCount": 3,
+      "tertiaryCount": 7,
+      "secondaryLabels": ["供应链风险", "地缘政治风险", "传导风险"],
+      "metricSamples": [
+        {
+          "secondary": "地缘政治风险",
+          "name": "制裁/限制清单命中数",
+          "definition": "企业及关联方命中的制裁或限制清单数量。",
+          "threshold": "低风险：0个；中风险：1个；高风险：≥2个",
+          "source": "BIS、OFAC、UVL 与欧盟公开清单",
+          "frequency": "月度",
+          "entityType": "地缘风险指标"
+        }
+      ]
+    },
+    {
+      "primary": "人员风险",
+      "secondaryCount": 3,
+      "tertiaryCount": 3,
+      "secondaryLabels": [
+        "股权稀释程度（创始人/创始团队持股）",
+        "竞业限制覆盖率（核心人员知识泄露风险）",
+        "核心技术人员占比"
+      ],
+      "metricSamples": [
+        {
+          "secondary": "核心技术人员占比",
+          "name": "待复核（源表第 45 行错列）",
+          "definition": "源表第 45 行字段错列，三级指标名称与定义尚待复核。",
+          "threshold": "待复核",
+          "source": "年报员工情况章节",
+          "frequency": "年度",
+          "entityType": "人才风险指标"
+        }
+      ]
+    }
+  ]
+}

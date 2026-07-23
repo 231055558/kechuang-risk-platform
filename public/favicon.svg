@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="科创企业风险平台">
+  <rect width="64" height="64" rx="18" fill="#f8fafc"/>
+  <path d="M32 9 50 16v13c0 13-7.3 22.8-18 27-10.7-4.2-18-14-18-27V16l18-7Z" fill="#2563eb" opacity=".12"/>
+  <path d="M32 11.8 47.5 18v11.1c0 11-6 19.4-15.5 23.2-9.5-3.8-15.5-12.2-15.5-23.2V18L32 11.8Z" fill="none" stroke="#2563eb" stroke-width="3.2" stroke-linejoin="round"/>
+  <path d="M24 33.5 30 39l11-15" fill="none" stroke="#0f172a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

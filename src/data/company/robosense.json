@@ -1,0 +1,866 @@
+{
+  "id": "robosense",
+  "name": "速腾聚创",
+  "sector": "智能驾驶感知 / 激光雷达",
+  "description": "RoboSense 官网和投资者关系材料显示其从激光雷达供应商扩展为 AI 驱动机器人公司，2026Q1 收入和销量高增长，当前重点是量产质量、客户结构、机器人增量和出海合规。",
+  "headquarters": "深圳",
+  "stage": "智能驾驶与机器人感知量产扩张阶段",
+  "riskIndex": 74,
+  "benchmarkCompanyId": "horizon",
+  "snapshotAt": "2026-07-14",
+  "metrics": {
+    "highRiskEvents": 2,
+    "mediumRiskEvents": 1,
+    "responseRate": 20,
+    "evidenceCoverage": 7,
+    "monitoredSources": 5,
+    "currentHighRiskType": "监管政策"
+  },
+  "dimensions": [
+    {
+      "id": "tech",
+      "label": "技术与算法",
+      "score": 73,
+      "level": "medium-high",
+      "weight": "量产硬件 + 感知算法协同",
+      "summary": "激光雷达产品既要保证硬件可靠性，也要保证感知算法在真实车端环境中持续稳定。",
+      "evidenceIds": [
+        "rs-e1",
+        "rs-e3"
+      ],
+      "indicatorIds": [
+        "ri-016",
+        "ri-017",
+        "ri-018",
+        "ri-019",
+        "ri-020"
+      ]
+    },
+    {
+      "id": "data",
+      "label": "数据合规",
+      "score": 42,
+      "level": "attention",
+      "weight": "数据来自车端与客户联调",
+      "summary": "数据合规不是首要矛盾，但随着更多联调、回灌与出海项目推进，数据治理会逐渐抬升。",
+      "evidenceIds": [
+        "rs-e2",
+        "rs-e4"
+      ],
+      "indicatorIds": [
+        "ri-033",
+        "ri-034",
+        "ri-035",
+        "ri-036",
+        "ri-037"
+      ]
+    },
+    {
+      "id": "ethics",
+      "label": "科技伦理",
+      "score": 68,
+      "level": "medium-high",
+      "weight": "自动驾驶安全争议间接传导",
+      "summary": "感知硬件本身不直接做决策，但一旦感知失效，仍会通过事故责任与公众感知转化为伦理风险。",
+      "evidenceIds": [
+        "rs-e1",
+        "rs-e3"
+      ],
+      "indicatorIds": [
+        "ri-040",
+        "ri-041",
+        "ri-042",
+        "ri-043",
+        "ri-044"
+      ]
+    },
+    {
+      "id": "ip",
+      "label": "知识产权",
+      "score": 64,
+      "level": "medium-high",
+      "weight": "传感器与全栈感知专利活跃",
+      "summary": "激光雷达和感知算法都处在高竞争专利带，产品路线变化会同步带来 IP 暴露。",
+      "evidenceIds": [
+        "rs-e1",
+        "rs-e3"
+      ],
+      "indicatorIds": [
+        "ri-049",
+        "ri-050",
+        "ri-051",
+        "ri-052",
+        "ri-053"
+      ]
+    },
+    {
+      "id": "finance",
+      "label": "经营财务",
+      "score": 74,
+      "level": "medium-high",
+      "weight": "量产 ramp-up 与客户集中并存",
+      "summary": "量产规模扩大有助于摊薄成本，但客户集中、价格竞争和项目兑现节奏仍会影响财务质量。",
+      "evidenceIds": [
+        "rs-e1",
+        "rs-e2"
+      ],
+      "indicatorIds": [
+        "ri-085",
+        "ri-086",
+        "ri-087",
+        "ri-088",
+        "ri-089"
+      ]
+    },
+    {
+      "id": "external",
+      "label": "外部环境/地缘",
+      "score": 71,
+      "level": "medium-high",
+      "weight": "出海与供应链同步受限",
+      "summary": "出海和供应链稳定性都会影响其量产兑现，特别是在多地区 homologation 和客户扩张阶段。",
+      "evidenceIds": [
+        "rs-e2",
+        "rs-e4"
+      ],
+      "indicatorIds": [
+        "ri-075",
+        "ri-076",
+        "ri-077",
+        "ri-078",
+        "ri-079"
+      ]
+    },
+    {
+      "id": "cyber",
+      "label": "网络安全",
+      "score": 66,
+      "level": "medium-high",
+      "weight": "车端软件接口与 OTA 协同",
+      "summary": "产品规模化部署后，软件接口、配置管理和更新流程都需要纳入统一安全治理。",
+      "evidenceIds": [
+        "rs-e2",
+        "rs-e3"
+      ],
+      "indicatorIds": [
+        "ri-029",
+        "ri-030",
+        "ri-031",
+        "ri-032"
+      ]
+    },
+    {
+      "id": "regulatory",
+      "label": "监管政策",
+      "score": 78,
+      "level": "high",
+      "weight": "功能安全和地区准入要求高",
+      "summary": "车载感知硬件深度绑定自动驾驶监管、功能安全和地区准入要求，是当前最值得关注的高位风险。",
+      "evidenceIds": [
+        "rs-e1",
+        "rs-e2",
+        "rs-e4",
+        "rs-e6",
+        "rs-e7"
+      ],
+      "indicatorIds": [
+        "ri-038",
+        "ri-039",
+        "ri-083",
+        "ri-084"
+      ]
+    }
+  ],
+  "lifecycle": [
+    {
+      "id": "rnd",
+      "label": "技术研发阶段",
+      "status": "passed",
+      "riskScore": 66,
+      "summary": "早期主要验证传感器架构、算法性能与成本路径。",
+      "keywords": [
+        "传感器架构",
+        "成本路线",
+        "算法性能"
+      ],
+      "change": "已经越过单点技术验证，风险转向量产兑现。",
+      "evidenceIds": [
+        "rs-e1"
+      ]
+    },
+    {
+      "id": "algo",
+      "label": "算法迭代阶段",
+      "status": "passed",
+      "riskScore": 69,
+      "summary": "感知算法需要持续适配不同车型、域控和场景。",
+      "keywords": [
+        "车型适配",
+        "算法回归",
+        "域控协同"
+      ],
+      "change": "算法问题开始通过量产项目暴露。",
+      "evidenceIds": [
+        "rs-e1",
+        "rs-e3"
+      ]
+    },
+    {
+      "id": "validation",
+      "label": "产品验证阶段",
+      "status": "passed",
+      "riskScore": 71,
+      "summary": "验证重点在于车规可靠性、耐久性和量产一致性。",
+      "keywords": [
+        "车规验证",
+        "可靠性",
+        "一致性"
+      ],
+      "change": "验证成本和质量门槛同步上升。",
+      "evidenceIds": [
+        "rs-e2",
+        "rs-e3"
+      ]
+    },
+    {
+      "id": "deployment",
+      "label": "场景落地阶段",
+      "status": "next",
+      "riskScore": 74,
+      "summary": "在车型导入和客户联调中，产品稳定性与事故责任认知会显著升温。",
+      "keywords": [
+        "车型导入",
+        "联调",
+        "责任边界"
+      ],
+      "change": "风险从产品本身过渡到场景责任。",
+      "evidenceIds": [
+        "rs-e1",
+        "rs-e2"
+      ]
+    },
+    {
+      "id": "expansion",
+      "label": "商业化扩张阶段",
+      "status": "current",
+      "riskScore": 79,
+      "summary": "当前最关键的是 OEM 集中、价格压力、功能安全要求和地区准入能否被同时管理。",
+      "keywords": [
+        "OEM 集中",
+        "价格压力",
+        "功能安全"
+      ],
+      "change": "进入当前高位，是典型的量产扩张风险期。",
+      "evidenceIds": [
+        "rs-e1",
+        "rs-e2",
+        "rs-e4",
+        "rs-e6",
+        "rs-e7"
+      ]
+    },
+    {
+      "id": "overseas",
+      "label": "出海与国际竞争阶段",
+      "status": "next",
+      "riskScore": 76,
+      "summary": "海外准入、车规认证和地区法规差异将显著提高项目管理复杂度。",
+      "keywords": [
+        "海外准入",
+        "认证",
+        "法规差异"
+      ],
+      "change": "出海并非只增加销量，也会显著增加合规成本。",
+      "evidenceIds": [
+        "rs-e2",
+        "rs-e4"
+      ]
+    }
+  ],
+  "trend": [
+    {
+      "month": "2026-01",
+      "riskIndex": 71,
+      "highRiskEvents": 1,
+      "mediumRiskEvents": 1,
+      "newEvents": 1
+    },
+    {
+      "month": "2026-02",
+      "riskIndex": 71,
+      "highRiskEvents": 1,
+      "mediumRiskEvents": 1,
+      "newEvents": 1
+    },
+    {
+      "month": "2026-03",
+      "riskIndex": 72,
+      "highRiskEvents": 1,
+      "mediumRiskEvents": 2,
+      "newEvents": 1
+    },
+    {
+      "month": "2026-04",
+      "riskIndex": 73,
+      "highRiskEvents": 2,
+      "mediumRiskEvents": 1,
+      "newEvents": 1
+    },
+    {
+      "month": "2026-05",
+      "riskIndex": 74,
+      "highRiskEvents": 2,
+      "mediumRiskEvents": 1,
+      "newEvents": 2
+    },
+    {
+      "month": "2026-06",
+      "riskIndex": 74,
+      "highRiskEvents": 2,
+      "mediumRiskEvents": 1,
+      "newEvents": 1
+    }
+  ],
+  "aiCoverage": {
+    "ingestedSourceTypes": [
+      "官网",
+      "投资者关系页",
+      "量产里程碑信息",
+      "出海/认证线索"
+    ],
+    "extractedSignals": [
+      "量产车型规模",
+      "OEM 客户结构",
+      "功能安全关键词",
+      "地区准入信息"
+    ]
+  },
+  "comparisonNote": "与地平线相比，速腾聚创更直接承担感知硬件量产和价格竞争压力；与宇树科技相比，它的场景更标准化，但 OEM 集中和车规监管更强。",
+  "evidence": [
+    {
+      "id": "rs-e1",
+      "type": "官网",
+      "title": "RoboSense 官网",
+      "sourceName": "RoboSense",
+      "sourceUrl": "https://www.robosense.ai/",
+      "publishedAt": "2026-07-02",
+      "capturedAt": "2026-07-02",
+      "summary": "官网介绍其为 AI 驱动的机器人公司，业务覆盖自动驾驶乘用车、商用车、Robotaxi、物流、割草、人形机器人等领域。",
+      "citationText": "AI 驱动的机器人公司；覆盖自动驾驶乘用车、商用车、Robotaxi、物流、割草、人形机器人。",
+      "citationMetric": "业务覆盖",
+      "sourceReliability": "official",
+      "recommendedUse": "支撑商业化落地、产品安全和机器人场景扩张风险。",
+      "indicatorIds": [
+        "ri-065",
+        "ri-068",
+        "ri-043"
+      ],
+      "relatedRiskDimension": [
+        "技术与算法",
+        "经营财务",
+        "科技伦理"
+      ],
+      "relatedStage": [
+        "场景落地阶段"
+      ],
+      "confidence": 0.92
+    },
+    {
+      "id": "rs-e2",
+      "type": "投资者关系",
+      "title": "RoboSense 投资者关系页",
+      "sourceName": "RoboSense IR",
+      "sourceUrl": "https://ir.robosense.ai/",
+      "publishedAt": "2026-07-02",
+      "capturedAt": "2026-07-02",
+      "summary": "投资者关系页提供财务报告、公告和公司治理信息，是跟踪量产、客户和出海风险的重要入口。",
+      "citationText": "投资者关系与公告入口。",
+      "citationMetric": "持续披露入口",
+      "sourceReliability": "official",
+      "recommendedUse": "支撑上市公司治理、财务质量和投后监测。",
+      "indicatorIds": [
+        "ri-085",
+        "ri-087",
+        "ri-038"
+      ],
+      "relatedRiskDimension": [
+        "经营财务",
+        "监管政策"
+      ],
+      "relatedStage": [
+        "商业化扩张阶段"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "id": "rs-e3",
+      "type": "一季报报道",
+      "title": "RoboSense 2026 一季度业绩材料",
+      "sourceName": "港交所披露易",
+      "sourceUrl": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0527/2026052701305_c.pdf",
+      "publishedAt": "2026-05-27",
+      "capturedAt": "2026-07-02",
+      "summary": "2026Q1 业绩报道显示，公司总营收约 4.6 亿元，同比增长约 40%；激光雷达总销量 33.03 万台，同比增长 204.1%；机器人领域激光雷达销量 18.55 万台，同比增长 1458.8%。",
+      "citationText": "2026Q1 总营收约 4.6 亿元；激光雷达销量 33.03 万台；机器人领域销量 18.55 万台。",
+      "citationMetric": "营收与销量增长",
+      "sourceReliability": "filing",
+      "recommendedUse": "支撑商业化、量产交付、客户结构和增长质量判断。",
+      "indicatorIds": [
+        "ri-068",
+        "ri-069",
+        "ri-085"
+      ],
+      "relatedRiskDimension": [
+        "经营财务",
+        "技术与算法"
+      ],
+      "relatedStage": [
+        "商业化扩张阶段"
+      ],
+      "confidence": 0.94
+    },
+    {
+      "id": "rs-e4",
+      "type": "港交所公告",
+      "title": "RoboSense 港交所公告材料",
+      "sourceName": "港交所披露易",
+      "sourceUrl": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0527/2026052701304.pdf",
+      "publishedAt": "2026-05-27",
+      "capturedAt": "2026-07-02",
+      "summary": "港交所公告材料可用于持续跟踪财务、治理、出海与产品策略变化。",
+      "citationText": "港交所持续披露材料。",
+      "citationMetric": "公告材料",
+      "sourceReliability": "filing",
+      "recommendedUse": "支撑监管政策、财务和外部环境风险分析。",
+      "indicatorIds": [
+        "ri-038",
+        "ri-085",
+        "ri-075"
+      ],
+      "relatedRiskDimension": [
+        "监管政策",
+        "经营财务",
+        "外部环境/地缘"
+      ],
+      "relatedStage": [
+        "商业化扩张阶段"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "id": "rs-e5",
+      "type": "年度材料",
+      "title": "RoboSense 2026 年度/业务材料",
+      "sourceName": "港交所披露易",
+      "sourceUrl": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0325/2026032501102.pdf",
+      "publishedAt": "2026-03-25",
+      "capturedAt": "2026-07-02",
+      "summary": "年度材料用于观察客户结构、研发投入、成本变化和战略方向。",
+      "citationText": "年度披露材料。",
+      "citationMetric": "年度披露",
+      "sourceReliability": "filing",
+      "recommendedUse": "支撑投后监测和估值质量判断。",
+      "indicatorIds": [
+        "ri-085",
+        "ri-088",
+        "ri-073"
+      ],
+      "relatedRiskDimension": [
+        "经营财务",
+        "供应链风险"
+      ],
+      "relatedStage": [
+        "商业化扩张阶段"
+      ],
+      "confidence": 0.88
+    },
+    {
+      "id": "rs-e6",
+      "type": "官网质量体系",
+      "title": "RoboSense 车规质量与产品安全体系",
+      "sourceName": "RoboSense",
+      "sourceUrl": "https://www.robosense.ai/",
+      "publishedAt": "2026-07-14",
+      "capturedAt": "2026-07-14",
+      "summary": "官网披露公司维持车规级质量与安全管理体系，并列示 ISO 26262、ISO 21434、IATF 16949 与 ASPICE CL2 等认证。",
+      "citationText": "质量与安全管理体系覆盖 ISO 26262、ISO 21434、IATF 16949 与 ASPICE CL2。",
+      "citationMetric": "车规安全与质量体系",
+      "sourceReliability": "official",
+      "recommendedUse": "用于核验功能安全、网络安全、量产质量与客户准入的基础能力。",
+      "indicatorIds": ["ri-031", "ri-032", "ri-068"],
+      "relatedRiskDimension": ["网络安全", "监管政策", "技术与算法"],
+      "relatedStage": ["产品验证阶段", "商业化扩张阶段"],
+      "confidence": 0.95
+    },
+    {
+      "id": "rs-e7",
+      "type": "官网制造与硬件披露",
+      "title": "RoboSense Mars 智能制造基地与自研芯片体系",
+      "sourceName": "RoboSense",
+      "sourceUrl": "https://www.robosense.ai/",
+      "publishedAt": "2026-07-14",
+      "capturedAt": "2026-07-14",
+      "summary": "官网披露 Mars 智能制造基地覆盖约 48,000 平方米、自动化率约 95%；并描述数字计算、光电、MEMS 与模拟芯片的研发体系。",
+      "citationText": "制造基地约 48,000 平方米、自动化率 95%；覆盖数字计算、光电、MEMS 与模拟芯片研发。",
+      "citationMetric": "制造自动化与自研芯片范围",
+      "sourceReliability": "official",
+      "recommendedUse": "用于评估规模交付、质量一致性、关键元器件与制造链韧性。",
+      "indicatorIds": ["ri-073", "ri-075", "ri-088"],
+      "relatedRiskDimension": ["供应链风险", "经营财务", "外部环境/地缘"],
+      "relatedStage": ["商业化扩张阶段", "出海与国际竞争阶段"],
+      "confidence": 0.94
+    }
+  ],
+  "events": [
+    {
+      "id": "rs-ev1",
+      "companyId": "robosense",
+      "riskType": "经营财务",
+      "severity": "high",
+      "status": "in-progress",
+      "sourceType": "官网 + IR",
+      "stage": "商业化扩张阶段",
+      "description": "量产规模上升有利于摊薄成本，但 OEM 集中和价格竞争会显著影响经营质量和议价空间。",
+      "evidenceIds": [
+        "rs-e1",
+        "rs-e2"
+      ],
+      "aiSummary": "这是典型的硬科技量产扩张风险：增长与利润改善不一定同步发生。",
+      "recommendedAction": "建立 OEM 集中度看板、价格弹性模型和量产 ramp-up 质量指标。",
+      "identifiedAt": "2026-06-14",
+      "indicatorIds": [
+        "ri-085",
+        "ri-088"
+      ],
+      "investmentImpact": "high"
+    },
+    {
+      "id": "rs-ev2",
+      "companyId": "robosense",
+      "riskType": "监管政策",
+      "severity": "high",
+      "status": "pending",
+      "sourceType": "官网 + IR",
+      "stage": "商业化扩张阶段",
+      "description": "感知硬件深度参与自动驾驶系统后，功能安全、责任界定与地区准入要求都将更加严格。",
+      "evidenceIds": [
+        "rs-e1",
+        "rs-e2",
+        "rs-e4"
+      ],
+      "aiSummary": "风险并不来自单次事故，而在于量产后任何安全事件都会被监管和客户放大。",
+      "recommendedAction": "建立车型/地区别的功能安全清单、事件回放和客户通报机制。",
+      "identifiedAt": "2026-05-08",
+      "indicatorIds": [
+        "ri-038",
+        "ri-083"
+      ],
+      "investmentImpact": "high"
+    },
+    {
+      "id": "rs-ev3",
+      "companyId": "robosense",
+      "riskType": "外部环境/地缘",
+      "severity": "medium",
+      "status": "pending",
+      "sourceType": "IR",
+      "stage": "出海与国际竞争阶段",
+      "description": "海外项目增加后，地区准入、认证和物流稳定性会显著提高项目复杂度。",
+      "evidenceIds": [
+        "rs-e2",
+        "rs-e4"
+      ],
+      "aiSummary": "目前是前置风险，但如果海外项目占比提升，将快速抬升至高位。",
+      "recommendedAction": "建立地区 homologation 清单、项目许可时间轴和在地合作伙伴库。",
+      "identifiedAt": "2026-04-17",
+      "indicatorIds": [
+        "ri-075",
+        "ri-078"
+      ],
+      "investmentImpact": "medium"
+    }
+  ],
+  "transmissionGraph": {
+    "keyInsight": "速腾聚创的风险传导具有典型量产硬科技特征：客户集中和功能安全要求先作用于项目节奏，随后传导到经营质量与出海复杂度。",
+    "nodes": [
+      {
+        "id": "rs-t1",
+        "label": "OEM 集中与量产 ramp-up",
+        "layer": "source",
+        "description": "少数大客户的节奏会影响整体经营表现。",
+        "evidenceIds": [
+          "rs-e1",
+          "rs-e2"
+        ]
+      },
+      {
+        "id": "rs-t2",
+        "label": "车规感知可靠性要求",
+        "layer": "source",
+        "description": "功能安全和可靠性门槛在量产后持续提高。",
+        "evidenceIds": [
+          "rs-e1",
+          "rs-e3"
+        ]
+      },
+      {
+        "id": "rs-t3",
+        "label": "海外准入差异",
+        "layer": "source",
+        "description": "地区法规与认证要求会拉高管理复杂度。",
+        "evidenceIds": [
+          "rs-e2",
+          "rs-e4"
+        ]
+      },
+      {
+        "id": "rs-t4",
+        "label": "项目交付波动",
+        "layer": "mediator",
+        "description": "量产节奏和客户结构变化会首先作用于项目执行。",
+        "evidenceIds": [
+          "rs-e1",
+          "rs-e2"
+        ]
+      },
+      {
+        "id": "rs-t5",
+        "label": "安全与责任压力上升",
+        "layer": "mediator",
+        "description": "功能安全要求会在量产阶段不断加码。",
+        "evidenceIds": [
+          "rs-e1",
+          "rs-e3"
+        ]
+      },
+      {
+        "id": "rs-t6",
+        "label": "毛利与现金流波动",
+        "layer": "impact",
+        "description": "交付与价格压力最终会传导到经营质量。",
+        "evidenceIds": [
+          "rs-e1",
+          "rs-e2"
+        ]
+      },
+      {
+        "id": "rs-t7",
+        "label": "海外项目复杂度上升",
+        "layer": "impact",
+        "description": "认证和准入要求会放慢海外扩张节奏。",
+        "evidenceIds": [
+          "rs-e2",
+          "rs-e4"
+        ]
+      },
+      {
+        "id": "rs-t8",
+        "label": "OEM 集中度与价格弹性看板",
+        "layer": "response",
+        "description": "提前量化客户结构带来的经营波动。",
+        "evidenceIds": [
+          "rs-e1",
+          "rs-e2"
+        ]
+      },
+      {
+        "id": "rs-t9",
+        "label": "功能安全回放与地区准入模板",
+        "layer": "response",
+        "description": "用标准化治理降低安全与出海风险。",
+        "evidenceIds": [
+          "rs-e2",
+          "rs-e4"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "rs-t1",
+        "target": "rs-t4",
+        "strength": "strong"
+      },
+      {
+        "source": "rs-t2",
+        "target": "rs-t5",
+        "strength": "strong"
+      },
+      {
+        "source": "rs-t3",
+        "target": "rs-t7",
+        "strength": "strong"
+      },
+      {
+        "source": "rs-t4",
+        "target": "rs-t6",
+        "strength": "strong"
+      },
+      {
+        "source": "rs-t5",
+        "target": "rs-t6",
+        "strength": "medium"
+      },
+      {
+        "source": "rs-t4",
+        "target": "rs-t8",
+        "strength": "medium"
+      },
+      {
+        "source": "rs-t7",
+        "target": "rs-t9",
+        "strength": "strong"
+      }
+    ]
+  },
+  "governance": [
+    {
+      "id": "rs-g1",
+      "riskType": "经营财务",
+      "title": "OEM 集中与价格弹性联动监控",
+      "priority": "P0",
+      "stage": "商业化扩张阶段",
+      "problem": "量产规模上升并不自动改善经营质量。",
+      "action": "同步监控 OEM 集中度、项目毛利、价格下降幅度和量产良率。",
+      "dataSupport": "客户结构、价格台账、良率、回款记录。",
+      "evidenceIds": [
+        "rs-e1",
+        "rs-e2"
+      ]
+    },
+    {
+      "id": "rs-g2",
+      "riskType": "监管政策",
+      "title": "车型/地区功能安全模板",
+      "priority": "P0",
+      "stage": "商业化扩张阶段",
+      "problem": "功能安全和责任界定会随着量产放大。",
+      "action": "围绕车型、地区和客户要求建立功能安全说明、事件回放和审计模板。",
+      "dataSupport": "项目需求、法规清单、事件复盘、客户审核记录。",
+      "evidenceIds": [
+        "rs-e1",
+        "rs-e2",
+        "rs-e4"
+      ]
+    },
+    {
+      "id": "rs-g3",
+      "riskType": "外部环境/地缘",
+      "title": "地区准入与 homologation 时间轴",
+      "priority": "P1",
+      "stage": "出海与国际竞争阶段",
+      "problem": "海外业务会显著增加认证和准入复杂度。",
+      "action": "为重点市场建立 homologation 条线、证照时间轴和在地合作伙伴库。",
+      "dataSupport": "地区法规、项目里程碑、证照清单、合作伙伴资料。",
+      "evidenceIds": [
+        "rs-e2",
+        "rs-e4"
+      ]
+    },
+    {
+      "id": "rs-g4",
+      "riskType": "技术与算法",
+      "title": "量产版本回归与事故回放机制",
+      "priority": "P1",
+      "stage": "场景落地阶段",
+      "problem": "车型差异和 OTA 变化容易引起感知性能回归。",
+      "action": "围绕车型、固件和算法版本建立统一回归集和事故回放链路。",
+      "dataSupport": "版本台账、车端日志、感知回放、客户问题单。",
+      "evidenceIds": [
+        "rs-e1",
+        "rs-e3"
+      ]
+    }
+  ],
+  "disclosureMetrics": [
+    {
+      "label": "2026Q1 营收",
+      "value": "4.6",
+      "unit": "亿元",
+      "period": "业绩材料",
+      "sourceId": "rs-e3",
+      "riskImplication": "收入增长显示量产扩张，但需要验证毛利和现金流。"
+    },
+    {
+      "label": "营收同比",
+      "value": "40",
+      "unit": "%",
+      "period": "业绩材料",
+      "sourceId": "rs-e3",
+      "riskImplication": "增长性较强，需观察是否来自可持续订单。"
+    },
+    {
+      "label": "激光雷达销量",
+      "value": "33.03",
+      "unit": "万台",
+      "period": "业绩材料",
+      "sourceId": "rs-e3",
+      "riskImplication": "销量高增长提高量产质量和售后责任风险。"
+    },
+    {
+      "label": "销量同比",
+      "value": "204.1",
+      "unit": "%",
+      "period": "业绩材料",
+      "sourceId": "rs-e3",
+      "riskImplication": "快速扩张可能带来供应链、质量和客户集中压力。"
+    },
+    {
+      "label": "机器人领域销量",
+      "value": "18.55",
+      "unit": "万台",
+      "period": "业绩材料",
+      "sourceId": "rs-e3",
+      "riskImplication": "机器人增量很强，但新场景稳定性和价格竞争需验证。"
+    },
+    {
+      "label": "安全体系",
+      "value": "ISO 26262 / 21434",
+      "unit": "",
+      "period": "官网披露",
+      "sourceId": "rs-e6",
+      "riskImplication": "功能安全与网络安全体系降低量产风险，但仍需结合具体车型的验证、更新和事故处理能力。"
+    },
+    {
+      "label": "制造自动化",
+      "value": "95",
+      "unit": "%",
+      "period": "官网披露",
+      "sourceId": "rs-e7",
+      "riskImplication": "制造自动化有利于规模交付与一致性，仍需监测良率、供应链和质量追溯闭环。"
+    }
+  ],
+  "investmentView": {
+    "stance": "进入下一轮研究前需验证增长质量",
+    "riskAppetite": "适用于智能驾驶与机器人硬件项目尽调，需重点核验量产质量、客户集中和价格变化。",
+    "summary": "公开数据反映销量和机器人领域增长，后续需核验硬件量产质量、客户集中、价格竞争、出海合规和新场景可靠性。",
+    "preInvestmentChecks": [
+      "核查销量增长对应的客户结构、单价和毛利变化。",
+      "确认机器人领域销量是否具备持续订单支撑。",
+      "评估车规安全、质量体系和售后责任。"
+    ],
+    "dueDiligenceFocus": [
+      "销量增长是否稀释毛利。",
+      "客户集中和主机厂议价是否压缩利润。",
+      "机器人新场景是否带来可靠性和责任问题。"
+    ],
+    "valuationConstraints": [
+      "将收入、毛利、现金流和客户多元化设为阶段评审的共同门槛。",
+      "销量高增速不单独作为质量证据，需同步核验均价、售后和现金回收。"
+    ],
+    "postInvestmentMonitoring": [
+      "季度跟踪销量、均价、毛利、客户结构和质量事件。",
+      "监控港交所公告和海外监管变化。"
+    ],
+    "stopLossTriggers": [
+      "大规模质量问题或核心客户项目暂停。",
+      "销量增长但毛利和现金流持续恶化。"
+    ],
+    "evidenceIds": [
+      "rs-e1",
+      "rs-e2",
+      "rs-e3",
+      "rs-e6",
+      "rs-e7"
+    ]
+  }
+}
