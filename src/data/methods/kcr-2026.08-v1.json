@@ -1,0 +1,267 @@
+{
+  "schemaVersion": "1.0.0",
+  "methodVersion": "KCR-2026.08-v1",
+  "status": "frozen-for-mvp",
+  "frozenAt": "2026-08-14",
+  "sourceBasis": "团队 2026-08-13 完整版指标体系",
+  "scoreDirection": "higher-means-higher-risk",
+  "scoreRange": {
+    "min": 0,
+    "max": 100
+  },
+  "counts": {
+    "dimensions": 5,
+    "weightedIndicators": 18,
+    "narrativeIndicators": 4,
+    "totalIndicators": 22,
+    "totalWeight": 100
+  },
+  "rules": {
+    "missingObservation": "missing-is-not-zero-and-is-excluded-from-scoring",
+    "coverage": "observed-weight-divided-by-total-weight",
+    "confidence": "reported-separately-from-score-and-coverage",
+    "redFlag": "reported-separately-and-never-averaged-away",
+    "narrative": "validation-only-and-never-affects-score",
+    "scenario": "objective-baseline-is-immutable-and-results-are-side-by-side",
+    "evidence": "every-scored-observation-requires-traceable-evidence"
+  },
+  "requiredOutputs": [
+    "baselineScore",
+    "riskLevel",
+    "dimensionScores",
+    "evidenceCoverage",
+    "confidence",
+    "redFlags",
+    "evidenceTrace",
+    "missingData",
+    "methodVersion",
+    "snapshotAt",
+    "disclaimer"
+  ],
+  "referenceAcceptance": {
+    "companyId": "cambricon",
+    "assessmentAt": "2026-08-13",
+    "dataCutoff": "2026-06-30",
+    "baselineScore": 35.6,
+    "riskLevel": "medium",
+    "evidenceCoverage": 0.95,
+    "confidence": 0.8875,
+    "dimensionScores": {
+      "technology": 20.8,
+      "compliance": 46.5,
+      "finance": 28.5,
+      "external": 63.75,
+      "personnel-governance": 17.666666666666668
+    }
+  },
+  "dimensions": [
+    {
+      "id": "technology",
+      "label": "技术风险",
+      "weight": 25,
+      "indicatorIds": ["T01", "T02", "T03", "T04", "T05"]
+    },
+    {
+      "id": "compliance",
+      "label": "合规风险",
+      "weight": 20,
+      "indicatorIds": ["C01", "C02", "C03"]
+    },
+    {
+      "id": "finance",
+      "label": "财务与融资风险",
+      "weight": 20,
+      "indicatorIds": ["F01", "F02", "F03", "F04"]
+    },
+    {
+      "id": "external",
+      "label": "外部环境风险",
+      "weight": 20,
+      "indicatorIds": ["E01", "E02", "E03"]
+    },
+    {
+      "id": "personnel-governance",
+      "label": "人员与治理风险",
+      "weight": 15,
+      "indicatorIds": ["P01", "P02", "P03"]
+    }
+  ],
+  "indicators": [
+    {
+      "id": "T01",
+      "kind": "weighted",
+      "dimensionId": "technology",
+      "label": "专利与知识产权质量代理",
+      "weight": 4,
+      "affectsScore": true
+    },
+    {
+      "id": "T02",
+      "kind": "weighted",
+      "dimensionId": "technology",
+      "label": "核心技术人员/研发人员占比",
+      "weight": 5,
+      "affectsScore": true
+    },
+    {
+      "id": "T03",
+      "kind": "weighted",
+      "dimensionId": "technology",
+      "label": "研发投入强度与趋势",
+      "weight": 6,
+      "affectsScore": true
+    },
+    {
+      "id": "T04",
+      "kind": "weighted",
+      "dimensionId": "technology",
+      "label": "研发/募投里程碑兑现度",
+      "weight": 5,
+      "affectsScore": true
+    },
+    {
+      "id": "T05",
+      "kind": "weighted",
+      "dimensionId": "technology",
+      "label": "重大技术与知识产权事件",
+      "weight": 5,
+      "affectsScore": true
+    },
+    {
+      "id": "C01",
+      "kind": "weighted",
+      "dimensionId": "compliance",
+      "label": "监管处罚强度",
+      "weight": 5,
+      "affectsScore": true
+    },
+    {
+      "id": "C02",
+      "kind": "weighted",
+      "dimensionId": "compliance",
+      "label": "交易所问询与披露风险",
+      "weight": 4,
+      "affectsScore": true
+    },
+    {
+      "id": "C03",
+      "kind": "weighted",
+      "dimensionId": "compliance",
+      "label": "诉讼与知识产权纠纷",
+      "weight": 11,
+      "affectsScore": true
+    },
+    {
+      "id": "F01",
+      "kind": "weighted",
+      "dimensionId": "finance",
+      "label": "营业收入增长与波动",
+      "weight": 6,
+      "affectsScore": true
+    },
+    {
+      "id": "F02",
+      "kind": "weighted",
+      "dimensionId": "finance",
+      "label": "无形资产与研发资本化减值",
+      "weight": 4,
+      "affectsScore": true
+    },
+    {
+      "id": "F03",
+      "kind": "weighted",
+      "dimensionId": "finance",
+      "label": "融资成本与期限错配",
+      "weight": 4,
+      "affectsScore": true
+    },
+    {
+      "id": "F04",
+      "kind": "weighted",
+      "dimensionId": "finance",
+      "label": "存货与预付款占用（模型补充项）",
+      "weight": 6,
+      "affectsScore": true
+    },
+    {
+      "id": "E01",
+      "kind": "weighted",
+      "dimensionId": "external",
+      "label": "关键供应链进口/集中依赖",
+      "weight": 7,
+      "affectsScore": true
+    },
+    {
+      "id": "E02",
+      "kind": "weighted",
+      "dimensionId": "external",
+      "label": "海外业务暴露",
+      "weight": 4,
+      "affectsScore": true
+    },
+    {
+      "id": "E03",
+      "kind": "weighted",
+      "dimensionId": "external",
+      "label": "出口管制与制裁暴露",
+      "weight": 9,
+      "affectsScore": true
+    },
+    {
+      "id": "P01",
+      "kind": "weighted",
+      "dimensionId": "personnel-governance",
+      "label": "控制权稀释与稳定性",
+      "weight": 5,
+      "affectsScore": true
+    },
+    {
+      "id": "P02",
+      "kind": "weighted",
+      "dimensionId": "personnel-governance",
+      "label": "高管关联风险暴露",
+      "weight": 4,
+      "affectsScore": true
+    },
+    {
+      "id": "P03",
+      "kind": "weighted",
+      "dimensionId": "personnel-governance",
+      "label": "关键管理与技术人员稳定性",
+      "weight": 6,
+      "affectsScore": true
+    },
+    {
+      "id": "N01",
+      "kind": "narrative-validation",
+      "dimensionId": null,
+      "label": "叙事热度基本面背离度",
+      "weight": null,
+      "affectsScore": false
+    },
+    {
+      "id": "N02",
+      "kind": "narrative-validation",
+      "dimensionId": null,
+      "label": "第三方与自身表述偏差",
+      "weight": null,
+      "affectsScore": false
+    },
+    {
+      "id": "N03",
+      "kind": "narrative-validation",
+      "dimensionId": null,
+      "label": "自身评价一致性/稳定性",
+      "weight": null,
+      "affectsScore": false
+    },
+    {
+      "id": "N04",
+      "kind": "narrative-validation",
+      "dimensionId": null,
+      "label": "概念股标签关联度",
+      "weight": null,
+      "affectsScore": false
+    }
+  ]
+}
