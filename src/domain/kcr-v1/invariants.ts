@@ -1,6 +1,7 @@
 import {
   KCR_DATA_SCHEMA_VERSION,
   KCR_DIMENSION_WEIGHTS,
+  KCR_INDICATOR_WEIGHTS,
   KCR_METHOD_VERSION,
   KCR_NARRATIVE_INDICATOR_IDS,
   KCR_RISK_DIMENSION_IDS,
@@ -116,6 +117,13 @@ function validateIndicatorContract(
           code: "INVALID_WEIGHT",
           path: `indicators[${index}].weight`,
           message: "加权指标权重必须大于 0。",
+        })
+      }
+      if (indicator.weight !== KCR_INDICATOR_WEIGHTS[indicator.id]) {
+        issues.push({
+          code: "INDICATOR_WEIGHT_MISMATCH",
+          path: `indicators[${index}].weight`,
+          message: `${indicator.id} 权重应为 ${KCR_INDICATOR_WEIGHTS[indicator.id]}，当前为 ${indicator.weight}。`,
         })
       }
     } else {

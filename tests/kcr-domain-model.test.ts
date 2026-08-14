@@ -241,6 +241,22 @@ test("domain constants cannot drift from the frozen method contract", () => {
   )
 })
 
+test("individual frozen indicator weights cannot trade places", () => {
+  const dataset = makeDataset()
+  const t01 = dataset.indicators.find((indicator) => indicator.id === "T01")
+  const t02 = dataset.indicators.find((indicator) => indicator.id === "T02")
+  assert.ok(t01?.kind === "weighted")
+  assert.ok(t02?.kind === "weighted")
+  t01.weight = 5
+  t02.weight = 4
+
+  assert.ok(
+    collectKcrDatasetIssues(dataset).some(
+      (issue) => issue.code === "INDICATOR_WEIGHT_MISMATCH"
+    )
+  )
+})
+
 test("a minimal evidence-backed KCR dataset satisfies every invariant", () => {
   const dataset = makeDataset()
   assert.deepEqual(collectKcrDatasetIssues(dataset), [])
