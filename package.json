@@ -16,6 +16,7 @@
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "import:kcr-workbook": "node --experimental-strip-types scripts/import-kcr-workbook.ts",
+    "score:kcr": "node --experimental-strip-types scripts/score-kcr-assessment.ts",
     "test": "node --experimental-strip-types --test tests/*.test.ts server/*.test.ts",
     "typecheck": "tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.node.json --noEmit && tsc -p tsconfig.server.json --noEmit && tsc -p tsconfig.test.json --noEmit",
     "preview": "vite preview",
