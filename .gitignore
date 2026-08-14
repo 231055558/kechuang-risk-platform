@@ -17,6 +17,17 @@ dist.bak
 output
 *.local
 
+# Local credentials
+.env
+.env.*
+!.env.example
+.secrets/
+
+# Private/raw project inputs. Commit only sanitized derived fixtures.
+private/
+data/raw/
+downloads/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
