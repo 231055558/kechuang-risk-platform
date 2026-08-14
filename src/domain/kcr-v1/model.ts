@@ -24,6 +24,27 @@ export const KCR_WEIGHTED_INDICATOR_IDS = [
 
 export const KCR_NARRATIVE_INDICATOR_IDS = ["N01", "N02", "N03", "N04"] as const
 
+export const KCR_INDICATOR_WEIGHTS = {
+  T01: 4,
+  T02: 5,
+  T03: 6,
+  T04: 5,
+  T05: 5,
+  C01: 5,
+  C02: 4,
+  C03: 11,
+  F01: 6,
+  F02: 4,
+  F03: 4,
+  F04: 6,
+  E01: 7,
+  E02: 4,
+  E03: 9,
+  P01: 5,
+  P02: 4,
+  P03: 6,
+} as const
+
 export const KCR_RISK_DIMENSION_IDS = [
   "technology",
   "compliance",

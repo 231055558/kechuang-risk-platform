@@ -5,5 +5,9 @@
     "strict": true,
     "resolveJsonModule": true
   },
-  "include": ["server/http-server.ts", "server/production-server.ts"]
+  "include": [
+    "server/http-server.ts",
+    "server/production-server.ts",
+    "scripts/import-kcr-workbook.ts"
+  ]
 }
