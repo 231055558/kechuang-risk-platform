@@ -8,6 +8,7 @@
   "include": [
     "server/http-server.ts",
     "server/production-server.ts",
-    "scripts/import-kcr-workbook.ts"
+    "scripts/import-kcr-workbook.ts",
+    "scripts/score-kcr-assessment.ts"
   ]
 }

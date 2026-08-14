@@ -1,0 +1,534 @@
+{
+  "methodVersion": "KCR-2026.08-v1",
+  "companyId": "cambricon",
+  "assessmentAt": "2026-08-13",
+  "dataCutoff": "2026-06-30",
+  "evidenceCatalog": [
+    {
+      "id": "S01",
+      "title": "中科寒武纪科技股份有限公司2026年半年度报告",
+      "sourceTier": "company-filing",
+      "sourceName": "中科寒武纪/上交所",
+      "sourceUrl": "https://static.cninfo.com.cn/finalpage/2026-08-08/1225464969.PDF",
+      "publishedAt": "2026-08-08",
+      "locator": "第7、17-22、52-58、109、146-159页"
+    },
+    {
+      "id": "S02",
+      "title": "中科寒武纪科技股份有限公司2025年年度报告",
+      "sourceTier": "company-filing",
+      "sourceName": "中科寒武纪/上交所",
+      "sourceUrl": "https://static.cninfo.com.cn/finalpage/2026-03-13/1225007336.PDF",
+      "publishedAt": "2026-03-13",
+      "locator": "第9、17-30页及财务附注"
+    },
+    {
+      "id": "S03",
+      "title": "寒武纪投资者关系/定期报告入口",
+      "sourceTier": "official-company",
+      "sourceName": "寒武纪官网",
+      "sourceUrl": "https://www.cambricon.com/index.php?m=content&c=index&a=lists&catid=326",
+      "publishedAt": "2026-08-08",
+      "locator": "公告列表"
+    },
+    {
+      "id": "S04",
+      "title": "Additions and Revisions to the Entity List",
+      "sourceTier": "regulator",
+      "sourceName": "U.S. Federal Register",
+      "sourceUrl": "https://www.federalregister.gov/documents/2022/12/19/2022-27151/additions-and-revisions-to-the-entity-list-and-conforming-removal-from-the-unverified-list",
+      "publishedAt": "2022-12-19",
+      "locator": "Cambricon 条目"
+    },
+    {
+      "id": "S05",
+      "title": "EAR §744.16 Entity List",
+      "sourceTier": "regulator",
+      "sourceName": "U.S. BIS",
+      "sourceUrl": "https://media.bis.gov/regulations/ear/part-744/section-744.16/entity-list",
+      "publishedAt": "2026-08-13",
+      "locator": "当前实体清单入口"
+    },
+    {
+      "id": "S06",
+      "title": "2025年度向特定对象发行股票审核问询函回复",
+      "sourceTier": "exchange",
+      "sourceName": "上交所/寒武纪",
+      "sourceUrl": "https://static.sse.com.cn/stock/disclosure/announcement/c/202507/688256_20250725_67OP.pdf",
+      "publishedAt": "2025-07-25",
+      "locator": "问询回复全文"
+    },
+    {
+      "id": "S07",
+      "title": "最近五年未被证券监管部门和交易所处罚或采取监管措施的公告",
+      "sourceTier": "company-filing",
+      "sourceName": "寒武纪",
+      "sourceUrl": "https://static.cninfo.com.cn/finalpage/2025-05-01/1223451010.PDF",
+      "publishedAt": "2025-05-01",
+      "locator": "全文"
+    },
+    {
+      "id": "S08",
+      "title": "企业天眼风险 API 聚合线索",
+      "sourceTier": "commercial-api",
+      "sourceName": "天眼查",
+      "sourceUrl": "https://www.tianyancha.com/data/open/1058",
+      "publishedAt": "2026-08-13",
+      "locator": "接口聚合结果；未保存原始响应"
+    }
+  ],
+  "indicators": [
+    {
+      "id": "T01",
+      "dimensionId": "technology",
+      "label": "专利与知识产权质量代理",
+      "weight": 4,
+      "riskScore": 25,
+      "dataStatus": "partial",
+      "coverageFactor": 0.75,
+      "evidenceConfidence": 0.75,
+      "rationale": "累计授权专利1,834项、发明授权1,762项；专利被引与高价值专利族占比缺失，因此仅作代理评分。",
+      "evidence": [
+        {
+          "evidenceId": "S01",
+          "locator": "第17页",
+          "supportStrength": "inferred",
+          "inferenceBasis": "以授权数量和发明授权占比作为专利质量代理，缺失被引与专利族数据。"
+        }
+      ]
+    },
+    {
+      "id": "T02",
+      "dimensionId": "technology",
+      "label": "核心技术人员/研发人员占比",
+      "weight": 5,
+      "riskScore": 10,
+      "dataStatus": "complete",
+      "coverageFactor": 1,
+      "evidenceConfidence": 0.95,
+      "rationale": "研发人员1,007人，占总人数80.62%，同比提升2.67个百分点。",
+      "evidence": [
+        {
+          "evidenceId": "S01",
+          "locator": "第19页",
+          "supportStrength": "direct",
+          "inferenceBasis": null
+        }
+      ]
+    },
+    {
+      "id": "T03",
+      "dimensionId": "technology",
+      "label": "研发投入强度与趋势",
+      "weight": 6,
+      "riskScore": 20,
+      "dataStatus": "complete",
+      "coverageFactor": 1,
+      "evidenceConfidence": 0.95,
+      "rationale": "2026H1研发投入7.02亿元，同比+29.63%；研发强度11.72%，因收入快速增长同比下降7.09个百分点。",
+      "evidence": [
+        {
+          "evidenceId": "S01",
+          "locator": "第18页",
+          "supportStrength": "direct",
+          "inferenceBasis": null
+        }
+      ]
+    },
+    {
+      "id": "T04",
+      "dimensionId": "technology",
+      "label": "研发/募投里程碑兑现度",
+      "weight": 5,
+      "riskScore": 30,
+      "dataStatus": "partial",
+      "coverageFactor": 0.75,
+      "evidenceConfidence": 0.75,
+      "rationale": "云端芯片、基础软件、硬件平台均披露为迭代研发中，但未给出预计总投资或外部验收时点。",
+      "evidence": [
+        {
+          "evidenceId": "S01",
+          "locator": "第17-22页",
+          "supportStrength": "inferred",
+          "inferenceBasis": "依据公开研发进展判断里程碑状态，但缺少外部验收和明确时点。"
+        }
+      ]
+    },
+    {
+      "id": "T05",
+      "dimensionId": "technology",
+      "label": "重大技术与知识产权事件",
+      "weight": 5,
+      "riskScore": 20,
+      "dataStatus": "complete",
+      "coverageFactor": 1,
+      "evidenceConfidence": 0.8,
+      "rationale": "未发现重大产品召回、核心专利无效或数据安全处罚；商业聚合线索未证实核心知识产权受损。",
+      "evidence": [
+        {
+          "evidenceId": "S01",
+          "locator": "第146-159页",
+          "supportStrength": "direct",
+          "inferenceBasis": null
+        },
+        {
+          "evidenceId": "S08",
+          "locator": "接口聚合结果",
+          "supportStrength": "background",
+          "inferenceBasis": null
+        }
+      ]
+    },
+    {
+      "id": "C01",
+      "dimensionId": "compliance",
+      "label": "监管处罚强度",
+      "weight": 5,
+      "riskScore": 5,
+      "dataStatus": "complete",
+      "coverageFactor": 1,
+      "evidenceConfidence": 0.95,
+      "rationale": "公司公告最近五年未被证券监管部门和交易所处罚或采取监管措施。",
+      "evidence": [
+        {
+          "evidenceId": "S07",
+          "locator": "全文",
+          "supportStrength": "direct",
+          "inferenceBasis": null
+        }
+      ]
+    },
+    {
+      "id": "C02",
+      "dimensionId": "compliance",
+      "label": "交易所问询与披露风险",
+      "weight": 4,
+      "riskScore": 20,
+      "dataStatus": "complete",
+      "coverageFactor": 1,
+      "evidenceConfidence": 0.9,
+      "rationale": "2025年存在向特定对象发行审核问询，属于再融资审核流程，未发现纪律处分或延期回复证据。",
+      "evidence": [
+        {
+          "evidenceId": "S06",
+          "locator": "问询回复全文",
+          "supportStrength": "direct",
+          "inferenceBasis": null
+        }
+      ]
+    },
+    {
+      "id": "C03",
+      "dimensionId": "compliance",
+      "label": "诉讼与知识产权纠纷",
+      "weight": 11,
+      "riskScore": 75,
+      "dataStatus": "complete",
+      "coverageFactor": 1,
+      "evidenceConfidence": 0.95,
+      "rationale": "原副总经理诉请股权激励损失42.866亿元，已立案未开庭；最终责任和金额高度不确定。",
+      "evidence": [
+        {
+          "evidenceId": "S01",
+          "locator": "第159页",
+          "supportStrength": "direct",
+          "inferenceBasis": null
+        }
+      ]
+    },
+    {
+      "id": "F01",
+      "dimensionId": "finance",
+      "label": "营业收入增长与波动",
+      "weight": 6,
+      "riskScore": 5,
+      "dataStatus": "complete",
+      "coverageFactor": 1,
+      "evidenceConfidence": 0.95,
+      "rationale": "2025年收入同比+453.21%，2026H1同比+108.13%；盈利连续改善。",
+      "evidence": [
+        {
+          "evidenceId": "S01",
+          "locator": "第7页",
+          "supportStrength": "direct",
+          "inferenceBasis": null
+        },
+        {
+          "evidenceId": "S02",
+          "locator": "第9页",
+          "supportStrength": "direct",
+          "inferenceBasis": null
+        }
+      ]
+    },
+    {
+      "id": "F02",
+      "dimensionId": "finance",
+      "label": "无形资产与研发资本化减值",
+      "weight": 4,
+      "riskScore": 5,
+      "dataStatus": "complete",
+      "coverageFactor": 1,
+      "evidenceConfidence": 0.95,
+      "rationale": "无形资产占总资产由1.41%降至1.06%，研发投入无资本化，未见显著减值压力。",
+      "evidence": [
+        {
+          "evidenceId": "S01",
+          "locator": "第57页",
+          "supportStrength": "direct",
+          "inferenceBasis": null
+        }
+      ]
+    },
+    {
+      "id": "F03",
+      "dimensionId": "finance",
+      "label": "融资成本与期限错配",
+      "weight": 4,
+      "riskScore": 10,
+      "dataStatus": "complete",
+      "coverageFactor": 1,
+      "evidenceConfidence": 0.95,
+      "rationale": "短期与长期借款均为0，资产负债率约25.48%，债务负担低。",
+      "evidence": [
+        {
+          "evidenceId": "S01",
+          "locator": "第58页",
+          "supportStrength": "direct",
+          "inferenceBasis": null
+        }
+      ]
+    },
+    {
+      "id": "F04",
+      "dimensionId": "finance",
+      "label": "存货与预付款占用（模型补充项）",
+      "weight": 6,
+      "riskScore": 80,
+      "dataStatus": "complete",
+      "coverageFactor": 1,
+      "evidenceConfidence": 0.95,
+      "rationale": "存货82.48亿元、占总资产45.32%、较年末+66.83%；预付款29.14亿元、+291.37%。",
+      "evidence": [
+        {
+          "evidenceId": "S01",
+          "locator": "第22、109页",
+          "supportStrength": "direct",
+          "inferenceBasis": null
+        }
+      ]
+    },
+    {
+      "id": "E01",
+      "dimensionId": "external",
+      "label": "关键供应链进口/集中依赖",
+      "weight": 7,
+      "riskScore": 70,
+      "dataStatus": "partial",
+      "coverageFactor": 0.75,
+      "evidenceConfidence": 0.65,
+      "rationale": "第一供应商占年度采购55.34%，公司为Fabless模式且承认实体清单影响供应链；供应商身份和境外采购额未披露。",
+      "evidence": [
+        {
+          "evidenceId": "S02",
+          "locator": "第30页",
+          "supportStrength": "inferred",
+          "inferenceBasis": "以供应商集中度、Fabless模式和实体清单暴露代理关键供应链依赖。"
+        },
+        {
+          "evidenceId": "S04",
+          "locator": "Cambricon 条目",
+          "supportStrength": "direct",
+          "inferenceBasis": null
+        }
+      ]
+    },
+    {
+      "id": "E02",
+      "dimensionId": "external",
+      "label": "海外业务暴露",
+      "weight": 4,
+      "riskScore": 5,
+      "dataStatus": "complete",
+      "coverageFactor": 1,
+      "evidenceConfidence": 0.95,
+      "rationale": "2025年境外收入仅6.71万元，占总收入约0.001%，销售端海外暴露很低。",
+      "evidence": [
+        {
+          "evidenceId": "S02",
+          "locator": "第27页",
+          "supportStrength": "direct",
+          "inferenceBasis": null
+        }
+      ]
+    },
+    {
+      "id": "E03",
+      "dimensionId": "external",
+      "label": "出口管制与制裁暴露",
+      "weight": 9,
+      "riskScore": 85,
+      "dataStatus": "complete",
+      "coverageFactor": 1,
+      "evidenceConfidence": 0.95,
+      "rationale": "公司及多家寒武纪实体列入BIS实体清单，许可审查政策为推定拒绝。",
+      "evidence": [
+        {
+          "evidenceId": "S04",
+          "locator": "Cambricon 条目",
+          "supportStrength": "direct",
+          "inferenceBasis": null
+        },
+        {
+          "evidenceId": "S05",
+          "locator": "当前实体清单入口",
+          "supportStrength": "direct",
+          "inferenceBasis": null
+        }
+      ]
+    },
+    {
+      "id": "P01",
+      "dimensionId": "personnel-governance",
+      "label": "控制权稀释与稳定性",
+      "weight": 5,
+      "riskScore": 25,
+      "dataStatus": "complete",
+      "coverageFactor": 1,
+      "evidenceConfidence": 0.95,
+      "rationale": "陈天石直接持股28.35%，加其控制的艾溪合伙7.27%，可识别控制比例下限35.62%，控制权稳定。",
+      "evidence": [
+        {
+          "evidenceId": "S01",
+          "locator": "第52-53页",
+          "supportStrength": "direct",
+          "inferenceBasis": null
+        }
+      ]
+    },
+    {
+      "id": "P02",
+      "dimensionId": "personnel-governance",
+      "label": "高管关联风险暴露",
+      "weight": 4,
+      "riskScore": 20,
+      "dataStatus": "partial",
+      "coverageFactor": 0.75,
+      "evidenceConfidence": 0.6,
+      "rationale": "公开披露未见董事高管处罚或诚信异常；商业聚合周边风险主要来自外部股东，不能直接穿透为公司高管风险。",
+      "evidence": [
+        {
+          "evidenceId": "S08",
+          "locator": "接口聚合结果",
+          "supportStrength": "inferred",
+          "inferenceBasis": "商业聚合结果仅作为关系线索，按关系有效性和强度衰减，不直接认定为高管事实。"
+        }
+      ]
+    },
+    {
+      "id": "P03",
+      "dimensionId": "personnel-governance",
+      "label": "关键管理与技术人员稳定性",
+      "weight": 6,
+      "riskScore": 10,
+      "dataStatus": "complete",
+      "coverageFactor": 1,
+      "evidenceConfidence": 0.95,
+      "rationale": "2026H1董事、高管和核心技术人员无变动；研发人员同比由792增至1,007。",
+      "evidence": [
+        {
+          "evidenceId": "S01",
+          "locator": "第19页及人员变动披露",
+          "supportStrength": "direct",
+          "inferenceBasis": null
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "id": "EV001",
+      "title": "BIS实体清单命中",
+      "summary": "公司及多家子公司被列入美国BIS实体清单，许可审查政策为推定拒绝。",
+      "severity": "high",
+      "redFlag": true,
+      "occurredAt": "2022-12-19",
+      "sourceIndicatorIds": ["E03"],
+      "evidenceIds": ["S04", "S05"]
+    },
+    {
+      "id": "EV002",
+      "title": "重大劳动争议诉讼待审",
+      "summary": "原副总经理诉请股权激励损失42.866亿元，案件已立案但尚未开庭，最终责任和金额不确定。",
+      "severity": "high",
+      "redFlag": true,
+      "occurredAt": "2025-01-01",
+      "sourceIndicatorIds": ["C03"],
+      "evidenceIds": ["S01"]
+    },
+    {
+      "id": "EV003",
+      "title": "存货与预付款快速占用",
+      "summary": "存货和预付款快速增长，存货跌价准备余额7.68亿元。",
+      "severity": "medium",
+      "redFlag": false,
+      "occurredAt": "2026-06-30",
+      "sourceIndicatorIds": ["F04"],
+      "evidenceIds": ["S01"]
+    },
+    {
+      "id": "EV007",
+      "title": "外部股东周边风险聚合",
+      "summary": "商业数据库周边风险主要来自外部股东或被投企业，需按关系有效性衰减。",
+      "severity": "watch",
+      "redFlag": false,
+      "occurredAt": "2026-08-13",
+      "sourceIndicatorIds": ["P02"],
+      "evidenceIds": ["S08"]
+    }
+  ],
+  "propagationPaths": [
+    {
+      "id": "PATH-BIS-DIRECT",
+      "label": "实体清单直接暴露路径",
+      "eventId": "EV001",
+      "eventRiskScore": 85,
+      "edges": [
+        {
+          "relationId": "R011",
+          "strength": 1,
+          "timeDecay": 1,
+          "businessRelevance": 1
+        }
+      ]
+    },
+    {
+      "id": "PATH-LAWSUIT-DIRECT",
+      "label": "重大诉讼直接路径",
+      "eventId": "EV002",
+      "eventRiskScore": 75,
+      "edges": [
+        {
+          "relationId": "R013",
+          "strength": 1,
+          "timeDecay": 1,
+          "businessRelevance": 1
+        }
+      ]
+    },
+    {
+      "id": "PATH-SHAREHOLDER-NOISE",
+      "label": "外部股东周边风险候选路径",
+      "eventId": "EV007",
+      "eventRiskScore": 50,
+      "edges": [
+        {
+          "relationId": "R014",
+          "strength": 0.1,
+          "timeDecay": 0.7,
+          "businessRelevance": 0.5
+        }
+      ]
+    }
+  ]
+}
