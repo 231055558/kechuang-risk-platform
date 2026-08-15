@@ -45,7 +45,7 @@ function score(request: KcrAssessmentRequest = cloneGolden()) {
   return calculateKcrAssessment(request, { now: fixedClock })
 }
 
-test("V3 reproduces the frozen Cambricon golden acceptance result", () => {
+test("V3 reproduces the Cambricon workbook acceptance result", () => {
   const result = score()
 
   assert.equal(result.modelVersion, "KCR-SCORE-2026.08-v3")

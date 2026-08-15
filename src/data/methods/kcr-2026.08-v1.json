@@ -1,9 +1,9 @@
 {
   "schemaVersion": "1.0.0",
   "methodVersion": "KCR-2026.08-v1",
-  "status": "frozen-for-mvp",
-  "frozenAt": "2026-08-14",
-  "sourceBasis": "团队 2026-08-13 完整版指标体系",
+  "status": "candidate-for-team-review",
+  "candidateRecordedAt": "2026-08-14",
+  "sourceBasis": "团队 2026-08-13 寒武纪工作簿；工程默认规则待团队确认",
   "scoreDirection": "higher-means-higher-risk",
   "scoreRange": {
     "min": 0,

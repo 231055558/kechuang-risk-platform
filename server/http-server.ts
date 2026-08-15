@@ -8,9 +8,16 @@ import {
 } from "node:http"
 import { extname, resolve, sep } from "node:path"
 
+import {
+  KCR_ASSESSMENT_SCORE_API_PATH,
+  KCR_COMPANY_ASSESSMENT_API_PREFIX,
+} from "../src/domain/kcr-v1/assessment-api.ts"
+
 const TECHNOLOGY_SCORE_PATH = "/api/v1/technology-risk/score"
 const TECHNOLOGY_BASELINE_QUANTIFY_PATH =
   "/api/v1/technology-risk/baseline-quantify"
+const KCR_ASSESSMENT_SCORE_PATH = `/${KCR_ASSESSMENT_SCORE_API_PATH}`
+const KCR_COMPANY_ASSESSMENT_PATH_PREFIX = `/${KCR_COMPANY_ASSESSMENT_API_PREFIX}/`
 const DEFAULT_MAX_BODY_BYTES = 1024 * 1024
 
 const contentTypes: Record<string, string> = {
@@ -34,11 +41,17 @@ export type TechnologyRiskCalculator = (
   request: unknown
 ) => unknown | Promise<unknown>
 export type TechnologyBaselineCalculator = TechnologyRiskCalculator
+export type KcrAssessmentCalculator = TechnologyRiskCalculator
+export type KcrAssessmentReader = (
+  companyId: string
+) => unknown | Promise<unknown>
 
 export interface ProductionServerOptions {
   staticRoot: string
   calculateTechnologyRisk: TechnologyRiskCalculator
   calculateTechnologyBaseline?: TechnologyBaselineCalculator
+  calculateKcrAssessment?: KcrAssessmentCalculator
+  getKcrAssessment?: KcrAssessmentReader
   basePath?: string
   maxBodyBytes?: number
 }
@@ -177,7 +190,11 @@ async function readJsonBody(
   }
 }
 
-function getPublicError(error: unknown) {
+function getPublicError(
+  error: unknown,
+  fallbackCode: string,
+  fallbackMessage: string
+) {
   if (typeof error !== "object" || error === null) {
     return null
   }
@@ -194,14 +211,11 @@ function getPublicError(error: unknown) {
 
   return {
     statusCode: candidate.statusCode,
-    code:
-      typeof candidate.code === "string"
-        ? candidate.code
-        : "TECHNOLOGY_SCORE_REQUEST_INVALID",
+    code: typeof candidate.code === "string" ? candidate.code : fallbackCode,
     message:
       typeof candidate.message === "string"
         ? candidate.message
-        : "技术风险评分请求无效。",
+        : fallbackMessage,
   }
 }
 
@@ -242,7 +256,11 @@ async function handleTechnologyScore(
     const result = await options.calculateTechnologyRisk(body.value)
     sendJson(response, 200, result)
   } catch (error) {
-    const publicError = getPublicError(error)
+    const publicError = getPublicError(
+      error,
+      "TECHNOLOGY_SCORE_REQUEST_INVALID",
+      "技术风险评分请求无效。"
+    )
     if (publicError) {
       sendApiError(
         response,
@@ -311,7 +329,11 @@ async function handleTechnologyBaseline(
     const result = await options.calculateTechnologyBaseline(body.value)
     sendJson(response, 200, result)
   } catch (error) {
-    const publicError = getPublicError(error)
+    const publicError = getPublicError(
+      error,
+      "TECHNOLOGY_BASELINE_REQUEST_INVALID",
+      "技术基础量化请求无效。"
+    )
     if (publicError) {
       sendApiError(
         response,
@@ -328,6 +350,154 @@ async function handleTechnologyBaseline(
       500,
       "TECHNOLOGY_BASELINE_FAILED",
       "技术基础量化暂时不可用。"
+    )
+  }
+}
+
+async function handleKcrAssessmentScore(
+  request: IncomingMessage,
+  response: ServerResponse,
+  options: {
+    calculateKcrAssessment?: KcrAssessmentCalculator
+    maxBodyBytes: number
+  }
+) {
+  if (request.method !== "POST") {
+    sendApiError(
+      response,
+      405,
+      "METHOD_NOT_ALLOWED",
+      "该接口仅支持 POST 请求。",
+      { allow: "POST" }
+    )
+    return
+  }
+
+  if (!options.calculateKcrAssessment) {
+    sendApiError(
+      response,
+      503,
+      "KCR_ASSESSMENT_UNAVAILABLE",
+      "KCR V3 评分服务尚未配置。"
+    )
+    return
+  }
+
+  const body = await readJsonBody(request, options.maxBodyBytes)
+  if (body.kind === "too-large") {
+    sendApiError(
+      response,
+      413,
+      "PAYLOAD_TOO_LARGE",
+      `请求体不能超过 ${options.maxBodyBytes} 字节。`
+    )
+    return
+  }
+  if (body.kind === "invalid") {
+    sendApiError(response, 400, "INVALID_JSON", "请求体必须是有效的 JSON。")
+    return
+  }
+
+  try {
+    sendJson(response, 200, await options.calculateKcrAssessment(body.value))
+  } catch (error) {
+    const publicError = getPublicError(
+      error,
+      "KCR_ASSESSMENT_REQUEST_INVALID",
+      "KCR V3 评分请求无效。"
+    )
+    if (publicError) {
+      sendApiError(
+        response,
+        publicError.statusCode,
+        publicError.code,
+        publicError.message
+      )
+      return
+    }
+
+    console.error("KCR assessment calculation failed", error)
+    sendApiError(
+      response,
+      500,
+      "KCR_ASSESSMENT_FAILED",
+      "KCR V3 评分暂时不可用。"
+    )
+  }
+}
+
+function getKcrCompanyId(pathname: string) {
+  if (
+    !pathname.startsWith(KCR_COMPANY_ASSESSMENT_PATH_PREFIX) ||
+    !pathname.endsWith("/assessment")
+  ) {
+    return null
+  }
+
+  const encodedCompanyId = pathname.slice(
+    KCR_COMPANY_ASSESSMENT_PATH_PREFIX.length,
+    -"/assessment".length
+  )
+  if (!encodedCompanyId || encodedCompanyId.includes("/")) return null
+
+  try {
+    return decodeURIComponent(encodedCompanyId)
+  } catch {
+    return null
+  }
+}
+
+async function handleKcrCompanyAssessment(
+  request: IncomingMessage,
+  response: ServerResponse,
+  companyId: string,
+  getKcrAssessment?: KcrAssessmentReader
+) {
+  if (request.method !== "GET") {
+    sendApiError(
+      response,
+      405,
+      "METHOD_NOT_ALLOWED",
+      "该接口仅支持 GET 请求。",
+      { allow: "GET" }
+    )
+    return
+  }
+
+  if (!getKcrAssessment) {
+    sendApiError(
+      response,
+      503,
+      "KCR_ASSESSMENT_UNAVAILABLE",
+      "KCR V3 评估快照服务尚未配置。"
+    )
+    return
+  }
+
+  try {
+    sendJson(response, 200, await getKcrAssessment(companyId))
+  } catch (error) {
+    const publicError = getPublicError(
+      error,
+      "KCR_ASSESSMENT_REQUEST_INVALID",
+      "KCR V3 评估查询无效。"
+    )
+    if (publicError) {
+      sendApiError(
+        response,
+        publicError.statusCode,
+        publicError.code,
+        publicError.message
+      )
+      return
+    }
+
+    console.error("KCR assessment retrieval failed", error)
+    sendApiError(
+      response,
+      500,
+      "KCR_ASSESSMENT_FAILED",
+      "KCR V3 评估快照暂时不可用。"
     )
   }
 }
@@ -488,6 +658,25 @@ export function createProductionServer(
           calculateTechnologyBaseline: options.calculateTechnologyBaseline,
           maxBodyBytes,
         })
+        return
+      }
+
+      if (pathname === KCR_ASSESSMENT_SCORE_PATH) {
+        await handleKcrAssessmentScore(request, response, {
+          calculateKcrAssessment: options.calculateKcrAssessment,
+          maxBodyBytes,
+        })
+        return
+      }
+
+      const kcrCompanyId = getKcrCompanyId(pathname)
+      if (kcrCompanyId !== null) {
+        await handleKcrCompanyAssessment(
+          request,
+          response,
+          kcrCompanyId,
+          options.getKcrAssessment
+        )
         return
       }
 
