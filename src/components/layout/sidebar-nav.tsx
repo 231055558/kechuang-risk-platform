@@ -12,11 +12,7 @@ import {
 } from "@/components/ui/select"
 import { navGroups, navItems } from "@/lib/nav-data"
 import { cn } from "@/lib/utils"
-import type {
-  NavigationItemId,
-  NavigationTarget,
-  NavItem,
-} from "@/types/nav"
+import type { NavigationItemId, NavigationTarget, NavItem } from "@/types/nav"
 import type {
   CompanyDetail,
   CompanySummary,
@@ -29,6 +25,11 @@ type SidebarNavProps = {
   activeNavigationItem: NavigationItemId
   detail: CompanyDetail
   assessment: RiskAssessment
+  assessmentSummaryOverride?: {
+    label: string
+    scoreLabel: string
+    methodVersion: string
+  }
   companySummaries: CompanySummary[]
   companyId: string
   onCompanyChange: (companyId: string) => void
@@ -41,6 +42,7 @@ export function SidebarNav({
   activeNavigationItem,
   detail,
   assessment,
+  assessmentSummaryOverride,
   companySummaries,
   companyId,
   onCompanyChange,
@@ -94,8 +96,13 @@ export function SidebarNav({
                 </div>
               </div>
               <div className="sidebar-risk-score">
-                <span>{assessment.label}</span>
-                <strong>{assessment.scoreLabel}</strong>
+                <span>
+                  {assessmentSummaryOverride?.label ?? assessment.label}
+                </span>
+                <strong>
+                  {assessmentSummaryOverride?.scoreLabel ??
+                    assessment.scoreLabel}
+                </strong>
               </div>
             </div>
           </div>
@@ -111,7 +118,11 @@ export function SidebarNav({
 
         <div className="sidebar-footnote">
           <DatabaseZapIcon className="size-4" />
-          <span>方法版本 · {assessment.methodVersion}</span>
+          {assessmentSummaryOverride ? (
+            <span>方法版本 · {assessmentSummaryOverride.methodVersion}</span>
+          ) : (
+            <span>方法版本 · {assessment.methodVersion}</span>
+          )}
         </div>
       </aside>
     </LiquidGlassSurface>
@@ -216,7 +227,10 @@ function SidebarNavItem({
       <Icon className="size-5" />
       <span>{item.label}</span>
       {liveCount !== undefined && liveCount > 0 ? (
-        <span className="sidebar-live-count" aria-label={`${liveCount} 条高优先级情报`}>
+        <span
+          className="sidebar-live-count"
+          aria-label={`${liveCount} 条高优先级情报`}
+        >
           <span className="sidebar-live-count-dot" />
           {liveCount}
         </span>

@@ -97,6 +97,12 @@ type AppShellProps = {
   companyId: string
   detail: CompanyDetail
   assessment: RiskAssessment
+  assessmentSummaryOverride?: {
+    label: string
+    scoreLabel: string
+    methodVersion: string
+    overviewDescription: string
+  }
   companySummaries: CompanySummary[]
   theme: string
   onCompanyChange: (companyId: string) => void
@@ -124,6 +130,7 @@ export function AppShell({
   companyId,
   detail,
   assessment,
+  assessmentSummaryOverride,
   companySummaries,
   theme,
   onCompanyChange,
@@ -250,6 +257,7 @@ export function AppShell({
           activeNavigationItem={activeNavigationItem}
           detail={detail}
           assessment={assessment}
+          assessmentSummaryOverride={assessmentSummaryOverride}
           companySummaries={companySummaries}
           companyId={companyId}
           onCompanyChange={onCompanyChange}
@@ -281,6 +289,7 @@ export function AppShell({
               activeNavigationItem={activeNavigationItem}
               detail={detail}
               assessment={assessment}
+              assessmentSummaryOverride={assessmentSummaryOverride}
               companySummaries={companySummaries}
               companyId={companyId}
               onCompanyChange={(value) => {
@@ -306,7 +315,11 @@ export function AppShell({
         <TopCommandBar
           group={activeNav.group}
           title={activeNav.label}
-          description={activeNav.description}
+          description={
+            activeView === "overview" && assessmentSummaryOverride
+              ? assessmentSummaryOverride.overviewDescription
+              : activeNav.description
+          }
           theme={theme}
           onToggleTheme={onToggleTheme}
           onOpenExports={onOpenExports}

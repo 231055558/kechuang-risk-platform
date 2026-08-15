@@ -17,6 +17,7 @@ import {
   SeverityBadge,
   StatusBadge,
 } from "@/components/dashboard/shared"
+import { KcrV3AssessmentPanel } from "@/components/dashboard/kcr-v3-assessment-panel"
 import { RiskRadarChart } from "@/components/dashboard/risk-radar-chart"
 import { Reveal } from "@/components/motion/workflow-transition"
 import { Badge } from "@/components/ui/badge"
@@ -31,6 +32,7 @@ import {
 } from "@/components/ui/select"
 import { formatSourceDate } from "@/lib/date-format"
 import { isEffectiveEvidence } from "@/lib/source-governance"
+import type { KcrAssessmentApiResponse } from "@/domain/kcr-v1/assessment-api.ts"
 import type {
   CompanyDetail,
   RiskAssessment,
@@ -46,6 +48,7 @@ type OverviewTabProps = {
   timeRange: "3m" | "6m"
   riskLens: "all" | "priority" | "high"
   onNavigate: (view: TabValue) => void
+  onKcrAssessmentLoad: (value: KcrAssessmentApiResponse) => void
   onRiskLensChange: (value: "all" | "priority" | "high") => void
   onTimeRangeChange: (value: "3m" | "6m") => void
   onOpenMethod: () => void
@@ -76,6 +79,7 @@ export function OverviewTab({
   timeRange,
   riskLens,
   onNavigate,
+  onKcrAssessmentLoad,
   onRiskLensChange,
   onTimeRangeChange,
   onOpenMethod,
@@ -123,6 +127,18 @@ export function OverviewTab({
     .sort((left, right) =>
       right.identifiedAt.localeCompare(left.identifiedAt)
     )[0]
+
+  if (detail.id === "cambricon") {
+    return (
+      <div className="page-stack">
+        <KcrV3AssessmentPanel
+          companyId={detail.id}
+          onAssessmentLoad={onKcrAssessmentLoad}
+          onOpenMethod={onOpenMethod}
+        />
+      </div>
+    )
+  }
 
   return (
     <div className="page-stack">
