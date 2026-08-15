@@ -10,6 +10,7 @@ import {
 
 import { GlassPanel } from "@/components/dashboard/shared"
 import { KcrEvidenceDrilldown } from "@/components/dashboard/kcr-evidence-drilldown"
+import { KcrRiskKnowledgeGraph } from "@/components/dashboard/kcr-risk-knowledge-graph"
 import { LiquidGlassSurface } from "@/components/liquid"
 import { Reveal } from "@/components/motion/workflow-transition"
 import { Badge } from "@/components/ui/badge"
@@ -348,6 +349,16 @@ export function KcrV3AssessmentPanel({
       </Reveal>
 
       <Reveal>
+        <KcrRiskKnowledgeGraph
+          response={state.value}
+          companyLabel="寒武纪"
+          onOpenDimension={(dimensionId) =>
+            setSelectedDimension({ companyId, dimensionId })
+          }
+        />
+      </Reveal>
+
+      <Reveal>
         <section className="kcr-v3-analysis-grid" aria-label="KCR V3 评估分析">
           <KcrRiskRadar
             dimensions={assessment.dimensions}
@@ -385,7 +396,7 @@ export function KcrV3AssessmentPanel({
                 ))}
               </div>
               <p className="kcr-v3-next-step">
-                红旗事件的关系传播将在后续任务节点接入。
+                红旗事件与传播路径已接入上方关系图谱；两者均不改写客观基线。
               </p>
             </div>
           </LiquidGlassSurface>
