@@ -9,6 +9,8 @@ async function startTestServer(options?: {
   basePath?: string
   calculateTechnologyRisk?: (request: unknown) => unknown | Promise<unknown>
   calculateTechnologyBaseline?: (request: unknown) => unknown | Promise<unknown>
+  calculateKcrAssessment?: (request: unknown) => unknown | Promise<unknown>
+  getKcrAssessment?: (companyId: string) => unknown | Promise<unknown>
   maxBodyBytes?: number
 }) {
   const staticRoot = mkdtempSync(join(tmpdir(), "risk-platform-server-test-"))
@@ -38,6 +40,8 @@ async function startTestServer(options?: {
         score: null,
       })),
     calculateTechnologyBaseline: options?.calculateTechnologyBaseline,
+    calculateKcrAssessment: options?.calculateKcrAssessment,
+    getKcrAssessment: options?.getKcrAssessment,
     maxBodyBytes: options?.maxBodyBytes,
   })
 
@@ -130,6 +134,131 @@ test("technology baseline POST forwards parsed JSON and returns the engine resul
       modelVersion: "TQB-2026.07-v5",
       score: null,
       scoringStatus: "calibration-observation-only",
+    })
+  } finally {
+    await testServer.close()
+  }
+})
+
+test("KCR company assessment GET returns the requested V3 snapshot", async () => {
+  const received: string[] = []
+  const testServer = await startTestServer({
+    getKcrAssessment(companyId) {
+      received.push(companyId)
+      return {
+        assessment: {
+          companyId,
+          modelVersion: "KCR-SCORE-2026.08-v3",
+          baselineScore: 35.6,
+        },
+        provenance: { methodStatus: "candidate-for-team-review" },
+      }
+    },
+  })
+
+  try {
+    const response = await fetch(
+      `${testServer.baseUrl}/api/v1/kcr/companies/cambricon/assessment`
+    )
+
+    assert.equal(response.status, 200)
+    assert.equal(response.headers.get("cache-control"), "no-store")
+    assert.deepEqual(received, ["cambricon"])
+    assert.deepEqual(await response.json(), {
+      assessment: {
+        companyId: "cambricon",
+        modelVersion: "KCR-SCORE-2026.08-v3",
+        baselineScore: 35.6,
+      },
+      provenance: { methodStatus: "candidate-for-team-review" },
+    })
+  } finally {
+    await testServer.close()
+  }
+})
+
+test("KCR assessment POST forwards JSON to the V3 calculator", async () => {
+  const received: unknown[] = []
+  const testServer = await startTestServer({
+    calculateKcrAssessment(request) {
+      received.push(request)
+      return {
+        assessment: {
+          modelVersion: "KCR-SCORE-2026.08-v3",
+          baselineScore: 41.25,
+        },
+        provenance: { assessmentInputSource: "api-request" },
+      }
+    },
+  })
+
+  try {
+    const payload = { companyId: "company-1", indicators: [] }
+    const response = await fetch(
+      `${testServer.baseUrl}/api/v1/kcr/assessments/score`,
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
+      }
+    )
+
+    assert.equal(response.status, 200)
+    assert.deepEqual(received, [payload])
+    assert.deepEqual(await response.json(), {
+      assessment: {
+        modelVersion: "KCR-SCORE-2026.08-v3",
+        baselineScore: 41.25,
+      },
+      provenance: { assessmentInputSource: "api-request" },
+    })
+  } finally {
+    await testServer.close()
+  }
+})
+
+test("KCR API exposes safe 404 and 422 errors without SPA fallback", async () => {
+  const testServer = await startTestServer({
+    getKcrAssessment(companyId) {
+      throw Object.assign(new Error(`企业 ${companyId} 暂无评估。`), {
+        code: "KCR_COMPANY_ASSESSMENT_NOT_FOUND",
+        statusCode: 404,
+      })
+    },
+    calculateKcrAssessment() {
+      throw Object.assign(new Error("指标权重不正确。"), {
+        code: "KCR_ASSESSMENT_REQUEST_INVALID",
+        statusCode: 422,
+      })
+    },
+  })
+
+  try {
+    const missing = await fetch(
+      `${testServer.baseUrl}/api/v1/kcr/companies/unknown/assessment`
+    )
+    assert.equal(missing.status, 404)
+    assert.deepEqual(await missing.json(), {
+      error: {
+        code: "KCR_COMPANY_ASSESSMENT_NOT_FOUND",
+        message: "企业 unknown 暂无评估。",
+      },
+    })
+
+    const invalid = await fetch(
+      `${testServer.baseUrl}/api/v1/kcr/assessments/score`,
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: "{}",
+      }
+    )
+    assert.equal(invalid.status, 422)
+    assert.deepEqual(await invalid.json(), {
+      error: {
+        code: "KCR_ASSESSMENT_REQUEST_INVALID",
+        message: "指标权重不正确。",
+      },
     })
   } finally {
     await testServer.close()
@@ -321,9 +450,7 @@ test("base path serves the application, assets, and API without exposing server 
     assert.equal(shell.status, 200)
     assert.match(await shell.text(), /application shell/)
 
-    const asset = await fetch(
-      `${testServer.baseUrl}/risk-demo/assets/app.js`
-    )
+    const asset = await fetch(`${testServer.baseUrl}/risk-demo/assets/app.js`)
     assert.equal(asset.status, 200)
     assert.equal(await asset.text(), "export const app = true\n")
 

@@ -3,6 +3,10 @@ import { fileURLToPath } from "node:url"
 import { calculateTechnologyBaseline } from "../src/lib/technology-baseline-engine.ts"
 import { calculateTechnologyRisk } from "../src/lib/technology-risk-engine.ts"
 import { createProductionServer } from "./http-server.ts"
+import {
+  getKcrCompanyAssessment,
+  scoreKcrAssessment,
+} from "./kcr-assessment-service.ts"
 
 function readPort(value: string | undefined) {
   const port = Number(value ?? "5000")
@@ -24,6 +28,8 @@ const server = createProductionServer({
   basePath,
   calculateTechnologyRisk,
   calculateTechnologyBaseline,
+  calculateKcrAssessment: scoreKcrAssessment,
+  getKcrAssessment: getKcrCompanyAssessment,
 })
 
 server.listen(port, host, () => {

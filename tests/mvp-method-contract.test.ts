@@ -59,7 +59,7 @@ const contract = JSON.parse(
 test("KCR-2026.08-v1 freezes one unambiguous MVP method contract", () => {
   assert.equal(contract.schemaVersion, "1.0.0")
   assert.equal(contract.methodVersion, "KCR-2026.08-v1")
-  assert.equal(contract.status, "frozen-for-mvp")
+  assert.equal(contract.status, "candidate-for-team-review")
   assert.equal(contract.scoreDirection, "higher-means-higher-risk")
   assert.deepEqual(contract.scoreRange, { min: 0, max: 100 })
   assert.deepEqual(contract.counts, {
@@ -168,7 +168,7 @@ test("method outputs keep score, quality, red flags, and provenance separate", (
   )
 })
 
-test("the frozen Cambricon acceptance target matches the agreed golden case", () => {
+test("the Cambricon candidate acceptance target matches the workbook case", () => {
   assert.equal(contract.referenceAcceptance.baselineScore, 35.6)
   assert.equal(contract.referenceAcceptance.riskLevel, "medium")
   assert.equal(contract.referenceAcceptance.evidenceCoverage, 0.95)
