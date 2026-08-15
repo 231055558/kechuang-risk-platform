@@ -76,6 +76,7 @@ import {
 import { quantifyTechnologyBaseline } from "@/lib/technology-baseline-api"
 import { scoreTechnologyRisk } from "@/lib/technology-scoring-api"
 import { cn } from "@/lib/utils"
+import type { KcrAssessmentApiResponse } from "@/domain/kcr-v1/assessment-api.ts"
 import type { NavigationTarget } from "@/types/nav"
 import type {
   EventStatus,
@@ -347,6 +348,8 @@ function App() {
   )
   const exportInProgressRef = useRef<ExportKind | null>(null)
   const [feedback, setFeedback] = useState("")
+  const [kcrAssessmentResponse, setKcrAssessmentResponse] =
+    useState<KcrAssessmentApiResponse | null>(null)
   const [scoringCreateToken, setScoringCreateToken] = useState(0)
   const scoringCreateRequestRef = useRef(0)
   const [lazyTabs, setLazyTabs] = useState<LazyViewRegistry>(
@@ -397,6 +400,26 @@ function App() {
   const assessment =
     runtimeAssessmentRegistry[companyId] ??
     runtimeAssessmentRegistry[defaultCompanyId]
+  const activeKcrAssessmentResponse =
+    kcrAssessmentResponse?.assessment.companyId === companyId
+      ? kcrAssessmentResponse
+      : null
+  const kcrAssessmentSummary = activeKcrAssessmentResponse
+    ? {
+        label: "KCR V3 客观风险基线",
+        scoreLabel:
+          activeKcrAssessmentResponse.assessment.baselineScore === null
+            ? "数据不足"
+            : `${activeKcrAssessmentResponse.assessment.baselineScore} · ${activeKcrAssessmentResponse.assessment.riskLevelLabel}风险`,
+        methodVersion: activeKcrAssessmentResponse.assessment.methodVersion,
+        overviewDescription:
+          "团队工作簿复算的客观基线、五维风险、证据质量与红旗事件",
+      }
+    : undefined
+  const handleKcrAssessmentLoad = useCallback(
+    (value: KcrAssessmentApiResponse) => setKcrAssessmentResponse(value),
+    []
+  )
   const promotedSignalIdsForCompany = useMemo(
     () => getPromotedSignalIdsForCompany(promotedSignalIds, detail.id),
     [detail.id, promotedSignalIds]
@@ -582,8 +605,7 @@ function App() {
     }
 
     const accepted = await handleViewChange(target.view)
-    const requestIsCurrent =
-      requestId === navigationTargetRequestRef.current
+    const requestIsCurrent = requestId === navigationTargetRequestRef.current
 
     if (!accepted || !requestIsCurrent) {
       if (requestIsCurrent) {
@@ -779,11 +801,7 @@ function App() {
         latestBaselineResult: result,
       })
       const feedback = `技术量化已保存 ${result.quantifiedIndicatorCount}/6 项，专项校准 ${result.calibratedIndicatorCount}/8 项；专项阈值仅用于单项观测，本次不会更新技术风险分或雷达图。`
-      setFeedback(
-        saved
-          ? feedback
-          : `${feedback} 浏览器未能持久保存结果。`
-      )
+      setFeedback(saved ? feedback : `${feedback} 浏览器未能持久保存结果。`)
       return result
     },
     [companyId, upsertTechnologyCompany]
@@ -938,9 +956,7 @@ function App() {
     if (demoSaved && scoringSaved && technologyScoringSaved) {
       setFeedback("已恢复初始企业、筛选条件、事件状态与评分数据。")
     } else if (!scoringSaved || !technologyScoringSaved) {
-      setFeedback(
-        "初始状态已在当前页面恢复，但部分评分数据无法写入本地存储。"
-      )
+      setFeedback("初始状态已在当前页面恢复，但部分评分数据无法写入本地存储。")
     }
     scrollToPageTop("smooth")
   }
@@ -991,6 +1007,11 @@ function App() {
   }
 
   const handleOpenExports = () => {
+    if (activeKcrAssessmentResponse) {
+      setFeedback("KCR V3 报告导出尚未接入；本页面不会导出旧方法结果。")
+      return
+    }
+
     exportTriggerRef.current =
       document.activeElement instanceof HTMLElement
         ? document.activeElement
@@ -1017,6 +1038,7 @@ function App() {
       companyId={companyId}
       detail={detail}
       assessment={assessment}
+      assessmentSummaryOverride={kcrAssessmentSummary}
       companySummaries={runtimeCompanySummaries}
       theme={theme}
       onCompanyChange={handleCompanyChange}
@@ -1049,6 +1071,7 @@ function App() {
                         : { view, operationsSection: "events" }
                     )
                   }}
+                  onKcrAssessmentLoad={handleKcrAssessmentLoad}
                   onRiskLensChange={handleRiskLensChange}
                   onTimeRangeChange={handleTimeRangeChange}
                   onOpenMethod={handleOpenMethod}
@@ -1130,13 +1153,22 @@ function App() {
         </footer>
       </div>
 
-      <MethodSheet
-        open={methodOpen}
-        onOpenChange={setMethodOpen}
-        detail={detail}
-        onReset={handleResetDemo}
-        returnFocusRef={methodTriggerRef}
-      />
+      {activeKcrAssessmentResponse ? (
+        <KcrMethodSheet
+          open={methodOpen}
+          onOpenChange={setMethodOpen}
+          response={activeKcrAssessmentResponse}
+          returnFocusRef={methodTriggerRef}
+        />
+      ) : (
+        <MethodSheet
+          open={methodOpen}
+          onOpenChange={setMethodOpen}
+          detail={detail}
+          onReset={handleResetDemo}
+          returnFocusRef={methodTriggerRef}
+        />
+      )}
 
       <Dialog open={exportDialogOpen} onOpenChange={setExportDialogOpen}>
         <DialogContent
@@ -1184,6 +1216,119 @@ function App() {
         </DialogContent>
       </Dialog>
     </AppShell>
+  )
+}
+
+function KcrMethodSheet({
+  open,
+  onOpenChange,
+  response,
+  returnFocusRef,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  response: KcrAssessmentApiResponse
+  returnFocusRef: RefObject<HTMLElement | null>
+}) {
+  const { assessment, provenance } = response
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent
+        className="method-sheet method-sheet--method sm:max-w-3xl"
+        onCloseAutoFocus={(event) => {
+          event.preventDefault()
+          const trigger = returnFocusRef.current
+          if (trigger?.isConnected) {
+            trigger.focus({ preventScroll: true })
+          }
+        }}
+      >
+        <SheetHeader>
+          <SheetTitle className="flex items-center gap-2">
+            <BookOpenCheckIcon aria-hidden="true" />
+            KCR V3 方法与来源
+          </SheetTitle>
+          <SheetDescription>
+            区分团队工作簿结论、程序复算结果与待团队确认的工程默认规则。
+          </SheetDescription>
+        </SheetHeader>
+
+        <div className="sheet-scroll-content">
+          <div className="method-stat-grid">
+            <DataNote label="风险维度" value="5 类" />
+            <DataNote label="加权指标" value="18 项" />
+            <DataNote label="固定权重" value="100" />
+          </div>
+
+          <section className="method-detail-section">
+            <h3>当前结果来自哪里</h3>
+            <p>
+              指标、权重、寒武纪风险分、证据置信度与红旗事件来自
+              {provenance.methodSourceLabel}；后端使用 {assessment.modelVersion}
+              重新校验并复算，得到 {assessment.baselineScore} 分。
+            </p>
+          </section>
+
+          <div className="method-rule-list">
+            <MethodRule
+              title="团队工作簿"
+              status="业务输入"
+              content="提供五个维度、18 项指标、固定权重、寒武纪评分、证据说明与事件记录。"
+            />
+            <MethodRule
+              title="V3 程序复算"
+              status="工程实现"
+              content="重新校验指标、权重与证据引用，计算总分、维度分、覆盖率和置信度；没有独立完成一轮企业尽调。"
+            />
+            <MethodRule
+              title="方法状态"
+              status="候选版"
+              content="当前版本用于 MVP 演示和团队复核，不表述为团队已经正式批准的最终规则。"
+            />
+          </div>
+
+          <section className="method-detail-section">
+            <h3>待团队确认的工程默认</h3>
+            <div className="method-rule-list">
+              {provenance.engineeringDefaults.map((item) => (
+                <MethodRule
+                  key={item.id}
+                  title={item.label}
+                  status="待确认"
+                  content={item.value}
+                />
+              ))}
+            </div>
+          </section>
+
+          <div className="method-boundary-stack">
+            <MethodBoundary
+              icon={ScaleIcon}
+              title="缺失数据不补零"
+              content="缺失指标不进入评分分子或分母，并单独影响评分权重覆盖率与复核状态。"
+            />
+            <MethodBoundary
+              icon={ShieldCheckIcon}
+              title="红旗不改写客观基线"
+              content="重大制裁与诉讼独立展示，防止被低风险指标平均掉，也不偷偷覆盖工作簿基线。"
+            />
+            <MethodBoundary
+              icon={DatabaseZapIcon}
+              title="结果可复算"
+              content={`方法 ${assessment.methodVersion}；数据截至 ${assessment.dataCutoff}；运行标识 ${assessment.runId}。`}
+            />
+          </div>
+
+          <div className="method-disclaimer">{assessment.disclaimer}</div>
+        </div>
+
+        <div className="sheet-action-bar">
+          <span>候选方法 {assessment.methodVersion}</span>
+          <span>工作簿复算 {assessment.baselineScore} 分</span>
+        </div>
+      </SheetContent>
+    </Sheet>
   )
 }
 
