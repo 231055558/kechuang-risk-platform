@@ -12,6 +12,7 @@ import {
 } from "../src/domain/kcr-v1/scoring-engine.ts"
 import {
   buildKcrRiskKnowledgeGraph,
+  buildKcrRiskGraphRadialLayout,
   distributeKcrRiskGraphPositions,
   selectKcrRiskGraphDimension,
 } from "../src/lib/kcr-risk-knowledge-graph.ts"
@@ -86,7 +87,65 @@ test("dimension focus keeps the company, all five dimensions, and only related d
   )
 })
 
-test("knowledge graph UI exposes filters, node inspection and evidence semantics", () => {
+test("radial layout keeps the company central and expands detail nodes into outer orbits", () => {
+  const graph = buildKcrRiskKnowledgeGraph(response, "寒武纪")
+  const external = selectKcrRiskGraphDimension(graph, "external")
+  const layout = buildKcrRiskGraphRadialLayout(
+    external.nodes,
+    "external",
+    "desktop"
+  )
+  const company = layout.nodes.find((node) => node.shape === "core")
+  const dimensions = layout.nodes.filter((node) => node.layer === 1)
+  const detailNodes = layout.nodes.filter((node) => node.layer >= 2)
+
+  assert.deepEqual(company, {
+    id: "company:cambricon",
+    x: layout.center.x,
+    y: layout.center.y,
+    radius: 64,
+    angle: 0,
+    layer: 0,
+    shape: "core",
+  })
+  assert.equal(dimensions.length, 5)
+  assert.equal(new Set(dimensions.map((node) => node.angle)).size, 5)
+  assert.ok(
+    detailNodes.every((node) => {
+      const distance = Math.hypot(
+        node.x - layout.center.x,
+        node.y - layout.center.y
+      )
+      return distance > 190
+    })
+  )
+})
+
+test("compact radial layout remains inside its viewport without horizontal overflow", () => {
+  const graph = buildKcrRiskKnowledgeGraph(response, "寒武纪")
+  const external = selectKcrRiskGraphDimension(graph, "external")
+  const layout = buildKcrRiskGraphRadialLayout(
+    external.nodes,
+    "external",
+    "compact"
+  )
+
+  assert.deepEqual([layout.width, layout.height], [400, 450])
+  layout.nodes.forEach((node) => {
+    assert.ok(node.x - node.radius >= 0, `${node.id} exceeds left edge`)
+    assert.ok(
+      node.x + node.radius <= layout.width,
+      `${node.id} exceeds right edge`
+    )
+    assert.ok(node.y - node.radius >= 0, `${node.id} exceeds top edge`)
+    assert.ok(
+      node.y + node.radius <= layout.height,
+      `${node.id} exceeds bottom edge`
+    )
+  })
+})
+
+test("knowledge graph UI exposes node inspection and evidence semantics", () => {
   const component = readFileSync(
     join(projectRoot, "src/components/dashboard/kcr-risk-knowledge-graph.tsx"),
     "utf8"
@@ -106,4 +165,23 @@ test("knowledge graph UI exposes filters, node inspection and evidence semantics
   assert.match(component, /不新增评分结论/)
   assert.match(panel, /<KcrRiskKnowledgeGraph/)
   assert.doesNotMatch(panel, /关系传播将在后续任务节点接入/)
+})
+
+test("knowledge graph renders a responsive radial network instead of fixed columns", () => {
+  const component = readFileSync(
+    join(projectRoot, "src/components/dashboard/kcr-risk-knowledge-graph.tsx"),
+    "utf8"
+  )
+  const styles = readFileSync(join(projectRoot, "src/styles/pages.css"), "utf8")
+
+  assert.match(component, /buildKcrRiskGraphRadialLayout/)
+  assert.match(component, /kcr-risk-graph-orbit/)
+  assert.match(component, /<circle/)
+  assert.match(component, /<polygon/)
+  assert.doesNotMatch(component, /kcr-risk-graph-dimension-filters/)
+  assert.doesNotMatch(component, /x: 100, y: 325/)
+  assert.doesNotMatch(
+    styles,
+    /\.kcr-risk-graph-canvas\s*\{[^}]*min-width:\s*(?:[5-9]\d{2,}|[1-9]\d{3,})px/s
+  )
 })

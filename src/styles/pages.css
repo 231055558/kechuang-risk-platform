@@ -6733,126 +6733,10 @@
   line-height: 1.7;
 }
 
-.kcr-risk-graph-counts {
-  display: grid;
-  flex: 0 0 auto;
-  grid-template-columns: auto auto;
-  align-items: baseline;
-  gap: 2px 7px;
-  padding: 10px 14px;
-  border: 1px solid var(--reading-border);
-  border-radius: 14px;
-  background: color-mix(in oklch, var(--glass-reading-bg) 78%, transparent);
-}
-
-.kcr-risk-graph-counts strong {
-  color: var(--text-strong);
-  font-size: 18px;
-  font-weight: 770;
-  font-variant-numeric: tabular-nums;
-}
-
-.kcr-risk-graph-counts span {
-  color: var(--text-soft);
-  font-size: 9px;
-}
-
-.kcr-risk-graph-dimension-filters {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 8px;
-  margin-top: 20px;
-}
-
-.kcr-risk-graph-dimension-filters > button {
-  display: flex;
-  min-width: 0;
-  min-height: 50px;
-  align-items: center;
-  justify-content: space-between;
-  gap: 9px;
-  padding: 10px 12px;
-  border: 1px solid var(--reading-separator);
-  border-radius: 12px;
-  background: color-mix(in oklch, var(--glass-control-bg) 46%, transparent);
-  color: var(--text-body);
-  cursor: pointer;
-  transition:
-    border-color var(--motion-fast) var(--ease-fluid),
-    background-color var(--motion-fast) var(--ease-fluid),
-    color var(--motion-fast) var(--ease-fluid);
-}
-
-.kcr-risk-graph-dimension-filters > button span {
-  overflow: hidden;
-  font-size: 11px;
-  font-weight: 650;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.kcr-risk-graph-dimension-filters > button strong {
-  color: var(--brand-strong);
-  font-size: 14px;
-  font-weight: 760;
-  font-variant-numeric: tabular-nums;
-}
-
-.kcr-risk-graph-dimension-filters > button[aria-pressed="true"] {
-  border-color: color-mix(in oklch, var(--brand) 52%, var(--reading-border));
-  background: color-mix(in oklch, var(--brand-soft) 62%, transparent);
-  color: var(--text-strong);
-  box-shadow: inset 0 1px 0
-    color-mix(in oklch, var(--glass-rim-inner) 68%, transparent);
-}
-
-.kcr-risk-graph-dimension-filters > button:focus-visible {
-  outline: 2px solid var(--brand);
-  outline-offset: 2px;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .kcr-risk-graph-dimension-filters > button:hover {
-    border-color: color-mix(in oklch, var(--brand) 36%, var(--reading-border));
-    background: color-mix(in oklch, var(--brand-soft) 40%, transparent);
-  }
-}
-
-.kcr-risk-graph-workspace {
-  display: grid;
-  min-width: 0;
-  grid-template-columns: minmax(0, 1fr) 300px;
-  gap: 16px;
-  margin-top: 14px;
-}
-
-.kcr-risk-graph-canvas-scroll {
-  min-width: 0;
-  overflow: auto hidden;
-  border: 1px solid var(--reading-border);
-  border-radius: 18px;
-  background:
-    linear-gradient(
-        color-mix(in oklch, var(--reading-separator) 32%, transparent) 1px,
-        transparent 1px
-      )
-      0 0 / 28px 28px,
-    linear-gradient(
-        90deg,
-        color-mix(in oklch, var(--reading-separator) 32%, transparent) 1px,
-        transparent 1px
-      )
-      0 0 / 28px 28px,
-    color-mix(in oklch, var(--glass-reading-bg) 76%, transparent);
-  box-shadow: inset 0 1px 0
-    color-mix(in oklch, var(--glass-rim-inner) 48%, transparent);
-  scrollbar-width: thin;
-}
-
 .kcr-risk-graph-canvas {
   display: block;
   width: 100%;
-  min-width: 820px;
+  min-width: 0;
   height: auto;
 }
 
@@ -7132,6 +7016,311 @@
   height: 14px;
   flex: 0 0 auto;
   color: var(--brand-strong);
+}
+
+/* Radial knowledge-graph redesign */
+.kcr-risk-graph-counts {
+  display: flex;
+  align-items: stretch;
+  gap: 7px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.kcr-risk-graph-counts > span {
+  display: flex;
+  min-width: 84px;
+  align-items: baseline;
+  justify-content: center;
+  gap: 5px;
+  padding: 11px 13px;
+  border: 1px solid var(--reading-border);
+  border-radius: 13px;
+  background: color-mix(in oklch, var(--glass-reading-bg) 76%, transparent);
+  color: var(--text-soft);
+  font-size: 9px;
+}
+
+.kcr-risk-graph-counts > span strong {
+  color: var(--text-strong);
+  font-size: 19px;
+  font-weight: 780;
+}
+
+.kcr-risk-graph-header > div:first-child > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.kcr-risk-graph-header > div:first-child > span > svg {
+  width: 15px;
+  height: 15px;
+}
+
+.kcr-risk-graph-stage {
+  position: relative;
+  min-width: 0;
+  margin-top: 20px;
+  overflow: hidden;
+  border: 1px solid
+    color-mix(in oklch, var(--brand-border) 38%, var(--reading-border));
+  border-radius: 20px;
+  background:
+    radial-gradient(
+      circle at 50% 47%,
+      color-mix(in oklch, var(--brand-soft) 52%, transparent),
+      transparent 23%
+    ),
+    radial-gradient(
+      circle at 50% 47%,
+      transparent 0 38%,
+      color-mix(in oklch, var(--accent-cyan) 7%, transparent) 39% 40%,
+      transparent 41%
+    ),
+    linear-gradient(
+        color-mix(in oklch, var(--reading-separator) 25%, transparent) 1px,
+        transparent 1px
+      )
+      0 0 / 32px 32px,
+    linear-gradient(
+        90deg,
+        color-mix(in oklch, var(--reading-separator) 25%, transparent) 1px,
+        transparent 1px
+      )
+      0 0 / 32px 32px,
+    color-mix(in oklch, var(--glass-reading-bg) 72%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, var(--glass-rim-inner) 56%, transparent),
+    inset 0 -28px 70px color-mix(in oklch, var(--brand) 4%, transparent);
+}
+
+.kcr-risk-graph-stage-label {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 12px 15px;
+  border-bottom: 1px solid var(--reading-separator);
+  background: color-mix(in oklch, var(--glass-reading-bg) 68%, transparent);
+  color: var(--text-soft);
+  font-size: 9px;
+}
+
+.kcr-risk-graph-stage-label strong {
+  color: var(--brand-strong);
+  font-size: 12px;
+  font-weight: 720;
+}
+
+.kcr-risk-graph-stage-label small {
+  margin-left: auto;
+  color: var(--text-soft);
+  font-size: 9px;
+}
+
+.kcr-risk-graph-orbit {
+  fill: none;
+  stroke: color-mix(in oklch, var(--brand) 28%, var(--reading-separator));
+  stroke-dasharray: 5 7;
+  stroke-width: 1;
+  opacity: 0.8;
+  vector-effect: non-scaling-stroke;
+}
+
+.kcr-risk-graph-orbit-outer {
+  stroke: color-mix(in oklch, var(--accent-cyan) 24%, var(--reading-separator));
+  stroke-dasharray: 2 9;
+  opacity: 0.62;
+}
+
+.kcr-risk-graph-focus-halo {
+  fill: color-mix(in oklch, var(--brand) 62%, var(--accent-cyan));
+  opacity: 0.42;
+  pointer-events: none;
+}
+
+.kcr-risk-graph-node > circle,
+.kcr-risk-graph-node > polygon,
+.kcr-risk-graph-node > rect {
+  fill: color-mix(in oklch, var(--glass-reading-bg) 88%, var(--surface));
+  stroke: color-mix(in oklch, var(--text-soft) 44%, var(--reading-border));
+  stroke-width: 1.2;
+  filter: drop-shadow(
+    0 7px 13px color-mix(in oklch, var(--text-strong) 9%, transparent)
+  );
+  vector-effect: non-scaling-stroke;
+  transition:
+    fill var(--motion-fast) var(--ease-fluid),
+    stroke var(--motion-fast) var(--ease-fluid),
+    stroke-width var(--motion-fast) var(--ease-fluid),
+    filter var(--motion-fast) var(--ease-fluid);
+}
+
+.kcr-risk-graph-node[data-kind] > .kcr-risk-graph-hit-target {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 0;
+  filter: none;
+  pointer-events: all;
+}
+
+.kcr-risk-graph-node[data-kind="company"] > circle {
+  fill: color-mix(in oklch, var(--brand) 25%, var(--glass-reading-bg));
+  stroke: color-mix(in oklch, var(--brand) 82%, white);
+  stroke-width: 2.4;
+  filter: drop-shadow(
+      0 0 18px color-mix(in oklch, var(--brand) 24%, transparent)
+    )
+    drop-shadow(
+      0 12px 18px color-mix(in oklch, var(--text-strong) 11%, transparent)
+    );
+}
+
+.kcr-risk-graph-node[data-kind="dimension"] > circle {
+  fill: color-mix(in oklch, var(--glass-reading-bg) 76%, var(--brand-soft));
+  stroke: color-mix(in oklch, var(--brand) 52%, var(--reading-border));
+  stroke-width: 1.6;
+}
+
+.kcr-risk-graph-node[data-kind="dimension"][data-tone="low"] > circle {
+  fill: color-mix(in oklch, var(--accent-cyan) 11%, var(--glass-reading-bg));
+  stroke: color-mix(in oklch, var(--accent-cyan) 48%, var(--reading-border));
+}
+
+.kcr-risk-graph-node[data-kind="dimension"][data-tone="medium"] > circle {
+  fill: color-mix(in oklch, var(--accent-amber) 12%, var(--glass-reading-bg));
+  stroke: color-mix(in oklch, var(--accent-amber) 50%, var(--reading-border));
+}
+
+.kcr-risk-graph-node[data-kind="dimension"][data-tone="high"] > circle,
+.kcr-risk-graph-node[data-kind="dimension"][data-tone="critical"] > circle {
+  fill: color-mix(in oklch, var(--danger) 11%, var(--glass-reading-bg));
+  stroke: color-mix(in oklch, var(--danger) 58%, var(--reading-border));
+}
+
+.kcr-risk-graph-node[data-kind="indicator"] > circle {
+  fill: color-mix(in oklch, var(--brand-soft) 66%, var(--glass-reading-bg));
+  stroke: color-mix(in oklch, var(--brand) 54%, var(--reading-border));
+}
+
+.kcr-risk-graph-node[data-kind="event"] > polygon {
+  fill: color-mix(in oklch, var(--danger) 16%, var(--glass-reading-bg));
+  stroke: color-mix(in oklch, var(--danger) 72%, var(--reading-border));
+  stroke-width: 2;
+}
+
+.kcr-risk-graph-node[data-kind="evidence"] > rect {
+  fill: color-mix(in oklch, var(--accent-cyan) 9%, var(--glass-reading-bg));
+  stroke: color-mix(in oklch, var(--accent-cyan) 46%, var(--reading-border));
+}
+
+.kcr-risk-graph-node[data-selected-dimension="true"] > circle,
+.kcr-risk-graph-node[data-active="true"] > circle,
+.kcr-risk-graph-node[data-active="true"] > polygon,
+.kcr-risk-graph-node[data-active="true"] > rect,
+.kcr-risk-graph-node:focus-visible > circle,
+.kcr-risk-graph-node:focus-visible > polygon,
+.kcr-risk-graph-node:focus-visible > rect {
+  stroke: var(--brand-strong);
+  stroke-width: 3;
+  filter: drop-shadow(
+      0 0 16px color-mix(in oklch, var(--brand) 34%, transparent)
+    )
+    drop-shadow(
+      0 10px 16px color-mix(in oklch, var(--text-strong) 10%, transparent)
+    );
+}
+
+.kcr-risk-graph-node[data-kind="event"][data-active="true"] > polygon {
+  stroke: var(--danger);
+}
+
+.kcr-risk-graph-node text {
+  fill: var(--text-strong);
+  font-size: 11px;
+  font-weight: 720;
+  letter-spacing: -0.015em;
+}
+
+.kcr-risk-graph-node[data-kind="company"] text {
+  font-size: 15px;
+  font-weight: 770;
+}
+
+.kcr-risk-graph-node[data-kind="dimension"] text {
+  font-size: 12px;
+}
+
+.kcr-risk-graph-node-score {
+  fill: var(--text-soft);
+  font-size: 8px;
+  font-weight: 640;
+  letter-spacing: 0;
+}
+
+.kcr-risk-graph-node[data-kind="company"] .kcr-risk-graph-node-score {
+  fill: var(--brand-strong);
+  font-size: 9px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .kcr-risk-graph-node:hover > circle,
+  .kcr-risk-graph-node:hover > polygon,
+  .kcr-risk-graph-node:hover > rect {
+    stroke: var(--brand-strong);
+    stroke-width: 2.6;
+    filter: drop-shadow(
+        0 0 12px color-mix(in oklch, var(--brand) 24%, transparent)
+      )
+      drop-shadow(
+        0 9px 14px color-mix(in oklch, var(--text-strong) 10%, transparent)
+      );
+  }
+}
+
+.kcr-risk-graph-inspector {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  grid-template-columns: minmax(240px, 1.15fr) minmax(350px, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  margin-top: 14px;
+  padding: 17px 18px;
+}
+
+.kcr-risk-graph-inspector-copy {
+  min-width: 0;
+}
+
+.kcr-risk-graph-inspector h4 {
+  margin-top: 9px;
+  font-size: 16px;
+}
+
+.kcr-risk-graph-inspector-copy > p {
+  margin: 6px 0 0;
+  color: var(--text-body);
+  font-size: 10px;
+  line-height: 1.65;
+}
+
+.kcr-risk-graph-inspector dl {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 0;
+}
+
+.kcr-risk-graph-inspector [data-slot="button"] {
+  width: auto;
+  min-width: 178px;
+  margin-top: 0;
+}
+
+.kcr-risk-graph-audit-note {
+  margin-top: 8px !important;
 }
 
 .kcr-evidence-sheet {
@@ -7677,22 +7866,24 @@
     border-bottom: 1px solid var(--reading-separator);
   }
 
-  .kcr-risk-graph-workspace {
-    grid-template-columns: minmax(0, 1fr) 270px;
+  .kcr-risk-graph-inspector {
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 1fr);
+  }
+
+  .kcr-risk-graph-inspector [data-slot="button"] {
+    width: 100%;
+    grid-column: 1 / -1;
   }
 }
 
 @media (max-width: 920px) {
-  .kcr-risk-graph-workspace {
+  .kcr-risk-graph-inspector {
+    min-height: 0;
     grid-template-columns: 1fr;
   }
 
-  .kcr-risk-graph-inspector {
-    min-height: 270px;
-  }
-
-  .kcr-risk-graph-dimension-filters {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .kcr-risk-graph-inspector dl {
+    margin-top: 0;
   }
 }
 
@@ -7830,22 +8021,43 @@
   }
 
   .kcr-risk-graph-counts {
-    grid-template-columns: auto auto auto auto;
+    width: 100%;
   }
 
-  .kcr-risk-graph-dimension-filters {
-    display: flex;
-    overflow-x: auto;
-    padding: 2px 2px 7px;
-    scrollbar-width: thin;
-  }
-
-  .kcr-risk-graph-dimension-filters > button {
-    min-width: 150px;
+  .kcr-risk-graph-counts > span {
+    flex: 1;
   }
 
   .kcr-risk-graph-canvas {
-    min-width: 850px;
+    min-width: 0;
+  }
+
+  .kcr-risk-graph-stage {
+    margin-top: 16px;
+    border-radius: 16px;
+  }
+
+  .kcr-risk-graph-stage-label {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .kcr-risk-graph-stage-label small {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .kcr-risk-graph-inspector {
+    gap: 14px;
+    padding: 15px;
+  }
+
+  .kcr-risk-graph-inspector dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .kcr-risk-graph-inspector [data-slot="button"] {
+    min-width: 0;
   }
 
   .kcr-risk-graph-footer > p {
