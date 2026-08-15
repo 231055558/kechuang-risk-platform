@@ -25,6 +25,7 @@ import {
 import { AppShell } from "@/components/layout/app-shell"
 import { WorkflowTransition } from "@/components/motion/workflow-transition"
 import { useTheme } from "@/components/theme-provider"
+import { useKcrMvpWorkspace } from "@/hooks/use-kcr-mvp-workspace"
 import { useScoringWorkspace } from "@/hooks/use-scoring-workspace"
 import { useTechnologyScoringWorkspace } from "@/hooks/use-technology-scoring-workspace"
 import { Badge } from "@/components/ui/badge"
@@ -77,6 +78,8 @@ import { quantifyTechnologyBaseline } from "@/lib/technology-baseline-api"
 import { scoreTechnologyRisk } from "@/lib/technology-scoring-api"
 import { cn } from "@/lib/utils"
 import type { KcrAssessmentApiResponse } from "@/domain/kcr-v1/assessment-api.ts"
+import type { KcrActionTask } from "@/domain/kcr-v1/model.ts"
+import type { KcrRedFlagResult } from "@/domain/kcr-v1/scoring-engine.ts"
 import type { NavigationTarget } from "@/types/nav"
 import type {
   EventStatus,
@@ -378,6 +381,12 @@ function App() {
     clearCompany: clearTechnologyCompany,
     resetWorkspace: resetTechnologyWorkspace,
   } = useTechnologyScoringWorkspace()
+  const {
+    tasks: kcrActionTasks,
+    createTask: createKcrActionTask,
+    updateTaskStatus: updateKcrActionTaskStatus,
+    resetTasks: resetKcrActionTasks,
+  } = useKcrMvpWorkspace()
 
   const detail = useMemo(() => getCompanyDetail(companyId), [companyId])
   const runtimeAssessmentRegistry = useMemo(
@@ -419,6 +428,38 @@ function App() {
   const handleKcrAssessmentLoad = useCallback(
     (value: KcrAssessmentApiResponse) => setKcrAssessmentResponse(value),
     []
+  )
+  const handleCreateKcrActionTask = useCallback(
+    (redFlag: KcrRedFlagResult) => {
+      if (!activeKcrAssessmentResponse) {
+        setFeedback("KCR V3 快照尚未就绪，暂时不能生成处置任务。")
+        return
+      }
+
+      const result = createKcrActionTask(
+        activeKcrAssessmentResponse.assessment,
+        redFlag
+      )
+      setFeedback(
+        result.created
+          ? result.saved
+            ? "处置任务已生成并保存到当前浏览器。"
+            : "处置任务已生成，但浏览器存储不可用；刷新后可能丢失。"
+          : "该红旗已经存在处置任务，没有重复创建。"
+      )
+    },
+    [activeKcrAssessmentResponse, createKcrActionTask]
+  )
+  const handleKcrActionTaskStatusChange = useCallback(
+    (taskId: string, status: KcrActionTask["status"]) => {
+      const result = updateKcrActionTaskStatus(taskId, status)
+      setFeedback(
+        result.saved
+          ? "处置任务状态已更新并保存。"
+          : "任务状态已更新，但浏览器存储不可用；刷新后可能丢失。"
+      )
+    },
+    [updateKcrActionTaskStatus]
   )
   const promotedSignalIdsForCompany = useMemo(
     () => getPromotedSignalIdsForCompany(promotedSignalIds, detail.id),
@@ -953,8 +994,9 @@ function App() {
     const demoSaved = commitDemoState(initialState)
     const scoringSaved = resetScoringWorkspace()
     const technologyScoringSaved = resetTechnologyWorkspace()
-    if (demoSaved && scoringSaved && technologyScoringSaved) {
-      setFeedback("已恢复初始企业、筛选条件、事件状态与评分数据。")
+    const kcrTasksReset = resetKcrActionTasks()
+    if (demoSaved && scoringSaved && technologyScoringSaved && kcrTasksReset) {
+      setFeedback("已恢复初始企业、筛选条件、事件状态、评分数据与处置任务。")
     } else if (!scoringSaved || !technologyScoringSaved) {
       setFeedback("初始状态已在当前页面恢复，但部分评分数据无法写入本地存储。")
     }
@@ -970,7 +1012,13 @@ function App() {
     setExportInProgress(kind)
     try {
       const reportExport = await loadReportExport()
-      if (kind === "pdf") {
+      if (activeKcrAssessmentResponse) {
+        reportExport.printKcrAssessmentReport(
+          activeKcrAssessmentResponse,
+          kcrActionTasks,
+          detail.name
+        )
+      } else if (kind === "pdf") {
         await reportExport.printRiskSummary(
           detail,
           assessment,
@@ -1007,11 +1055,6 @@ function App() {
   }
 
   const handleOpenExports = () => {
-    if (activeKcrAssessmentResponse) {
-      setFeedback("KCR V3 报告导出尚未接入；本页面不会导出旧方法结果。")
-      return
-    }
-
     exportTriggerRef.current =
       document.activeElement instanceof HTMLElement
         ? document.activeElement
@@ -1077,6 +1120,10 @@ function App() {
                   onOpenMethod={handleOpenMethod}
                   onOpenEvent={handleOpenEvent}
                   onCreateObservation={handleCreateObservation}
+                  kcrActionTasks={kcrActionTasks}
+                  onCreateKcrActionTask={handleCreateKcrActionTask}
+                  onKcrActionTaskStatusChange={handleKcrActionTaskStatusChange}
+                  onOpenKcrReport={handleOpenExports}
                 />
               ) : null}
               {activeView === "realtime" ? (
@@ -1187,31 +1234,45 @@ function App() {
               导出 {detail.name} 风险材料
             </DialogTitle>
             <DialogDescription>
-              导出文件包含方法版本、评分证据覆盖率、研判截止日期、公开情报更新时间和非投资建议声明。
+              {activeKcrAssessmentResponse
+                ? "KCR V3 报告包含方法与模型版本、快照时间、五维评分、18 项指标、证据引用、红旗、处置任务和免责声明。"
+                : "导出文件包含方法版本、评分证据覆盖率、研判截止日期、公开情报更新时间和非投资建议声明。"}
             </DialogDescription>
           </DialogHeader>
           <div className="export-action-list">
-            <ExportAction
-              title="企业风险摘要 PDF"
-              description="打开系统打印面板，可直接另存为 PDF。"
-              disabled={exportInProgress !== null}
-              pending={exportInProgress === "pdf"}
-              onClick={() => runExport("pdf")}
-            />
-            <ExportAction
-              title="风险事件 CSV"
-              description="导出处置状态、证据口径、方法版本和建议动作。"
-              disabled={exportInProgress !== null}
-              pending={exportInProgress === "csv"}
-              onClick={() => runExport("csv")}
-            />
-            <ExportAction
-              title="风险概览 PNG"
-              description="生成 1600 × 900 风险概览图片。"
-              disabled={exportInProgress !== null}
-              pending={exportInProgress === "png"}
-              onClick={() => runExport("png")}
-            />
+            {activeKcrAssessmentResponse ? (
+              <ExportAction
+                title="KCR V3 完整审计报告"
+                description="打开系统打印面板，可直接另存为 PDF；不会混入旧六维口径。"
+                disabled={exportInProgress !== null}
+                pending={exportInProgress === "pdf"}
+                onClick={() => runExport("pdf")}
+              />
+            ) : (
+              <>
+                <ExportAction
+                  title="企业风险摘要 PDF"
+                  description="打开系统打印面板，可直接另存为 PDF。"
+                  disabled={exportInProgress !== null}
+                  pending={exportInProgress === "pdf"}
+                  onClick={() => runExport("pdf")}
+                />
+                <ExportAction
+                  title="风险事件 CSV"
+                  description="导出处置状态、证据口径、方法版本和建议动作。"
+                  disabled={exportInProgress !== null}
+                  pending={exportInProgress === "csv"}
+                  onClick={() => runExport("csv")}
+                />
+                <ExportAction
+                  title="风险概览 PNG"
+                  description="生成 1600 × 900 风险概览图片。"
+                  disabled={exportInProgress !== null}
+                  pending={exportInProgress === "png"}
+                  onClick={() => runExport("png")}
+                />
+              </>
+            )}
           </div>
         </DialogContent>
       </Dialog>
