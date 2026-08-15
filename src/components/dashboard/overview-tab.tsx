@@ -33,6 +33,8 @@ import {
 import { formatSourceDate } from "@/lib/date-format"
 import { isEffectiveEvidence } from "@/lib/source-governance"
 import type { KcrAssessmentApiResponse } from "@/domain/kcr-v1/assessment-api.ts"
+import type { KcrActionTask } from "@/domain/kcr-v1/model.ts"
+import type { KcrRedFlagResult } from "@/domain/kcr-v1/scoring-engine.ts"
 import type {
   CompanyDetail,
   RiskAssessment,
@@ -54,6 +56,13 @@ type OverviewTabProps = {
   onOpenMethod: () => void
   onOpenEvent: (eventId: string) => void
   onCreateObservation: () => void
+  kcrActionTasks: KcrActionTask[]
+  onCreateKcrActionTask: (redFlag: KcrRedFlagResult) => void
+  onKcrActionTaskStatusChange: (
+    taskId: string,
+    status: KcrActionTask["status"]
+  ) => void
+  onOpenKcrReport: () => void
 }
 
 function getDimensionScoreLabel(dimension: RiskAssessmentDimension) {
@@ -85,6 +94,10 @@ export function OverviewTab({
   onOpenMethod,
   onOpenEvent,
   onCreateObservation,
+  kcrActionTasks,
+  onCreateKcrActionTask,
+  onKcrActionTaskStatusChange,
+  onOpenKcrReport,
 }: OverviewTabProps) {
   const sortedDimensions = [...assessment.dimensions].sort((left, right) => {
     if (left.score === null) return 1
@@ -135,6 +148,10 @@ export function OverviewTab({
           companyId={detail.id}
           onAssessmentLoad={onKcrAssessmentLoad}
           onOpenMethod={onOpenMethod}
+          actionTasks={kcrActionTasks}
+          onCreateActionTask={onCreateKcrActionTask}
+          onActionTaskStatusChange={onKcrActionTaskStatusChange}
+          onOpenReport={onOpenKcrReport}
         />
       </div>
     )

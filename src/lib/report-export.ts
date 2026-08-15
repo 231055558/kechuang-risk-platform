@@ -1,6 +1,8 @@
 import { calculateResponseRate } from "./risk-metrics.ts"
 import { formatEvidenceSupport } from "./source-governance.ts"
 import { formatSourceDateTime } from "./date-format.ts"
+import type { KcrAssessmentApiResponse } from "../domain/kcr-v1/assessment-api.ts"
+import type { KcrActionTask } from "../domain/kcr-v1/model.ts"
 import type {
   CompanyDetail,
   EvidenceScoringBinding,
@@ -674,6 +676,160 @@ export function printRiskSummary(
   )
   printDocument.close()
 
+  frame.addEventListener("load", () => printFrameAndRemoveAfterPrint(frame), {
+    once: true,
+  })
+}
+
+export function createKcrAssessmentPrintHtml(
+  response: KcrAssessmentApiResponse,
+  actionTasks: readonly KcrActionTask[] = [],
+  companyLabel = "寒武纪"
+) {
+  const { assessment, evidenceCatalog, provenance } = response
+  const companyTasks = actionTasks.filter(
+    (task) =>
+      task.companyId === assessment.companyId &&
+      task.snapshotId === assessment.runId
+  )
+  const evidenceById = new Map(
+    evidenceCatalog.map((evidence) => [evidence.id, evidence])
+  )
+  const dimensionRows = assessment.dimensions
+    .map(
+      (dimension) =>
+        `<tr><td>${escapeHtml(dimension.label)}</td><td>${escapeHtml(dimension.score ?? "缺失")}</td><td>${escapeHtml(dimension.riskLevelLabel)}</td><td>${escapeHtml(`${Math.round(dimension.evidenceCoverage * 10000) / 100}%`)}</td><td>${escapeHtml(`${Math.round(dimension.confidence * 10000) / 100}%`)}</td><td>${escapeHtml(dimension.formulaTrace)}</td></tr>`
+    )
+    .join("")
+  const redFlagRows =
+    assessment.redFlags.length > 0
+      ? assessment.redFlags
+          .map(
+            (redFlag) =>
+              `<tr><td>${escapeHtml(redFlag.priority)}</td><td>${escapeHtml(redFlag.eventId)}</td><td>${escapeHtml(redFlag.title)}</td><td>${escapeHtml(redFlag.summary)}</td><td>${escapeHtml(redFlag.evidenceIds.join("、"))}</td><td>否</td></tr>`
+          )
+          .join("")
+      : '<tr><td colspan="6">当前快照没有红旗事件。</td></tr>'
+  const indicatorRows = assessment.indicatorResults
+    .map(
+      (indicator) =>
+        `<tr><td>${escapeHtml(indicator.id)}</td><td>${escapeHtml(indicator.label)}</td><td>${escapeHtml(indicator.riskScore ?? "缺失")}</td><td>${escapeHtml(indicator.weight)}</td><td>${escapeHtml(indicator.dataStatus)}</td><td>${escapeHtml(indicator.evidence.map((item) => `${item.evidenceId}（${item.locator}）`).join("；") || "无")}</td><td>${escapeHtml(indicator.rationale)}</td></tr>`
+    )
+    .join("")
+  const evidenceRows = evidenceCatalog
+    .map(
+      (evidence) =>
+        `<tr><td class="mono">${escapeHtml(evidence.id)}</td><td>${escapeHtml(evidence.sourceTier)}</td><td><strong>${escapeHtml(evidence.sourceName)}</strong><br />${escapeHtml(evidence.title)}</td><td>${escapeHtml(evidence.publishedAt ?? "未提供")}</td><td>${escapeHtml(evidence.locator)}</td><td class="source-url">${evidence.sourceUrl ? `<a href="${escapeHtml(evidence.sourceUrl)}">${escapeHtml(evidence.sourceUrl)}</a>` : "未提供公开链接"}</td></tr>`
+    )
+    .join("")
+  const taskRows =
+    companyTasks.length > 0
+      ? companyTasks
+          .map((task) => {
+            const evidenceIds =
+              assessment.redFlags.find(
+                (redFlag) => redFlag.eventId === task.sourceId
+              )?.evidenceIds ?? []
+            return `<tr><td>${escapeHtml(task.priority)}</td><td>${escapeHtml(task.title)}</td><td>${escapeHtml(task.owner ?? "待分配")}</td><td>${escapeHtml(task.dueDate)}</td><td>${escapeHtml(task.status)}</td><td>${escapeHtml(`${task.sourceType}:${task.sourceId}`)}</td><td>${escapeHtml(evidenceIds.join("、") || "无")}</td></tr>`
+          })
+          .join("")
+      : '<tr><td colspan="7">当前浏览器尚未从红旗生成处置任务。</td></tr>'
+  const defaultRows = provenance.engineeringDefaults
+    .map(
+      (item) =>
+        `<li><strong>${escapeHtml(item.label)}：</strong>${escapeHtml(item.value)}（待团队确认）</li>`
+    )
+    .join("")
+
+  const citedEvidenceCount = new Set(
+    assessment.indicatorResults.flatMap((indicator) => indicator.evidenceIds)
+  ).size
+  const unresolvedEvidenceIds = assessment.indicatorResults
+    .flatMap((indicator) => indicator.evidenceIds)
+    .filter((evidenceId) => !evidenceById.has(evidenceId))
+
+  return `<!doctype html>
+    <html lang="zh-CN">
+      <head>
+        <meta charset="utf-8" />
+        <title>${escapeHtml(companyLabel)} KCR V3 风险评估报告</title>
+        <style>
+          @page { size: A4; margin: 14mm; }
+          * { box-sizing: border-box; }
+          body { color: #172033; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; line-height: 1.55; }
+          h1 { margin: 0; font-size: 26px; }
+          h2 { margin: 24px 0 9px; font-size: 16px; break-after: avoid; }
+          .meta { margin-top: 7px; color: #64748b; font-size: 10px; }
+          .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; margin: 18px 0; }
+          .metric { border: 1px solid #dbe3ee; border-radius: 7px; padding: 9px; }
+          .metric span { display: block; color: #64748b; font-size: 9px; }
+          .metric strong { display: block; margin-top: 3px; font-size: 17px; }
+          table { width: 100%; border-collapse: collapse; font-size: 9px; }
+          tr { break-inside: avoid; }
+          th, td { border-bottom: 1px solid #dbe3ee; padding: 6px 5px; text-align: left; vertical-align: top; }
+          th { color: #475569; background: #f7f9fc; }
+          .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; white-space: nowrap; }
+          .source-url { overflow-wrap: anywhere; font-size: 8px; }
+          .boundary { margin-top: 20px; border: 1px solid #dbe3ee; border-radius: 7px; padding: 10px; color: #475569; font-size: 9px; }
+          .boundary p { margin: 4px 0; }
+          .boundary ul { margin: 6px 0 0; padding-left: 18px; }
+        </style>
+      </head>
+      <body>
+        <h1>${escapeHtml(companyLabel)} KCR V3 风险评估报告</h1>
+        <div class="meta">企业 ${escapeHtml(assessment.companyId)} · 方法 ${escapeHtml(assessment.methodVersion)} · 模型 ${escapeHtml(assessment.modelVersion)} · 评估日期 ${escapeHtml(assessment.assessmentAt)} · 数据截至 ${escapeHtml(assessment.dataCutoff)} · 运行标识 ${escapeHtml(assessment.runId)}</div>
+        <div class="metrics">
+          <div class="metric"><span>客观风险基线</span><strong>${escapeHtml(assessment.baselineScore ?? "数据不足")}</strong></div>
+          <div class="metric"><span>风险等级</span><strong>${escapeHtml(assessment.riskLevelLabel)}风险</strong></div>
+          <div class="metric"><span>证据覆盖率</span><strong>${escapeHtml(`${Math.round(assessment.evidenceCoverage * 10000) / 100}%`)}</strong></div>
+          <div class="metric"><span>证据置信度</span><strong>${escapeHtml(`${Math.round(assessment.confidence * 10000) / 100}%`)}</strong></div>
+        </div>
+        <h2>五维客观风险</h2>
+        <table><thead><tr><th>维度</th><th>分数</th><th>等级</th><th>证据覆盖</th><th>置信度</th><th>公式轨迹</th></tr></thead><tbody>${dimensionRows}</tbody></table>
+        <h2>独立红旗事件</h2>
+        <table><thead><tr><th>优先级</th><th>事件 ID</th><th>标题</th><th>摘要</th><th>证据引用</th><th>改写基线</th></tr></thead><tbody>${redFlagRows}</tbody></table>
+        <h2>18 项评分指标与证据链</h2>
+        <table><thead><tr><th>ID</th><th>指标</th><th>风险分</th><th>权重</th><th>数据状态</th><th>证据与位置</th><th>评分依据</th></tr></thead><tbody>${indicatorRows}</tbody></table>
+        <h2>处置任务</h2>
+        <table><thead><tr><th>优先级</th><th>任务</th><th>责任角色</th><th>截止日期</th><th>状态</th><th>来源</th><th>证据</th></tr></thead><tbody>${taskRows}</tbody></table>
+        <h2>证据来源附录（${evidenceCatalog.length} 条目录 / ${citedEvidenceCount} 条评分引用）</h2>
+        <table><thead><tr><th>ID</th><th>来源级别</th><th>来源</th><th>发布日期</th><th>位置</th><th>公开链接</th></tr></thead><tbody>${evidenceRows}</tbody></table>
+        <div class="boundary">
+          <p><strong>方法来源：</strong>${escapeHtml(provenance.methodSourceLabel)}；当前状态为候选方法。</p>
+          <p><strong>数据来源：</strong>${escapeHtml(provenance.assessmentInputSourceLabel)}。</p>
+          <p><strong>引用完整性：</strong>${unresolvedEvidenceIds.length === 0 ? "评分引用均能在证据目录中解析。" : `有 ${unresolvedEvidenceIds.length} 条引用未解析。`}</p>
+          <p><strong>工程默认：</strong></p><ul>${defaultRows}</ul>
+          <p><strong>使用边界：</strong>${escapeHtml(assessment.disclaimer)}</p>
+        </div>
+      </body>
+    </html>`
+}
+
+export function printKcrAssessmentReport(
+  response: KcrAssessmentApiResponse,
+  actionTasks: readonly KcrActionTask[] = [],
+  companyLabel = "寒武纪"
+) {
+  const frame = document.createElement("iframe")
+  frame.setAttribute("title", `${companyLabel} KCR V3 风险评估报告打印`)
+  frame.style.position = "fixed"
+  frame.style.width = "1px"
+  frame.style.height = "1px"
+  frame.style.opacity = "0"
+  frame.style.pointerEvents = "none"
+  document.body.appendChild(frame)
+
+  const printDocument = frame.contentDocument
+  if (!printDocument) {
+    frame.remove()
+    return
+  }
+
+  printDocument.open()
+  printDocument.write(
+    createKcrAssessmentPrintHtml(response, actionTasks, companyLabel)
+  )
+  printDocument.close()
   frame.addEventListener("load", () => printFrameAndRemoveAfterPrint(frame), {
     once: true,
   })

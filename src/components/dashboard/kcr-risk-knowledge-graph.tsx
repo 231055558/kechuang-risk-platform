@@ -406,7 +406,11 @@ export function KcrRiskKnowledgeGraph({
       className="kcr-risk-graph-glass"
       padding="0"
     >
-      <section className="kcr-risk-graph" aria-labelledby={titleId}>
+      <section
+        id="kcr-risk-knowledge-graph"
+        className="kcr-risk-graph"
+        aria-labelledby={titleId}
+      >
         <header className="kcr-risk-graph-header">
           <div>
             <span>

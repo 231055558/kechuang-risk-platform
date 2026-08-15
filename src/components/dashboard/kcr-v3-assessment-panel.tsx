@@ -10,14 +10,21 @@ import {
 
 import { GlassPanel } from "@/components/dashboard/shared"
 import { KcrEvidenceDrilldown } from "@/components/dashboard/kcr-evidence-drilldown"
+import { KcrMvpReviewWorkspace } from "@/components/dashboard/kcr-mvp-review-workspace"
 import { KcrRiskKnowledgeGraph } from "@/components/dashboard/kcr-risk-knowledge-graph"
 import { LiquidGlassSurface } from "@/components/liquid"
 import { Reveal } from "@/components/motion/workflow-transition"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { KcrAssessmentApiResponse } from "@/domain/kcr-v1/assessment-api.ts"
-import type { KcrRiskDimensionId } from "@/domain/kcr-v1/model.ts"
-import type { KcrAssessmentDimensionResult } from "@/domain/kcr-v1/scoring-engine.ts"
+import type {
+  KcrActionTask,
+  KcrRiskDimensionId,
+} from "@/domain/kcr-v1/model.ts"
+import type {
+  KcrAssessmentDimensionResult,
+  KcrRedFlagResult,
+} from "@/domain/kcr-v1/scoring-engine.ts"
 import { formatSourceDate } from "@/lib/date-format"
 import { fetchKcrCompanyAssessment } from "@/lib/kcr-assessment-api"
 import { buildKcrRiskRadarModel } from "@/lib/kcr-risk-radar"
@@ -31,6 +38,13 @@ type KcrV3AssessmentPanelProps = {
   companyId: string
   onAssessmentLoad: (value: KcrAssessmentApiResponse) => void
   onOpenMethod: () => void
+  actionTasks: KcrActionTask[]
+  onCreateActionTask: (redFlag: KcrRedFlagResult) => void
+  onActionTaskStatusChange: (
+    taskId: string,
+    status: KcrActionTask["status"]
+  ) => void
+  onOpenReport: () => void
 }
 
 const percentFormatter = new Intl.NumberFormat("zh-CN", {
@@ -181,6 +195,10 @@ export function KcrV3AssessmentPanel({
   companyId,
   onAssessmentLoad,
   onOpenMethod,
+  actionTasks,
+  onCreateActionTask,
+  onActionTaskStatusChange,
+  onOpenReport,
 }: KcrV3AssessmentPanelProps) {
   const [attempt, setAttempt] = useState(0)
   const [state, setState] = useState<LoadState>({ status: "loading" })
@@ -260,6 +278,7 @@ export function KcrV3AssessmentPanel({
     <>
       <Reveal>
         <GlassPanel
+          id="kcr-v3-summary"
           className="kcr-v3-summary"
           surfaceClassName="kcr-v3-summary-glass"
           variant="floating"
@@ -402,6 +421,17 @@ export function KcrV3AssessmentPanel({
           </LiquidGlassSurface>
         </section>
       </Reveal>
+
+      <KcrMvpReviewWorkspace
+        response={state.value}
+        tasks={actionTasks}
+        onCreateTask={onCreateActionTask}
+        onTaskStatusChange={onActionTaskStatusChange}
+        onOpenDimension={(dimensionId) =>
+          setSelectedDimension({ companyId, dimensionId })
+        }
+        onOpenReport={onOpenReport}
+      />
 
       {activeDimension ? (
         <KcrEvidenceDrilldown
