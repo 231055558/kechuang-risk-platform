@@ -3,7 +3,10 @@ import {
   createKcrAssessmentApiResponse,
   type KcrAssessmentApiResponse,
 } from "../src/domain/kcr-v1/assessment-api.ts"
-import { calculateKcrAssessment } from "../src/domain/kcr-v1/scoring-engine.ts"
+import {
+  calculateKcrAssessment,
+  type KcrAssessmentRequest,
+} from "../src/domain/kcr-v1/scoring-engine.ts"
 
 export class KcrCompanyAssessmentNotFoundError extends Error {
   readonly statusCode = 404
@@ -22,15 +25,21 @@ export function getKcrCompanyAssessment(
     throw new KcrCompanyAssessmentNotFoundError(companyId)
   }
 
+  const assessment = calculateKcrAssessment(cambriconAssessmentInput)
+  const validatedInput = cambriconAssessmentInput as KcrAssessmentRequest
   return createKcrAssessmentApiResponse(
-    calculateKcrAssessment(cambriconAssessmentInput),
-    "team-workbook"
+    assessment,
+    "team-workbook",
+    validatedInput.evidenceCatalog
   )
 }
 
 export function scoreKcrAssessment(request: unknown): KcrAssessmentApiResponse {
+  const assessment = calculateKcrAssessment(request)
+  const validatedRequest = request as KcrAssessmentRequest
   return createKcrAssessmentApiResponse(
-    calculateKcrAssessment(request),
-    "api-request"
+    assessment,
+    "api-request",
+    validatedRequest.evidenceCatalog
   )
 }

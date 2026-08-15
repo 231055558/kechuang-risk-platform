@@ -3,7 +3,10 @@ import test from "node:test"
 
 import goldenInput from "../src/data/mvp/cambricon-scoring-input-v3.json" with { type: "json" }
 import { createKcrAssessmentApiResponse } from "../src/domain/kcr-v1/assessment-api.ts"
-import { calculateKcrAssessment } from "../src/domain/kcr-v1/scoring-engine.ts"
+import {
+  calculateKcrAssessment,
+  type KcrAssessmentRequest,
+} from "../src/domain/kcr-v1/scoring-engine.ts"
 import {
   fetchKcrCompanyAssessment,
   KcrAssessmentApiError,
@@ -11,7 +14,8 @@ import {
 
 const validResponse = createKcrAssessmentApiResponse(
   calculateKcrAssessment(goldenInput),
-  "team-workbook"
+  "team-workbook",
+  (goldenInput as KcrAssessmentRequest).evidenceCatalog
 )
 
 test("KCR assessment client requests the selected company using a relative URL", async () => {
@@ -30,6 +34,9 @@ test("KCR assessment client requests the selected company using a relative URL",
   assert.equal(calls[0].input, "api/v1/kcr/companies/cambricon/assessment")
   assert.equal(calls[0].init?.method, "GET")
   assert.equal(result.assessment.baselineScore, 35.6)
+  assert.equal(result.assessment.indicatorResults.length, 18)
+  assert.equal(result.evidenceCatalog.length, 8)
+  assert.equal(result.evidenceCatalog[0].id, "S01")
   assert.equal(result.provenance.assessmentInputSource, "team-workbook")
 })
 
@@ -69,6 +76,43 @@ test("KCR assessment client rejects malformed success payloads", async () => {
               status: 200,
             }
           ),
+      }),
+    (error: unknown) => {
+      assert.ok(error instanceof KcrAssessmentApiError)
+      assert.equal(error.code, "KCR_ASSESSMENT_RESPONSE_INVALID")
+      return true
+    }
+  )
+})
+
+test("KCR assessment client rejects unsafe evidence links", async () => {
+  const unsafeResponse = structuredClone(validResponse)
+  unsafeResponse.evidenceCatalog[0].sourceUrl = "javascript:alert(1)"
+
+  await assert.rejects(
+    () =>
+      fetchKcrCompanyAssessment("cambricon", {
+        fetch: async () =>
+          new Response(JSON.stringify(unsafeResponse), { status: 200 }),
+      }),
+    (error: unknown) => {
+      assert.ok(error instanceof KcrAssessmentApiError)
+      assert.equal(error.code, "KCR_ASSESSMENT_RESPONSE_INVALID")
+      return true
+    }
+  )
+})
+
+test("KCR assessment client rejects inferred evidence without its basis", async () => {
+  const unsupportedResponse = structuredClone(validResponse)
+  unsupportedResponse.assessment.indicatorResults[0].evidence[0].inferenceBasis =
+    null
+
+  await assert.rejects(
+    () =>
+      fetchKcrCompanyAssessment("cambricon", {
+        fetch: async () =>
+          new Response(JSON.stringify(unsupportedResponse), { status: 200 }),
       }),
     (error: unknown) => {
       assert.ok(error instanceof KcrAssessmentApiError)

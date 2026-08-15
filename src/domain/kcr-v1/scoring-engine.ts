@@ -189,6 +189,17 @@ const expectedDataStatus = {
   missing: 0,
 } as const
 
+const evidenceSourceTiers = new Set<KcrAssessmentEvidenceInput["sourceTier"]>([
+  "regulator",
+  "exchange",
+  "company-filing",
+  "official-company",
+  "commercial-api",
+  "research",
+  "media",
+  "manual",
+])
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value)
 }
@@ -199,6 +210,27 @@ function finiteNumber(value: unknown, min: number, max: number) {
     Number.isFinite(value) &&
     value >= min &&
     value <= max
+  )
+}
+
+function isSafeSourceUrl(value: unknown) {
+  if (value === null) return true
+  if (typeof value !== "string" || !value.trim()) return false
+
+  try {
+    const url = new URL(value)
+    return url.protocol === "https:" || url.protocol === "http:"
+  } catch {
+    return false
+  }
+}
+
+function isEvidenceSourceTier(
+  value: unknown
+): value is KcrAssessmentEvidenceInput["sourceTier"] {
+  return (
+    typeof value === "string" &&
+    evidenceSourceTiers.has(value as KcrAssessmentEvidenceInput["sourceTier"])
   )
 }
 
@@ -255,10 +287,25 @@ function validateRequest(
     evidenceIds.add(item.id)
     if (
       typeof item.title !== "string" ||
+      !item.title.trim() ||
       typeof item.sourceName !== "string" ||
-      typeof item.locator !== "string"
+      !item.sourceName.trim() ||
+      typeof item.locator !== "string" ||
+      !item.locator.trim()
     ) {
       errors.push(`证据 ${item.id} 缺少标题、来源或位置。`)
+    }
+    if (!isEvidenceSourceTier(item.sourceTier)) {
+      errors.push(`证据 ${item.id} 的来源等级无效。`)
+    }
+    if (!isSafeSourceUrl(item.sourceUrl)) {
+      errors.push(`证据 ${item.id} 的来源链接必须是 HTTP(S) URL 或空值。`)
+    }
+    if (
+      item.publishedAt !== null &&
+      (typeof item.publishedAt !== "string" || !item.publishedAt.trim())
+    ) {
+      errors.push(`证据 ${item.id} 的发布日期无效。`)
     }
   })
 

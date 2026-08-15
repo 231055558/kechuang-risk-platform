@@ -19,7 +19,8 @@ curl -X POST \
   http://127.0.0.1:5001/api/v1/kcr/assessments/score
 ```
 
-两个接口都返回 `assessment` 与 `provenance`。前者是评分引擎输出，后者明确区分：
+两个接口都返回 `assessment`、`evidenceCatalog` 与 `provenance`。评分结果包含指标与
+公式轨迹，证据目录提供安全的来源标题、HTTP(S) 链接、日期和位置，来源信息明确区分：
 
 - 方法与寒武纪输入来自团队工作簿；
 - 方法目前是待团队确认的候选版；
