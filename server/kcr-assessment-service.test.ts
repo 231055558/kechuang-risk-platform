@@ -17,6 +17,18 @@ test("Cambricon snapshot service recalculates the golden V3 assessment", () => {
   assert.equal(response.assessment.confidence, 0.8875)
   assert.equal(response.assessment.dimensions.length, 5)
   assert.equal(response.assessment.redFlags.length, 2)
+  assert.equal(response.assessment.indicatorResults.length, 18)
+  assert.equal(response.evidenceCatalog.length, 8)
+  assert.deepEqual(response.evidenceCatalog[0], {
+    id: "S01",
+    title: "中科寒武纪科技股份有限公司2026年半年度报告",
+    sourceTier: "company-filing",
+    sourceName: "中科寒武纪/上交所",
+    sourceUrl:
+      "https://static.cninfo.com.cn/finalpage/2026-08-08/1225464969.PDF",
+    publishedAt: "2026-08-08",
+    locator: "第7、17-22、52-58、109、146-159页",
+  })
   assert.equal(response.provenance.methodStatus, "candidate-for-team-review")
   assert.equal(response.provenance.assessmentInputSource, "team-workbook")
   assert.equal(response.provenance.engineeringDefaults.length, 4)

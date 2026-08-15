@@ -225,6 +225,11 @@ test("invalid weights, evidence references, and unsupported scores fail safely",
       "推断依据",
       (request) => (request.indicators[0].evidence[0].inferenceBasis = null),
     ],
+    [
+      "必须是 HTTP(S) URL",
+      (request) =>
+        (request.evidenceCatalog[0].sourceUrl = "javascript:alert(1)"),
+    ],
   ]
 
   for (const [message, mutate] of cases) {

@@ -1,4 +1,7 @@
-import type { KcrAssessmentResult } from "./scoring-engine.ts"
+import type {
+  KcrAssessmentEvidenceInput,
+  KcrAssessmentResult,
+} from "./scoring-engine.ts"
 
 export const KCR_ASSESSMENT_SCORE_API_PATH =
   "api/v1/kcr/assessments/score" as const
@@ -28,6 +31,7 @@ export interface KcrAssessmentProvenance {
 
 export interface KcrAssessmentApiResponse {
   assessment: KcrAssessmentResult
+  evidenceCatalog: KcrAssessmentEvidenceInput[]
   provenance: KcrAssessmentProvenance
 }
 
@@ -64,10 +68,12 @@ export function getKcrCompanyAssessmentApiPath(companyId: string) {
 
 export function createKcrAssessmentApiResponse(
   assessment: KcrAssessmentResult,
-  assessmentInputSource: KcrAssessmentInputSource
+  assessmentInputSource: KcrAssessmentInputSource,
+  evidenceCatalog: readonly KcrAssessmentEvidenceInput[]
 ): KcrAssessmentApiResponse {
   return {
     assessment,
+    evidenceCatalog: evidenceCatalog.map((evidence) => ({ ...evidence })),
     provenance: {
       methodStatus: "candidate-for-team-review",
       methodSource: "team-workbook",

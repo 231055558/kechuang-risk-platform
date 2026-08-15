@@ -1,6 +1,7 @@
 import { useEffect, useId, useState } from "react"
 import {
   AlertTriangleIcon,
+  ArrowRightIcon,
   BookOpenCheckIcon,
   DatabaseZapIcon,
   RefreshCwIcon,
@@ -8,11 +9,13 @@ import {
 } from "lucide-react"
 
 import { GlassPanel } from "@/components/dashboard/shared"
+import { KcrEvidenceDrilldown } from "@/components/dashboard/kcr-evidence-drilldown"
 import { LiquidGlassSurface } from "@/components/liquid"
 import { Reveal } from "@/components/motion/workflow-transition"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { KcrAssessmentApiResponse } from "@/domain/kcr-v1/assessment-api.ts"
+import type { KcrRiskDimensionId } from "@/domain/kcr-v1/model.ts"
 import type { KcrAssessmentDimensionResult } from "@/domain/kcr-v1/scoring-engine.ts"
 import { formatSourceDate } from "@/lib/date-format"
 import { fetchKcrCompanyAssessment } from "@/lib/kcr-assessment-api"
@@ -37,8 +40,10 @@ const percentFormatter = new Intl.NumberFormat("zh-CN", {
 
 function KcrRiskRadar({
   dimensions,
+  onSelectDimension,
 }: {
   dimensions: KcrAssessmentDimensionResult[]
+  onSelectDimension: (dimensionId: KcrRiskDimensionId) => void
 }) {
   const model = buildKcrRiskRadarModel(dimensions)
   const titleId = useId()
@@ -58,7 +63,7 @@ function KcrRiskRadar({
             <span>团队工作簿复算</span>
             <h3>五维风险分布</h3>
           </div>
-          <Badge variant="outline">5/5 已评分</Badge>
+          <Badge variant="outline">点击维度下钻</Badge>
         </div>
 
         <svg
@@ -137,15 +142,20 @@ function KcrRiskRadar({
 
         <ul className="kcr-v3-dimension-values" aria-label="五维风险评分明细">
           {dimensions.map((dimension) => (
-            <li
-              key={dimension.dimensionId}
-              data-level={dimension.riskLevel ?? "unknown"}
-            >
-              <span>
-                <strong>{dimension.label}</strong>
-                <small>{dimension.indicatorIds.length} 项加权指标</small>
-              </span>
-              <b>{dimension.score ?? "—"}</b>
+            <li key={dimension.dimensionId}>
+              <button
+                type="button"
+                data-level={dimension.riskLevel ?? "unknown"}
+                aria-label={`查看${dimension.label}的 ${dimension.indicatorIds.length} 项指标与来源证据`}
+                onClick={() => onSelectDimension(dimension.dimensionId)}
+              >
+                <span>
+                  <strong>{dimension.label}</strong>
+                  <small>{dimension.indicatorIds.length} 项加权指标</small>
+                </span>
+                <b>{dimension.score ?? "—"}</b>
+                <ArrowRightIcon aria-hidden="true" />
+              </button>
             </li>
           ))}
         </ul>
@@ -173,6 +183,10 @@ export function KcrV3AssessmentPanel({
 }: KcrV3AssessmentPanelProps) {
   const [attempt, setAttempt] = useState(0)
   const [state, setState] = useState<LoadState>({ status: "loading" })
+  const [selectedDimension, setSelectedDimension] = useState<{
+    companyId: string
+    dimensionId: KcrRiskDimensionId
+  } | null>(null)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -229,6 +243,17 @@ export function KcrV3AssessmentPanel({
 
   const { assessment, provenance } = state.value
   const primaryRedFlag = assessment.redFlags[0]
+  const activeDimension =
+    selectedDimension?.companyId === companyId
+      ? assessment.dimensions.find(
+          (dimension) => dimension.dimensionId === selectedDimension.dimensionId
+        )
+      : undefined
+  const selectedIndicators = activeDimension
+    ? assessment.indicatorResults.filter(
+        (indicator) => indicator.dimensionId === activeDimension.dimensionId
+      )
+    : []
 
   return (
     <>
@@ -324,7 +349,12 @@ export function KcrV3AssessmentPanel({
 
       <Reveal>
         <section className="kcr-v3-analysis-grid" aria-label="KCR V3 评估分析">
-          <KcrRiskRadar dimensions={assessment.dimensions} />
+          <KcrRiskRadar
+            dimensions={assessment.dimensions}
+            onSelectDimension={(dimensionId) =>
+              setSelectedDimension({ companyId, dimensionId })
+            }
+          />
 
           <LiquidGlassSurface
             variant="card"
@@ -355,12 +385,26 @@ export function KcrV3AssessmentPanel({
                 ))}
               </div>
               <p className="kcr-v3-next-step">
-                指标贡献和证据下钻将在下一任务节点接入。
+                红旗事件的关系传播将在后续任务节点接入。
               </p>
             </div>
           </LiquidGlassSurface>
         </section>
       </Reveal>
+
+      {activeDimension ? (
+        <KcrEvidenceDrilldown
+          open
+          onOpenChange={(open) => {
+            if (!open) setSelectedDimension(null)
+          }}
+          dimension={activeDimension}
+          indicators={selectedIndicators}
+          evidenceCatalog={state.value.evidenceCatalog}
+          methodVersion={assessment.methodVersion}
+          dataCutoff={assessment.dataCutoff}
+        />
+      ) : null}
     </>
   )
 }

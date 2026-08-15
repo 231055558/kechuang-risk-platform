@@ -30,14 +30,126 @@ function isRatio(value: unknown) {
   return typeof value === "number" && value >= 0 && value <= 1
 }
 
+function isScore(value: unknown) {
+  return typeof value === "number" && value >= 0 && value <= 100
+}
+
+const evidenceSourceTiers = new Set([
+  "regulator",
+  "exchange",
+  "company-filing",
+  "official-company",
+  "commercial-api",
+  "research",
+  "media",
+  "manual",
+])
+
+const evidenceSupportStrengths = new Set(["direct", "inferred", "background"])
+
+function isSafeSourceUrl(value: unknown) {
+  if (value === null) return true
+  if (typeof value !== "string" || !value.trim()) return false
+
+  try {
+    const url = new URL(value)
+    return url.protocol === "https:" || url.protocol === "http:"
+  } catch {
+    return false
+  }
+}
+
+function isEvidenceCatalog(
+  value: unknown
+): value is KcrAssessmentApiResponse["evidenceCatalog"] {
+  if (!Array.isArray(value) || value.length === 0) return false
+  const ids = new Set<string>()
+
+  return value.every((item) => {
+    if (!isRecord(item)) return false
+    if (
+      typeof item.id !== "string" ||
+      !item.id.trim() ||
+      ids.has(item.id) ||
+      typeof item.title !== "string" ||
+      !item.title.trim() ||
+      typeof item.sourceName !== "string" ||
+      !item.sourceName.trim() ||
+      typeof item.locator !== "string" ||
+      !item.locator.trim() ||
+      typeof item.sourceTier !== "string" ||
+      !evidenceSourceTiers.has(item.sourceTier) ||
+      !isSafeSourceUrl(item.sourceUrl) ||
+      (item.publishedAt !== null && typeof item.publishedAt !== "string")
+    ) {
+      return false
+    }
+
+    ids.add(item.id)
+    return true
+  })
+}
+
+function isIndicatorEvidenceReference(
+  value: unknown,
+  evidenceIds: ReadonlySet<string>
+) {
+  if (!isRecord(value)) return false
+  if (
+    typeof value.evidenceId !== "string" ||
+    !evidenceIds.has(value.evidenceId) ||
+    typeof value.locator !== "string" ||
+    !value.locator.trim() ||
+    typeof value.supportStrength !== "string" ||
+    !evidenceSupportStrengths.has(value.supportStrength)
+  ) {
+    return false
+  }
+
+  if (value.supportStrength === "inferred") {
+    return (
+      typeof value.inferenceBasis === "string" &&
+      value.inferenceBasis.trim().length > 0
+    )
+  }
+
+  return value.inferenceBasis === null || typeof value.inferenceBasis === "string"
+}
+
+function isIndicatorResult(value: unknown, evidenceIds: ReadonlySet<string>) {
+  if (!isRecord(value)) return false
+  return (
+    typeof value.id === "string" &&
+    typeof value.dimensionId === "string" &&
+    typeof value.label === "string" &&
+    typeof value.weight === "number" &&
+    (value.riskScore === null || isScore(value.riskScore)) &&
+    (value.dataStatus === "complete" ||
+      value.dataStatus === "partial" ||
+      value.dataStatus === "missing") &&
+    isRatio(value.coverageFactor) &&
+    isRatio(value.evidenceConfidence) &&
+    typeof value.rationale === "string" &&
+    Array.isArray(value.evidence) &&
+    value.evidence.every((reference) =>
+      isIndicatorEvidenceReference(reference, evidenceIds)
+    ) &&
+    (value.weightedContribution === null ||
+      typeof value.weightedContribution === "number") &&
+    typeof value.formulaTrace === "string"
+  )
+}
+
 function isKcrAssessmentApiResponse(
   value: unknown
 ): value is KcrAssessmentApiResponse {
   if (!isRecord(value) || !isRecord(value.assessment)) return false
   if (!isRecord(value.provenance)) return false
+  if (!isEvidenceCatalog(value.evidenceCatalog)) return false
 
   const assessment = value.assessment
   const provenance = value.provenance
+  const evidenceIds = new Set(value.evidenceCatalog.map((item) => item.id))
   return (
     assessment.modelVersion === "KCR-SCORE-2026.08-v3" &&
     assessment.methodVersion === "KCR-2026.08-v1" &&
@@ -51,6 +163,11 @@ function isKcrAssessmentApiResponse(
     isRatio(assessment.confidence) &&
     Array.isArray(assessment.dimensions) &&
     assessment.dimensions.length === 5 &&
+    Array.isArray(assessment.indicatorResults) &&
+    assessment.indicatorResults.length === 18 &&
+    assessment.indicatorResults.every((indicator) =>
+      isIndicatorResult(indicator, evidenceIds)
+    ) &&
     Array.isArray(assessment.redFlags) &&
     Array.isArray(assessment.warnings) &&
     provenance.methodStatus === "candidate-for-team-review" &&
