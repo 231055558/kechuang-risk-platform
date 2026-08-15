@@ -790,8 +790,7 @@
   height: 7px;
   border-radius: 999px;
   background: var(--brand);
-  box-shadow: 0 0 0 4px
-    color-mix(in oklch, var(--brand-soft) 48%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in oklch, var(--brand-soft) 48%, transparent);
 }
 
 .risk-radar-values li[data-state="missing"] > i {
@@ -2044,11 +2043,7 @@
   padding: 16px;
   border: 1px solid var(--reading-separator);
   border-radius: 12px;
-  background: color-mix(
-    in oklch,
-    var(--glass-reading-bg) 68%,
-    transparent
-  );
+  background: color-mix(in oklch, var(--glass-reading-bg) 68%, transparent);
 }
 
 .compare-readiness-item span,
@@ -3391,12 +3386,11 @@
   border: 1px solid
     color-mix(in oklch, var(--warning-border) 78%, var(--glass-border));
   border-radius: 14px;
-  background:
-    linear-gradient(
-      138deg,
-      color-mix(in oklch, var(--warning-bg) 78%, transparent),
-      color-mix(in oklch, var(--glass-reading-bg) 54%, transparent)
-    );
+  background: linear-gradient(
+    138deg,
+    color-mix(in oklch, var(--warning-bg) 78%, transparent),
+    color-mix(in oklch, var(--glass-reading-bg) 54%, transparent)
+  );
   box-shadow:
     inset 0 1px 0 color-mix(in oklch, var(--glass-rim-inner) 72%, transparent),
     0 8px 20px color-mix(in oklch, var(--warning) 8%, transparent);
@@ -3427,7 +3421,8 @@
     inset 0 1px 0 color-mix(in oklch, var(--glass-rim-inner) 94%, transparent),
     inset 1px 0 0 color-mix(in oklch, var(--glass-rim-inner) 46%, transparent),
     inset 0 -1px 0 color-mix(in oklch, var(--glass-rim-outer) 54%, transparent),
-    0 16px 40px color-mix(in oklch, var(--glass-density-shadow) 64%, transparent) !important;
+    0 16px 40px
+      color-mix(in oklch, var(--glass-density-shadow) 64%, transparent) !important;
   -webkit-backdrop-filter: blur(24px) saturate(1.18);
   backdrop-filter: blur(24px) saturate(1.18);
 }
@@ -3536,7 +3531,8 @@
   box-shadow:
     inset 0 1px 0 color-mix(in oklch, var(--glass-rim-inner) 88%, transparent),
     inset 0 -1px 0 color-mix(in oklch, var(--glass-rim-outer) 46%, transparent),
-    0 12px 30px color-mix(in oklch, var(--glass-density-shadow) 48%, transparent);
+    0 12px 30px
+      color-mix(in oklch, var(--glass-density-shadow) 48%, transparent);
   -webkit-backdrop-filter: blur(18px) saturate(1.08);
   backdrop-filter: blur(18px) saturate(1.08);
 }
@@ -3930,7 +3926,8 @@
   box-shadow:
     inset 0 1px 0 color-mix(in oklch, var(--glass-rim-inner) 82%, transparent),
     inset 0 -1px 0 color-mix(in oklch, var(--glass-rim-outer) 42%, transparent),
-    0 14px 32px color-mix(in oklch, var(--glass-density-shadow) 44%, transparent);
+    0 14px 32px
+      color-mix(in oklch, var(--glass-density-shadow) 44%, transparent);
   -webkit-backdrop-filter: blur(20px) saturate(1.12);
   backdrop-filter: blur(20px) saturate(1.12);
 }
@@ -4054,11 +4051,7 @@
       transparent
     );
     box-shadow: inset 3px 0 0
-      color-mix(
-        in oklch,
-        var(--scoring-dimension-accent) 56%,
-        transparent
-      );
+      color-mix(in oklch, var(--scoring-dimension-accent) 56%, transparent);
   }
 
   .scoring-quantification-row:hover {
@@ -4068,11 +4061,7 @@
       transparent
     );
     box-shadow: inset 3px 0 0
-      color-mix(
-        in oklch,
-        var(--scoring-dimension-accent) 54%,
-        transparent
-      );
+      color-mix(in oklch, var(--scoring-dimension-accent) 54%, transparent);
   }
 
   .scoring-observation-row-empty > [data-slot="button"]:hover {
@@ -4467,8 +4456,7 @@
     color-mix(in oklch, var(--glass-card-bg) 68%, transparent);
   box-shadow:
     inset 0 1px 0 color-mix(in oklch, var(--glass-rim-inner) 82%, transparent),
-    0 12px 30px
-      color-mix(in oklch, var(--scoring-score-tone) 8%, transparent);
+    0 12px 30px color-mix(in oklch, var(--scoring-score-tone) 8%, transparent);
   text-align: center;
 }
 
@@ -4934,7 +4922,8 @@
     color-mix(in oklch, var(--glass-reading-bg) 70%, transparent);
   box-shadow:
     inset 0 1px 0 color-mix(in oklch, var(--glass-rim-inner) 90%, transparent),
-    0 22px 54px color-mix(in oklch, var(--glass-density-shadow) 56%, transparent);
+    0 22px 54px
+      color-mix(in oklch, var(--glass-density-shadow) 56%, transparent);
   -webkit-backdrop-filter: blur(28px) saturate(1.2);
   backdrop-filter: blur(28px) saturate(1.2);
 }
@@ -5011,7 +5000,8 @@
   box-shadow:
     inset 0 1px 0 color-mix(in oklch, var(--glass-rim-inner) 96%, transparent),
     inset 0 -1px 0 color-mix(in oklch, var(--glass-rim-outer) 44%, transparent),
-    0 14px 34px color-mix(in oklch, var(--glass-density-shadow) 45%, transparent) !important;
+    0 14px 34px
+      color-mix(in oklch, var(--glass-density-shadow) 45%, transparent) !important;
 }
 
 .technology-scoring-summary-glass > .liquid-glass-content {
@@ -5181,8 +5171,7 @@
       transparent 30%
     ),
     color-mix(in oklch, var(--glass-control-bg) 32%, transparent);
-  box-shadow: inset 3px 0 0
-    color-mix(in oklch, var(--brand) 58%, transparent);
+  box-shadow: inset 3px 0 0 color-mix(in oklch, var(--brand) 58%, transparent);
 }
 
 .technology-indicator-weight {
@@ -5596,7 +5585,8 @@
     color-mix(in oklch, var(--glass-reading-bg) 68%, transparent);
   box-shadow:
     inset 0 1px 0 color-mix(in oklch, var(--glass-rim-inner) 88%, transparent),
-    0 18px 42px color-mix(in oklch, var(--glass-density-shadow) 42%, transparent);
+    0 18px 42px
+      color-mix(in oklch, var(--glass-density-shadow) 42%, transparent);
   -webkit-backdrop-filter: blur(26px) saturate(1.18);
   backdrop-filter: blur(26px) saturate(1.18);
 }
@@ -5662,7 +5652,8 @@
     color-mix(in oklch, var(--glass-card-bg) 58%, transparent) !important;
   box-shadow:
     inset 0 1px 0 color-mix(in oklch, var(--glass-rim-inner) 94%, transparent),
-    0 12px 30px color-mix(in oklch, var(--glass-density-shadow) 36%, transparent) !important;
+    0 12px 30px
+      color-mix(in oklch, var(--glass-density-shadow) 36%, transparent) !important;
 }
 
 .technology-baseline-summary-glass > .liquid-glass-content {
@@ -6086,8 +6077,7 @@
 @media (hover: hover) and (pointer: fine) {
   .technology-indicator-row:hover {
     background: color-mix(in oklch, var(--brand-soft) 38%, transparent);
-    box-shadow: inset 3px 0 0
-      color-mix(in oklch, var(--brand) 52%, transparent);
+    box-shadow: inset 3px 0 0 color-mix(in oklch, var(--brand) 52%, transparent);
   }
 }
 
@@ -6685,6 +6675,465 @@
   }
 }
 
+/* KCR V3 lightweight risk knowledge graph */
+.kcr-risk-graph-glass {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--reading-border);
+  border-radius: 22px;
+  background:
+    radial-gradient(
+      circle at 22% 14%,
+      color-mix(in oklch, var(--brand-soft) 48%, transparent),
+      transparent 34%
+    ),
+    linear-gradient(
+      138deg,
+      color-mix(in oklch, var(--glass-specular-hot) 20%, transparent),
+      transparent 48%
+    ),
+    color-mix(in oklch, var(--apple-material-reading) 70%, transparent);
+  box-shadow: var(--apple-edge-reading), var(--apple-shadow-reading);
+}
+
+.kcr-risk-graph {
+  min-width: 0;
+  padding: 24px;
+}
+
+.kcr-risk-graph-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.kcr-risk-graph-header > div:first-child {
+  min-width: 0;
+}
+
+.kcr-risk-graph-header > div:first-child > span {
+  color: var(--brand-strong);
+  font-size: 11px;
+  font-weight: 720;
+}
+
+.kcr-risk-graph-header h3 {
+  margin: 4px 0 0;
+  color: var(--text-strong);
+  font-size: 22px;
+  font-weight: 750;
+}
+
+.kcr-risk-graph-header p {
+  max-width: 760px;
+  margin: 8px 0 0;
+  color: var(--text-body);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.kcr-risk-graph-counts {
+  display: grid;
+  flex: 0 0 auto;
+  grid-template-columns: auto auto;
+  align-items: baseline;
+  gap: 2px 7px;
+  padding: 10px 14px;
+  border: 1px solid var(--reading-border);
+  border-radius: 14px;
+  background: color-mix(in oklch, var(--glass-reading-bg) 78%, transparent);
+}
+
+.kcr-risk-graph-counts strong {
+  color: var(--text-strong);
+  font-size: 18px;
+  font-weight: 770;
+  font-variant-numeric: tabular-nums;
+}
+
+.kcr-risk-graph-counts span {
+  color: var(--text-soft);
+  font-size: 9px;
+}
+
+.kcr-risk-graph-dimension-filters {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.kcr-risk-graph-dimension-filters > button {
+  display: flex;
+  min-width: 0;
+  min-height: 50px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  padding: 10px 12px;
+  border: 1px solid var(--reading-separator);
+  border-radius: 12px;
+  background: color-mix(in oklch, var(--glass-control-bg) 46%, transparent);
+  color: var(--text-body);
+  cursor: pointer;
+  transition:
+    border-color var(--motion-fast) var(--ease-fluid),
+    background-color var(--motion-fast) var(--ease-fluid),
+    color var(--motion-fast) var(--ease-fluid);
+}
+
+.kcr-risk-graph-dimension-filters > button span {
+  overflow: hidden;
+  font-size: 11px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kcr-risk-graph-dimension-filters > button strong {
+  color: var(--brand-strong);
+  font-size: 14px;
+  font-weight: 760;
+  font-variant-numeric: tabular-nums;
+}
+
+.kcr-risk-graph-dimension-filters > button[aria-pressed="true"] {
+  border-color: color-mix(in oklch, var(--brand) 52%, var(--reading-border));
+  background: color-mix(in oklch, var(--brand-soft) 62%, transparent);
+  color: var(--text-strong);
+  box-shadow: inset 0 1px 0
+    color-mix(in oklch, var(--glass-rim-inner) 68%, transparent);
+}
+
+.kcr-risk-graph-dimension-filters > button:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .kcr-risk-graph-dimension-filters > button:hover {
+    border-color: color-mix(in oklch, var(--brand) 36%, var(--reading-border));
+    background: color-mix(in oklch, var(--brand-soft) 40%, transparent);
+  }
+}
+
+.kcr-risk-graph-workspace {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.kcr-risk-graph-canvas-scroll {
+  min-width: 0;
+  overflow: auto hidden;
+  border: 1px solid var(--reading-border);
+  border-radius: 18px;
+  background:
+    linear-gradient(
+        color-mix(in oklch, var(--reading-separator) 32%, transparent) 1px,
+        transparent 1px
+      )
+      0 0 / 28px 28px,
+    linear-gradient(
+        90deg,
+        color-mix(in oklch, var(--reading-separator) 32%, transparent) 1px,
+        transparent 1px
+      )
+      0 0 / 28px 28px,
+    color-mix(in oklch, var(--glass-reading-bg) 76%, transparent);
+  box-shadow: inset 0 1px 0
+    color-mix(in oklch, var(--glass-rim-inner) 48%, transparent);
+  scrollbar-width: thin;
+}
+
+.kcr-risk-graph-canvas {
+  display: block;
+  width: 100%;
+  min-width: 820px;
+  height: auto;
+}
+
+.kcr-risk-graph-edge {
+  fill: none;
+  stroke: color-mix(in oklch, var(--text-soft) 48%, transparent);
+  stroke-width: 1.25;
+  opacity: 0.68;
+  vector-effect: non-scaling-stroke;
+  transition:
+    opacity var(--motion-fast) var(--ease-fluid),
+    stroke-width var(--motion-fast) var(--ease-fluid);
+}
+
+.kcr-risk-graph-edge[data-kind="direct"] {
+  stroke: color-mix(in oklch, var(--brand) 74%, var(--text-soft));
+  stroke-width: 1.8;
+}
+
+.kcr-risk-graph-edge[data-kind="inferred"] {
+  stroke: color-mix(in oklch, var(--accent-amber) 78%, var(--text-soft));
+  stroke-dasharray: 7 5;
+  stroke-width: 1.8;
+}
+
+.kcr-risk-graph-edge[data-kind="background"] {
+  stroke: var(--text-soft);
+  stroke-dasharray: 2 6;
+}
+
+.kcr-risk-graph-edge[data-kind="event-link"] {
+  stroke: color-mix(in oklch, var(--accent-amber) 70%, var(--text-soft));
+  stroke-dasharray: 3 3;
+  stroke-width: 1.65;
+}
+
+.kcr-risk-graph-edge[data-kind="propagation"] {
+  stroke: color-mix(in oklch, var(--danger) 68%, var(--accent-amber));
+  stroke-dasharray: 10 6;
+  stroke-width: 2;
+}
+
+.kcr-risk-graph-edge[data-active="true"] {
+  stroke-width: 3;
+  opacity: 1;
+}
+
+.kcr-risk-graph-node {
+  cursor: pointer;
+  outline: none;
+}
+
+.kcr-risk-graph-node rect {
+  fill: color-mix(in oklch, var(--glass-reading-bg) 94%, var(--surface));
+  stroke: color-mix(in oklch, var(--reading-border) 82%, var(--text-soft));
+  stroke-width: 1;
+  filter: drop-shadow(
+    0 7px 11px color-mix(in oklch, var(--text-strong) 8%, transparent)
+  );
+  vector-effect: non-scaling-stroke;
+  transition:
+    fill var(--motion-fast) var(--ease-fluid),
+    stroke var(--motion-fast) var(--ease-fluid),
+    stroke-width var(--motion-fast) var(--ease-fluid);
+}
+
+.kcr-risk-graph-node text {
+  fill: var(--text-strong);
+  font-size: 11px;
+  font-weight: 680;
+  pointer-events: none;
+}
+
+.kcr-risk-graph-node-caption {
+  fill: var(--text-soft);
+  font-size: 8px;
+  font-weight: 560;
+}
+
+.kcr-risk-graph-node[data-kind="company"] rect {
+  fill: color-mix(in oklch, var(--brand) 16%, var(--glass-reading-bg));
+  stroke: color-mix(in oklch, var(--brand) 58%, var(--reading-border));
+  stroke-width: 1.8;
+}
+
+.kcr-risk-graph-node[data-kind="dimension"] rect {
+  fill: color-mix(in oklch, var(--brand-soft) 55%, var(--glass-reading-bg));
+}
+
+.kcr-risk-graph-node[data-kind="event"] rect {
+  fill: color-mix(in oklch, var(--accent-amber) 12%, var(--glass-reading-bg));
+  stroke: color-mix(in oklch, var(--accent-amber) 48%, var(--reading-border));
+}
+
+.kcr-risk-graph-node[data-kind="evidence"] rect {
+  fill: color-mix(in oklch, var(--accent-cyan) 7%, var(--glass-reading-bg));
+  stroke: color-mix(in oklch, var(--accent-cyan) 32%, var(--reading-border));
+}
+
+.kcr-risk-graph-node[data-active="true"] rect,
+.kcr-risk-graph-node:focus-visible rect {
+  fill: color-mix(in oklch, var(--brand-soft) 80%, var(--glass-reading-bg));
+  stroke: var(--brand-strong);
+  stroke-width: 2.5;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .kcr-risk-graph-node:hover rect {
+    fill: color-mix(in oklch, var(--brand-soft) 68%, var(--glass-reading-bg));
+    stroke: color-mix(in oklch, var(--brand) 76%, var(--reading-border));
+    stroke-width: 2;
+  }
+}
+
+.kcr-risk-graph-inspector {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 18px;
+  border: 1px solid var(--reading-border);
+  border-radius: 18px;
+  background: color-mix(in oklch, var(--glass-reading-bg) 82%, transparent);
+  box-shadow: var(--apple-edge-reading);
+}
+
+.kcr-risk-graph-inspector-heading {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--brand-strong);
+  font-size: 10px;
+  font-weight: 710;
+}
+
+.kcr-risk-graph-inspector h4 {
+  margin: 13px 0 0;
+  color: var(--text-strong);
+  font-size: 17px;
+  font-weight: 730;
+  line-height: 1.45;
+}
+
+.kcr-risk-graph-inspector > p {
+  margin: 9px 0 0;
+  color: var(--text-body);
+  font-size: 11px;
+  line-height: 1.72;
+}
+
+.kcr-risk-graph-inspector dl {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin: 16px 0 0;
+  overflow: hidden;
+  padding: 1px;
+  border: 1px solid var(--reading-separator);
+  border-radius: 12px;
+  background: var(--reading-separator);
+}
+
+.kcr-risk-graph-inspector dl > div {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+  padding: 10px;
+  background: color-mix(in oklch, var(--glass-reading-bg) 92%, var(--surface));
+}
+
+.kcr-risk-graph-inspector dt {
+  color: var(--text-soft);
+  font-size: 8px;
+}
+
+.kcr-risk-graph-inspector dd {
+  overflow-wrap: anywhere;
+  margin: 0;
+  color: var(--text-strong);
+  font-size: 11px;
+  font-weight: 690;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+
+.kcr-risk-graph-inspector [data-slot="button"] {
+  width: 100%;
+  min-height: 42px;
+  margin-top: auto;
+  padding-top: 9px;
+  padding-bottom: 9px;
+  border-radius: 12px;
+  white-space: normal;
+}
+
+.kcr-risk-graph-audit-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 9px 10px;
+  border-radius: 10px;
+  background: color-mix(in oklch, var(--accent-amber) 9%, transparent);
+}
+
+.kcr-risk-graph-audit-note > svg {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  color: var(--accent-amber);
+}
+
+.kcr-risk-graph-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 14px;
+}
+
+.kcr-risk-graph-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+
+.kcr-risk-graph-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-soft);
+  font-size: 9px;
+}
+
+.kcr-risk-graph-legend > span::before {
+  width: 24px;
+  border-top: 2px solid var(--brand-strong);
+  content: "";
+}
+
+.kcr-risk-graph-legend > span[data-kind="inferred"]::before {
+  border-color: var(--accent-amber);
+  border-top-style: dashed;
+}
+
+.kcr-risk-graph-legend > span[data-kind="background"]::before {
+  border-color: var(--text-soft);
+  border-top-style: dotted;
+}
+
+.kcr-risk-graph-legend > span[data-kind="event-link"]::before {
+  border-color: color-mix(in oklch, var(--accent-amber) 72%, var(--text-soft));
+  border-top-style: dashed;
+}
+
+.kcr-risk-graph-legend > span[data-kind="propagation"]::before {
+  border-color: color-mix(in oklch, var(--danger) 68%, var(--accent-amber));
+  border-top-style: dashed;
+}
+
+.kcr-risk-graph-footer > p {
+  display: flex;
+  max-width: 520px;
+  align-items: flex-start;
+  gap: 7px;
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 9px;
+  line-height: 1.55;
+  text-align: right;
+}
+
+.kcr-risk-graph-footer > p > svg {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  color: var(--brand-strong);
+}
+
 .kcr-evidence-sheet {
   width: min(860px, 92vw) !important;
 }
@@ -7009,7 +7458,11 @@
 }
 
 .kcr-evidence-card[data-support="inferred"] {
-  border-color: color-mix(in oklch, var(--accent-amber) 26%, var(--reading-border));
+  border-color: color-mix(
+    in oklch,
+    var(--accent-amber) 26%,
+    var(--reading-border)
+  );
 }
 
 .kcr-evidence-card[data-support="background"] {
@@ -7132,9 +7585,14 @@
 
 .kcr-v3-red-flag-list article {
   padding: 17px;
-  border: 1px solid color-mix(in oklch, var(--accent-amber) 24%, var(--reading-border));
+  border: 1px solid
+    color-mix(in oklch, var(--accent-amber) 24%, var(--reading-border));
   border-radius: 15px;
-  background: color-mix(in oklch, var(--accent-amber) 7%, var(--glass-reading-bg));
+  background: color-mix(
+    in oklch,
+    var(--accent-amber) 7%,
+    var(--glass-reading-bg)
+  );
 }
 
 .kcr-v3-red-flag-list article > div {
@@ -7217,6 +7675,24 @@
     padding-right: 4px;
     border-right: 0;
     border-bottom: 1px solid var(--reading-separator);
+  }
+
+  .kcr-risk-graph-workspace {
+    grid-template-columns: minmax(0, 1fr) 270px;
+  }
+}
+
+@media (max-width: 920px) {
+  .kcr-risk-graph-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .kcr-risk-graph-inspector {
+    min-height: 270px;
+  }
+
+  .kcr-risk-graph-dimension-filters {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -7337,6 +7813,43 @@
     min-height: 300px;
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .kcr-risk-graph {
+    padding: 18px;
+  }
+
+  .kcr-risk-graph-header,
+  .kcr-risk-graph-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .kcr-risk-graph-header h3 {
+    font-size: 20px;
+  }
+
+  .kcr-risk-graph-counts {
+    grid-template-columns: auto auto auto auto;
+  }
+
+  .kcr-risk-graph-dimension-filters {
+    display: flex;
+    overflow-x: auto;
+    padding: 2px 2px 7px;
+    scrollbar-width: thin;
+  }
+
+  .kcr-risk-graph-dimension-filters > button {
+    min-width: 150px;
+  }
+
+  .kcr-risk-graph-canvas {
+    min-width: 850px;
+  }
+
+  .kcr-risk-graph-footer > p {
+    text-align: left;
   }
 }
 

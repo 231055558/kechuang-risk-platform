@@ -121,3 +121,41 @@ test("KCR assessment client rejects inferred evidence without its basis", async 
     }
   )
 })
+
+test("KCR assessment client rejects graph relations with unknown endpoints", async () => {
+  const malformedResponse = structuredClone(validResponse)
+  malformedResponse.assessment.redFlags[0].sourceIndicatorIds = [
+    "UNKNOWN",
+  ] as never
+
+  await assert.rejects(
+    () =>
+      fetchKcrCompanyAssessment("cambricon", {
+        fetch: async () =>
+          new Response(JSON.stringify(malformedResponse), { status: 200 }),
+      }),
+    (error: unknown) => {
+      assert.ok(error instanceof KcrAssessmentApiError)
+      assert.equal(error.code, "KCR_ASSESSMENT_RESPONSE_INVALID")
+      return true
+    }
+  )
+})
+
+test("KCR assessment client rejects malformed propagation paths", async () => {
+  const malformedResponse = structuredClone(validResponse)
+  malformedResponse.assessment.propagationPaths[0].included = "yes" as never
+
+  await assert.rejects(
+    () =>
+      fetchKcrCompanyAssessment("cambricon", {
+        fetch: async () =>
+          new Response(JSON.stringify(malformedResponse), { status: 200 }),
+      }),
+    (error: unknown) => {
+      assert.ok(error instanceof KcrAssessmentApiError)
+      assert.equal(error.code, "KCR_ASSESSMENT_RESPONSE_INVALID")
+      return true
+    }
+  )
+})

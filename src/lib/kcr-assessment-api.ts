@@ -2,6 +2,7 @@ import {
   getKcrCompanyAssessmentApiPath,
   type KcrAssessmentApiResponse,
 } from "../domain/kcr-v1/assessment-api.ts"
+import { KCR_RISK_DIMENSION_IDS } from "../domain/kcr-v1/model.ts"
 
 interface ApiErrorPayload {
   error?: {
@@ -113,7 +114,9 @@ function isIndicatorEvidenceReference(
     )
   }
 
-  return value.inferenceBasis === null || typeof value.inferenceBasis === "string"
+  return (
+    value.inferenceBasis === null || typeof value.inferenceBasis === "string"
+  )
 }
 
 function isIndicatorResult(value: unknown, evidenceIds: ReadonlySet<string>) {
@@ -140,6 +143,73 @@ function isIndicatorResult(value: unknown, evidenceIds: ReadonlySet<string>) {
   )
 }
 
+function isDimensionResult(value: unknown, indicatorIds: ReadonlySet<string>) {
+  if (!isRecord(value)) return false
+  return (
+    typeof value.dimensionId === "string" &&
+    KCR_RISK_DIMENSION_IDS.includes(
+      value.dimensionId as (typeof KCR_RISK_DIMENSION_IDS)[number]
+    ) &&
+    typeof value.label === "string" &&
+    (value.score === null || isScore(value.score)) &&
+    typeof value.riskLevelLabel === "string" &&
+    isRatio(value.scoreWeightCoverage) &&
+    isRatio(value.evidenceCoverage) &&
+    isRatio(value.confidence) &&
+    Array.isArray(value.indicatorIds) &&
+    value.indicatorIds.every(
+      (indicatorId) =>
+        typeof indicatorId === "string" && indicatorIds.has(indicatorId)
+    ) &&
+    typeof value.formulaTrace === "string"
+  )
+}
+
+function isRedFlagResult(
+  value: unknown,
+  indicatorIds: ReadonlySet<string>,
+  evidenceIds: ReadonlySet<string>
+) {
+  if (!isRecord(value)) return false
+  return (
+    typeof value.eventId === "string" &&
+    value.eventId.length > 0 &&
+    typeof value.title === "string" &&
+    value.title.length > 0 &&
+    typeof value.summary === "string" &&
+    (value.priority === "P0" || value.priority === "P1") &&
+    Array.isArray(value.sourceIndicatorIds) &&
+    value.sourceIndicatorIds.every(
+      (indicatorId) =>
+        typeof indicatorId === "string" && indicatorIds.has(indicatorId)
+    ) &&
+    Array.isArray(value.evidenceIds) &&
+    value.evidenceIds.every(
+      (evidenceId) =>
+        typeof evidenceId === "string" && evidenceIds.has(evidenceId)
+    ) &&
+    value.affectsBaselineScore === false
+  )
+}
+
+function isPropagationPathResult(value: unknown) {
+  if (!isRecord(value)) return false
+  return (
+    typeof value.id === "string" &&
+    value.id.length > 0 &&
+    typeof value.label === "string" &&
+    typeof value.eventId === "string" &&
+    isScore(value.eventRiskScore) &&
+    isRatio(value.pathCoefficient) &&
+    isScore(value.candidateRisk) &&
+    isScore(value.propagatedRisk) &&
+    typeof value.included === "boolean" &&
+    Array.isArray(value.edgeTraces) &&
+    value.edgeTraces.every((trace) => typeof trace === "string") &&
+    typeof value.formulaTrace === "string"
+  )
+}
+
 function isKcrAssessmentApiResponse(
   value: unknown
 ): value is KcrAssessmentApiResponse {
@@ -150,6 +220,34 @@ function isKcrAssessmentApiResponse(
   const assessment = value.assessment
   const provenance = value.provenance
   const evidenceIds = new Set(value.evidenceCatalog.map((item) => item.id))
+  if (
+    !Array.isArray(assessment.indicatorResults) ||
+    assessment.indicatorResults.length !== 18 ||
+    !assessment.indicatorResults.every((indicator) =>
+      isIndicatorResult(indicator, evidenceIds)
+    )
+  ) {
+    return false
+  }
+  const indicatorIds = new Set(
+    assessment.indicatorResults.map((indicator) => indicator.id as string)
+  )
+  if (
+    !Array.isArray(assessment.dimensions) ||
+    assessment.dimensions.length !== 5 ||
+    !assessment.dimensions.every((dimension) =>
+      isDimensionResult(dimension, indicatorIds)
+    ) ||
+    !Array.isArray(assessment.redFlags) ||
+    !assessment.redFlags.every((redFlag) =>
+      isRedFlagResult(redFlag, indicatorIds, evidenceIds)
+    ) ||
+    !Array.isArray(assessment.propagationPaths) ||
+    !assessment.propagationPaths.every(isPropagationPathResult)
+  ) {
+    return false
+  }
+
   return (
     assessment.modelVersion === "KCR-SCORE-2026.08-v3" &&
     assessment.methodVersion === "KCR-2026.08-v1" &&
@@ -161,14 +259,6 @@ function isKcrAssessmentApiResponse(
     typeof assessment.riskLevelLabel === "string" &&
     isRatio(assessment.evidenceCoverage) &&
     isRatio(assessment.confidence) &&
-    Array.isArray(assessment.dimensions) &&
-    assessment.dimensions.length === 5 &&
-    Array.isArray(assessment.indicatorResults) &&
-    assessment.indicatorResults.length === 18 &&
-    assessment.indicatorResults.every((indicator) =>
-      isIndicatorResult(indicator, evidenceIds)
-    ) &&
-    Array.isArray(assessment.redFlags) &&
     Array.isArray(assessment.warnings) &&
     provenance.methodStatus === "candidate-for-team-review" &&
     provenance.methodSource === "team-workbook" &&
