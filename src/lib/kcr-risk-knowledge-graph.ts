@@ -18,6 +18,8 @@ export interface KcrRiskGraphNode {
   kind: KcrRiskGraphNodeKind
   label: string
   caption: string
+  score: number | null
+  tone: "low" | "medium" | "high" | "critical" | "neutral"
   dimensionIds: KcrRiskDimensionId[]
 }
 
@@ -41,6 +43,25 @@ export interface KcrRiskKnowledgeGraph {
     backgroundEvidence: number
     propagationPaths: number
   }
+}
+
+export type KcrRiskGraphLayoutMode = "desktop" | "compact"
+
+export interface KcrRiskGraphLayoutNode {
+  id: string
+  x: number
+  y: number
+  radius: number
+  angle: number
+  layer: 0 | 1 | 2 | 3
+  shape: "core" | "dimension" | "indicator" | "event" | "evidence"
+}
+
+export interface KcrRiskGraphRadialLayout {
+  width: number
+  height: number
+  center: { x: number; y: number }
+  nodes: KcrRiskGraphLayoutNode[]
 }
 
 const nodeId = {
@@ -68,6 +89,153 @@ export function distributeKcrRiskGraphPositions(
   )
 }
 
+function polarPoint(
+  center: { x: number; y: number },
+  radiusX: number,
+  radiusY: number,
+  angle: number
+) {
+  return {
+    x: center.x + Math.cos(angle) * radiusX,
+    y: center.y + Math.sin(angle) * radiusY,
+  }
+}
+
+function clamp(value: number, minimum: number, maximum: number) {
+  return Math.min(Math.max(value, minimum), maximum)
+}
+
+export function buildKcrRiskGraphRadialLayout(
+  nodes: readonly KcrRiskGraphNode[],
+  selectedDimensionId: KcrRiskDimensionId,
+  mode: KcrRiskGraphLayoutMode
+): KcrRiskGraphRadialLayout {
+  const compact = mode === "compact"
+  const width = compact ? 400 : 960
+  const height = compact ? 450 : 700
+  const center = compact ? { x: 200, y: 180 } : { x: 480, y: 340 }
+  const dimensions = nodes.filter((node) => node.kind === "dimension")
+  const indicators = nodes.filter((node) => node.kind === "indicator")
+  const evidence = nodes.filter((node) => node.kind === "evidence")
+  const events = nodes.filter((node) => node.kind === "event")
+  const baseDimensionAngles = new Map(
+    dimensions.map((dimension, index) => [
+      dimension.entityId,
+      -Math.PI / 2 + (index * Math.PI * 2) / Math.max(dimensions.length, 1),
+    ])
+  )
+  const compactRotation = compact
+    ? Math.PI / 2 -
+      (baseDimensionAngles.get(selectedDimensionId) ?? -Math.PI / 2)
+    : 0
+  const dimensionAngles = new Map(
+    [...baseDimensionAngles].map(([dimensionId, angle]) => [
+      dimensionId,
+      angle + compactRotation,
+    ])
+  )
+  const selectedAngle = dimensionAngles.get(selectedDimensionId) ?? -Math.PI / 2
+  const layoutNodes: KcrRiskGraphLayoutNode[] = []
+
+  nodes
+    .filter((node) => node.kind === "company")
+    .forEach((node) =>
+      layoutNodes.push({
+        id: node.id,
+        ...center,
+        radius: compact ? 52 : 64,
+        angle: 0,
+        layer: 0,
+        shape: "core",
+      })
+    )
+
+  dimensions.forEach((node) => {
+    const angle = dimensionAngles.get(node.entityId) ?? 0
+    const point = polarPoint(
+      center,
+      compact ? 112 : 205,
+      compact ? 95 : 155,
+      angle
+    )
+    layoutNodes.push({
+      id: node.id,
+      ...point,
+      radius: compact ? 38 : 44,
+      angle,
+      layer: 1,
+      shape: "dimension",
+    })
+  })
+
+  const detailGroups = [
+    {
+      nodes: indicators,
+      radiusX: compact ? 165 : 330,
+      radiusY: compact ? 170 : 245,
+      radius: compact ? 27 : 30,
+      span: compact ? 1 : 0.46,
+      layer: 2 as const,
+      shape: "indicator" as const,
+    },
+    {
+      nodes: evidence,
+      radiusX: compact ? 180 : 420,
+      radiusY: compact ? 235 : 305,
+      radius: compact ? 27 : 25,
+      span: compact ? 1.45 : 0.92,
+      layer: 3 as const,
+      shape: "evidence" as const,
+    },
+  ]
+
+  detailGroups.forEach((group) => {
+    const angleOffsets = distributeKcrRiskGraphPositions(
+      group.nodes.length,
+      -group.span / 2,
+      group.span / 2
+    )
+    group.nodes.forEach((node, index) => {
+      const angle = selectedAngle + angleOffsets[index]
+      const point = polarPoint(center, group.radiusX, group.radiusY, angle)
+      const padding = group.radius + (compact ? 8 : 12)
+      layoutNodes.push({
+        id: node.id,
+        x: clamp(point.x, padding, width - padding),
+        y: clamp(point.y, padding, height - padding),
+        radius: group.radius,
+        angle,
+        layer: group.layer,
+        shape: group.shape,
+      })
+    })
+  })
+
+  events.forEach((node, index) => {
+    const angle =
+      selectedAngle + (compact ? 1.1 : 0.68) + index * (compact ? 0.18 : 0.22)
+    const point = polarPoint(
+      center,
+      compact ? 176 : 370,
+      compact ? 170 : 270,
+      angle
+    )
+    const radius = compact ? 32 : 38
+    const padding = radius + (compact ? 8 : 12)
+    layoutNodes.push({
+      id: node.id,
+      x: clamp(point.x, padding, width - padding),
+      y: clamp(point.y, padding, height - padding),
+      radius,
+      angle,
+      layer: 2,
+      shape: "event",
+    })
+  })
+
+  return { width, height, center, nodes: layoutNodes }
+}
+
 export function buildKcrRiskKnowledgeGraph(
   response: KcrAssessmentApiResponse,
   companyLabel: string
@@ -89,6 +257,8 @@ export function buildKcrRiskKnowledgeGraph(
       kind: "company",
       label: companyLabel,
       caption: `${assessment.baselineScore ?? "—"} 分 · ${assessment.riskLevelLabel}风险`,
+      score: assessment.baselineScore,
+      tone: assessment.riskLevel ?? "neutral",
       dimensionIds: assessment.dimensions.map(
         (dimension) => dimension.dimensionId
       ),
@@ -99,6 +269,8 @@ export function buildKcrRiskKnowledgeGraph(
       kind: "dimension",
       label: dimension.label,
       caption: `${dimension.score ?? "—"} 分 · ${dimension.riskLevelLabel}风险`,
+      score: dimension.score,
+      tone: dimension.riskLevel ?? "neutral",
       dimensionIds: [dimension.dimensionId],
     })),
     ...assessment.indicatorResults.map((indicator): KcrRiskGraphNode => ({
@@ -107,6 +279,8 @@ export function buildKcrRiskKnowledgeGraph(
       kind: "indicator",
       label: indicator.label,
       caption: `${indicator.id} · ${indicator.riskScore ?? "—"} 分`,
+      score: indicator.riskScore,
+      tone: indicator.riskLevel ?? "neutral",
       dimensionIds: [indicator.dimensionId],
     })),
     ...assessment.redFlags.map((redFlag): KcrRiskGraphNode => {
@@ -125,6 +299,13 @@ export function buildKcrRiskKnowledgeGraph(
         kind: "event",
         label: redFlag.title,
         caption: `${redFlag.priority} · 独立红旗`,
+        score: null,
+        tone:
+          redFlag.severity === "critical"
+            ? "critical"
+            : redFlag.severity === "high"
+              ? "high"
+              : "medium",
         dimensionIds,
       }
     }),
@@ -147,6 +328,8 @@ export function buildKcrRiskKnowledgeGraph(
         kind: "evidence",
         label: evidence.title,
         caption: `${evidence.id} · ${evidence.sourceName}`,
+        score: null,
+        tone: "neutral",
         dimensionIds,
       }
     }),
