@@ -315,7 +315,12 @@ export const realtimeData = {
 } satisfies RealTimeDataSet
 export const realtimeSignals = realtimeData.signals
 
-export const defaultCompanyId = companySummaries[0]?.id ?? "deepseek"
+const mvpDefaultCompanyId = "cambricon"
+export const defaultCompanyId = companySummaries.some(
+  (company) => company.id === mvpDefaultCompanyId
+)
+  ? mvpDefaultCompanyId
+  : (companySummaries[0]?.id ?? "deepseek")
 export const defaultCompareId =
   detailRegistry[defaultCompanyId]?.benchmarkCompanyId ?? "fourth-paradigm"
 
