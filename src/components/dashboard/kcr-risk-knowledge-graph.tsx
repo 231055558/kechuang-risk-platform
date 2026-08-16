@@ -21,6 +21,7 @@ import {
   buildKcrRiskGraphNetworkLayout,
   selectKcrRiskGraphDimension,
   selectKcrRiskGraphLineage,
+  selectKcrRiskGraphOverview,
   type KcrRiskGraphEdge,
   type KcrRiskGraphLayoutNode,
   type KcrRiskGraphNode,
@@ -122,44 +123,129 @@ const graphViewLabels: Record<
   { label: string; hint: string }
 > = {
   overview: {
-    label: "全景网络",
-    hint: "一次查看本评估时点全部节点与关系",
+    label: "结构总览",
+    hint: "先看企业、五维与红旗；指标和证据按需展开",
   },
   focus: {
     label: "维度聚焦",
-    hint: "保留五维骨架，只展开一个风险簇",
+    hint: "一次展开一个风险维度，点击指标查看关联证据",
   },
   lineage: {
-    label: "风险脉络",
-    hint: "只展示红旗、关联指标、证据与传播路径",
+    label: "事件溯源",
+    hint: "一次追踪一条红旗的指标、证据与传播路径",
   },
 }
 
-function getEdgeEndpoints(
-  source: KcrRiskGraphLayoutNode,
-  target: KcrRiskGraphLayoutNode
-) {
-  const dx = target.x - source.x
-  const dy = target.y - source.y
-  const distance = Math.hypot(dx, dy) || 1
-  const unitX = dx / distance
-  const unitY = dy / distance
+type GraphPoint = { x: number; y: number }
 
-  return {
-    x1: source.x + unitX * source.radius,
-    y1: source.y + unitY * source.radius,
-    x2: target.x - unitX * target.radius,
-    y2: target.y - unitY * target.radius,
-  }
+function nodeWidth(node: KcrRiskGraphLayoutNode) {
+  return node.width ?? node.radius * 2
 }
 
-function hexagonPoints(node: KcrRiskGraphLayoutNode) {
-  return Array.from({ length: 6 }, (_, index) => {
-    const angle = -Math.PI / 2 + (index * Math.PI) / 3
-    return `${node.x + Math.cos(angle) * node.radius},${
-      node.y + Math.sin(angle) * node.radius
-    }`
-  }).join(" ")
+function nodeHeight(node: KcrRiskGraphLayoutNode) {
+  return node.height ?? node.radius * 2
+}
+
+function roundedOrthogonalPath(points: readonly GraphPoint[], radius = 8) {
+  if (points.length < 2) return ""
+  let path = `M ${points[0].x} ${points[0].y}`
+
+  for (let index = 1; index < points.length - 1; index += 1) {
+    const previous = points[index - 1]
+    const current = points[index]
+    const next = points[index + 1]
+    const incomingLength = Math.hypot(
+      current.x - previous.x,
+      current.y - previous.y
+    )
+    const outgoingLength = Math.hypot(next.x - current.x, next.y - current.y)
+    const bend = Math.min(radius, incomingLength / 2, outgoingLength / 2)
+    const incomingX = (current.x - previous.x) / (incomingLength || 1)
+    const incomingY = (current.y - previous.y) / (incomingLength || 1)
+    const outgoingX = (next.x - current.x) / (outgoingLength || 1)
+    const outgoingY = (next.y - current.y) / (outgoingLength || 1)
+    const before = {
+      x: current.x - incomingX * bend,
+      y: current.y - incomingY * bend,
+    }
+    const after = {
+      x: current.x + outgoingX * bend,
+      y: current.y + outgoingY * bend,
+    }
+    path += ` L ${before.x} ${before.y} Q ${current.x} ${current.y} ${after.x} ${after.y}`
+  }
+
+  const last = points.at(-1)!
+  return `${path} L ${last.x} ${last.y}`
+}
+
+function orthogonalConnectorPoints(
+  source: KcrRiskGraphLayoutNode,
+  target: KcrRiskGraphLayoutNode,
+  edge: KcrRiskGraphEdge,
+  canvasWidth: number
+) {
+  const sourceWidth = nodeWidth(source)
+  const sourceHeight = nodeHeight(source)
+  const targetWidth = nodeWidth(target)
+  const targetHeight = nodeHeight(target)
+
+  if (edge.kind === "propagation") {
+    const rightLane = source.x >= canvasWidth / 2
+    const laneX = rightLane ? canvasWidth - 24 : 24
+    const sourcePoint = {
+      x: source.x + (rightLane ? sourceWidth / 2 : -sourceWidth / 2),
+      y: source.y,
+    }
+    const targetPoint = {
+      x: target.x + (rightLane ? targetWidth * 0.26 : -targetWidth * 0.26),
+      y: target.y - targetHeight / 2,
+    }
+    const topLaneY = 16
+    return [
+      sourcePoint,
+      { x: laneX, y: sourcePoint.y },
+      { x: laneX, y: topLaneY },
+      { x: targetPoint.x, y: topLaneY },
+      targetPoint,
+    ]
+  }
+
+  if (Math.abs(target.y - source.y) < 24) {
+    const rightward = target.x >= source.x
+    const sourcePoint = {
+      x: source.x + (rightward ? sourceWidth / 2 : -sourceWidth / 2),
+      y: source.y,
+    }
+    const targetPoint = {
+      x: target.x + (rightward ? -targetWidth / 2 : targetWidth / 2),
+      y: target.y,
+    }
+    const midpointX = (sourcePoint.x + targetPoint.x) / 2
+    return [
+      sourcePoint,
+      { x: midpointX, y: sourcePoint.y },
+      { x: midpointX, y: targetPoint.y },
+      targetPoint,
+    ]
+  }
+
+  const downward = target.y >= source.y
+  const sourcePoint = {
+    x: source.x,
+    y: source.y + (downward ? sourceHeight / 2 : -sourceHeight / 2),
+  }
+  const targetPoint = {
+    x: target.x,
+    y: target.y + (downward ? -targetHeight / 2 : targetHeight / 2),
+  }
+  const midpointY = (sourcePoint.y + targetPoint.y) / 2
+  return [
+    sourcePoint,
+    { x: sourcePoint.x, y: midpointY },
+    { x: targetPoint.x, y: midpointY },
+    targetPoint,
+  ]
 }
 
 function dimensionShortLabel(label: string) {
@@ -338,15 +424,22 @@ export function KcrRiskKnowledgeGraph({
   const [selectedNodeId, setSelectedNodeId] = useState(
     `company:${assessment.companyId}`
   )
+  const [selectedEventId, setSelectedEventId] = useState(
+    assessment.redFlags[0]?.eventId ?? ""
+  )
   const [searchQuery, setSearchQuery] = useState("")
   const visibleGraph = useMemo(
     () =>
       viewMode === "overview"
-        ? graph
+        ? selectKcrRiskGraphOverview(graph)
         : viewMode === "lineage"
-          ? selectKcrRiskGraphLineage(graph)
-          : selectKcrRiskGraphDimension(graph, selectedDimensionId),
-    [graph, selectedDimensionId, viewMode]
+          ? selectKcrRiskGraphLineage(graph, selectedEventId)
+          : selectKcrRiskGraphDimension(
+              graph,
+              selectedDimensionId,
+              selectedNodeId
+            ),
+    [graph, selectedDimensionId, selectedEventId, selectedNodeId, viewMode]
   )
   const layout = useMemo(
     () =>
@@ -384,12 +477,17 @@ export function KcrRiskKnowledgeGraph({
   const titleId = useId()
   const descriptionId = useId()
   const markerId = `${useId().replaceAll(":", "")}-graph-arrow`
-  const glowId = `${useId().replaceAll(":", "")}-graph-glow`
 
   function selectNode(node: KcrRiskGraphNode) {
     setSelectedNodeId(node.id)
     if (node.kind === "dimension") {
       setSelectedDimensionId(node.entityId as KcrRiskDimensionId)
+      setViewMode("focus")
+    } else if (node.kind === "event") {
+      setSelectedEventId(node.entityId)
+      if (viewMode === "overview") setViewMode("lineage")
+    } else if (node.kind === "company") {
+      setViewMode("overview")
     }
   }
 
@@ -402,6 +500,7 @@ export function KcrRiskKnowledgeGraph({
       setSelectedNodeId(`dimension:${selectedDimensionId}`)
     } else {
       const firstEvent = graph.nodes.find((node) => node.kind === "event")
+      if (firstEvent) setSelectedEventId(firstEvent.entityId)
       setSelectedNodeId(firstEvent?.id ?? `company:${assessment.companyId}`)
     }
   }
@@ -412,16 +511,13 @@ export function KcrRiskKnowledgeGraph({
         ? (node.entityId as KcrRiskDimensionId)
         : node.dimensionIds[0]
     if (dimensionId) setSelectedDimensionId(dimensionId)
-    if (viewMode === "focus" && node.kind !== "company" && dimensionId) {
-      setSelectedDimensionId(dimensionId)
-    }
-    if (
-      viewMode === "lineage" &&
-      !selectKcrRiskGraphLineage(graph).nodes.some(
-        (visibleNode) => visibleNode.id === node.id
-      )
-    ) {
+    if (node.kind === "company") {
       setViewMode("overview")
+    } else if (node.kind === "event") {
+      setSelectedEventId(node.entityId)
+      setViewMode("lineage")
+    } else if (dimensionId) {
+      setViewMode("focus")
     }
     setSelectedNodeId(node.id)
     setSearchQuery("")
@@ -431,23 +527,14 @@ export function KcrRiskKnowledgeGraph({
     const source = positions.get(edge.source)
     const target = positions.get(edge.target)
     if (!source || !target) return null
-    const points = getEdgeEndpoints(source, target)
     const active =
       edge.source === selectedNodeId || edge.target === selectedNodeId
-    const midpointX = (points.x1 + points.x2) / 2
-    const midpointY = (points.y1 + points.y2) / 2
-    const curve =
-      edge.kind === "structure" ? 0 : edge.kind === "propagation" ? 46 : 12
-    const dx = points.x2 - points.x1
-    const dy = points.y2 - points.y1
-    const distance = Math.hypot(dx, dy) || 1
-    const controlX = midpointX - (dy / distance) * curve
-    const controlY = midpointY + (dx / distance) * curve
+    const points = orthogonalConnectorPoints(source, target, edge, layout.width)
 
     return (
       <path
         key={edge.id}
-        d={`M ${points.x1} ${points.y1} Q ${controlX} ${controlY} ${points.x2} ${points.y2}`}
+        d={roundedOrthogonalPath(points)}
         className="kcr-risk-graph-edge"
         data-kind={edge.kind}
         data-active={active || undefined}
@@ -462,29 +549,23 @@ export function KcrRiskKnowledgeGraph({
   }
 
   function renderNodeShape(layoutNode: KcrRiskGraphLayoutNode) {
-    if (layoutNode.shape === "event") {
-      return <polygon points={hexagonPoints(layoutNode)} />
-    }
-    if (layoutNode.shape === "evidence") {
-      const side = layoutNode.radius * 1.45
-      return (
-        <rect
-          x={layoutNode.x - side / 2}
-          y={layoutNode.y - side / 2}
-          width={side}
-          height={side}
-          rx="7"
-          transform={`rotate(45 ${layoutNode.x} ${layoutNode.y})`}
-        />
-      )
-    }
-    return <circle cx={layoutNode.x} cy={layoutNode.y} r={layoutNode.radius} />
+    const width = nodeWidth(layoutNode)
+    const height = nodeHeight(layoutNode)
+    return (
+      <rect
+        x={layoutNode.x - width / 2}
+        y={layoutNode.y - height / 2}
+        width={width}
+        height={height}
+        rx="7"
+      />
+    )
   }
 
   return (
     <LiquidGlassSurface
       variant="card"
-      refractive
+      refractive={false}
       className="kcr-risk-graph-glass"
       padding="0"
     >
@@ -501,8 +582,9 @@ export function KcrRiskKnowledgeGraph({
             </span>
             <h3 id={titleId}>企业风险知识图谱</h3>
             <p id={descriptionId}>
-              全景呈现企业、五维风险、{assessment.indicatorResults.length}
-              项指标、红旗事件与来源证据；切换视图可聚焦风险簇或追踪红旗传播脉络。
+              先读企业—五维—红旗的结构总览，再按维度展开
+              {assessment.indicatorResults.length}
+              项指标，或按事件追踪证据与传播路径。
             </p>
           </div>
           <div className="kcr-risk-graph-counts" aria-label="完整图谱统计">
@@ -569,6 +651,48 @@ export function KcrRiskKnowledgeGraph({
           </div>
         </div>
 
+        {viewMode !== "overview" ? (
+          <div
+            className="kcr-risk-graph-context-switcher"
+            aria-label={viewMode === "focus" ? "选择风险维度" : "选择红旗事件"}
+          >
+            <span>{viewMode === "focus" ? "当前维度" : "当前红旗"}</span>
+            <div>
+              {viewMode === "focus"
+                ? assessment.dimensions.map((dimension) => (
+                    <button
+                      key={dimension.dimensionId}
+                      type="button"
+                      aria-pressed={
+                        dimension.dimensionId === selectedDimensionId
+                      }
+                      onClick={() => {
+                        setSelectedDimensionId(dimension.dimensionId)
+                        setSelectedNodeId(`dimension:${dimension.dimensionId}`)
+                      }}
+                    >
+                      {dimensionShortLabel(dimension.label)}
+                      <small>{dimension.score ?? "—"}</small>
+                    </button>
+                  ))
+                : assessment.redFlags.map((redFlag) => (
+                    <button
+                      key={redFlag.eventId}
+                      type="button"
+                      aria-pressed={redFlag.eventId === selectedEventId}
+                      onClick={() => {
+                        setSelectedEventId(redFlag.eventId)
+                        setSelectedNodeId(`event:${redFlag.eventId}`)
+                      }}
+                    >
+                      {redFlag.eventId}
+                      <small>{redFlag.priority}</small>
+                    </button>
+                  ))}
+            </div>
+          </div>
+        ) : null}
+
         <div className="kcr-risk-graph-stage">
           <div className="kcr-risk-graph-stage-label">
             <span>{graphViewLabels[viewMode].label}</span>
@@ -576,7 +700,7 @@ export function KcrRiskKnowledgeGraph({
               {viewMode === "focus"
                 ? selectedDimension?.label
                 : viewMode === "lineage"
-                  ? `${assessment.redFlags.length} 条独立红旗链路`
+                  ? `${selectedEventId} 单事件链路`
                   : `${visibleGraph.nodes.length} 节点 · ${visibleGraph.edges.length} 关系`}
             </strong>
             <small>{graphViewLabels[viewMode].hint}</small>
@@ -601,75 +725,7 @@ export function KcrRiskKnowledgeGraph({
               >
                 <path d="M 0 0 L 7 3.5 L 0 7 z" fill="context-stroke" />
               </marker>
-              <filter id={glowId} x="-80%" y="-80%" width="260%" height="260%">
-                <feGaussianBlur stdDeviation={compact ? "5" : "8"} />
-              </filter>
             </defs>
-
-            <ellipse
-              className="kcr-risk-graph-orbit"
-              cx={layout.center.x}
-              cy={layout.center.y}
-              rx={
-                compact
-                  ? viewMode === "focus"
-                    ? 112
-                    : 105
-                  : viewMode === "focus"
-                    ? 205
-                    : viewMode === "lineage"
-                      ? 205
-                      : 190
-              }
-              ry={
-                compact
-                  ? viewMode === "focus"
-                    ? 95
-                    : 88
-                  : viewMode === "focus"
-                    ? 155
-                    : viewMode === "lineage"
-                      ? 150
-                      : 140
-              }
-              aria-hidden="true"
-            />
-            <ellipse
-              className="kcr-risk-graph-orbit kcr-risk-graph-orbit-outer"
-              cx={layout.center.x}
-              cy={layout.center.y}
-              rx={
-                compact
-                  ? viewMode === "focus"
-                    ? 178
-                    : 219
-                  : viewMode === "focus"
-                    ? 386
-                    : 452
-              }
-              ry={
-                compact
-                  ? viewMode === "focus"
-                    ? 170
-                    : 234
-                  : viewMode === "focus"
-                    ? 282
-                    : 320
-              }
-              aria-hidden="true"
-            />
-
-            {viewMode === "focus" &&
-            positions.get(`dimension:${selectedDimensionId}`) ? (
-              <circle
-                className="kcr-risk-graph-focus-halo"
-                cx={positions.get(`dimension:${selectedDimensionId}`)?.x}
-                cy={positions.get(`dimension:${selectedDimensionId}`)?.y}
-                r={compact ? 54 : 65}
-                filter={`url(#${glowId})`}
-                aria-hidden="true"
-              />
-            ) : null}
 
             <g aria-hidden="true">{visibleGraph.edges.map(renderEdge)}</g>
 
@@ -703,24 +759,32 @@ export function KcrRiskKnowledgeGraph({
                       }
                     }}
                   >
-                    <circle
+                    <rect
                       className="kcr-risk-graph-hit-target"
-                      cx={layoutNode.x}
-                      cy={layoutNode.y}
-                      r={Math.max(layoutNode.radius, compact ? 32 : 36)}
+                      x={layoutNode.x - nodeWidth(layoutNode) / 2 - 4}
+                      y={layoutNode.y - nodeHeight(layoutNode) / 2 - 4}
+                      width={nodeWidth(layoutNode) + 8}
+                      height={nodeHeight(layoutNode) + 8}
                       aria-hidden="true"
                     />
                     {renderNodeShape(layoutNode)}
                     <text x={layoutNode.x} y={layoutNode.y} textAnchor="middle">
                       {node.kind === "company" ? (
                         <>
-                          <tspan x={layoutNode.x} dy="-0.35em">
+                          <tspan
+                            className="kcr-risk-graph-node-caption"
+                            x={layoutNode.x}
+                            dy="-0.8em"
+                          >
+                            评估企业
+                          </tspan>
+                          <tspan x={layoutNode.x} dy="1.35em">
                             {node.label}
                           </tspan>
                           <tspan
                             className="kcr-risk-graph-node-score"
                             x={layoutNode.x}
-                            dy="1.55em"
+                            dy="1.35em"
                           >
                             {node.score ?? "—"} · {assessment.riskLevelLabel}
                             风险
@@ -728,54 +792,82 @@ export function KcrRiskKnowledgeGraph({
                         </>
                       ) : node.kind === "dimension" ? (
                         <>
-                          <tspan x={layoutNode.x} dy="-0.45em">
+                          <tspan
+                            className="kcr-risk-graph-node-caption"
+                            x={layoutNode.x}
+                            dy="-0.7em"
+                          >
+                            风险维度
+                          </tspan>
+                          <tspan x={layoutNode.x} dy="1.35em">
                             {dimensionShortLabel(node.label)}
                           </tspan>
                           <tspan
                             className="kcr-risk-graph-node-score"
                             x={layoutNode.x}
-                            dy="1.45em"
+                            dy="1.35em"
                           >
                             {node.score ?? "—"}
                           </tspan>
                         </>
                       ) : node.kind === "indicator" ? (
                         <>
-                          <tspan x={layoutNode.x} dy="-0.35em">
+                          <tspan
+                            className="kcr-risk-graph-node-caption"
+                            x={layoutNode.x}
+                            dy="-0.55em"
+                          >
+                            评分指标
+                          </tspan>
+                          <tspan x={layoutNode.x} dy="1.4em">
                             {node.entityId}
                           </tspan>
                           <tspan
                             className="kcr-risk-graph-node-score"
                             x={layoutNode.x}
-                            dy="1.4em"
+                            dy="1.35em"
                           >
                             {node.score ?? "—"} 分
                           </tspan>
                         </>
                       ) : node.kind === "event" ? (
                         <>
-                          <tspan x={layoutNode.x} dy="-0.35em">
-                            {node.caption.split(" · ")[0]}
-                          </tspan>
                           <tspan
-                            className="kcr-risk-graph-node-score"
+                            className="kcr-risk-graph-node-caption"
                             x={layoutNode.x}
-                            dy="1.4em"
+                            dy="-0.55em"
                           >
-                            红旗
+                            红旗事件
                           </tspan>
-                        </>
-                      ) : (
-                        <>
-                          <tspan x={layoutNode.x} dy="-0.35em">
+                          <tspan x={layoutNode.x} dy="1.4em">
                             {node.entityId}
                           </tspan>
                           <tspan
                             className="kcr-risk-graph-node-score"
                             x={layoutNode.x}
-                            dy="1.4em"
+                            dy="1.35em"
                           >
-                            证据
+                            {node.caption.split(" · ")[0]}
+                          </tspan>
+                        </>
+                      ) : (
+                        <>
+                          <tspan
+                            className="kcr-risk-graph-node-caption"
+                            x={layoutNode.x}
+                            dy="-0.55em"
+                          >
+                            来源证据
+                          </tspan>
+                          <tspan x={layoutNode.x} dy="1.4em">
+                            {node.entityId}
+                          </tspan>
+                          <tspan
+                            className="kcr-risk-graph-node-score"
+                            x={layoutNode.x}
+                            dy="1.35em"
+                          >
+                            {node.caption.split(" · ")[0]}
                           </tspan>
                         </>
                       )}

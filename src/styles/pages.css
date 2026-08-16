@@ -8223,6 +8223,222 @@
   }
 }
 
+/* Editorial risk graph: low-density hierarchy, progressive disclosure. */
+.kcr-risk-graph-glass {
+  border-radius: 14px;
+  background: color-mix(in oklch, var(--surface) 96%, var(--brand-soft));
+  box-shadow: none;
+}
+
+.kcr-risk-graph-view-switcher [data-slot="button"],
+.kcr-risk-graph-search [data-slot="input"] {
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.kcr-risk-graph-context-switcher {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 9px 11px;
+  border: 1px solid var(--reading-border);
+  border-radius: 9px;
+  background: color-mix(in oklch, var(--surface) 92%, transparent);
+}
+
+.kcr-risk-graph-context-switcher > span {
+  flex: 0 0 auto;
+  color: var(--text-soft);
+  font-size: 9px;
+  font-weight: 680;
+}
+
+.kcr-risk-graph-context-switcher > div {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.kcr-risk-graph-context-switcher button {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 9px;
+  border: 1px solid var(--reading-border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-body);
+  font: inherit;
+  font-size: 10px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.kcr-risk-graph-context-switcher button small {
+  color: var(--text-soft);
+  font-size: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.kcr-risk-graph-context-switcher button[aria-pressed="true"] {
+  border-color: color-mix(in oklch, var(--brand) 64%, var(--reading-border));
+  background: color-mix(in oklch, var(--brand-soft) 54%, var(--surface));
+  color: var(--brand-strong);
+}
+
+.kcr-risk-graph-stage {
+  margin-top: 14px;
+  border-color: var(--reading-border);
+  border-radius: 11px;
+  background: color-mix(in oklch, var(--surface) 98%, var(--brand-soft));
+  box-shadow: none;
+}
+
+.kcr-risk-graph-stage-label {
+  padding: 11px 14px;
+  background: color-mix(in oklch, var(--surface) 97%, transparent);
+}
+
+.kcr-risk-graph-stage-label strong {
+  color: var(--text-strong);
+}
+
+.kcr-risk-graph-canvas {
+  background: transparent;
+}
+
+.kcr-risk-graph-edge {
+  stroke: color-mix(in oklch, var(--text-soft) 38%, transparent);
+  stroke-width: 1.1;
+  opacity: 0.58;
+}
+
+.kcr-risk-graph-edge[data-kind="direct"] {
+  stroke: color-mix(in oklch, var(--brand) 56%, var(--text-soft));
+  stroke-width: 1.35;
+}
+
+.kcr-risk-graph-edge[data-kind="inferred"],
+.kcr-risk-graph-edge[data-kind="event-link"] {
+  stroke: color-mix(in oklch, var(--accent-amber) 62%, var(--text-soft));
+  stroke-width: 1.25;
+}
+
+.kcr-risk-graph-edge[data-kind="propagation"] {
+  stroke: color-mix(in oklch, var(--danger) 62%, var(--text-soft));
+  stroke-width: 1.45;
+}
+
+.kcr-risk-graph-edge[data-active="true"] {
+  stroke-width: 2;
+}
+
+.kcr-risk-graph-node > rect {
+  fill: color-mix(in oklch, var(--surface) 96%, var(--brand-soft));
+  stroke: color-mix(in oklch, var(--text-soft) 38%, var(--reading-border));
+  stroke-width: 1;
+  filter: none;
+}
+
+.kcr-risk-graph-node[data-kind="company"] > rect {
+  fill: color-mix(in oklch, var(--brand) 15%, var(--surface));
+  stroke: color-mix(in oklch, var(--brand) 68%, var(--reading-border));
+  stroke-width: 1.6;
+}
+
+.kcr-risk-graph-node[data-kind="dimension"] > rect,
+.kcr-risk-graph-node[data-kind="indicator"] > rect {
+  fill: color-mix(in oklch, var(--brand-soft) 34%, var(--surface));
+  stroke: color-mix(in oklch, var(--brand) 34%, var(--reading-border));
+}
+
+.kcr-risk-graph-node[data-kind="event"] > rect {
+  fill: color-mix(in oklch, var(--danger) 7%, var(--surface));
+  stroke: color-mix(in oklch, var(--danger) 46%, var(--reading-border));
+  stroke-dasharray: 4 3;
+}
+
+.kcr-risk-graph-node[data-kind="evidence"] > rect {
+  fill: var(--surface);
+  stroke: color-mix(in oklch, var(--text-soft) 42%, var(--reading-border));
+}
+
+.kcr-risk-graph-node[data-kind] > .kcr-risk-graph-hit-target {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 0;
+  filter: none;
+}
+
+.kcr-risk-graph-node[data-selected-dimension="true"] > rect,
+.kcr-risk-graph-node[data-active="true"] > rect,
+.kcr-risk-graph-node:focus-visible > rect {
+  stroke: var(--brand-strong);
+  stroke-width: 2;
+  filter: none;
+}
+
+.kcr-risk-graph-node[data-kind="event"][data-active="true"] > rect {
+  stroke: var(--danger);
+}
+
+.kcr-risk-graph-node text,
+.kcr-risk-graph-node[data-kind="company"] text,
+.kcr-risk-graph-node[data-kind="dimension"] text {
+  fill: var(--text-strong);
+  font-size: 11px;
+  font-weight: 690;
+  letter-spacing: 0;
+}
+
+.kcr-risk-graph-node .kcr-risk-graph-node-caption {
+  fill: var(--text-soft);
+  font-size: 7px;
+  font-weight: 560;
+  letter-spacing: 0.04em;
+}
+
+.kcr-risk-graph-node .kcr-risk-graph-node-score,
+.kcr-risk-graph-node[data-kind="company"] .kcr-risk-graph-node-score {
+  fill: var(--text-soft);
+  font-size: 8px;
+  font-weight: 570;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .kcr-risk-graph-node:hover > rect {
+    stroke: var(--brand-strong);
+    stroke-width: 1.7;
+    filter: none;
+  }
+}
+
+.kcr-risk-graph-inspector {
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: none;
+}
+
+@media (max-width: 760px) {
+  .kcr-risk-graph-context-switcher {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .kcr-risk-graph-context-switcher > div {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .kcr-risk-graph-context-switcher button {
+    justify-content: space-between;
+  }
+}
+
 /* KCR V3 MVP review workspace */
 .kcr-mvp-workspace {
   position: relative;

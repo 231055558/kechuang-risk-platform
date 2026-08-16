@@ -53,19 +53,19 @@ export interface KcrRiskGraphLayoutNode {
   x: number
   y: number
   radius: number
+  width?: number
+  height?: number
   angle: number
   layer: 0 | 1 | 2 | 3
   shape: "core" | "dimension" | "indicator" | "event" | "evidence"
 }
 
-export interface KcrRiskGraphRadialLayout {
+export interface KcrRiskGraphLayout {
   width: number
   height: number
   center: { x: number; y: number }
   nodes: KcrRiskGraphLayoutNode[]
 }
-
-const TAU = Math.PI * 2
 
 const nodeId = {
   company: (id: string) => `company:${id}`,
@@ -92,361 +92,303 @@ export function distributeKcrRiskGraphPositions(
   )
 }
 
-function polarPoint(
-  center: { x: number; y: number },
-  radiusX: number,
-  radiusY: number,
-  angle: number
+
+function addEditorialLayoutNode(
+  layoutNodes: KcrRiskGraphLayoutNode[],
+  node: KcrRiskGraphNode,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  layer: 0 | 1 | 2 | 3
 ) {
-  return {
-    x: center.x + Math.cos(angle) * radiusX,
-    y: center.y + Math.sin(angle) * radiusY,
-  }
-}
-
-function clamp(value: number, minimum: number, maximum: number) {
-  return Math.min(Math.max(value, minimum), maximum)
-}
-
-export function buildKcrRiskGraphRadialLayout(
-  nodes: readonly KcrRiskGraphNode[],
-  selectedDimensionId: KcrRiskDimensionId,
-  mode: KcrRiskGraphLayoutMode
-): KcrRiskGraphRadialLayout {
-  const compact = mode === "compact"
-  const width = compact ? 400 : 960
-  const height = compact ? 450 : 700
-  const center = compact ? { x: 200, y: 180 } : { x: 480, y: 340 }
-  const dimensions = nodes.filter((node) => node.kind === "dimension")
-  const indicators = nodes.filter((node) => node.kind === "indicator")
-  const evidence = nodes.filter((node) => node.kind === "evidence")
-  const events = nodes.filter((node) => node.kind === "event")
-  const baseDimensionAngles = new Map(
-    dimensions.map((dimension, index) => [
-      dimension.entityId,
-      -Math.PI / 2 + (index * Math.PI * 2) / Math.max(dimensions.length, 1),
-    ])
-  )
-  const compactRotation = compact
-    ? Math.PI / 2 -
-      (baseDimensionAngles.get(selectedDimensionId) ?? -Math.PI / 2)
-    : 0
-  const dimensionAngles = new Map(
-    [...baseDimensionAngles].map(([dimensionId, angle]) => [
-      dimensionId,
-      angle + compactRotation,
-    ])
-  )
-  const selectedAngle = dimensionAngles.get(selectedDimensionId) ?? -Math.PI / 2
-  const layoutNodes: KcrRiskGraphLayoutNode[] = []
-
-  nodes
-    .filter((node) => node.kind === "company")
-    .forEach((node) =>
-      layoutNodes.push({
-        id: node.id,
-        ...center,
-        radius: compact ? 52 : 64,
-        angle: 0,
-        layer: 0,
-        shape: "core",
-      })
-    )
-
-  dimensions.forEach((node) => {
-    const angle = dimensionAngles.get(node.entityId) ?? 0
-    const point = polarPoint(
-      center,
-      compact ? 112 : 205,
-      compact ? 95 : 155,
-      angle
-    )
-    layoutNodes.push({
-      id: node.id,
-      ...point,
-      radius: compact ? 38 : 44,
-      angle,
-      layer: 1,
-      shape: "dimension",
-    })
+  layoutNodes.push({
+    id: node.id,
+    x,
+    y,
+    width,
+    height,
+    radius: Math.max(width, height) / 2,
+    angle: 0,
+    layer,
+    shape:
+      node.kind === "company"
+        ? "core"
+        : node.kind === "dimension"
+          ? "dimension"
+          : node.kind,
   })
-
-  const detailGroups = [
-    {
-      nodes: indicators,
-      radiusX: compact ? 165 : 330,
-      radiusY: compact ? 170 : 245,
-      radius: compact ? 27 : 30,
-      span: compact ? 1 : 0.46,
-      layer: 2 as const,
-      shape: "indicator" as const,
-    },
-    {
-      nodes: evidence,
-      radiusX: compact ? 180 : 420,
-      radiusY: compact ? 235 : 305,
-      radius: compact ? 27 : 25,
-      span: compact ? 1.45 : 0.92,
-      layer: 3 as const,
-      shape: "evidence" as const,
-    },
-  ]
-
-  detailGroups.forEach((group) => {
-    const angleOffsets = distributeKcrRiskGraphPositions(
-      group.nodes.length,
-      -group.span / 2,
-      group.span / 2
-    )
-    group.nodes.forEach((node, index) => {
-      const angle = selectedAngle + angleOffsets[index]
-      const point = polarPoint(center, group.radiusX, group.radiusY, angle)
-      const padding = group.radius + (compact ? 8 : 12)
-      layoutNodes.push({
-        id: node.id,
-        x: clamp(point.x, padding, width - padding),
-        y: clamp(point.y, padding, height - padding),
-        radius: group.radius,
-        angle,
-        layer: group.layer,
-        shape: group.shape,
-      })
-    })
-  })
-
-  events.forEach((node, index) => {
-    const angle =
-      selectedAngle + (compact ? 1.1 : 0.68) + index * (compact ? 0.18 : 0.22)
-    const point = polarPoint(
-      center,
-      compact ? 176 : 370,
-      compact ? 170 : 270,
-      angle
-    )
-    const radius = compact ? 32 : 38
-    const padding = radius + (compact ? 8 : 12)
-    layoutNodes.push({
-      id: node.id,
-      x: clamp(point.x, padding, width - padding),
-      y: clamp(point.y, padding, height - padding),
-      radius,
-      angle,
-      layer: 2,
-      shape: "event",
-    })
-  })
-
-  return { width, height, center, nodes: layoutNodes }
-}
-
-function meanAngle(angles: readonly number[]) {
-  if (angles.length === 0) return -Math.PI / 2
-  const x = angles.reduce((total, angle) => total + Math.cos(angle), 0)
-  const y = angles.reduce((total, angle) => total + Math.sin(angle), 0)
-  return Math.atan2(y, x)
-}
-
-function groupNodesByPrimaryDimension(
-  nodes: readonly KcrRiskGraphNode[],
-  dimensionAngles: ReadonlyMap<KcrRiskDimensionId, number>
-) {
-  const groups = new Map<KcrRiskDimensionId, KcrRiskGraphNode[]>()
-
-  nodes.forEach((node) => {
-    const dimensionId = node.dimensionIds.find((id) => dimensionAngles.has(id))
-    if (!dimensionId) return
-    const group = groups.get(dimensionId) ?? []
-    group.push(node)
-    groups.set(dimensionId, group)
-  })
-
-  return groups
 }
 
 /**
- * Places a complete snapshot as semantic clusters around the assessed company.
- * This is intentionally deterministic: layout never creates or weights a
- * relationship, it only visualises the relations already present in the KCR
- * assessment response.
+ * Places the already-selected graph as an editorial hierarchy. The layout is
+ * deliberately sparse and deterministic: overview, focus and lineage each
+ * have a distinct reading direction, without creating or weighting relations.
  */
 export function buildKcrRiskGraphNetworkLayout(
   nodes: readonly KcrRiskGraphNode[],
-  selectedDimensionId: KcrRiskDimensionId,
+  _selectedDimensionId: KcrRiskDimensionId,
   mode: KcrRiskGraphLayoutMode,
   viewMode: KcrRiskGraphViewMode
-): KcrRiskGraphRadialLayout {
-  if (viewMode === "focus") {
-    return buildKcrRiskGraphRadialLayout(nodes, selectedDimensionId, mode)
-  }
-
+): KcrRiskGraphLayout {
   const compact = mode === "compact"
   const width = compact ? 480 : 1060
-  const height = compact ? 560 : 720
-  const center = compact ? { x: 240, y: 274 } : { x: 530, y: 356 }
   const dimensions = nodes.filter((node) => node.kind === "dimension")
   const indicators = nodes.filter((node) => node.kind === "indicator")
   const evidence = nodes.filter((node) => node.kind === "evidence")
   const events = nodes.filter((node) => node.kind === "event")
+  const companies = nodes.filter((node) => node.kind === "company")
   const layoutNodes: KcrRiskGraphLayoutNode[] = []
-  const dimensionAngles = new Map<KcrRiskDimensionId, number>()
 
-  dimensions.forEach((dimension, index) => {
-    const angle = -Math.PI / 2 + (index * TAU) / Math.max(dimensions.length, 1)
-    dimensionAngles.set(dimension.entityId as KcrRiskDimensionId, angle)
-  })
-
-  nodes
-    .filter((node) => node.kind === "company")
-    .forEach((node) =>
-      layoutNodes.push({
-        id: node.id,
-        ...center,
-        radius: compact ? 43 : 58,
-        angle: 0,
-        layer: 0,
-        shape: "core",
-      })
-    )
-
-  dimensions.forEach((node) => {
-    const angle = dimensionAngles.get(node.entityId as KcrRiskDimensionId) ?? 0
-    const point = polarPoint(
-      center,
-      compact ? 105 : viewMode === "lineage" ? 205 : 190,
-      compact ? 88 : viewMode === "lineage" ? 150 : 140,
-      angle
-    )
-    layoutNodes.push({
-      id: node.id,
-      ...point,
-      radius: compact ? 30 : 38,
-      angle,
-      layer: 1,
-      shape: "dimension",
-    })
-  })
-
-  const indicatorGroups = groupNodesByPrimaryDimension(
-    indicators,
-    dimensionAngles
-  )
-  indicatorGroups.forEach((group, dimensionId) => {
-    const centerAngle = dimensionAngles.get(dimensionId) ?? 0
-    const offsets = distributeKcrRiskGraphPositions(
-      group.length,
-      compact ? -0.52 : -0.38,
-      compact ? 0.52 : 0.38
-    )
-    group.forEach((node, index) => {
-      const angle = centerAngle + offsets[index]
-      const point = polarPoint(
-        center,
-        compact ? 174 : viewMode === "lineage" ? 340 : 326,
-        compact ? 166 : viewMode === "lineage" ? 265 : 252,
-        angle
+  if (viewMode === "overview") {
+    const height = compact ? 660 : 480
+    companies.forEach((node) =>
+      addEditorialLayoutNode(
+        layoutNodes,
+        node,
+        width / 2,
+        compact ? 64 : 62,
+        compact ? 176 : 190,
+        68,
+        0
       )
-      layoutNodes.push({
-        id: node.id,
-        ...point,
-        radius: compact ? 17 : 24,
-        angle,
-        layer: 2,
-        shape: "indicator",
-      })
-    })
-  })
-
-  const eventGroups = groupNodesByPrimaryDimension(events, dimensionAngles)
-  eventGroups.forEach((group, dimensionId) => {
-    const centerAngle = dimensionAngles.get(dimensionId) ?? 0
-    const dimensionPoint = polarPoint(
-      center,
-      compact ? 105 : viewMode === "lineage" ? 205 : 190,
-      compact ? 88 : viewMode === "lineage" ? 150 : 140,
-      centerAngle
     )
-    const tangentOffsets = distributeKcrRiskGraphPositions(
-      group.length,
-      compact ? 59 : 78,
-      compact
-        ? 59 + Math.max(group.length - 1, 0) * 52
-        : 78 + Math.max(group.length - 1, 0) * 70
+    const dimensionXs = distributeKcrRiskGraphPositions(
+      dimensions.length,
+      compact ? 116 : 116,
+      compact ? 364 : 944
     )
-    group.forEach((node, index) => {
-      const tangentOffset = tangentOffsets[index]
-      layoutNodes.push({
-        id: node.id,
-        x: dimensionPoint.x - Math.sin(centerAngle) * tangentOffset,
-        y: dimensionPoint.y + Math.cos(centerAngle) * tangentOffset,
-        radius: compact ? 23 : 31,
-        angle: centerAngle,
-        layer: 2,
-        shape: "event",
-      })
-    })
-  })
-
-  const evidenceGroups = groupNodesByPrimaryDimension(evidence, dimensionAngles)
-  evidenceGroups.forEach((group, dimensionId) => {
-    const relatedAngles = group.flatMap((node) =>
-      node.dimensionIds.flatMap((id) => {
-        const angle = dimensionAngles.get(id)
-        return angle === undefined ? [] : [angle]
-      })
-    )
-    const centerAngle = relatedAngles.length
-      ? meanAngle(relatedAngles)
-      : (dimensionAngles.get(dimensionId) ?? 0)
-    const offsets = distributeKcrRiskGraphPositions(
-      group.length,
-      compact ? -0.36 : -0.32,
-      compact ? 0.36 : 0.32
-    )
-    group.forEach((node, index) => {
-      const angle = centerAngle + offsets[index]
-      const point = polarPoint(
-        center,
-        compact ? 219 : viewMode === "lineage" ? 455 : 452,
-        compact ? 234 : viewMode === "lineage" ? 326 : 320,
-        angle
+    dimensions.forEach((node, index) =>
+      addEditorialLayoutNode(
+        layoutNodes,
+        node,
+        compact ? (index % 2 === 0 ? 116 : 364) : dimensionXs[index],
+        compact ? 190 + Math.floor(index / 2) * 104 : 224,
+        compact ? 176 : 146,
+        62,
+        1
       )
-      const radius = compact ? 18 : 21
-      const padding = radius + 5
-      layoutNodes.push({
-        id: node.id,
-        x: clamp(point.x, padding, width - padding),
-        y: clamp(point.y, padding, height - padding),
-        radius,
-        angle,
-        layer: 3,
-        shape: "evidence",
-      })
+    )
+    events.forEach((node, index) => {
+      const relatedDimensionIndex = dimensions.findIndex((dimension) =>
+        node.dimensionIds.includes(dimension.entityId as KcrRiskDimensionId)
+      )
+      const fallbackX = distributeKcrRiskGraphPositions(
+        events.length,
+        compact ? 116 : 220,
+        compact ? 364 : 840
+      )[index]
+      addEditorialLayoutNode(
+        layoutNodes,
+        node,
+        compact
+          ? index % 2 === 0
+            ? 116
+            : 364
+          : (dimensionXs[relatedDimensionIndex] ?? fallbackX),
+        compact ? 542 + Math.floor(index / 2) * 92 : 394,
+        compact ? 176 : 154,
+        64,
+        2
+      )
     })
-  })
+    return {
+      width,
+      height,
+      center: { x: width / 2, y: height / 2 },
+      nodes: layoutNodes,
+    }
+  }
 
-  const assignedEvidenceIds = new Set(
-    [...evidenceGroups.values()].flatMap((group) =>
-      group.map((node) => node.id)
+  if (viewMode === "focus") {
+    if (compact) {
+      let cursorY = 60
+      companies.forEach((node) =>
+        addEditorialLayoutNode(layoutNodes, node, 130, cursorY, 190, 68, 0)
+      )
+      dimensions.forEach((node) =>
+        addEditorialLayoutNode(layoutNodes, node, 354, cursorY, 190, 68, 1)
+      )
+      cursorY += 128
+      const indicatorYs = indicators.map(
+        (_, index) => cursorY + Math.floor(index / 2) * 96
+      )
+      indicators.forEach((node, index) =>
+        addEditorialLayoutNode(
+          layoutNodes,
+          node,
+          index % 2 === 0 ? 124 : 356,
+          indicatorYs[index],
+          190,
+          62,
+          2
+        )
+      )
+      cursorY += Math.ceil(indicators.length / 2) * 96
+      events.forEach((node, index) =>
+        addEditorialLayoutNode(
+          layoutNodes,
+          node,
+          events.length === 1 ? 240 : index % 2 === 0 ? 124 : 356,
+          cursorY + Math.floor(index / 2) * 92,
+          190,
+          62,
+          2
+        )
+      )
+      cursorY += Math.ceil(events.length / 2) * 92
+      evidence.forEach((node, index) =>
+        addEditorialLayoutNode(
+          layoutNodes,
+          node,
+          index % 2 === 0 ? 124 : 356,
+          cursorY + Math.floor(index / 2) * 88,
+          190,
+          58,
+          3
+        )
+      )
+      const height = Math.max(
+        460,
+        cursorY + Math.ceil(evidence.length / 2) * 88 + 54
+      )
+      return {
+        width,
+        height,
+        center: { x: width / 2, y: height / 2 },
+        nodes: layoutNodes,
+      }
+    }
+
+    const height = evidence.length ? 520 : 390
+    companies.forEach((node) =>
+      addEditorialLayoutNode(layoutNodes, node, 126, 68, 190, 68, 0)
+    )
+    dimensions.forEach((node) =>
+      addEditorialLayoutNode(layoutNodes, node, 370, 68, 174, 68, 1)
+    )
+    const indicatorXs = distributeKcrRiskGraphPositions(
+      indicators.length,
+      130,
+      events.length ? 760 : 930
+    )
+    indicators.forEach((node, index) =>
+      addEditorialLayoutNode(
+        layoutNodes,
+        node,
+        indicatorXs[index],
+        238,
+        148,
+        62,
+        2
+      )
+    )
+    events.forEach((node, index) =>
+      addEditorialLayoutNode(
+        layoutNodes,
+        node,
+        930,
+        238 + index * 84,
+        158,
+        64,
+        2
+      )
+    )
+    const evidenceXs = distributeKcrRiskGraphPositions(
+      evidence.length,
+      180,
+      880
+    )
+    evidence.forEach((node, index) =>
+      addEditorialLayoutNode(
+        layoutNodes,
+        node,
+        evidenceXs[index],
+        430,
+        156,
+        60,
+        3
+      )
+    )
+    return {
+      width,
+      height,
+      center: { x: width / 2, y: height / 2 },
+      nodes: layoutNodes,
+    }
+  }
+
+  if (compact) {
+    const orderedGroups = [companies, dimensions, indicators, events]
+    let cursorY = 54
+    orderedGroups.forEach((group, groupIndex) => {
+      group.forEach((node, index) =>
+        addEditorialLayoutNode(
+          layoutNodes,
+          node,
+          group.length === 1 ? 240 : index % 2 === 0 ? 124 : 356,
+          cursorY + Math.floor(index / 2) * 88,
+          190,
+          62,
+          Math.min(groupIndex, 2) as 0 | 1 | 2
+        )
+      )
+      cursorY += Math.max(1, Math.ceil(group.length / 2)) * 96
+    })
+    evidence.forEach((node, index) =>
+      addEditorialLayoutNode(
+        layoutNodes,
+        node,
+        index % 2 === 0 ? 124 : 356,
+        cursorY + Math.floor(index / 2) * 88,
+        190,
+        58,
+        3
+      )
+    )
+    const height = cursorY + Math.max(1, Math.ceil(evidence.length / 2)) * 88
+    return {
+      width,
+      height,
+      center: { x: width / 2, y: height / 2 },
+      nodes: layoutNodes,
+    }
+  }
+
+  const height = 430
+  const columnXs = [105, 330, 555, 790]
+  ;[companies, dimensions, indicators, events].forEach((group, groupIndex) => {
+    const ys = distributeKcrRiskGraphPositions(group.length, 100, 250)
+    group.forEach((node, index) =>
+      addEditorialLayoutNode(
+        layoutNodes,
+        node,
+        columnXs[groupIndex],
+        ys[index],
+        groupIndex === 0 ? 170 : 160,
+        64,
+        Math.min(groupIndex, 2) as 0 | 1 | 2
+      )
+    )
+  })
+  const evidenceXs = distributeKcrRiskGraphPositions(evidence.length, 520, 950)
+  evidence.forEach((node, index) =>
+    addEditorialLayoutNode(
+      layoutNodes,
+      node,
+      evidenceXs[index],
+      350,
+      158,
+      58,
+      3
     )
   )
-  const unassignedEvidence = evidence.filter(
-    (node) => !assignedEvidenceIds.has(node.id)
-  )
-  unassignedEvidence.forEach((node, index) => {
-    const radius = compact ? 18 : 21
-    const gap = compact ? 9 : 12
-    layoutNodes.push({
-      id: node.id,
-      x: radius + 5 + index * (radius * 2 + gap),
-      y: height - (compact ? 26 : 30),
-      radius,
-      angle: Math.PI / 2,
-      layer: 3,
-      shape: "evidence",
-    })
-  })
-
-  return { width, height, center, nodes: layoutNodes }
+  return {
+    width,
+    height,
+    center: { x: width / 2, y: height / 2 },
+    nodes: layoutNodes,
+  }
 }
 
 export function buildKcrRiskKnowledgeGraph(
@@ -640,7 +582,75 @@ export function buildKcrRiskKnowledgeGraph(
 
 export function selectKcrRiskGraphDimension(
   graph: KcrRiskKnowledgeGraph,
-  dimensionId: KcrRiskDimensionId
+  dimensionId: KcrRiskDimensionId,
+  expandedNodeId?: string
+): KcrRiskKnowledgeGraph {
+  const includedNodeIds = new Set(
+    graph.nodes
+      .filter(
+        (node) =>
+          node.kind === "company" ||
+          (node.kind === "dimension" && node.entityId === dimensionId) ||
+          (node.kind !== "evidence" && node.dimensionIds.includes(dimensionId))
+      )
+      .map((node) => node.id)
+  )
+
+  if (expandedNodeId) {
+    const expandedNode = graph.nodes.find((node) => node.id === expandedNodeId)
+    if (expandedNode?.kind === "evidence") {
+      includedNodeIds.add(expandedNode.id)
+    } else if (
+      expandedNode &&
+      expandedNode.dimensionIds.includes(dimensionId)
+    ) {
+      graph.edges
+        .filter(
+          (edge) =>
+            (edge.source === expandedNodeId ||
+              edge.target === expandedNodeId) &&
+            graph.nodes.some(
+              (node) =>
+                node.kind === "evidence" &&
+                (node.id === edge.source || node.id === edge.target)
+            )
+        )
+        .forEach((edge) => {
+          includedNodeIds.add(edge.source)
+          includedNodeIds.add(edge.target)
+        })
+    }
+  }
+
+  const nodes = graph.nodes.filter((node) => includedNodeIds.has(node.id))
+  const nodeKindById = new Map(graph.nodes.map((node) => [node.id, node.kind]))
+  const edges = graph.edges.filter((edge) => {
+    if (
+      !includedNodeIds.has(edge.source) ||
+      !includedNodeIds.has(edge.target)
+    ) {
+      return false
+    }
+    const touchesEvidence =
+      nodeKindById.get(edge.source) === "evidence" ||
+      nodeKindById.get(edge.target) === "evidence"
+    return (
+      !touchesEvidence ||
+      !expandedNodeId ||
+      edge.source === expandedNodeId ||
+      edge.target === expandedNodeId
+    )
+  })
+
+  return {
+    nodes,
+    edges,
+    counts: graph.counts,
+  }
+}
+
+export function selectKcrRiskGraphOverview(
+  graph: KcrRiskKnowledgeGraph
 ): KcrRiskKnowledgeGraph {
   const includedNodeIds = new Set(
     graph.nodes
@@ -648,7 +658,7 @@ export function selectKcrRiskGraphDimension(
         (node) =>
           node.kind === "company" ||
           node.kind === "dimension" ||
-          node.dimensionIds.includes(dimensionId)
+          node.kind === "event"
       )
       .map((node) => node.id)
   )
@@ -658,24 +668,30 @@ export function selectKcrRiskGraphDimension(
       includedNodeIds.has(edge.source) && includedNodeIds.has(edge.target)
   )
 
-  return {
-    nodes,
-    edges,
-    counts: graph.counts,
-  }
+  return { nodes, edges, counts: graph.counts }
 }
 
 export function selectKcrRiskGraphLineage(
-  graph: KcrRiskKnowledgeGraph
+  graph: KcrRiskKnowledgeGraph,
+  eventId?: string
 ): KcrRiskKnowledgeGraph {
+  const targetEvent = eventId
+    ? graph.nodes.find(
+        (node) => node.kind === "event" && node.entityId === eventId
+      )
+    : graph.nodes.find((node) => node.kind === "event")
   const includedNodeIds = new Set(
     graph.nodes
-      .filter((node) => node.kind === "company" || node.kind === "event")
+      .filter((node) => node.kind === "company" || node.id === targetEvent?.id)
       .map((node) => node.id)
   )
 
   graph.edges
-    .filter((edge) => edge.kind === "event-link" || edge.kind === "propagation")
+    .filter(
+      (edge) =>
+        (edge.kind === "event-link" || edge.kind === "propagation") &&
+        (edge.source === targetEvent?.id || edge.target === targetEvent?.id)
+    )
     .forEach((edge) => {
       if (
         includedNodeIds.has(edge.source) ||
@@ -690,7 +706,7 @@ export function selectKcrRiskGraphLineage(
     .filter(
       (node) =>
         includedNodeIds.has(node.id) &&
-        (node.kind === "indicator" || node.kind === "evidence")
+        (node.kind === "indicator" || node.kind === "event")
     )
     .flatMap((node) => node.dimensionIds)
     .forEach((dimensionId) =>
