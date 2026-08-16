@@ -13,10 +13,10 @@ import {
 import {
   buildKcrRiskKnowledgeGraph,
   buildKcrRiskGraphNetworkLayout,
-  buildKcrRiskGraphRadialLayout,
   distributeKcrRiskGraphPositions,
   selectKcrRiskGraphDimension,
   selectKcrRiskGraphLineage,
+  selectKcrRiskGraphOverview,
 } from "../src/lib/kcr-risk-knowledge-graph.ts"
 
 const projectRoot = dirname(
@@ -69,137 +69,134 @@ test("graph layout returns no phantom position for an empty node group", () => {
   )
 })
 
-test("dimension focus keeps the company, all five dimensions, and only related detail nodes", () => {
+test("overview keeps a legible eight-node summary while preserving full counts", () => {
+  const graph = buildKcrRiskKnowledgeGraph(response, "寒武纪")
+  const overview = selectKcrRiskGraphOverview(graph)
+
+  assert.equal(overview.nodes.length, 8)
+  assert.equal(overview.edges.length, 7)
+  assert.deepEqual(overview.counts, graph.counts)
+  assert.deepEqual(
+    overview.nodes
+      .filter((node) => node.kind === "dimension")
+      .map((node) => node.entityId),
+    ["technology", "compliance", "finance", "external", "personnel-governance"]
+  )
+  assert.equal(overview.nodes.filter((node) => node.kind === "event").length, 2)
+  assert.equal(
+    overview.nodes.filter((node) => node.kind === "indicator").length,
+    0
+  )
+  assert.equal(
+    overview.nodes.filter((node) => node.kind === "evidence").length,
+    0
+  )
+})
+
+test("dimension focus starts with one risk cluster and expands only selected evidence", () => {
   const graph = buildKcrRiskKnowledgeGraph(response, "寒武纪")
   const external = selectKcrRiskGraphDimension(graph, "external")
 
-  assert.equal(external.nodes.length, 13)
-  assert.equal(external.edges.length, 17)
+  assert.equal(external.nodes.length, 6)
+  assert.equal(external.edges.length, 6)
   assert.deepEqual(
     external.nodes
-      .filter((node) => node.kind === "indicator")
+      .filter((node) => node.kind === "dimension")
       .map((node) => node.entityId),
-    ["E01", "E02", "E03"]
+    ["external"]
   )
+  assert.equal(
+    external.nodes.filter((node) => node.kind === "evidence").length,
+    0
+  )
+
+  const expanded = selectKcrRiskGraphDimension(
+    graph,
+    "external",
+    "indicator:E03"
+  )
+  assert.equal(expanded.nodes.length, 8)
+  assert.equal(expanded.edges.length, 8)
   assert.deepEqual(
-    external.nodes
+    expanded.nodes
+      .filter((node) => node.kind === "evidence")
+      .map((node) => node.entityId),
+    ["S04", "S05"]
+  )
+})
+
+test("editorial layouts keep every visible card in bounds without overlap", () => {
+  const graph = buildKcrRiskKnowledgeGraph(response, "寒武纪")
+  const viewGraphs = {
+    overview: selectKcrRiskGraphOverview(graph),
+    focus: selectKcrRiskGraphDimension(graph, "external", "indicator:E03"),
+    lineage: selectKcrRiskGraphLineage(graph, "EV001"),
+  }
+
+  for (const [viewMode, viewGraph] of Object.entries(viewGraphs)) {
+    for (const mode of ["desktop", "compact"] as const) {
+      const layout = buildKcrRiskGraphNetworkLayout(
+        viewGraph.nodes,
+        "external",
+        mode,
+        viewMode as keyof typeof viewGraphs
+      )
+      assert.equal(layout.nodes.length, viewGraph.nodes.length)
+      layout.nodes.forEach((node, index) => {
+        const width = node.width ?? node.radius * 2
+        const height = node.height ?? node.radius * 2
+        assert.ok(
+          node.x - width / 2 >= 0,
+          `${viewMode}/${mode}: ${node.id} left`
+        )
+        assert.ok(
+          node.x + width / 2 <= layout.width,
+          `${viewMode}/${mode}: ${node.id} right`
+        )
+        assert.ok(
+          node.y - height / 2 >= 0,
+          `${viewMode}/${mode}: ${node.id} top`
+        )
+        assert.ok(
+          node.y + height / 2 <= layout.height,
+          `${viewMode}/${mode}: ${node.id} bottom`
+        )
+
+        layout.nodes.slice(index + 1).forEach((other) => {
+          const otherWidth = other.width ?? other.radius * 2
+          const otherHeight = other.height ?? other.radius * 2
+          const separated =
+            Math.abs(node.x - other.x) >= (width + otherWidth) / 2 ||
+            Math.abs(node.y - other.y) >= (height + otherHeight) / 2
+          assert.ok(
+            separated,
+            `${viewMode}/${mode}: ${node.id} overlaps ${other.id}`
+          )
+        })
+      })
+    }
+  }
+})
+
+test("risk lineage isolates one red flag, its indicator, evidence, and propagation", () => {
+  const graph = buildKcrRiskKnowledgeGraph(response, "寒武纪")
+  const lineage = selectKcrRiskGraphLineage(graph, "EV001")
+
+  assert.deepEqual(
+    lineage.nodes
       .filter((node) => node.kind === "event")
       .map((node) => node.entityId),
     ["EV001"]
   )
-})
-
-test("radial layout keeps the company central and expands detail nodes into outer orbits", () => {
-  const graph = buildKcrRiskKnowledgeGraph(response, "寒武纪")
-  const external = selectKcrRiskGraphDimension(graph, "external")
-  const layout = buildKcrRiskGraphRadialLayout(
-    external.nodes,
-    "external",
-    "desktop"
-  )
-  const company = layout.nodes.find((node) => node.shape === "core")
-  const dimensions = layout.nodes.filter((node) => node.layer === 1)
-  const detailNodes = layout.nodes.filter((node) => node.layer >= 2)
-
-  assert.deepEqual(company, {
-    id: "company:cambricon",
-    x: layout.center.x,
-    y: layout.center.y,
-    radius: 64,
-    angle: 0,
-    layer: 0,
-    shape: "core",
-  })
-  assert.equal(dimensions.length, 5)
-  assert.equal(new Set(dimensions.map((node) => node.angle)).size, 5)
-  assert.ok(
-    detailNodes.every((node) => {
-      const distance = Math.hypot(
-        node.x - layout.center.x,
-        node.y - layout.center.y
-      )
-      return distance > 190
-    })
-  )
-})
-
-test("compact radial layout remains inside its viewport without horizontal overflow", () => {
-  const graph = buildKcrRiskKnowledgeGraph(response, "寒武纪")
-  const external = selectKcrRiskGraphDimension(graph, "external")
-  const layout = buildKcrRiskGraphRadialLayout(
-    external.nodes,
-    "external",
-    "compact"
-  )
-
-  assert.deepEqual([layout.width, layout.height], [400, 450])
-  layout.nodes.forEach((node) => {
-    assert.ok(node.x - node.radius >= 0, `${node.id} exceeds left edge`)
-    assert.ok(
-      node.x + node.radius <= layout.width,
-      `${node.id} exceeds right edge`
-    )
-    assert.ok(node.y - node.radius >= 0, `${node.id} exceeds top edge`)
-    assert.ok(
-      node.y + node.radius <= layout.height,
-      `${node.id} exceeds bottom edge`
-    )
-  })
-})
-
-test("overview layout places every snapshot node in the full network", () => {
-  const graph = buildKcrRiskKnowledgeGraph(response, "寒武纪")
-  const layout = buildKcrRiskGraphNetworkLayout(
-    graph.nodes,
-    "external",
-    "desktop",
-    "overview"
-  )
-
-  assert.equal(layout.nodes.length, graph.nodes.length)
-  assert.equal(new Set(layout.nodes.map((node) => node.id)).size, 34)
-  assert.deepEqual([layout.width, layout.height], [1060, 720])
-  assert.equal(layout.nodes.filter((node) => node.layer === 1).length, 5)
-  assert.equal(layout.nodes.filter((node) => node.layer === 2).length, 20)
-
-  for (const mode of ["desktop", "compact"] as const) {
-    const currentLayout = buildKcrRiskGraphNetworkLayout(
-      graph.nodes,
-      "external",
-      mode,
-      "overview"
-    )
-    currentLayout.nodes.forEach((node, index) => {
-      currentLayout.nodes.slice(index + 1).forEach((other) => {
-        const gap =
-          Math.hypot(node.x - other.x, node.y - other.y) -
-          node.radius -
-          other.radius
-        assert.ok(gap >= 0, `${mode}: ${node.id} overlaps ${other.id}`)
-      })
-    })
-  }
-})
-
-test("risk lineage keeps red flags, their indicators, evidence, and propagation", () => {
-  const graph = buildKcrRiskKnowledgeGraph(response, "寒武纪")
-  const lineage = selectKcrRiskGraphLineage(graph)
-
-  assert.deepEqual(
-    lineage.nodes
-      .filter((node) => node.kind === "event")
-      .map((node) => node.entityId),
-    ["EV001", "EV002"]
-  )
   assert.deepEqual(
     lineage.nodes
       .filter((node) => node.kind === "indicator")
       .map((node) => node.entityId),
-    ["C03", "E03"]
+    ["E03"]
   )
   assert.equal(
     lineage.edges.filter((edge) => edge.kind === "propagation").length,
-    2
+    1
   )
   assert.ok(
     lineage.edges.every(
@@ -221,9 +218,9 @@ test("knowledge graph UI exposes node inspection and evidence semantics", () => 
   )
 
   assert.match(component, /企业风险知识图谱/)
-  assert.match(component, /全景网络/)
+  assert.match(component, /结构总览/)
   assert.match(component, /维度聚焦/)
-  assert.match(component, /风险脉络/)
+  assert.match(component, /事件溯源/)
   assert.match(component, /搜索图谱节点/)
   assert.match(component, /直接证据/)
   assert.match(component, /推断证据/)
@@ -236,7 +233,7 @@ test("knowledge graph UI exposes node inspection and evidence semantics", () => 
   assert.doesNotMatch(panel, /关系传播将在后续任务节点接入/)
 })
 
-test("knowledge graph renders responsive full-network and focus layouts", () => {
+test("knowledge graph renders responsive editorial hierarchy and progressive detail", () => {
   const component = readFileSync(
     join(projectRoot, "src/components/dashboard/kcr-risk-knowledge-graph.tsx"),
     "utf8"
@@ -244,10 +241,12 @@ test("knowledge graph renders responsive full-network and focus layouts", () => 
   const styles = readFileSync(join(projectRoot, "src/styles/pages.css"), "utf8")
 
   assert.match(component, /buildKcrRiskGraphNetworkLayout/)
-  assert.match(component, /kcr-risk-graph-orbit/)
-  assert.match(component, /<circle/)
-  assert.match(component, /<polygon/)
-  assert.doesNotMatch(component, /kcr-risk-graph-dimension-filters/)
+  assert.match(component, /roundedOrthogonalPath/)
+  assert.match(component, /kcr-risk-graph-context-switcher/)
+  assert.match(component, /selectKcrRiskGraphOverview/)
+  assert.doesNotMatch(component, /kcr-risk-graph-orbit/)
+  assert.doesNotMatch(component, /<circle/)
+  assert.doesNotMatch(component, /<polygon/)
   assert.doesNotMatch(component, /x: 100, y: 325/)
   assert.doesNotMatch(
     styles,
