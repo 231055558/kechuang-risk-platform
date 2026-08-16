@@ -7059,6 +7059,105 @@
   height: 15px;
 }
 
+.kcr-risk-graph-toolbar {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.kcr-risk-graph-view-switcher {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.kcr-risk-graph-view-switcher [data-slot="button"] {
+  min-height: 38px;
+  border-radius: 11px;
+}
+
+.kcr-risk-graph-view-switcher [data-slot="button"] > svg {
+  width: 14px;
+  height: 14px;
+}
+
+.kcr-risk-graph-search {
+  position: relative;
+  width: min(310px, 36vw);
+}
+
+.kcr-risk-graph-search > svg {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 12px;
+  width: 15px;
+  height: 15px;
+  color: var(--text-soft);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.kcr-risk-graph-search [data-slot="input"] {
+  height: 40px;
+  padding-left: 36px;
+  border-radius: 12px;
+  background: color-mix(in oklch, var(--glass-reading-bg) 82%, transparent);
+}
+
+.kcr-risk-graph-search-results {
+  position: absolute;
+  z-index: 8;
+  top: calc(100% + 7px);
+  right: 0;
+  display: grid;
+  width: min(390px, 82vw);
+  overflow: hidden;
+  border: 1px solid var(--reading-border);
+  border-radius: 14px;
+  background: color-mix(in oklch, var(--surface) 94%, transparent);
+  box-shadow: var(--apple-shadow-reading);
+  -webkit-backdrop-filter: blur(22px) saturate(1.12);
+  backdrop-filter: blur(22px) saturate(1.12);
+}
+
+.kcr-risk-graph-search-results > button {
+  display: grid;
+  gap: 3px;
+  padding: 10px 12px;
+  border: 0;
+  border-top: 1px solid var(--reading-separator);
+  background: transparent;
+  color: var(--text-strong);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.kcr-risk-graph-search-results > button:first-child {
+  border-top: 0;
+}
+
+.kcr-risk-graph-search-results > button:hover,
+.kcr-risk-graph-search-results > button:focus-visible {
+  background: color-mix(in oklch, var(--brand-soft) 36%, transparent);
+  outline: none;
+}
+
+.kcr-risk-graph-search-results span {
+  font-size: 11px;
+  font-weight: 690;
+}
+
+.kcr-risk-graph-search-results small {
+  color: var(--text-soft);
+  font-size: 9px;
+}
+
 .kcr-risk-graph-stage {
   position: relative;
   min-width: 0;
@@ -8026,6 +8125,31 @@
 
   .kcr-risk-graph-counts > span {
     flex: 1;
+  }
+
+  .kcr-risk-graph-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .kcr-risk-graph-view-switcher {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .kcr-risk-graph-view-switcher [data-slot="button"] {
+    min-width: 0;
+    padding-inline: 8px;
+  }
+
+  .kcr-risk-graph-search {
+    width: 100%;
+  }
+
+  .kcr-risk-graph-search-results {
+    right: auto;
+    left: 0;
+    width: 100%;
   }
 
   .kcr-risk-graph-canvas {

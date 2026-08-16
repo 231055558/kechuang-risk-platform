@@ -46,6 +46,7 @@ export interface KcrRiskKnowledgeGraph {
 }
 
 export type KcrRiskGraphLayoutMode = "desktop" | "compact"
+export type KcrRiskGraphViewMode = "overview" | "focus" | "lineage"
 
 export interface KcrRiskGraphLayoutNode {
   id: string
@@ -63,6 +64,8 @@ export interface KcrRiskGraphRadialLayout {
   center: { x: number; y: number }
   nodes: KcrRiskGraphLayoutNode[]
 }
+
+const TAU = Math.PI * 2
 
 const nodeId = {
   company: (id: string) => `company:${id}`,
@@ -230,6 +233,216 @@ export function buildKcrRiskGraphRadialLayout(
       angle,
       layer: 2,
       shape: "event",
+    })
+  })
+
+  return { width, height, center, nodes: layoutNodes }
+}
+
+function meanAngle(angles: readonly number[]) {
+  if (angles.length === 0) return -Math.PI / 2
+  const x = angles.reduce((total, angle) => total + Math.cos(angle), 0)
+  const y = angles.reduce((total, angle) => total + Math.sin(angle), 0)
+  return Math.atan2(y, x)
+}
+
+function groupNodesByPrimaryDimension(
+  nodes: readonly KcrRiskGraphNode[],
+  dimensionAngles: ReadonlyMap<KcrRiskDimensionId, number>
+) {
+  const groups = new Map<KcrRiskDimensionId, KcrRiskGraphNode[]>()
+
+  nodes.forEach((node) => {
+    const dimensionId = node.dimensionIds.find((id) => dimensionAngles.has(id))
+    if (!dimensionId) return
+    const group = groups.get(dimensionId) ?? []
+    group.push(node)
+    groups.set(dimensionId, group)
+  })
+
+  return groups
+}
+
+/**
+ * Places a complete snapshot as semantic clusters around the assessed company.
+ * This is intentionally deterministic: layout never creates or weights a
+ * relationship, it only visualises the relations already present in the KCR
+ * assessment response.
+ */
+export function buildKcrRiskGraphNetworkLayout(
+  nodes: readonly KcrRiskGraphNode[],
+  selectedDimensionId: KcrRiskDimensionId,
+  mode: KcrRiskGraphLayoutMode,
+  viewMode: KcrRiskGraphViewMode
+): KcrRiskGraphRadialLayout {
+  if (viewMode === "focus") {
+    return buildKcrRiskGraphRadialLayout(nodes, selectedDimensionId, mode)
+  }
+
+  const compact = mode === "compact"
+  const width = compact ? 480 : 1060
+  const height = compact ? 560 : 720
+  const center = compact ? { x: 240, y: 274 } : { x: 530, y: 356 }
+  const dimensions = nodes.filter((node) => node.kind === "dimension")
+  const indicators = nodes.filter((node) => node.kind === "indicator")
+  const evidence = nodes.filter((node) => node.kind === "evidence")
+  const events = nodes.filter((node) => node.kind === "event")
+  const layoutNodes: KcrRiskGraphLayoutNode[] = []
+  const dimensionAngles = new Map<KcrRiskDimensionId, number>()
+
+  dimensions.forEach((dimension, index) => {
+    const angle = -Math.PI / 2 + (index * TAU) / Math.max(dimensions.length, 1)
+    dimensionAngles.set(dimension.entityId as KcrRiskDimensionId, angle)
+  })
+
+  nodes
+    .filter((node) => node.kind === "company")
+    .forEach((node) =>
+      layoutNodes.push({
+        id: node.id,
+        ...center,
+        radius: compact ? 43 : 58,
+        angle: 0,
+        layer: 0,
+        shape: "core",
+      })
+    )
+
+  dimensions.forEach((node) => {
+    const angle = dimensionAngles.get(node.entityId as KcrRiskDimensionId) ?? 0
+    const point = polarPoint(
+      center,
+      compact ? 105 : viewMode === "lineage" ? 205 : 190,
+      compact ? 88 : viewMode === "lineage" ? 150 : 140,
+      angle
+    )
+    layoutNodes.push({
+      id: node.id,
+      ...point,
+      radius: compact ? 30 : 38,
+      angle,
+      layer: 1,
+      shape: "dimension",
+    })
+  })
+
+  const indicatorGroups = groupNodesByPrimaryDimension(
+    indicators,
+    dimensionAngles
+  )
+  indicatorGroups.forEach((group, dimensionId) => {
+    const centerAngle = dimensionAngles.get(dimensionId) ?? 0
+    const offsets = distributeKcrRiskGraphPositions(
+      group.length,
+      compact ? -0.52 : -0.38,
+      compact ? 0.52 : 0.38
+    )
+    group.forEach((node, index) => {
+      const angle = centerAngle + offsets[index]
+      const point = polarPoint(
+        center,
+        compact ? 174 : viewMode === "lineage" ? 340 : 326,
+        compact ? 166 : viewMode === "lineage" ? 265 : 252,
+        angle
+      )
+      layoutNodes.push({
+        id: node.id,
+        ...point,
+        radius: compact ? 17 : 24,
+        angle,
+        layer: 2,
+        shape: "indicator",
+      })
+    })
+  })
+
+  const eventGroups = groupNodesByPrimaryDimension(events, dimensionAngles)
+  eventGroups.forEach((group, dimensionId) => {
+    const centerAngle = dimensionAngles.get(dimensionId) ?? 0
+    const dimensionPoint = polarPoint(
+      center,
+      compact ? 105 : viewMode === "lineage" ? 205 : 190,
+      compact ? 88 : viewMode === "lineage" ? 150 : 140,
+      centerAngle
+    )
+    const tangentOffsets = distributeKcrRiskGraphPositions(
+      group.length,
+      compact ? 59 : 78,
+      compact
+        ? 59 + Math.max(group.length - 1, 0) * 52
+        : 78 + Math.max(group.length - 1, 0) * 70
+    )
+    group.forEach((node, index) => {
+      const tangentOffset = tangentOffsets[index]
+      layoutNodes.push({
+        id: node.id,
+        x: dimensionPoint.x - Math.sin(centerAngle) * tangentOffset,
+        y: dimensionPoint.y + Math.cos(centerAngle) * tangentOffset,
+        radius: compact ? 23 : 31,
+        angle: centerAngle,
+        layer: 2,
+        shape: "event",
+      })
+    })
+  })
+
+  const evidenceGroups = groupNodesByPrimaryDimension(evidence, dimensionAngles)
+  evidenceGroups.forEach((group, dimensionId) => {
+    const relatedAngles = group.flatMap((node) =>
+      node.dimensionIds.flatMap((id) => {
+        const angle = dimensionAngles.get(id)
+        return angle === undefined ? [] : [angle]
+      })
+    )
+    const centerAngle = relatedAngles.length
+      ? meanAngle(relatedAngles)
+      : (dimensionAngles.get(dimensionId) ?? 0)
+    const offsets = distributeKcrRiskGraphPositions(
+      group.length,
+      compact ? -0.36 : -0.32,
+      compact ? 0.36 : 0.32
+    )
+    group.forEach((node, index) => {
+      const angle = centerAngle + offsets[index]
+      const point = polarPoint(
+        center,
+        compact ? 219 : viewMode === "lineage" ? 455 : 452,
+        compact ? 234 : viewMode === "lineage" ? 326 : 320,
+        angle
+      )
+      const radius = compact ? 18 : 21
+      const padding = radius + 5
+      layoutNodes.push({
+        id: node.id,
+        x: clamp(point.x, padding, width - padding),
+        y: clamp(point.y, padding, height - padding),
+        radius,
+        angle,
+        layer: 3,
+        shape: "evidence",
+      })
+    })
+  })
+
+  const assignedEvidenceIds = new Set(
+    [...evidenceGroups.values()].flatMap((group) =>
+      group.map((node) => node.id)
+    )
+  )
+  const unassignedEvidence = evidence.filter(
+    (node) => !assignedEvidenceIds.has(node.id)
+  )
+  unassignedEvidence.forEach((node, index) => {
+    const radius = compact ? 18 : 21
+    const gap = compact ? 9 : 12
+    layoutNodes.push({
+      id: node.id,
+      x: radius + 5 + index * (radius * 2 + gap),
+      y: height - (compact ? 26 : 30),
+      radius,
+      angle: Math.PI / 2,
+      layer: 3,
+      shape: "evidence",
     })
   })
 
@@ -450,4 +663,58 @@ export function selectKcrRiskGraphDimension(
     edges,
     counts: graph.counts,
   }
+}
+
+export function selectKcrRiskGraphLineage(
+  graph: KcrRiskKnowledgeGraph
+): KcrRiskKnowledgeGraph {
+  const includedNodeIds = new Set(
+    graph.nodes
+      .filter((node) => node.kind === "company" || node.kind === "event")
+      .map((node) => node.id)
+  )
+
+  graph.edges
+    .filter((edge) => edge.kind === "event-link" || edge.kind === "propagation")
+    .forEach((edge) => {
+      if (
+        includedNodeIds.has(edge.source) ||
+        includedNodeIds.has(edge.target)
+      ) {
+        includedNodeIds.add(edge.source)
+        includedNodeIds.add(edge.target)
+      }
+    })
+
+  graph.nodes
+    .filter(
+      (node) =>
+        includedNodeIds.has(node.id) &&
+        (node.kind === "indicator" || node.kind === "evidence")
+    )
+    .flatMap((node) => node.dimensionIds)
+    .forEach((dimensionId) =>
+      includedNodeIds.add(nodeId.dimension(dimensionId))
+    )
+
+  graph.edges
+    .filter(
+      (edge) =>
+        (edge.kind === "direct" ||
+          edge.kind === "inferred" ||
+          edge.kind === "background") &&
+        includedNodeIds.has(edge.source)
+    )
+    .forEach((edge) => {
+      includedNodeIds.add(edge.source)
+      includedNodeIds.add(edge.target)
+    })
+
+  const nodes = graph.nodes.filter((node) => includedNodeIds.has(node.id))
+  const edges = graph.edges.filter(
+    (edge) =>
+      includedNodeIds.has(edge.source) && includedNodeIds.has(edge.target)
+  )
+
+  return { nodes, edges, counts: graph.counts }
 }
