@@ -1,13 +1,25 @@
-import { useId, useMemo, useState, useSyncExternalStore } from "react"
+import {
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type PointerEvent as ReactPointerEvent,
+  type WheelEvent as ReactWheelEvent,
+} from "react"
 import {
   AlertTriangleIcon,
   ArrowRightIcon,
   ExternalLinkIcon,
   FileCheck2Icon,
   GitBranchIcon,
+  LayoutGridIcon,
+  Maximize2Icon,
   NetworkIcon,
   SearchIcon,
   TargetIcon,
+  ZoomInIcon,
+  ZoomOutIcon,
 } from "lucide-react"
 
 import { LiquidGlassSurface } from "@/components/liquid"
@@ -126,6 +138,10 @@ const graphViewLabels: Record<
     label: "结构总览",
     hint: "先看企业、五维与红旗；指标和证据按需展开",
   },
+  network: {
+    label: "完整图谱",
+    hint: "高密度展示全部节点与关系，可缩放、平移并高亮邻接关系",
+  },
   focus: {
     label: "维度聚焦",
     hint: "一次展开一个风险维度，点击指标查看关联证据",
@@ -137,6 +153,9 @@ const graphViewLabels: Record<
 }
 
 type GraphPoint = { x: number; y: number }
+type GraphViewport = { scale: number; x: number; y: number }
+
+const defaultGraphViewport: GraphViewport = { scale: 1, x: 0, y: 0 }
 
 function nodeWidth(node: KcrRiskGraphLayoutNode) {
   return node.width ?? node.radius * 2
@@ -177,6 +196,42 @@ function roundedOrthogonalPath(points: readonly GraphPoint[], radius = 8) {
 
   const last = points.at(-1)!
   return `${path} L ${last.x} ${last.y}`
+}
+
+function stableEdgeCurve(value: string) {
+  let hash = 0
+  for (let index = 0; index < value.length; index += 1) {
+    hash = (hash * 31 + value.charCodeAt(index)) | 0
+  }
+  return ((Math.abs(hash) % 7) - 3) * 5
+}
+
+function explorationConnectorPath(
+  source: KcrRiskGraphLayoutNode,
+  target: KcrRiskGraphLayoutNode,
+  edge: KcrRiskGraphEdge
+) {
+  const dx = target.x - source.x
+  const dy = target.y - source.y
+  const distance = Math.hypot(dx, dy) || 1
+  const unitX = dx / distance
+  const unitY = dy / distance
+  const sourceInset = Math.min(nodeWidth(source), nodeHeight(source)) * 0.42
+  const targetInset = Math.min(nodeWidth(target), nodeHeight(target)) * 0.42
+  const start = {
+    x: source.x + unitX * sourceInset,
+    y: source.y + unitY * sourceInset,
+  }
+  const end = {
+    x: target.x - unitX * targetInset,
+    y: target.y - unitY * targetInset,
+  }
+  const curve = stableEdgeCurve(edge.id)
+  const midpoint = {
+    x: (start.x + end.x) / 2 - unitY * curve,
+    y: (start.y + end.y) / 2 + unitX * curve,
+  }
+  return `M ${start.x} ${start.y} Q ${midpoint.x} ${midpoint.y} ${end.x} ${end.y}`
 }
 
 function orthogonalConnectorPoints(
@@ -250,6 +305,21 @@ function orthogonalConnectorPoints(
 
 function dimensionShortLabel(label: string) {
   return label.replace(/风险$/, "")
+}
+
+function networkNodeShortLabel(node: KcrRiskGraphNode) {
+  let label = dimensionShortLabel(node.label)
+  if (node.kind === "evidence") {
+    const datedReportStart = label.search(/\d{4}年/)
+    if (datedReportStart > 0 && label.includes("报告")) {
+      label = label.slice(datedReportStart)
+    }
+  }
+  const characters = Array.from(label)
+  const limit = node.kind === "evidence" ? 7 : 8
+  return characters.length > limit
+    ? `${characters.slice(0, limit).join("")}…`
+    : label
 }
 
 function KcrGraphNodeInspector({
@@ -427,18 +497,29 @@ export function KcrRiskKnowledgeGraph({
   const [selectedEventId, setSelectedEventId] = useState(
     assessment.redFlags[0]?.eventId ?? ""
   )
+  const [networkViewport, setNetworkViewport] =
+    useState<GraphViewport>(defaultGraphViewport)
+  const networkPanRef = useRef<{
+    pointerId: number
+    clientX: number
+    clientY: number
+    originX: number
+    originY: number
+  } | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const visibleGraph = useMemo(
     () =>
       viewMode === "overview"
         ? selectKcrRiskGraphOverview(graph)
-        : viewMode === "lineage"
-          ? selectKcrRiskGraphLineage(graph, selectedEventId)
-          : selectKcrRiskGraphDimension(
-              graph,
-              selectedDimensionId,
-              selectedNodeId
-            ),
+        : viewMode === "network"
+          ? graph
+          : viewMode === "lineage"
+            ? selectKcrRiskGraphLineage(graph, selectedEventId)
+            : selectKcrRiskGraphDimension(
+                graph,
+                selectedDimensionId,
+                selectedNodeId
+              ),
     [graph, selectedDimensionId, selectedEventId, selectedNodeId, viewMode]
   )
   const layout = useMemo(
@@ -447,9 +528,16 @@ export function KcrRiskKnowledgeGraph({
         visibleGraph.nodes,
         selectedDimensionId,
         compact ? "compact" : "desktop",
-        viewMode
+        viewMode,
+        visibleGraph.edges
       ),
-    [compact, selectedDimensionId, viewMode, visibleGraph.nodes]
+    [
+      compact,
+      selectedDimensionId,
+      viewMode,
+      visibleGraph.edges,
+      visibleGraph.nodes,
+    ]
   )
   const positions = useMemo(
     () => new Map(layout.nodes.map((node) => [node.id, node])),
@@ -457,9 +545,42 @@ export function KcrRiskKnowledgeGraph({
   )
   const selectedNode =
     graph.nodes.find((node) => node.id === selectedNodeId) ?? graph.nodes[0]
+  const networkReferenceGroups = [
+    {
+      kind: "indicator" as const,
+      label: "评分指标",
+      description: "T / C / F / E / P",
+      nodes: graph.nodes.filter((node) => node.kind === "indicator"),
+    },
+    {
+      kind: "event" as const,
+      label: "红旗事件",
+      description: "EV",
+      nodes: graph.nodes.filter((node) => node.kind === "event"),
+    },
+    {
+      kind: "evidence" as const,
+      label: "来源证据",
+      description: "S",
+      nodes: graph.nodes.filter((node) => node.kind === "evidence"),
+    },
+  ]
   const selectedDimension = assessment.dimensions.find(
     (dimension) => dimension.dimensionId === selectedDimensionId
   )
+  const networkNeighborhood = useMemo(() => {
+    const neighborhood = new Set([selectedNodeId])
+    graph.edges.forEach((edge) => {
+      if (edge.source === selectedNodeId || edge.target === selectedNodeId) {
+        neighborhood.add(edge.source)
+        neighborhood.add(edge.target)
+      }
+    })
+    return neighborhood
+  }, [graph.edges, selectedNodeId])
+  const companyNodeId = `company:${assessment.companyId}`
+  const networkHasFocusedNode =
+    viewMode === "network" && selectedNodeId !== companyNodeId
   const normalizedSearchQuery = searchQuery.trim().toLocaleLowerCase("zh-CN")
   const searchResults = normalizedSearchQuery
     ? graph.nodes
@@ -480,6 +601,14 @@ export function KcrRiskKnowledgeGraph({
 
   function selectNode(node: KcrRiskGraphNode) {
     setSelectedNodeId(node.id)
+    if (viewMode === "network") {
+      if (node.kind === "dimension") {
+        setSelectedDimensionId(node.entityId as KcrRiskDimensionId)
+      } else if (node.kind === "event") {
+        setSelectedEventId(node.entityId)
+      }
+      return
+    }
     if (node.kind === "dimension") {
       setSelectedDimensionId(node.entityId as KcrRiskDimensionId)
       setViewMode("focus")
@@ -494,7 +623,10 @@ export function KcrRiskKnowledgeGraph({
   function changeViewMode(nextViewMode: KcrRiskGraphViewMode) {
     setViewMode(nextViewMode)
     setSearchQuery("")
+    setNetworkViewport(defaultGraphViewport)
     if (nextViewMode === "overview") {
+      setSelectedNodeId(`company:${assessment.companyId}`)
+    } else if (nextViewMode === "network") {
       setSelectedNodeId(`company:${assessment.companyId}`)
     } else if (nextViewMode === "focus") {
       setSelectedNodeId(`dimension:${selectedDimensionId}`)
@@ -506,6 +638,11 @@ export function KcrRiskKnowledgeGraph({
   }
 
   function selectSearchResult(node: KcrRiskGraphNode) {
+    if (viewMode === "network") {
+      selectNode(node)
+      setSearchQuery("")
+      return
+    }
     const dimensionId =
       node.kind === "dimension"
         ? (node.entityId as KcrRiskDimensionId)
@@ -529,15 +666,22 @@ export function KcrRiskKnowledgeGraph({
     if (!source || !target) return null
     const active =
       edge.source === selectedNodeId || edge.target === selectedNodeId
-    const points = orthogonalConnectorPoints(source, target, edge, layout.width)
+    const muted = networkHasFocusedNode && !active
+    const edgePath =
+      viewMode === "network"
+        ? explorationConnectorPath(source, target, edge)
+        : roundedOrthogonalPath(
+            orthogonalConnectorPoints(source, target, edge, layout.width)
+          )
 
     return (
       <path
         key={edge.id}
-        d={roundedOrthogonalPath(points)}
+        d={edgePath}
         className="kcr-risk-graph-edge"
         data-kind={edge.kind}
         data-active={active || undefined}
+        data-muted={muted || undefined}
         markerEnd={`url(#${markerId})`}
       >
         <title>
@@ -548,9 +692,32 @@ export function KcrRiskKnowledgeGraph({
     )
   }
 
-  function renderNodeShape(layoutNode: KcrRiskGraphLayoutNode) {
+  function renderNodeShape(
+    layoutNode: KcrRiskGraphLayoutNode,
+    node: KcrRiskGraphNode
+  ) {
     const width = nodeWidth(layoutNode)
     const height = nodeHeight(layoutNode)
+    if (viewMode === "network" && node.kind === "indicator") {
+      return (
+        <circle
+          cx={layoutNode.x}
+          cy={layoutNode.y}
+          r={Math.min(width, height) / 2}
+        />
+      )
+    }
+    if (viewMode === "network" && node.kind === "event") {
+      return (
+        <polygon
+          points={`${layoutNode.x},${layoutNode.y - height / 2} ${
+            layoutNode.x + width / 2
+          },${layoutNode.y} ${layoutNode.x},${
+            layoutNode.y + height / 2
+          } ${layoutNode.x - width / 2},${layoutNode.y}`}
+        />
+      )
+    }
     return (
       <rect
         x={layoutNode.x - width / 2}
@@ -560,6 +727,50 @@ export function KcrRiskKnowledgeGraph({
         rx="7"
       />
     )
+  }
+
+  function startNetworkPan(event: ReactPointerEvent<SVGSVGElement>) {
+    if (viewMode !== "network") return
+    if ((event.target as SVGElement).closest(".kcr-risk-graph-node")) return
+    event.currentTarget.setPointerCapture(event.pointerId)
+    networkPanRef.current = {
+      pointerId: event.pointerId,
+      clientX: event.clientX,
+      clientY: event.clientY,
+      originX: networkViewport.x,
+      originY: networkViewport.y,
+    }
+  }
+
+  function moveNetworkPan(event: ReactPointerEvent<SVGSVGElement>) {
+    const pan = networkPanRef.current
+    if (!pan || pan.pointerId !== event.pointerId) return
+    const bounds = event.currentTarget.getBoundingClientRect()
+    const graphUnitsPerPixel = layout.width / Math.max(bounds.width, 1)
+    setNetworkViewport((current) => ({
+      ...current,
+      x:
+        pan.originX +
+        ((event.clientX - pan.clientX) * graphUnitsPerPixel) / current.scale,
+      y:
+        pan.originY +
+        ((event.clientY - pan.clientY) * graphUnitsPerPixel) / current.scale,
+    }))
+  }
+
+  function stopNetworkPan(event: ReactPointerEvent<SVGSVGElement>) {
+    if (networkPanRef.current?.pointerId !== event.pointerId) return
+    networkPanRef.current = null
+    event.currentTarget.releasePointerCapture(event.pointerId)
+  }
+
+  function zoomNetwork(event: ReactWheelEvent<SVGSVGElement>) {
+    if (viewMode !== "network") return
+    event.preventDefault()
+    setNetworkViewport((current) => ({
+      ...current,
+      scale: Math.min(Math.max(current.scale - event.deltaY * 0.001, 0.7), 2.2),
+    }))
   }
 
   return (
@@ -572,6 +783,7 @@ export function KcrRiskKnowledgeGraph({
       <section
         id="kcr-risk-knowledge-graph"
         className="kcr-risk-graph"
+        data-view={viewMode}
         aria-labelledby={titleId}
       >
         <header className="kcr-risk-graph-header">
@@ -582,7 +794,8 @@ export function KcrRiskKnowledgeGraph({
             </span>
             <h3 id={titleId}>企业风险知识图谱</h3>
             <p id={descriptionId}>
-              先读企业—五维—红旗的结构总览，再按维度展开
+              可在完整图谱中探索全部 {graph.counts.nodes} 个节点与
+              {graph.counts.edges} 条关系，也可从结构总览按维度展开
               {assessment.indicatorResults.length}
               项指标，或按事件追踪证据与传播路径。
             </p>
@@ -610,6 +823,8 @@ export function KcrRiskKnowledgeGraph({
                   onClick={() => changeViewMode(mode)}
                 >
                   {mode === "overview" ? (
+                    <LayoutGridIcon aria-hidden="true" />
+                  ) : mode === "network" ? (
                     <NetworkIcon aria-hidden="true" />
                   ) : mode === "focus" ? (
                     <TargetIcon aria-hidden="true" />
@@ -651,7 +866,7 @@ export function KcrRiskKnowledgeGraph({
           </div>
         </div>
 
-        {viewMode !== "overview" ? (
+        {viewMode === "focus" || viewMode === "lineage" ? (
           <div
             className="kcr-risk-graph-context-switcher"
             aria-label={viewMode === "focus" ? "选择风险维度" : "选择红旗事件"}
@@ -703,6 +918,47 @@ export function KcrRiskKnowledgeGraph({
                   ? `${selectedEventId} 单事件链路`
                   : `${visibleGraph.nodes.length} 节点 · ${visibleGraph.edges.length} 关系`}
             </strong>
+            {viewMode === "network" ? (
+              <div
+                className="kcr-risk-graph-network-controls"
+                aria-label="完整图谱缩放控制"
+              >
+                <button
+                  type="button"
+                  aria-label="缩小完整图谱"
+                  onClick={() =>
+                    setNetworkViewport((current) => ({
+                      ...current,
+                      scale: Math.max(current.scale - 0.2, 0.7),
+                    }))
+                  }
+                >
+                  <ZoomOutIcon aria-hidden="true" />
+                </button>
+                <output aria-label="当前缩放比例">
+                  {Math.round(networkViewport.scale * 100)}%
+                </output>
+                <button
+                  type="button"
+                  aria-label="放大完整图谱"
+                  onClick={() =>
+                    setNetworkViewport((current) => ({
+                      ...current,
+                      scale: Math.min(current.scale + 0.2, 2.2),
+                    }))
+                  }
+                >
+                  <ZoomInIcon aria-hidden="true" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="复位完整图谱"
+                  onClick={() => setNetworkViewport(defaultGraphViewport)}
+                >
+                  <Maximize2Icon aria-hidden="true" />
+                </button>
+              </div>
+            ) : null}
             <small>{graphViewLabels[viewMode].hint}</small>
           </div>
 
@@ -712,6 +968,11 @@ export function KcrRiskKnowledgeGraph({
             role="img"
             aria-labelledby={`${titleId} ${descriptionId}`}
             preserveAspectRatio="xMidYMid meet"
+            onPointerDown={startNetworkPan}
+            onPointerMove={moveNetworkPan}
+            onPointerUp={stopNetworkPan}
+            onPointerCancel={stopNetworkPan}
+            onWheel={zoomNetwork}
           >
             <defs>
               <marker
@@ -727,156 +988,243 @@ export function KcrRiskKnowledgeGraph({
               </marker>
             </defs>
 
-            <g aria-hidden="true">{visibleGraph.edges.map(renderEdge)}</g>
+            <g
+              className="kcr-risk-graph-viewport"
+              transform={
+                viewMode === "network"
+                  ? `translate(${layout.center.x} ${layout.center.y}) translate(${networkViewport.x} ${networkViewport.y}) scale(${networkViewport.scale}) translate(${-layout.center.x} ${-layout.center.y})`
+                  : undefined
+              }
+            >
+              <g aria-hidden="true">{visibleGraph.edges.map(renderEdge)}</g>
 
-            <g>
-              {visibleGraph.nodes.map((node) => {
-                const layoutNode = positions.get(node.id)
-                if (!layoutNode) return null
-                const active = node.id === selectedNodeId
-                const selectedDimensionNode =
-                  viewMode === "focus" &&
-                  node.kind === "dimension" &&
-                  node.entityId === selectedDimensionId
+              <g>
+                {visibleGraph.nodes.map((node) => {
+                  const layoutNode = positions.get(node.id)
+                  if (!layoutNode) return null
+                  const active = node.id === selectedNodeId
+                  const selectedDimensionNode =
+                    viewMode === "focus" &&
+                    node.kind === "dimension" &&
+                    node.entityId === selectedDimensionId
+                  const muted =
+                    networkHasFocusedNode && !networkNeighborhood.has(node.id)
 
-                return (
-                  <g
-                    key={node.id}
-                    className="kcr-risk-graph-node"
-                    data-kind={node.kind}
-                    data-tone={node.tone}
-                    data-active={active || undefined}
-                    data-selected-dimension={selectedDimensionNode || undefined}
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`查看${nodeKindLabels[node.kind]}：${node.label}`}
-                    aria-pressed={active}
-                    onClick={() => selectNode(node)}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter" || event.key === " ") {
-                        event.preventDefault()
-                        selectNode(node)
+                  return (
+                    <g
+                      key={node.id}
+                      className="kcr-risk-graph-node"
+                      data-kind={node.kind}
+                      data-tone={node.tone}
+                      data-active={active || undefined}
+                      data-muted={muted || undefined}
+                      data-selected-dimension={
+                        selectedDimensionNode || undefined
                       }
-                    }}
-                  >
-                    <rect
-                      className="kcr-risk-graph-hit-target"
-                      x={layoutNode.x - nodeWidth(layoutNode) / 2 - 4}
-                      y={layoutNode.y - nodeHeight(layoutNode) / 2 - 4}
-                      width={nodeWidth(layoutNode) + 8}
-                      height={nodeHeight(layoutNode) + 8}
-                      aria-hidden="true"
-                    />
-                    {renderNodeShape(layoutNode)}
-                    <text x={layoutNode.x} y={layoutNode.y} textAnchor="middle">
-                      {node.kind === "company" ? (
-                        <>
-                          <tspan
-                            className="kcr-risk-graph-node-caption"
-                            x={layoutNode.x}
-                            dy="-0.8em"
-                          >
-                            评估企业
-                          </tspan>
-                          <tspan x={layoutNode.x} dy="1.35em">
-                            {node.label}
-                          </tspan>
-                          <tspan
-                            className="kcr-risk-graph-node-score"
-                            x={layoutNode.x}
-                            dy="1.35em"
-                          >
-                            {node.score ?? "—"} · {assessment.riskLevelLabel}
-                            风险
-                          </tspan>
-                        </>
-                      ) : node.kind === "dimension" ? (
-                        <>
-                          <tspan
-                            className="kcr-risk-graph-node-caption"
-                            x={layoutNode.x}
-                            dy="-0.7em"
-                          >
-                            风险维度
-                          </tspan>
-                          <tspan x={layoutNode.x} dy="1.35em">
-                            {dimensionShortLabel(node.label)}
-                          </tspan>
-                          <tspan
-                            className="kcr-risk-graph-node-score"
-                            x={layoutNode.x}
-                            dy="1.35em"
-                          >
-                            {node.score ?? "—"}
-                          </tspan>
-                        </>
-                      ) : node.kind === "indicator" ? (
-                        <>
-                          <tspan
-                            className="kcr-risk-graph-node-caption"
-                            x={layoutNode.x}
-                            dy="-0.55em"
-                          >
-                            评分指标
-                          </tspan>
-                          <tspan x={layoutNode.x} dy="1.4em">
-                            {node.entityId}
-                          </tspan>
-                          <tspan
-                            className="kcr-risk-graph-node-score"
-                            x={layoutNode.x}
-                            dy="1.35em"
-                          >
-                            {node.score ?? "—"} 分
-                          </tspan>
-                        </>
-                      ) : node.kind === "event" ? (
-                        <>
-                          <tspan
-                            className="kcr-risk-graph-node-caption"
-                            x={layoutNode.x}
-                            dy="-0.55em"
-                          >
-                            红旗事件
-                          </tspan>
-                          <tspan x={layoutNode.x} dy="1.4em">
-                            {node.entityId}
-                          </tspan>
-                          <tspan
-                            className="kcr-risk-graph-node-score"
-                            x={layoutNode.x}
-                            dy="1.35em"
-                          >
-                            {node.caption.split(" · ")[0]}
-                          </tspan>
-                        </>
-                      ) : (
-                        <>
-                          <tspan
-                            className="kcr-risk-graph-node-caption"
-                            x={layoutNode.x}
-                            dy="-0.55em"
-                          >
-                            来源证据
-                          </tspan>
-                          <tspan x={layoutNode.x} dy="1.4em">
-                            {node.entityId}
-                          </tspan>
-                          <tspan
-                            className="kcr-risk-graph-node-score"
-                            x={layoutNode.x}
-                            dy="1.35em"
-                          >
-                            {node.caption.split(" · ")[0]}
-                          </tspan>
-                        </>
-                      )}
-                    </text>
-                  </g>
-                )
-              })}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`查看${nodeKindLabels[node.kind]}：${node.label}`}
+                      aria-pressed={active}
+                      onClick={() => selectNode(node)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault()
+                          selectNode(node)
+                        }
+                      }}
+                    >
+                      <title>
+                        {node.entityId} · {node.label} ·{" "}
+                        {nodeKindLabels[node.kind]}
+                      </title>
+                      <rect
+                        className="kcr-risk-graph-hit-target"
+                        x={layoutNode.x - nodeWidth(layoutNode) / 2 - 4}
+                        y={layoutNode.y - nodeHeight(layoutNode) / 2 - 4}
+                        width={nodeWidth(layoutNode) + 8}
+                        height={nodeHeight(layoutNode) + 8}
+                        aria-hidden="true"
+                      />
+                      {renderNodeShape(layoutNode, node)}
+                      <text
+                        x={layoutNode.x}
+                        y={layoutNode.y}
+                        textAnchor="middle"
+                      >
+                        {viewMode === "network" ? (
+                          <>
+                            <tspan x={layoutNode.x} dy="-0.15em">
+                              {node.kind === "company" ||
+                              node.kind === "dimension"
+                                ? dimensionShortLabel(node.label)
+                                : node.entityId}
+                            </tspan>
+                            <tspan
+                              className="kcr-risk-graph-node-score"
+                              x={layoutNode.x}
+                              dy="1.35em"
+                            >
+                              {node.kind === "company" ||
+                              node.kind === "dimension"
+                                ? node.score === null
+                                  ? nodeKindLabels[node.kind]
+                                  : `${node.score} 分`
+                                : networkNodeShortLabel(node)}
+                            </tspan>
+                          </>
+                        ) : node.kind === "company" ? (
+                          <>
+                            <tspan
+                              className="kcr-risk-graph-node-caption"
+                              x={layoutNode.x}
+                              dy="-0.8em"
+                            >
+                              评估企业
+                            </tspan>
+                            <tspan x={layoutNode.x} dy="1.35em">
+                              {node.label}
+                            </tspan>
+                            <tspan
+                              className="kcr-risk-graph-node-score"
+                              x={layoutNode.x}
+                              dy="1.35em"
+                            >
+                              {node.score ?? "—"} · {assessment.riskLevelLabel}
+                              风险
+                            </tspan>
+                          </>
+                        ) : node.kind === "dimension" ? (
+                          <>
+                            <tspan
+                              className="kcr-risk-graph-node-caption"
+                              x={layoutNode.x}
+                              dy="-0.7em"
+                            >
+                              风险维度
+                            </tspan>
+                            <tspan x={layoutNode.x} dy="1.35em">
+                              {dimensionShortLabel(node.label)}
+                            </tspan>
+                            <tspan
+                              className="kcr-risk-graph-node-score"
+                              x={layoutNode.x}
+                              dy="1.35em"
+                            >
+                              {node.score ?? "—"}
+                            </tspan>
+                          </>
+                        ) : node.kind === "indicator" ? (
+                          <>
+                            <tspan
+                              className="kcr-risk-graph-node-caption"
+                              x={layoutNode.x}
+                              dy="-0.55em"
+                            >
+                              评分指标
+                            </tspan>
+                            <tspan x={layoutNode.x} dy="1.4em">
+                              {node.entityId}
+                            </tspan>
+                            <tspan
+                              className="kcr-risk-graph-node-score"
+                              x={layoutNode.x}
+                              dy="1.35em"
+                            >
+                              {node.score ?? "—"} 分
+                            </tspan>
+                          </>
+                        ) : node.kind === "event" ? (
+                          <>
+                            <tspan
+                              className="kcr-risk-graph-node-caption"
+                              x={layoutNode.x}
+                              dy="-0.55em"
+                            >
+                              红旗事件
+                            </tspan>
+                            <tspan x={layoutNode.x} dy="1.4em">
+                              {node.entityId}
+                            </tspan>
+                            <tspan
+                              className="kcr-risk-graph-node-score"
+                              x={layoutNode.x}
+                              dy="1.35em"
+                            >
+                              {node.caption.split(" · ")[0]}
+                            </tspan>
+                          </>
+                        ) : (
+                          <>
+                            <tspan
+                              className="kcr-risk-graph-node-caption"
+                              x={layoutNode.x}
+                              dy="-0.55em"
+                            >
+                              来源证据
+                            </tspan>
+                            <tspan x={layoutNode.x} dy="1.4em">
+                              {node.entityId}
+                            </tspan>
+                            <tspan
+                              className="kcr-risk-graph-node-score"
+                              x={layoutNode.x}
+                              dy="1.35em"
+                            >
+                              {node.caption.split(" · ")[0]}
+                            </tspan>
+                          </>
+                        )}
+                      </text>
+                    </g>
+                  )
+                })}
+              </g>
             </g>
           </svg>
+
+          {viewMode === "network" ? (
+            <aside
+              className="kcr-risk-graph-reference"
+              aria-label="图中缩写速查"
+            >
+              <header>
+                <div>
+                  <span>图中缩写速查</span>
+                  <strong>
+                    <code>{selectedNode.entityId}</code>
+                    {selectedNode.label}
+                  </strong>
+                </div>
+                <small>点击条目可在完整图谱中定位并高亮直接关系</small>
+              </header>
+              <div className="kcr-risk-graph-reference-groups">
+                {networkReferenceGroups.map((group) => (
+                  <section key={group.kind} data-kind={group.kind}>
+                    <h4>
+                      {group.label}
+                      <small>
+                        {group.description} · {group.nodes.length}
+                      </small>
+                    </h4>
+                    <div>
+                      {group.nodes.map((node) => (
+                        <button
+                          key={node.id}
+                          type="button"
+                          aria-pressed={node.id === selectedNodeId}
+                          title={`${node.entityId} · ${node.label}`}
+                          onClick={() => selectNode(node)}
+                        >
+                          <code>{node.entityId}</code>
+                          <span>{node.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </section>
+                ))}
+              </div>
+            </aside>
+          ) : null}
         </div>
 
         <KcrGraphNodeInspector
