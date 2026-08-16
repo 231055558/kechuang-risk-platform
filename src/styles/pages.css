@@ -8306,8 +8306,58 @@
   color: var(--text-strong);
 }
 
+.kcr-risk-graph-network-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.kcr-risk-graph-network-controls button {
+  display: inline-grid;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid var(--reading-border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text-body);
+  cursor: pointer;
+}
+
+.kcr-risk-graph-network-controls button:hover,
+.kcr-risk-graph-network-controls button:focus-visible {
+  border-color: var(--brand);
+  color: var(--brand-strong);
+  outline: none;
+}
+
+.kcr-risk-graph-network-controls svg {
+  width: 13px;
+  height: 13px;
+}
+
+.kcr-risk-graph-network-controls output {
+  min-width: 38px;
+  color: var(--text-soft);
+  font-size: 8px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
 .kcr-risk-graph-canvas {
   background: transparent;
+}
+
+.kcr-risk-graph[data-view="network"] .kcr-risk-graph-canvas {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.kcr-risk-graph[data-view="network"] .kcr-risk-graph-canvas:active {
+  cursor: grabbing;
 }
 
 .kcr-risk-graph-edge {
@@ -8334,6 +8384,33 @@
 
 .kcr-risk-graph-edge[data-active="true"] {
   stroke-width: 2;
+}
+
+.kcr-risk-graph[data-view="network"] .kcr-risk-graph-edge {
+  stroke-width: 0.9;
+  opacity: 0.3;
+  transition: opacity var(--motion-fast) var(--ease-fluid);
+}
+
+.kcr-risk-graph[data-view="network"] .kcr-risk-graph-edge[data-kind="direct"],
+.kcr-risk-graph[data-view="network"]
+  .kcr-risk-graph-edge[data-kind="event-link"] {
+  stroke-width: 1.1;
+}
+
+.kcr-risk-graph[data-view="network"]
+  .kcr-risk-graph-edge[data-kind="propagation"] {
+  stroke-width: 1.5;
+  opacity: 0.56;
+}
+
+.kcr-risk-graph[data-view="network"] .kcr-risk-graph-edge[data-active="true"] {
+  stroke-width: 2.4;
+  opacity: 1;
+}
+
+.kcr-risk-graph[data-view="network"] .kcr-risk-graph-edge[data-muted="true"] {
+  opacity: 0.06;
 }
 
 .kcr-risk-graph-node > rect {
@@ -8385,6 +8462,47 @@
   stroke: var(--danger);
 }
 
+.kcr-risk-graph[data-view="network"] .kcr-risk-graph-node {
+  transition: opacity var(--motion-fast) var(--ease-fluid);
+}
+
+.kcr-risk-graph[data-view="network"] .kcr-risk-graph-node[data-muted="true"] {
+  opacity: 0.2;
+}
+
+.kcr-risk-graph[data-view="network"] .kcr-risk-graph-node > circle,
+.kcr-risk-graph[data-view="network"] .kcr-risk-graph-node > polygon {
+  fill: color-mix(in oklch, var(--brand-soft) 58%, var(--surface));
+  stroke: color-mix(in oklch, var(--brand) 48%, var(--reading-border));
+  stroke-width: 1.2;
+  filter: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.kcr-risk-graph[data-view="network"]
+  .kcr-risk-graph-node[data-kind="event"]
+  > polygon {
+  fill: color-mix(in oklch, var(--danger) 12%, var(--surface));
+  stroke: color-mix(in oklch, var(--danger) 68%, var(--reading-border));
+}
+
+.kcr-risk-graph[data-view="network"]
+  .kcr-risk-graph-node[data-active="true"]
+  > circle,
+.kcr-risk-graph[data-view="network"]
+  .kcr-risk-graph-node[data-active="true"]
+  > polygon,
+.kcr-risk-graph[data-view="network"]
+  .kcr-risk-graph-node:focus-visible
+  > circle,
+.kcr-risk-graph[data-view="network"]
+  .kcr-risk-graph-node:focus-visible
+  > polygon {
+  stroke: var(--brand-strong);
+  stroke-width: 2.2;
+  filter: none;
+}
+
 .kcr-risk-graph-node text,
 .kcr-risk-graph-node[data-kind="company"] text,
 .kcr-risk-graph-node[data-kind="dimension"] text {
@@ -8408,6 +8526,143 @@
   font-weight: 570;
 }
 
+.kcr-risk-graph[data-view="network"] .kcr-risk-graph-node text {
+  font-size: 9px;
+  font-weight: 710;
+}
+
+.kcr-risk-graph[data-view="network"]
+  .kcr-risk-graph-node[data-kind="indicator"]
+  text,
+.kcr-risk-graph[data-view="network"]
+  .kcr-risk-graph-node[data-kind="evidence"]
+  text {
+  font-size: 8px;
+}
+
+.kcr-risk-graph[data-view="network"] .kcr-risk-graph-node-score {
+  font-size: 6.5px;
+}
+
+.kcr-risk-graph-reference {
+  margin: 0 14px 14px;
+  padding: 13px;
+  border: 1px solid var(--reading-border);
+  border-radius: 9px;
+  background: color-mix(in oklch, var(--surface) 96%, var(--brand-soft));
+}
+
+.kcr-risk-graph-reference > header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--reading-separator);
+}
+
+.kcr-risk-graph-reference > header > div {
+  display: grid;
+  gap: 4px;
+}
+
+.kcr-risk-graph-reference > header span,
+.kcr-risk-graph-reference section h4 {
+  color: var(--text-soft);
+  font-size: 9px;
+  font-weight: 680;
+  letter-spacing: 0.04em;
+}
+
+.kcr-risk-graph-reference > header strong {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  color: var(--text-strong);
+  font-size: 12px;
+  font-weight: 690;
+}
+
+.kcr-risk-graph-reference code {
+  color: var(--brand-strong);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 740;
+}
+
+.kcr-risk-graph-reference > header > small {
+  color: var(--text-soft);
+  font-size: 8px;
+  text-align: right;
+}
+
+.kcr-risk-graph-reference-groups {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(145px, 0.7fr) minmax(0, 1.2fr);
+  gap: 12px;
+  padding-top: 11px;
+}
+
+.kcr-risk-graph-reference section {
+  min-width: 0;
+}
+
+.kcr-risk-graph-reference section h4 {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 0 6px;
+}
+
+.kcr-risk-graph-reference section h4 small {
+  color: var(--text-soft);
+  font-size: 7px;
+  font-weight: 560;
+  letter-spacing: 0;
+}
+
+.kcr-risk-graph-reference section > div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px;
+}
+
+.kcr-risk-graph-reference section[data-kind="event"] > div {
+  grid-template-columns: 1fr;
+}
+
+.kcr-risk-graph-reference button {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: 6px;
+  padding: 5px 6px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text-body);
+  cursor: pointer;
+  text-align: left;
+}
+
+.kcr-risk-graph-reference button span {
+  overflow: hidden;
+  font-size: 8px;
+  font-weight: 580;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kcr-risk-graph-reference button:hover,
+.kcr-risk-graph-reference button:focus-visible,
+.kcr-risk-graph-reference button[aria-pressed="true"] {
+  border-color: color-mix(in oklch, var(--brand) 42%, var(--reading-border));
+  background: color-mix(in oklch, var(--brand-soft) 46%, var(--surface));
+  outline: none;
+}
+
 @media (hover: hover) and (pointer: fine) {
   .kcr-risk-graph-node:hover > rect {
     stroke: var(--brand-strong);
@@ -8423,6 +8678,40 @@
 }
 
 @media (max-width: 760px) {
+  .kcr-risk-graph-view-switcher {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .kcr-risk-graph-stage-label:has(.kcr-risk-graph-network-controls) {
+    align-items: center;
+  }
+
+  .kcr-risk-graph-stage-label:has(.kcr-risk-graph-network-controls) small {
+    width: 100%;
+  }
+
+  .kcr-risk-graph-network-controls {
+    margin-left: auto;
+  }
+
+  .kcr-risk-graph-reference > header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .kcr-risk-graph-reference > header > small {
+    text-align: left;
+  }
+
+  .kcr-risk-graph-reference-groups {
+    grid-template-columns: 1fr;
+  }
+
+  .kcr-risk-graph-reference section[data-kind="event"] > div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .kcr-risk-graph-context-switcher {
     align-items: flex-start;
     flex-direction: column;
@@ -8448,7 +8737,11 @@
   border-radius: 28px;
   background:
     radial-gradient(circle at 4% 0%, rgb(59 130 246 / 0.11), transparent 32%),
-    radial-gradient(circle at 100% 100%, rgb(14 165 233 / 0.08), transparent 38%),
+    radial-gradient(
+      circle at 100% 100%,
+      rgb(14 165 233 / 0.08),
+      transparent 38%
+    ),
     color-mix(in srgb, var(--card) 88%, transparent);
   box-shadow: 0 26px 70px rgb(15 23 42 / 0.08);
   scroll-margin-top: 96px;

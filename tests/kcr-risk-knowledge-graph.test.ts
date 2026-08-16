@@ -125,10 +125,11 @@ test("dimension focus starts with one risk cluster and expands only selected evi
   )
 })
 
-test("editorial layouts keep every visible card in bounds without overlap", () => {
+test("editorial and complete-network layouts stay deterministic, bounded, and collision-free", () => {
   const graph = buildKcrRiskKnowledgeGraph(response, "寒武纪")
   const viewGraphs = {
     overview: selectKcrRiskGraphOverview(graph),
+    network: graph,
     focus: selectKcrRiskGraphDimension(graph, "external", "indicator:E03"),
     lineage: selectKcrRiskGraphLineage(graph, "EV001"),
   }
@@ -139,9 +140,23 @@ test("editorial layouts keep every visible card in bounds without overlap", () =
         viewGraph.nodes,
         "external",
         mode,
-        viewMode as keyof typeof viewGraphs
+        viewMode as keyof typeof viewGraphs,
+        viewGraph.edges
       )
       assert.equal(layout.nodes.length, viewGraph.nodes.length)
+      if (viewMode === "network") {
+        assert.equal(layout.nodes.length, 34)
+        assert.deepEqual(
+          layout,
+          buildKcrRiskGraphNetworkLayout(
+            viewGraph.nodes,
+            "external",
+            mode,
+            "network",
+            viewGraph.edges
+          )
+        )
+      }
       layout.nodes.forEach((node, index) => {
         const width = node.width ?? node.radius * 2
         const height = node.height ?? node.radius * 2
@@ -219,9 +234,13 @@ test("knowledge graph UI exposes node inspection and evidence semantics", () => 
 
   assert.match(component, /企业风险知识图谱/)
   assert.match(component, /结构总览/)
+  assert.match(component, /完整图谱/)
   assert.match(component, /维度聚焦/)
   assert.match(component, /事件溯源/)
   assert.match(component, /搜索图谱节点/)
+  assert.match(component, /图中缩写速查/)
+  assert.match(component, /networkNodeShortLabel/)
+  assert.match(component, /点击条目可在完整图谱中定位并高亮直接关系/)
   assert.match(component, /直接证据/)
   assert.match(component, /推断证据/)
   assert.match(component, /背景核验/)
@@ -233,7 +252,7 @@ test("knowledge graph UI exposes node inspection and evidence semantics", () => 
   assert.doesNotMatch(panel, /关系传播将在后续任务节点接入/)
 })
 
-test("knowledge graph renders responsive editorial hierarchy and progressive detail", () => {
+test("knowledge graph renders both full-network exploration and progressive detail", () => {
   const component = readFileSync(
     join(projectRoot, "src/components/dashboard/kcr-risk-knowledge-graph.tsx"),
     "utf8"
@@ -242,11 +261,15 @@ test("knowledge graph renders responsive editorial hierarchy and progressive det
 
   assert.match(component, /buildKcrRiskGraphNetworkLayout/)
   assert.match(component, /roundedOrthogonalPath/)
+  assert.match(component, /explorationConnectorPath/)
+  assert.match(component, /kcr-risk-graph-network-controls/)
+  assert.match(component, /onPointerDown=\{startNetworkPan\}/)
+  assert.match(component, /onWheel=\{zoomNetwork\}/)
   assert.match(component, /kcr-risk-graph-context-switcher/)
   assert.match(component, /selectKcrRiskGraphOverview/)
   assert.doesNotMatch(component, /kcr-risk-graph-orbit/)
-  assert.doesNotMatch(component, /<circle/)
-  assert.doesNotMatch(component, /<polygon/)
+  assert.match(component, /<circle/)
+  assert.match(component, /<polygon/)
   assert.doesNotMatch(component, /x: 100, y: 325/)
   assert.doesNotMatch(
     styles,
