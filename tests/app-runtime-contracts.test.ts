@@ -11,6 +11,16 @@ function readProjectFile(path: string) {
   return readFileSync(join(projectRoot, path), "utf8")
 }
 
+test("new MVP sessions default to the company with the KCR knowledge graph", () => {
+  const dataSource = readProjectFile("src/lib/data.ts")
+
+  assert.match(dataSource, /const mvpDefaultCompanyId = "cambricon"/)
+  assert.match(
+    dataSource,
+    /export const defaultCompanyId = companySummaries\.some\([\s\S]*mvpDefaultCompanyId/
+  )
+})
+
 test("failed lazy views render a retryable local error boundary", () => {
   const appSource = readProjectFile("src/App.tsx")
 
