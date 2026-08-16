@@ -4,22 +4,28 @@ import {
   ArrowRightIcon,
   ExternalLinkIcon,
   FileCheck2Icon,
+  GitBranchIcon,
   NetworkIcon,
+  SearchIcon,
+  TargetIcon,
 } from "lucide-react"
 
 import { LiquidGlassSurface } from "@/components/liquid"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import type { KcrAssessmentApiResponse } from "@/domain/kcr-v1/assessment-api.ts"
 import type { KcrRiskDimensionId } from "@/domain/kcr-v1/model.ts"
 import {
   buildKcrRiskKnowledgeGraph,
-  buildKcrRiskGraphRadialLayout,
+  buildKcrRiskGraphNetworkLayout,
   selectKcrRiskGraphDimension,
+  selectKcrRiskGraphLineage,
   type KcrRiskGraphEdge,
   type KcrRiskGraphLayoutNode,
   type KcrRiskGraphNode,
   type KcrRiskGraphNodeKind,
+  type KcrRiskGraphViewMode,
 } from "@/lib/kcr-risk-knowledge-graph"
 
 type KcrRiskKnowledgeGraphProps = {
@@ -110,6 +116,24 @@ const dataStatusLabels = {
   partial: "部分覆盖",
   missing: "数据缺失",
 } as const
+
+const graphViewLabels: Record<
+  KcrRiskGraphViewMode,
+  { label: string; hint: string }
+> = {
+  overview: {
+    label: "全景网络",
+    hint: "一次查看本评估时点全部节点与关系",
+  },
+  focus: {
+    label: "维度聚焦",
+    hint: "保留五维骨架，只展开一个风险簇",
+  },
+  lineage: {
+    label: "风险脉络",
+    hint: "只展示红旗、关联指标、证据与传播路径",
+  },
+}
 
 function getEdgeEndpoints(
   source: KcrRiskGraphLayoutNode,
@@ -250,7 +274,9 @@ function KcrGraphNodeInspector({
         {redFlag ? (
           <p className="kcr-risk-graph-audit-note">
             <AlertTriangleIcon aria-hidden="true" />
-            红旗与传播路径独立展示，不改写 35.6 分客观基线。
+            红旗与传播路径独立展示，不改写 {assessment.baselineScore ??
+              "—"}{" "}
+            分客观基线。
           </p>
         ) : null}
       </div>
@@ -308,21 +334,29 @@ export function KcrRiskKnowledgeGraph({
   )
   const [selectedDimensionId, setSelectedDimensionId] =
     useState<KcrRiskDimensionId>(highestRiskDimension)
+  const [viewMode, setViewMode] = useState<KcrRiskGraphViewMode>("overview")
   const [selectedNodeId, setSelectedNodeId] = useState(
-    `dimension:${highestRiskDimension}`
+    `company:${assessment.companyId}`
   )
+  const [searchQuery, setSearchQuery] = useState("")
   const visibleGraph = useMemo(
-    () => selectKcrRiskGraphDimension(graph, selectedDimensionId),
-    [graph, selectedDimensionId]
+    () =>
+      viewMode === "overview"
+        ? graph
+        : viewMode === "lineage"
+          ? selectKcrRiskGraphLineage(graph)
+          : selectKcrRiskGraphDimension(graph, selectedDimensionId),
+    [graph, selectedDimensionId, viewMode]
   )
   const layout = useMemo(
     () =>
-      buildKcrRiskGraphRadialLayout(
+      buildKcrRiskGraphNetworkLayout(
         visibleGraph.nodes,
         selectedDimensionId,
-        compact ? "compact" : "desktop"
+        compact ? "compact" : "desktop",
+        viewMode
       ),
-    [compact, selectedDimensionId, visibleGraph.nodes]
+    [compact, selectedDimensionId, viewMode, visibleGraph.nodes]
   )
   const positions = useMemo(
     () => new Map(layout.nodes.map((node) => [node.id, node])),
@@ -333,6 +367,20 @@ export function KcrRiskKnowledgeGraph({
   const selectedDimension = assessment.dimensions.find(
     (dimension) => dimension.dimensionId === selectedDimensionId
   )
+  const normalizedSearchQuery = searchQuery.trim().toLocaleLowerCase("zh-CN")
+  const searchResults = normalizedSearchQuery
+    ? graph.nodes
+        .filter(
+          (node) =>
+            node.label
+              .toLocaleLowerCase("zh-CN")
+              .includes(normalizedSearchQuery) ||
+            node.entityId
+              .toLocaleLowerCase("zh-CN")
+              .includes(normalizedSearchQuery)
+        )
+        .slice(0, 6)
+    : []
   const titleId = useId()
   const descriptionId = useId()
   const markerId = `${useId().replaceAll(":", "")}-graph-arrow`
@@ -343,6 +391,40 @@ export function KcrRiskKnowledgeGraph({
     if (node.kind === "dimension") {
       setSelectedDimensionId(node.entityId as KcrRiskDimensionId)
     }
+  }
+
+  function changeViewMode(nextViewMode: KcrRiskGraphViewMode) {
+    setViewMode(nextViewMode)
+    setSearchQuery("")
+    if (nextViewMode === "overview") {
+      setSelectedNodeId(`company:${assessment.companyId}`)
+    } else if (nextViewMode === "focus") {
+      setSelectedNodeId(`dimension:${selectedDimensionId}`)
+    } else {
+      const firstEvent = graph.nodes.find((node) => node.kind === "event")
+      setSelectedNodeId(firstEvent?.id ?? `company:${assessment.companyId}`)
+    }
+  }
+
+  function selectSearchResult(node: KcrRiskGraphNode) {
+    const dimensionId =
+      node.kind === "dimension"
+        ? (node.entityId as KcrRiskDimensionId)
+        : node.dimensionIds[0]
+    if (dimensionId) setSelectedDimensionId(dimensionId)
+    if (viewMode === "focus" && node.kind !== "company" && dimensionId) {
+      setSelectedDimensionId(dimensionId)
+    }
+    if (
+      viewMode === "lineage" &&
+      !selectKcrRiskGraphLineage(graph).nodes.some(
+        (visibleNode) => visibleNode.id === node.id
+      )
+    ) {
+      setViewMode("overview")
+    }
+    setSelectedNodeId(node.id)
+    setSearchQuery("")
   }
 
   function renderEdge(edge: KcrRiskGraphEdge) {
@@ -415,11 +497,12 @@ export function KcrRiskKnowledgeGraph({
           <div>
             <span>
               <NetworkIcon aria-hidden="true" />
-              企业—风险—指标—证据关系网络
+              单一评估时点 · 数据截止 {assessment.dataCutoff}
             </span>
-            <h3 id={titleId}>轻量风险知识图谱</h3>
+            <h3 id={titleId}>企业风险知识图谱</h3>
             <p id={descriptionId}>
-              企业位于网络中心，五个风险簇环绕展开；点击维度切换局部关系，点击指标、红旗或证据查看审计依据。
+              全景呈现企业、五维风险、{assessment.indicatorResults.length}
+              项指标、红旗事件与来源证据；切换视图可聚焦风险簇或追踪红旗传播脉络。
             </p>
           </div>
           <div className="kcr-risk-graph-counts" aria-label="完整图谱统计">
@@ -432,11 +515,71 @@ export function KcrRiskKnowledgeGraph({
           </div>
         </header>
 
+        <div className="kcr-risk-graph-toolbar">
+          <div className="kcr-risk-graph-view-switcher" aria-label="图谱视图">
+            {(Object.keys(graphViewLabels) as KcrRiskGraphViewMode[]).map(
+              (mode) => (
+                <Button
+                  key={mode}
+                  type="button"
+                  variant={viewMode === mode ? "default" : "outline"}
+                  aria-pressed={viewMode === mode}
+                  title={graphViewLabels[mode].hint}
+                  onClick={() => changeViewMode(mode)}
+                >
+                  {mode === "overview" ? (
+                    <NetworkIcon aria-hidden="true" />
+                  ) : mode === "focus" ? (
+                    <TargetIcon aria-hidden="true" />
+                  ) : (
+                    <GitBranchIcon aria-hidden="true" />
+                  )}
+                  {graphViewLabels[mode].label}
+                </Button>
+              )
+            )}
+          </div>
+
+          <div className="kcr-risk-graph-search">
+            <SearchIcon aria-hidden="true" />
+            <Input
+              value={searchQuery}
+              aria-label="搜索图谱节点"
+              placeholder="搜索节点名称或编号"
+              onChange={(event) => setSearchQuery(event.target.value)}
+            />
+            {searchResults.length ? (
+              <div className="kcr-risk-graph-search-results" role="listbox">
+                {searchResults.map((node) => (
+                  <button
+                    key={node.id}
+                    type="button"
+                    role="option"
+                    aria-selected={node.id === selectedNodeId}
+                    onClick={() => selectSearchResult(node)}
+                  >
+                    <span>{node.label}</span>
+                    <small>
+                      {nodeKindLabels[node.kind]} · {node.entityId}
+                    </small>
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
+        </div>
+
         <div className="kcr-risk-graph-stage">
           <div className="kcr-risk-graph-stage-label">
-            <span>当前展开</span>
-            <strong>{selectedDimension?.label}</strong>
-            <small>点击五维节点切换风险簇</small>
+            <span>{graphViewLabels[viewMode].label}</span>
+            <strong>
+              {viewMode === "focus"
+                ? selectedDimension?.label
+                : viewMode === "lineage"
+                  ? `${assessment.redFlags.length} 条独立红旗链路`
+                  : `${visibleGraph.nodes.length} 节点 · ${visibleGraph.edges.length} 关系`}
+            </strong>
+            <small>{graphViewLabels[viewMode].hint}</small>
           </div>
 
           <svg
@@ -467,20 +610,57 @@ export function KcrRiskKnowledgeGraph({
               className="kcr-risk-graph-orbit"
               cx={layout.center.x}
               cy={layout.center.y}
-              rx={compact ? 112 : 205}
-              ry={compact ? 95 : 155}
+              rx={
+                compact
+                  ? viewMode === "focus"
+                    ? 112
+                    : 105
+                  : viewMode === "focus"
+                    ? 205
+                    : viewMode === "lineage"
+                      ? 205
+                      : 190
+              }
+              ry={
+                compact
+                  ? viewMode === "focus"
+                    ? 95
+                    : 88
+                  : viewMode === "focus"
+                    ? 155
+                    : viewMode === "lineage"
+                      ? 150
+                      : 140
+              }
               aria-hidden="true"
             />
             <ellipse
               className="kcr-risk-graph-orbit kcr-risk-graph-orbit-outer"
               cx={layout.center.x}
               cy={layout.center.y}
-              rx={compact ? 178 : 386}
-              ry={compact ? 170 : 282}
+              rx={
+                compact
+                  ? viewMode === "focus"
+                    ? 178
+                    : 219
+                  : viewMode === "focus"
+                    ? 386
+                    : 452
+              }
+              ry={
+                compact
+                  ? viewMode === "focus"
+                    ? 170
+                    : 234
+                  : viewMode === "focus"
+                    ? 282
+                    : 320
+              }
               aria-hidden="true"
             />
 
-            {positions.get(`dimension:${selectedDimensionId}`) ? (
+            {viewMode === "focus" &&
+            positions.get(`dimension:${selectedDimensionId}`) ? (
               <circle
                 className="kcr-risk-graph-focus-halo"
                 cx={positions.get(`dimension:${selectedDimensionId}`)?.x}
@@ -499,6 +679,7 @@ export function KcrRiskKnowledgeGraph({
                 if (!layoutNode) return null
                 const active = node.id === selectedNodeId
                 const selectedDimensionNode =
+                  viewMode === "focus" &&
                   node.kind === "dimension" &&
                   node.entityId === selectedDimensionId
 
@@ -622,7 +803,8 @@ export function KcrRiskKnowledgeGraph({
           </div>
           <p>
             <FileCheck2Icon aria-hidden="true" />
-            关系类型沿用工作簿记录；图谱不把推断或传播路径改写为事实。
+            本图只重组本次 KCR V3
+            响应；关系类型沿用工作簿记录，不把推断或传播路径改写为事实。
           </p>
         </footer>
       </section>
