@@ -276,3 +276,44 @@ test("knowledge graph renders both full-network exploration and progressive deta
     /\.kcr-risk-graph-canvas\s*\{[^}]*min-width:\s*(?:[5-9]\d{2,}|[1-9]\d{3,})px/s
   )
 })
+
+test("complete network encodes node kinds and risk tones with a semantic palette", () => {
+  const component = readFileSync(
+    join(projectRoot, "src/components/dashboard/kcr-risk-knowledge-graph.tsx"),
+    "utf8"
+  )
+  const styles = readFileSync(join(projectRoot, "src/styles/pages.css"), "utf8")
+
+  assert.match(component, /节点颜色图例/)
+  assert.match(component, /低风险/)
+  assert.match(component, /中风险/)
+  assert.match(component, /高风险/)
+  assert.match(component, /红旗事件/)
+  assert.match(component, /来源证据/)
+  assert.match(
+    styles,
+    /data-kind="indicator"\]\[data-tone="low"\][^{}]*> circle/
+  )
+  assert.match(
+    styles,
+    /data-kind="indicator"\]\[data-tone="medium"\][^{}]*> circle/
+  )
+  assert.match(
+    styles,
+    /data-kind="indicator"\]\[data-tone="high"\][^{}]*> circle/
+  )
+  assert.match(
+    styles,
+    /data-kind="indicator"\]\[data-tone="critical"\][^{}]*> circle/
+  )
+  assert.match(styles, /--kcr-node-low:/)
+  assert.match(styles, /--kcr-node-medium:/)
+  assert.match(styles, /--kcr-node-high:/)
+  assert.match(styles, /--kcr-node-critical:/)
+  assert.match(styles, /--kcr-node-evidence:/)
+  assert.match(styles, /data-kind="direct"\][^{}]*\{[^}]*var\(--accent-teal\)/s)
+  assert.match(
+    styles,
+    /data-kind="event-link"\][^{}]*\{[^}]*var\(--accent-rose\)/s
+  )
+})

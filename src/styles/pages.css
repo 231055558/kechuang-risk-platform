@@ -6975,7 +6975,7 @@
 
 .kcr-risk-graph-legend > span::before {
   width: 24px;
-  border-top: 2px solid var(--brand-strong);
+  border-top: 2px solid var(--accent-teal);
   content: "";
 }
 
@@ -6990,7 +6990,7 @@
 }
 
 .kcr-risk-graph-legend > span[data-kind="event-link"]::before {
-  border-color: color-mix(in oklch, var(--accent-amber) 72%, var(--text-soft));
+  border-color: color-mix(in oklch, var(--accent-rose) 82%, var(--text-soft));
   border-top-style: dashed;
 }
 
@@ -8306,6 +8306,89 @@
   color: var(--text-strong);
 }
 
+.kcr-risk-graph {
+  --kcr-node-low: var(--accent-teal);
+  --kcr-node-medium: var(--accent-amber);
+  --kcr-node-high: var(--accent-rose);
+  --kcr-node-critical: var(--danger);
+  --kcr-node-event: var(--danger);
+  --kcr-node-evidence: var(--accent-violet);
+}
+
+.kcr-risk-graph-node-legend {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  min-height: 34px;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 13px;
+  padding: 7px 14px;
+  border-bottom: 1px solid var(--reading-separator);
+  background: color-mix(in oklch, var(--surface) 94%, transparent);
+}
+
+.kcr-risk-graph-node-legend > span {
+  --kcr-legend-tone: var(--text-soft);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-body);
+  font-size: 8px;
+  font-weight: 620;
+}
+
+.kcr-risk-graph-node-legend > span::before {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 auto;
+  border: 1.5px solid var(--kcr-legend-tone);
+  border-radius: 50%;
+  background: color-mix(in oklch, var(--kcr-legend-tone) 24%, var(--surface));
+  content: "";
+}
+
+.kcr-risk-graph-node-legend > span[data-tone="low"] {
+  --kcr-legend-tone: var(--kcr-node-low);
+}
+
+.kcr-risk-graph-node-legend > span[data-tone="medium"] {
+  --kcr-legend-tone: var(--kcr-node-medium);
+}
+
+.kcr-risk-graph-node-legend > span[data-tone="high"] {
+  --kcr-legend-tone: var(--kcr-node-high);
+}
+
+.kcr-risk-graph-node-legend > span[data-tone="critical"] {
+  --kcr-legend-tone: var(--kcr-node-critical);
+}
+
+.kcr-risk-graph-node-legend > span[data-kind="event"] {
+  --kcr-legend-tone: var(--kcr-node-event);
+}
+
+.kcr-risk-graph-node-legend > span[data-kind="event"]::before {
+  border-radius: 1px;
+  transform: rotate(45deg) scale(0.82);
+}
+
+.kcr-risk-graph-node-legend > span[data-kind="evidence"] {
+  --kcr-legend-tone: var(--kcr-node-evidence);
+}
+
+.kcr-risk-graph-node-legend > span[data-kind="evidence"]::before {
+  width: 12px;
+  border-radius: 2px;
+}
+
+.kcr-risk-graph-node-legend > small {
+  margin-left: auto;
+  color: var(--text-soft);
+  font-size: 7px;
+}
+
 .kcr-risk-graph-network-controls {
   display: inline-flex;
   align-items: center;
@@ -8388,14 +8471,42 @@
 
 .kcr-risk-graph[data-view="network"] .kcr-risk-graph-edge {
   stroke-width: 0.9;
-  opacity: 0.3;
+  opacity: 0.4;
   transition: opacity var(--motion-fast) var(--ease-fluid);
+}
+
+.kcr-risk-graph[data-view="network"]
+  .kcr-risk-graph-edge[data-kind="structure"] {
+  stroke: color-mix(in oklch, var(--text-soft) 56%, transparent);
+  opacity: 0.32;
 }
 
 .kcr-risk-graph[data-view="network"] .kcr-risk-graph-edge[data-kind="direct"],
 .kcr-risk-graph[data-view="network"]
   .kcr-risk-graph-edge[data-kind="event-link"] {
   stroke-width: 1.1;
+}
+
+.kcr-risk-graph[data-view="network"] .kcr-risk-graph-edge[data-kind="direct"] {
+  stroke: color-mix(in oklch, var(--accent-teal) 82%, var(--text-soft));
+  opacity: 0.62;
+}
+
+.kcr-risk-graph[data-view="network"]
+  .kcr-risk-graph-edge[data-kind="inferred"] {
+  stroke: color-mix(in oklch, var(--accent-amber) 84%, var(--text-soft));
+  opacity: 0.62;
+}
+
+.kcr-risk-graph[data-view="network"]
+  .kcr-risk-graph-edge[data-kind="background"] {
+  opacity: 0.34;
+}
+
+.kcr-risk-graph[data-view="network"]
+  .kcr-risk-graph-edge[data-kind="event-link"] {
+  stroke: color-mix(in oklch, var(--accent-rose) 84%, var(--text-soft));
+  opacity: 0.66;
 }
 
 .kcr-risk-graph[data-view="network"]
@@ -8479,11 +8590,78 @@
   vector-effect: non-scaling-stroke;
 }
 
+.kcr-risk-graph-node[data-tone="low"] > rect,
+.kcr-risk-graph[data-view="network"]
+  .kcr-risk-graph-node[data-kind="indicator"][data-tone="low"]
+  > circle {
+  fill: color-mix(in oklch, var(--kcr-node-low) 22%, var(--surface));
+  stroke: color-mix(in oklch, var(--kcr-node-low) 82%, var(--reading-border));
+}
+
+.kcr-risk-graph-node[data-tone="medium"] > rect,
+.kcr-risk-graph[data-view="network"]
+  .kcr-risk-graph-node[data-kind="indicator"][data-tone="medium"]
+  > circle {
+  fill: color-mix(in oklch, var(--kcr-node-medium) 24%, var(--surface));
+  stroke: color-mix(
+    in oklch,
+    var(--kcr-node-medium) 86%,
+    var(--reading-border)
+  );
+}
+
+.kcr-risk-graph-node[data-tone="high"] > rect,
+.kcr-risk-graph[data-view="network"]
+  .kcr-risk-graph-node[data-kind="indicator"][data-tone="high"]
+  > circle {
+  fill: color-mix(in oklch, var(--kcr-node-high) 24%, var(--surface));
+  stroke: color-mix(in oklch, var(--kcr-node-high) 86%, var(--reading-border));
+}
+
+.kcr-risk-graph-node[data-tone="critical"] > rect,
+.kcr-risk-graph[data-view="network"]
+  .kcr-risk-graph-node[data-kind="indicator"][data-tone="critical"]
+  > circle {
+  fill: color-mix(in oklch, var(--kcr-node-critical) 31%, var(--surface));
+  stroke: color-mix(
+    in oklch,
+    var(--kcr-node-critical) 94%,
+    var(--reading-border)
+  );
+  stroke-width: 1.8;
+}
+
+.kcr-risk-graph-node[data-kind="event"] > rect {
+  fill: color-mix(in oklch, var(--kcr-node-event) 25%, var(--surface));
+  stroke: color-mix(in oklch, var(--kcr-node-event) 90%, var(--reading-border));
+}
+
+.kcr-risk-graph-node[data-kind="evidence"] > rect {
+  fill: color-mix(in oklch, var(--kcr-node-evidence) 15%, var(--surface));
+  stroke: color-mix(
+    in oklch,
+    var(--kcr-node-evidence) 66%,
+    var(--reading-border)
+  );
+}
+
 .kcr-risk-graph[data-view="network"]
   .kcr-risk-graph-node[data-kind="event"]
   > polygon {
-  fill: color-mix(in oklch, var(--danger) 12%, var(--surface));
-  stroke: color-mix(in oklch, var(--danger) 68%, var(--reading-border));
+  fill: color-mix(in oklch, var(--kcr-node-event) 27%, var(--surface));
+  stroke: color-mix(in oklch, var(--kcr-node-event) 92%, var(--reading-border));
+  stroke-width: 1.8;
+}
+
+.kcr-risk-graph[data-view="network"]
+  .kcr-risk-graph-node[data-kind="evidence"]
+  > rect {
+  fill: color-mix(in oklch, var(--kcr-node-evidence) 16%, var(--surface));
+  stroke: color-mix(
+    in oklch,
+    var(--kcr-node-evidence) 68%,
+    var(--reading-border)
+  );
 }
 
 .kcr-risk-graph[data-view="network"]
@@ -8590,6 +8768,27 @@
   font-weight: 740;
 }
 
+.kcr-risk-graph-reference button[data-tone="low"] code {
+  color: var(--kcr-node-low);
+}
+
+.kcr-risk-graph-reference button[data-tone="medium"] code {
+  color: color-mix(in oklch, var(--kcr-node-medium) 78%, var(--text-strong));
+}
+
+.kcr-risk-graph-reference button[data-tone="high"] code {
+  color: var(--kcr-node-high);
+}
+
+.kcr-risk-graph-reference button[data-tone="critical"] code,
+.kcr-risk-graph-reference button[data-kind="event"] code {
+  color: var(--kcr-node-critical);
+}
+
+.kcr-risk-graph-reference button[data-kind="evidence"] code {
+  color: var(--kcr-node-evidence);
+}
+
 .kcr-risk-graph-reference > header > small {
   color: var(--text-soft);
   font-size: 8px;
@@ -8692,6 +8891,11 @@
 
   .kcr-risk-graph-network-controls {
     margin-left: auto;
+  }
+
+  .kcr-risk-graph-node-legend > small {
+    width: 100%;
+    margin-left: 0;
   }
 
   .kcr-risk-graph-reference > header {

@@ -962,6 +962,21 @@ export function KcrRiskKnowledgeGraph({
             <small>{graphViewLabels[viewMode].hint}</small>
           </div>
 
+          {viewMode === "network" ? (
+            <div
+              className="kcr-risk-graph-node-legend"
+              aria-label="节点颜色图例"
+            >
+              <span data-tone="low">低风险</span>
+              <span data-tone="medium">中风险</span>
+              <span data-tone="high">高风险</span>
+              <span data-tone="critical">极高风险</span>
+              <span data-kind="event">红旗事件</span>
+              <span data-kind="evidence">来源证据</span>
+              <small>颜色表示风险或节点语义，形状表示节点类型</small>
+            </div>
+          ) : null}
+
           <svg
             className="kcr-risk-graph-canvas"
             viewBox={`0 0 ${layout.width} ${layout.height}`}
@@ -1211,6 +1226,8 @@ export function KcrRiskKnowledgeGraph({
                         <button
                           key={node.id}
                           type="button"
+                          data-kind={node.kind}
+                          data-tone={node.tone}
                           aria-pressed={node.id === selectedNodeId}
                           title={`${node.entityId} · ${node.label}`}
                           onClick={() => selectNode(node)}
