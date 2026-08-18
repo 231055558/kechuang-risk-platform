@@ -7239,6 +7239,453 @@
   }
 }
 
+/* Complete industry evidence graph */
+.industry-graph-glass,
+.industry-graph-state-glass {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--reading-border);
+  border-radius: 24px;
+  background:
+    radial-gradient(
+      circle at 12% 0%,
+      color-mix(in oklch, var(--brand) 10%, transparent),
+      transparent 34%
+    ),
+    color-mix(in oklch, var(--apple-material-reading) 72%, transparent);
+  box-shadow: var(--apple-edge-reading), var(--apple-shadow-reading);
+}
+
+.industry-graph {
+  min-width: 0;
+  padding: 26px;
+}
+
+.industry-graph-state {
+  display: flex;
+  min-height: 240px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 28px;
+  color: var(--text-body);
+  text-align: center;
+}
+
+.industry-graph-state > svg {
+  width: 24px;
+  height: 24px;
+  color: var(--brand-strong);
+}
+
+.industry-graph-header {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 22px;
+}
+
+.industry-graph-header h2 {
+  margin: 8px 0 0;
+  color: var(--text-strong);
+  font-size: clamp(24px, 2.3vw, 34px);
+  font-weight: 760;
+  letter-spacing: -0.025em;
+}
+
+.industry-graph-header p {
+  max-width: 800px;
+  margin: 10px 0 0;
+  color: var(--text-body);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.industry-graph-mode-controls {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 8px;
+}
+
+.industry-graph-mode-controls [data-slot="button"] {
+  min-height: 42px;
+  border-radius: 12px;
+}
+
+.industry-graph-summary {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 20px;
+  padding: 12px 0;
+  border-top: 1px solid var(--reading-separator);
+  border-bottom: 1px solid var(--reading-separator);
+}
+
+.industry-graph-summary [data-slot="select"] {
+  margin-left: auto;
+}
+
+.industry-graph-summary [data-slot="select-trigger"] {
+  min-width: 160px;
+  min-height: 36px;
+}
+
+.industry-graph-content {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 15px;
+  margin-top: 16px;
+}
+
+.industry-graph-canvas {
+  min-width: 0;
+  height: 760px;
+  overflow: auto;
+  border: 1px solid var(--reading-border);
+  border-radius: 18px;
+  background:
+    linear-gradient(
+        color-mix(in oklch, var(--reading-separator) 40%, transparent) 1px,
+        transparent 1px
+      )
+      0 0 / 32px 32px,
+    linear-gradient(
+        90deg,
+        color-mix(in oklch, var(--reading-separator) 40%, transparent) 1px,
+        transparent 1px
+      )
+      0 0 / 32px 32px,
+    color-mix(in oklch, var(--glass-reading-bg) 84%, transparent);
+  scrollbar-color: color-mix(in oklch, var(--brand) 28%, transparent) transparent;
+}
+
+.industry-graph-canvas svg {
+  display: block;
+  width: 1420px;
+  height: auto;
+  min-height: 100%;
+  margin: 0 auto;
+}
+
+.industry-graph-edges line {
+  stroke: color-mix(in oklch, var(--text-soft) 38%, transparent);
+  stroke-width: 1.1;
+  opacity: 0.15;
+  vector-effect: non-scaling-stroke;
+  transition: opacity var(--motion-fast) var(--ease-fluid);
+}
+
+.industry-graph-edges line[data-kind="hierarchy"] {
+  stroke: color-mix(in oklch, var(--brand) 65%, transparent);
+  stroke-width: 1.8;
+  opacity: 0.32;
+}
+
+.industry-graph-edges line[data-kind="coverage"] {
+  stroke: color-mix(in oklch, var(--accent-violet) 54%, transparent);
+}
+
+.industry-graph-edges line[data-kind="provenance"] {
+  stroke: color-mix(in oklch, var(--accent-cyan) 56%, transparent);
+}
+
+.industry-graph-edges line[data-kind="event-link"] {
+  stroke: color-mix(in oklch, var(--danger) 58%, transparent);
+}
+
+.industry-graph-edges line[data-kind="material"] {
+  stroke: color-mix(in oklch, var(--success) 48%, transparent);
+}
+
+.industry-graph-edges line[data-active="true"] {
+  stroke-width: 2.5;
+  opacity: 0.92;
+}
+
+.industry-graph-edges line[data-dimmed="true"] {
+  opacity: 0.025;
+}
+
+.industry-graph-node {
+  cursor: pointer;
+  outline: none;
+  transition: opacity var(--motion-fast) var(--ease-fluid);
+}
+
+.industry-graph-node rect,
+.industry-graph-node circle {
+  fill: color-mix(in oklch, var(--glass-floating-bg) 90%, var(--background));
+  stroke: var(--reading-border);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  transition:
+    fill var(--motion-fast) var(--ease-fluid),
+    stroke var(--motion-fast) var(--ease-fluid),
+    stroke-width var(--motion-fast) var(--ease-fluid);
+}
+
+.industry-graph-node text {
+  pointer-events: none;
+  fill: var(--text-strong);
+  font-size: 17px;
+  font-weight: 680;
+}
+
+.industry-graph-node[data-kind="sector"] rect {
+  fill: color-mix(in oklch, var(--brand) 16%, var(--glass-floating-bg));
+  stroke: color-mix(in oklch, var(--brand) 72%, var(--border));
+}
+
+.industry-graph-node[data-kind="segment"] rect {
+  fill: color-mix(in oklch, var(--accent-cyan) 13%, var(--glass-floating-bg));
+  stroke: color-mix(in oklch, var(--accent-cyan) 60%, var(--border));
+}
+
+.industry-graph-node[data-kind="company"] rect {
+  fill: color-mix(in oklch, var(--brand-soft) 62%, var(--glass-floating-bg));
+  stroke: color-mix(in oklch, var(--brand) 58%, var(--border));
+}
+
+.industry-graph-node[data-kind="company"][data-tone="critical"] rect {
+  fill: color-mix(in oklch, var(--danger-bg) 74%, var(--glass-floating-bg));
+  stroke: var(--danger);
+}
+
+.industry-graph-node[data-kind="company"][data-tone="high"] rect {
+  fill: color-mix(in oklch, var(--warning-bg) 72%, var(--glass-floating-bg));
+  stroke: var(--warning);
+}
+
+.industry-graph-node[data-kind="indicator"] rect {
+  fill: color-mix(in oklch, var(--accent-violet) 11%, var(--glass-floating-bg));
+  stroke: color-mix(in oklch, var(--accent-violet) 52%, var(--border));
+}
+
+.industry-graph-node[data-kind="source"] circle {
+  fill: var(--accent-cyan);
+  stroke: color-mix(in oklch, white 72%, var(--accent-cyan));
+}
+
+.industry-graph-node[data-kind="event"] circle {
+  fill: var(--danger);
+  stroke: color-mix(in oklch, white 72%, var(--danger));
+}
+
+.industry-graph-node[data-kind="artifact"] circle {
+  fill: var(--success);
+  stroke: color-mix(in oklch, white 72%, var(--success));
+}
+
+.industry-graph-node[data-selected="true"] rect,
+.industry-graph-node[data-selected="true"] circle,
+.industry-graph-node:focus-visible rect,
+.industry-graph-node:focus-visible circle {
+  stroke: var(--text-strong);
+  stroke-width: 4;
+}
+
+.industry-graph-node[data-dimmed="true"] {
+  opacity: 0.12;
+}
+
+.industry-graph-inspector {
+  min-width: 0;
+  max-height: 760px;
+  overflow: auto;
+  padding: 18px;
+  border: 1px solid var(--reading-border);
+  border-radius: 18px;
+  background: color-mix(in oklch, var(--glass-reading-bg) 82%, transparent);
+}
+
+.industry-graph-inspector h3 {
+  margin: 12px 0 0;
+  color: var(--text-strong);
+  font-size: 19px;
+  font-weight: 740;
+  line-height: 1.35;
+}
+
+.industry-graph-inspector > p,
+.industry-graph-inspector-empty p {
+  margin: 8px 0 0;
+  color: var(--text-body);
+  font-size: 11px;
+  line-height: 1.65;
+}
+
+.industry-graph-inspector > strong {
+  display: block;
+  margin-top: 13px;
+  color: var(--brand-strong);
+  font-size: 23px;
+  font-variant-numeric: tabular-nums;
+}
+
+.industry-graph-inspector > div:not(.industry-graph-inspector-empty) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 12px;
+  margin-top: 13px;
+  color: var(--text-soft);
+  font-size: 9px;
+}
+
+.industry-graph-inspector ul {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.industry-graph-inspector li {
+  display: grid;
+  gap: 3px;
+  padding-top: 8px;
+  border-top: 1px solid var(--reading-separator);
+}
+
+.industry-graph-inspector li b {
+  color: var(--text-strong);
+  font-size: 10px;
+}
+
+.industry-graph-inspector li span,
+.industry-graph-inspector > small {
+  color: var(--text-soft);
+  font-size: 9px;
+  line-height: 1.55;
+}
+
+.industry-graph-inspector-empty {
+  display: flex;
+  min-height: 240px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.industry-graph-inspector-empty svg {
+  width: 32px;
+  height: 32px;
+  color: var(--brand-strong);
+}
+
+.industry-graph-legend {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 17px;
+  margin-top: 15px;
+  color: var(--text-soft);
+  font-size: 9px;
+}
+
+.industry-graph-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.industry-graph-legend > span::before {
+  width: 8px;
+  height: 8px;
+  border-radius: 3px;
+  background: var(--brand);
+  content: "";
+}
+
+.industry-graph-legend > span[data-kind="segment"]::before,
+.industry-graph-legend > span[data-kind="source"]::before {
+  background: var(--accent-cyan);
+}
+
+.industry-graph-legend > span[data-kind="indicator"]::before {
+  background: var(--accent-violet);
+}
+
+.industry-graph-legend > span[data-kind="event"]::before {
+  background: var(--danger);
+}
+
+.industry-graph-legend > span[data-kind="artifact"]::before {
+  background: var(--success);
+}
+
+.industry-graph-legend > p {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 0 auto;
+}
+
+.industry-graph-legend > p svg {
+  width: 13px;
+  height: 13px;
+  color: var(--accent-amber);
+}
+
+@media (max-width: 960px) {
+  .industry-graph {
+    padding: 20px;
+  }
+
+  .industry-graph-header {
+    flex-direction: column;
+  }
+
+  .industry-graph-mode-controls {
+    width: 100%;
+  }
+
+  .industry-graph-mode-controls [data-slot="button"] {
+    flex: 1;
+  }
+
+  .industry-graph-content {
+    grid-template-columns: 1fr;
+  }
+
+  .industry-graph-canvas {
+    height: 620px;
+  }
+
+  .industry-graph-inspector {
+    max-height: none;
+  }
+
+  .industry-graph-summary [data-slot="select"] {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .industry-graph-summary [data-slot="select-trigger"] {
+    width: 100%;
+  }
+
+  .industry-graph-legend > p {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .industry-graph {
+    padding: 16px;
+  }
+
+  .industry-graph-canvas {
+    height: 540px;
+  }
+}
+
 /* KCR V3 lightweight risk knowledge graph */
 .kcr-risk-graph-glass {
   min-width: 0;

@@ -13,6 +13,7 @@ async function startTestServer(options?: {
   getKcrAssessment?: (companyId: string) => unknown | Promise<unknown>
   listIndustryRiskCompanies?: () => unknown | Promise<unknown>
   getIndustryRiskAssessment?: (companyId: string) => unknown | Promise<unknown>
+  getIndustryRiskGraph?: () => unknown | Promise<unknown>
   maxBodyBytes?: number
 }) {
   const staticRoot = mkdtempSync(join(tmpdir(), "risk-platform-server-test-"))
@@ -46,6 +47,7 @@ async function startTestServer(options?: {
     getKcrAssessment: options?.getKcrAssessment,
     listIndustryRiskCompanies: options?.listIndustryRiskCompanies,
     getIndustryRiskAssessment: options?.getIndustryRiskAssessment,
+    getIndustryRiskGraph: options?.getIndustryRiskGraph,
     maxBodyBytes: options?.maxBodyBytes,
   })
 
@@ -236,6 +238,13 @@ test("industry risk GET endpoints expose the directory and selected assessment",
         assessment: { companyId, metrics: [{ indicatorId: "R07" }] },
       }
     },
+    getIndustryRiskGraph() {
+      return {
+        schemaVersion: "KCR-INDUSTRY-GRAPH-2026.08-v1",
+        nodes: [{ id: "company:star-688256", kind: "company" }],
+        edges: [],
+      }
+    },
   })
 
   try {
@@ -259,6 +268,16 @@ test("industry risk GET endpoints expose the directory and selected assessment",
         companyId: "star-688256",
         metrics: [{ indicatorId: "R07" }],
       },
+    })
+
+    const graph = await fetch(
+      `${testServer.baseUrl}/api/v1/industry-risk/graph`
+    )
+    assert.equal(graph.status, 200)
+    assert.deepEqual(await graph.json(), {
+      schemaVersion: "KCR-INDUSTRY-GRAPH-2026.08-v1",
+      nodes: [{ id: "company:star-688256", kind: "company" }],
+      edges: [],
     })
   } finally {
     await testServer.close()

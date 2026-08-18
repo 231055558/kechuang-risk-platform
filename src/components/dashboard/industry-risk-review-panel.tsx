@@ -10,6 +10,7 @@ import {
 } from "lucide-react"
 
 import { GlassPanel } from "@/components/dashboard/shared"
+import { IndustryRiskKnowledgeGraph } from "@/components/dashboard/industry-risk-knowledge-graph"
 import { Reveal } from "@/components/motion/workflow-transition"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -188,117 +189,124 @@ export function IndustryRiskReviewPanel() {
   }
 
   return (
-    <Reveal>
-      <GlassPanel
-        className="industry-risk-workspace"
-        surfaceClassName="industry-risk-workspace-glass"
-        variant="floating"
-        aria-labelledby="industry-risk-title"
-      >
-        <header className="industry-risk-header">
-          <div>
-            <span className="eyebrow">R01–R22 · 行业横截面试验</span>
-            <h2 id="industry-risk-title">10 家芯片企业风险基线</h2>
-            <p>
-              已接入毛同学数据；当前仅 5 项指标可评分，候选总分不等于正式结论。
-            </p>
-          </div>
-          <div className="industry-risk-company-control">
-            <label id="industry-company-label">查看企业</label>
-            <Select value={selectedCompanyId} onValueChange={selectCompany}>
-              <SelectTrigger aria-labelledby="industry-company-label">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent position="popper" align="end">
-                <SelectGroup>
-                  {directory.value.companies.map((company) => (
-                    <SelectItem
-                      key={company.companyId}
-                      value={company.companyId}
-                    >
-                      {company.companyName} · {company.stockCode}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-        </header>
-
-        <div className="industry-risk-scope-strip">
-          <span>{directory.value.sectorLabel}</span>
-          <span>{directory.value.sampleSize} 家同业样本</span>
-          <span>{directory.value.reportingPeriod}</span>
-          <Badge variant="outline">行业风险 0.5 为会议占位值</Badge>
-        </div>
-
-        <div className="industry-risk-body">
-          <aside
-            className="industry-risk-ranking"
-            aria-label="CRITIC 候选基线排序"
-          >
-            <div className="industry-risk-section-heading">
-              <div>
-                <BarChart3Icon aria-hidden="true" />
-                <h3>同业位置</h3>
-              </div>
-              <Badge variant="outline">CRITIC 候选</Badge>
+    <>
+      <Reveal>
+        <GlassPanel
+          className="industry-risk-workspace"
+          surfaceClassName="industry-risk-workspace-glass"
+          variant="floating"
+          aria-labelledby="industry-risk-title"
+        >
+          <header className="industry-risk-header">
+            <div>
+              <span className="eyebrow">R01–R22 · 行业横截面试验</span>
+              <h2 id="industry-risk-title">10 家芯片企业风险基线</h2>
+              <p>
+                已接入毛同学数据；当前仅 5
+                项指标可评分，候选总分不等于正式结论。
+              </p>
             </div>
-            <ol>
-              {rankedCompanies.map((company, index) => {
-                const score = candidateScore(company, "critic")
-                return (
-                  <li key={company.companyId}>
-                    <button
-                      type="button"
-                      data-active={company.companyId === selectedCompanyId}
-                      onClick={() => selectCompany(company.companyId)}
-                      aria-label={`查看 ${company.companyName}，候选分 ${score ?? "缺失"}`}
-                    >
-                      <span>{index + 1}</span>
-                      <div>
-                        <strong>{company.companyName}</strong>
-                        <small>{company.chainSegment}</small>
-                        <i style={{ width: `${score ?? 0}%` }} />
-                      </div>
-                      <b data-tone={scoreTone(score)}>{score ?? "—"}</b>
-                    </button>
-                  </li>
-                )
-              })}
-            </ol>
-          </aside>
+            <div className="industry-risk-company-control">
+              <label id="industry-company-label">查看企业</label>
+              <Select value={selectedCompanyId} onValueChange={selectCompany}>
+                <SelectTrigger aria-labelledby="industry-company-label">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent position="popper" align="end">
+                  <SelectGroup>
+                    {directory.value.companies.map((company) => (
+                      <SelectItem
+                        key={company.companyId}
+                        value={company.companyId}
+                      >
+                        {company.companyName} · {company.stockCode}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+          </header>
 
-          <section className="industry-risk-assessment" aria-live="polite">
-            {assessment.status === "success" ? (
-              <IndustryRiskAssessmentContent response={assessment.value} />
-            ) : assessment.status === "error" ? (
-              <div className="industry-risk-assessment-state" role="alert">
-                <InfoIcon aria-hidden="true" />
-                <p>{assessment.message}</p>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setAssessment({ status: "loading" })
-                    setAssessmentAttempt((value) => value + 1)
-                  }}
-                >
-                  重新计算
-                </Button>
+          <div className="industry-risk-scope-strip">
+            <span>{directory.value.sectorLabel}</span>
+            <span>{directory.value.sampleSize} 家同业样本</span>
+            <span>{directory.value.reportingPeriod}</span>
+            <Badge variant="outline">行业风险 0.5 为会议占位值</Badge>
+          </div>
+
+          <div className="industry-risk-body">
+            <aside
+              className="industry-risk-ranking"
+              aria-label="CRITIC 候选基线排序"
+            >
+              <div className="industry-risk-section-heading">
+                <div>
+                  <BarChart3Icon aria-hidden="true" />
+                  <h3>同业位置</h3>
+                </div>
+                <Badge variant="outline">CRITIC 候选</Badge>
               </div>
-            ) : (
-              <div className="industry-risk-assessment-state" role="status">
-                <DatabaseZapIcon aria-hidden="true" />
-                <p>
-                  正在计算 {selectedSummary?.companyName ?? "所选企业"}{" "}
-                  的同业位置…
-                </p>
-              </div>
-            )}
-          </section>
-        </div>
-      </GlassPanel>
-    </Reveal>
+              <ol>
+                {rankedCompanies.map((company, index) => {
+                  const score = candidateScore(company, "critic")
+                  return (
+                    <li key={company.companyId}>
+                      <button
+                        type="button"
+                        data-active={company.companyId === selectedCompanyId}
+                        onClick={() => selectCompany(company.companyId)}
+                        aria-label={`查看 ${company.companyName}，候选分 ${score ?? "缺失"}`}
+                      >
+                        <span>{index + 1}</span>
+                        <div>
+                          <strong>{company.companyName}</strong>
+                          <small>{company.chainSegment}</small>
+                          <i style={{ width: `${score ?? 0}%` }} />
+                        </div>
+                        <b data-tone={scoreTone(score)}>{score ?? "—"}</b>
+                      </button>
+                    </li>
+                  )
+                })}
+              </ol>
+            </aside>
+
+            <section className="industry-risk-assessment" aria-live="polite">
+              {assessment.status === "success" ? (
+                <IndustryRiskAssessmentContent response={assessment.value} />
+              ) : assessment.status === "error" ? (
+                <div className="industry-risk-assessment-state" role="alert">
+                  <InfoIcon aria-hidden="true" />
+                  <p>{assessment.message}</p>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setAssessment({ status: "loading" })
+                      setAssessmentAttempt((value) => value + 1)
+                    }}
+                  >
+                    重新计算
+                  </Button>
+                </div>
+              ) : (
+                <div className="industry-risk-assessment-state" role="status">
+                  <DatabaseZapIcon aria-hidden="true" />
+                  <p>
+                    正在计算 {selectedSummary?.companyName ?? "所选企业"}{" "}
+                    的同业位置…
+                  </p>
+                </div>
+              )}
+            </section>
+          </div>
+        </GlassPanel>
+      </Reveal>
+      <IndustryRiskKnowledgeGraph
+        key={selectedCompanyId}
+        selectedCompanyId={selectedCompanyId}
+      />
+    </>
   )
 }
 

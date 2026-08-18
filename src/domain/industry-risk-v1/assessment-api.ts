@@ -10,6 +10,8 @@ import type {
 
 export const INDUSTRY_RISK_COMPANIES_API_PATH =
   "api/v1/industry-risk/companies" as const
+export const INDUSTRY_RISK_GRAPH_API_PATH =
+  "api/v1/industry-risk/graph" as const
 
 export interface IndustryRiskCompanySummary {
   companyId: string
