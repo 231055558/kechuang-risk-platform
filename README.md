@@ -31,6 +31,18 @@
 
 项目不会在本地启动后自动采集新数据。更新企业资料时，请同时维护来源 URL、发布日期、采集日期、证据定位和支持强度。
 
+### 可选：同花顺 iFinD MCP 实时新闻
+
+默认仍使用仓库中的公开研究快照。若本机有 iFinD MCP 访问权限，可在 `.env.local` 中配置以下变量后启动项目：
+
+```bash
+IFIND_MCP_NEWS_URL=https://你的-iFinD-MCP-新闻服务地址
+IFIND_MCP_AUTHORIZATION=Bearer 你的访问令牌
+IFIND_MCP_RECENT_DAYS=30
+```
+
+不要提交 `.env.local`、令牌或 MCP 返回的受限原始数据。配置后，实时情报页会叠加最近新闻；这些记录均为“待核验”，不会自动进入评分。
+
 ## 环境要求
 
 - Node.js 24.18.0
