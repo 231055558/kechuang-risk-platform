@@ -1,8 +1,10 @@
 import {
   INDUSTRY_RISK_COMPANIES_API_PATH,
+  INDUSTRY_RISK_GRAPH_API_PATH,
   getIndustryRiskCompanyAssessmentApiPath,
   type IndustryRiskAssessmentApiResponse,
   type IndustryRiskCompanyDirectoryResponse,
+  type IndustryRiskKnowledgeGraph,
 } from "../domain/industry-risk-v1/index.ts"
 
 interface ApiErrorPayload {
@@ -156,6 +158,95 @@ function isAssessmentResponse(
   )
 }
 
+const graphNodeKinds = new Set([
+  "sector",
+  "segment",
+  "company",
+  "indicator",
+  "source",
+  "event",
+  "artifact",
+])
+const graphEdgeKinds = new Set([
+  "hierarchy",
+  "coverage",
+  "provenance",
+  "event-link",
+  "material",
+])
+
+function isKnowledgeGraph(value: unknown): value is IndustryRiskKnowledgeGraph {
+  if (
+    !isRecord(value) ||
+    value.schemaVersion !== "KCR-INDUSTRY-GRAPH-2026.08-v1" ||
+    !Array.isArray(value.nodes) ||
+    !Array.isArray(value.edges) ||
+    !isRecord(value.counts) ||
+    typeof value.scopeNote !== "string"
+  ) {
+    return false
+  }
+  const nodeIds = new Set<string>()
+  if (
+    !value.nodes.every((node) => {
+      if (
+        !isRecord(node) ||
+        typeof node.id !== "string" ||
+        nodeIds.has(node.id) ||
+        typeof node.entityId !== "string" ||
+        typeof node.kind !== "string" ||
+        !graphNodeKinds.has(node.kind) ||
+        typeof node.label !== "string" ||
+        typeof node.caption !== "string" ||
+        (node.score !== null && !isFiniteNumber(node.score)) ||
+        !Array.isArray(node.companyIds) ||
+        !node.companyIds.every((id) => typeof id === "string")
+      ) {
+        return false
+      }
+      nodeIds.add(node.id)
+      return true
+    })
+  ) {
+    return false
+  }
+  const edgeIds = new Set<string>()
+  if (
+    !value.edges.every((edge) => {
+      if (
+        !isRecord(edge) ||
+        typeof edge.id !== "string" ||
+        edgeIds.has(edge.id) ||
+        typeof edge.source !== "string" ||
+        !nodeIds.has(edge.source) ||
+        typeof edge.target !== "string" ||
+        !nodeIds.has(edge.target) ||
+        typeof edge.kind !== "string" ||
+        !graphEdgeKinds.has(edge.kind) ||
+        typeof edge.label !== "string" ||
+        typeof edge.detail !== "string" ||
+        !Array.isArray(edge.companyIds) ||
+        !edge.companyIds.every((id) => typeof id === "string")
+      ) {
+        return false
+      }
+      edgeIds.add(edge.id)
+      return true
+    })
+  ) {
+    return false
+  }
+  return (
+    value.counts.nodes === value.nodes.length &&
+    value.counts.edges === value.edges.length &&
+    Number.isInteger(value.counts.scoredCompanies) &&
+    Number.isInteger(value.counts.evidenceOnlyCompanies) &&
+    Number.isInteger(value.counts.indicators) &&
+    Number.isInteger(value.counts.events) &&
+    Number.isInteger(value.counts.artifacts)
+  )
+}
+
 async function fetchPayload(
   path: string,
   options: { fetch?: typeof globalThis.fetch; signal?: AbortSignal }
@@ -216,6 +307,23 @@ export async function fetchIndustryRiskAssessment(
     throw new IndustryRiskApiError(
       "行业风险评估响应格式不正确。",
       "INDUSTRY_RISK_RESPONSE_INVALID",
+      status
+    )
+  }
+  return payload
+}
+
+export async function fetchIndustryRiskKnowledgeGraph(
+  options: { fetch?: typeof globalThis.fetch; signal?: AbortSignal } = {}
+) {
+  const { payload, status } = await fetchPayload(
+    INDUSTRY_RISK_GRAPH_API_PATH,
+    options
+  )
+  if (!isKnowledgeGraph(payload)) {
+    throw new IndustryRiskApiError(
+      "行业风险图谱响应格式不正确。",
+      "INDUSTRY_RISK_GRAPH_RESPONSE_INVALID",
       status
     )
   }

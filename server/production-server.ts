@@ -5,6 +5,7 @@ import { calculateTechnologyRisk } from "../src/lib/technology-risk-engine.ts"
 import { createProductionServer } from "./http-server.ts"
 import {
   getIndustryRiskAssessment,
+  getIndustryRiskKnowledgeGraph,
   listIndustryRiskCompanies,
 } from "./industry-risk-service.ts"
 import {
@@ -36,6 +37,7 @@ const server = createProductionServer({
   getKcrAssessment: getKcrCompanyAssessment,
   listIndustryRiskCompanies,
   getIndustryRiskAssessment,
+  getIndustryRiskGraph: getIndustryRiskKnowledgeGraph,
 })
 
 server.listen(port, host, () => {

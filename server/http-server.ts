@@ -12,7 +12,10 @@ import {
   KCR_ASSESSMENT_SCORE_API_PATH,
   KCR_COMPANY_ASSESSMENT_API_PREFIX,
 } from "../src/domain/kcr-v1/assessment-api.ts"
-import { INDUSTRY_RISK_COMPANIES_API_PATH } from "../src/domain/industry-risk-v1/assessment-api.ts"
+import {
+  INDUSTRY_RISK_COMPANIES_API_PATH,
+  INDUSTRY_RISK_GRAPH_API_PATH,
+} from "../src/domain/industry-risk-v1/assessment-api.ts"
 
 const TECHNOLOGY_SCORE_PATH = "/api/v1/technology-risk/score"
 const TECHNOLOGY_BASELINE_QUANTIFY_PATH =
@@ -21,6 +24,7 @@ const KCR_ASSESSMENT_SCORE_PATH = `/${KCR_ASSESSMENT_SCORE_API_PATH}`
 const KCR_COMPANY_ASSESSMENT_PATH_PREFIX = `/${KCR_COMPANY_ASSESSMENT_API_PREFIX}/`
 const INDUSTRY_RISK_COMPANIES_PATH = `/${INDUSTRY_RISK_COMPANIES_API_PATH}`
 const INDUSTRY_RISK_COMPANY_PATH_PREFIX = `${INDUSTRY_RISK_COMPANIES_PATH}/`
+const INDUSTRY_RISK_GRAPH_PATH = `/${INDUSTRY_RISK_GRAPH_API_PATH}`
 const DEFAULT_MAX_BODY_BYTES = 1024 * 1024
 
 const contentTypes: Record<string, string> = {
@@ -59,6 +63,7 @@ export interface ProductionServerOptions {
   getKcrAssessment?: KcrAssessmentReader
   listIndustryRiskCompanies?: IndustryRiskCompanyLister
   getIndustryRiskAssessment?: IndustryRiskAssessmentReader
+  getIndustryRiskGraph?: IndustryRiskCompanyLister
   basePath?: string
   maxBodyBytes?: number
 }
@@ -791,6 +796,15 @@ export function createProductionServer(
           request,
           response,
           options.listIndustryRiskCompanies
+        )
+        return
+      }
+
+      if (pathname === INDUSTRY_RISK_GRAPH_PATH) {
+        await handleIndustryRiskCompanyDirectory(
+          request,
+          response,
+          options.getIndustryRiskGraph
         )
         return
       }

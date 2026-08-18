@@ -3,12 +3,14 @@ import test from "node:test"
 
 import {
   getIndustryRiskAssessment,
+  getIndustryRiskKnowledgeGraph,
   listIndustryRiskCompanies,
 } from "../server/industry-risk-service.ts"
 import {
   IndustryRiskApiError,
   fetchIndustryRiskAssessment,
   fetchIndustryRiskCompanies,
+  fetchIndustryRiskKnowledgeGraph,
 } from "../src/lib/industry-risk-api.ts"
 
 function jsonResponse(payload: unknown, status = 200) {
@@ -39,6 +41,28 @@ test("industry risk client validates directory and assessment responses", async 
     "api/v1/industry-risk/companies",
     "api/v1/industry-risk/companies/star-688256/assessment",
   ])
+})
+
+test("industry graph client validates all node and edge references", async () => {
+  const graph = await fetchIndustryRiskKnowledgeGraph({
+    fetch: async (input) => {
+      assert.equal(String(input), "api/v1/industry-risk/graph")
+      return jsonResponse(getIndustryRiskKnowledgeGraph())
+    },
+  })
+  assert.equal(graph.counts.nodes, 209)
+  assert.equal(graph.counts.edges, 526)
+
+  const malformed = structuredClone(graph)
+  malformed.edges[0].target = "node:missing"
+  await assert.rejects(
+    fetchIndustryRiskKnowledgeGraph({
+      fetch: async () => jsonResponse(malformed),
+    }),
+    (error: unknown) =>
+      error instanceof IndustryRiskApiError &&
+      error.code === "INDUSTRY_RISK_GRAPH_RESPONSE_INVALID"
+  )
 })
 
 test("industry risk client rejects malformed success payloads", async () => {
