@@ -15,6 +15,7 @@
     "build": "tsc -b && vite build && vite build --mode server",
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
+    "import:industry-risk": "node --experimental-strip-types scripts/import-industry-risk-sqlite.ts",
     "import:kcr-workbook": "node --experimental-strip-types scripts/import-kcr-workbook.ts",
     "score:kcr": "node --experimental-strip-types scripts/score-kcr-assessment.ts",
     "test": "node --experimental-strip-types --test tests/*.test.ts server/*.test.ts",
