@@ -24,9 +24,17 @@ R01–R04 是叙事校验项，R05–R22 是客观评分候选项。当前只有
 npm run import:industry-risk -- input.sqlite output.json
 ```
 
-导入器以只读方式打开 SQLite，删除本机路径和原始证据摘录，再执行整表校验。公开仓库只
-保存脱敏派生夹具，不提交团队原始 SQLite、iFinD 文件、天眼查页面数据、PDF 或工作站
-路径。
+仓库现已按团队授权保存固定原始输入快照。可用下面的实际路径重建派生夹具：
+
+```bash
+npm run import:industry-risk -- \
+  data/raw/科创板芯片企业风险指标数据库.sqlite \
+  src/data/industry/semiconductor-risk-pilot.json
+```
+
+导入器以只读方式打开 SQLite，删除派生 JSON 中的本机路径和原始证据摘录，再执行整表校验。
+应用运行时只读取派生 JSON，不依赖 SQLite 服务；原始 SQLite 保留在 `data/raw/` 供审计和重建。
+文件完整性由 `data/raw/SHA256SUMS` 校验。
 
 ## 后续计算边界
 

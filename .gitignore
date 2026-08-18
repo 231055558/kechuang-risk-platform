@@ -23,9 +23,9 @@ output
 !.env.example
 .secrets/
 
-# Private/raw project inputs. Commit only sanitized derived fixtures.
+# Local-only project inputs. The redistributable project snapshot under
+# data/raw/ is intentionally tracked; never place credentials there.
 private/
-data/raw/
 downloads/
 
 # Editor directories and files
