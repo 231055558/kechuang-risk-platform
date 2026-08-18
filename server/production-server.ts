@@ -4,6 +4,10 @@ import { calculateTechnologyBaseline } from "../src/lib/technology-baseline-engi
 import { calculateTechnologyRisk } from "../src/lib/technology-risk-engine.ts"
 import { createProductionServer } from "./http-server.ts"
 import {
+  getIndustryRiskAssessment,
+  listIndustryRiskCompanies,
+} from "./industry-risk-service.ts"
+import {
   getKcrCompanyAssessment,
   scoreKcrAssessment,
 } from "./kcr-assessment-service.ts"
@@ -30,6 +34,8 @@ const server = createProductionServer({
   calculateTechnologyBaseline,
   calculateKcrAssessment: scoreKcrAssessment,
   getKcrAssessment: getKcrCompanyAssessment,
+  listIndustryRiskCompanies,
+  getIndustryRiskAssessment,
 })
 
 server.listen(port, host, () => {

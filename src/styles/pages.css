@@ -6675,6 +6675,570 @@
   }
 }
 
+/* R01-R22 industry comparison workspace */
+.industry-risk-workspace {
+  min-width: 0;
+  padding: 28px;
+  border: 0;
+  border-radius: 24px;
+  background: transparent;
+}
+
+.industry-risk-workspace-glass {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--reading-border);
+  border-radius: 24px;
+  background:
+    radial-gradient(
+      circle at 88% 0%,
+      color-mix(in oklch, var(--accent-cyan) 10%, transparent),
+      transparent 38%
+    ),
+    color-mix(in oklch, var(--apple-material-reading) 72%, transparent);
+  box-shadow: var(--apple-edge-reading), var(--apple-shadow-reading);
+}
+
+.industry-risk-header {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.industry-risk-header h2 {
+  margin: 9px 0 0;
+  color: var(--text-strong);
+  font-size: clamp(24px, 2.3vw, 34px);
+  font-weight: 760;
+  letter-spacing: -0.025em;
+}
+
+.industry-risk-header > div:first-child > p {
+  max-width: 720px;
+  margin: 10px 0 0;
+  color: var(--text-body);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.industry-risk-company-control {
+  display: grid;
+  min-width: 210px;
+  gap: 7px;
+}
+
+.industry-risk-company-control label {
+  color: var(--text-soft);
+  font-size: 11px;
+  font-weight: 680;
+}
+
+.industry-risk-company-control [data-slot="select-trigger"] {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 13px;
+  font-weight: 680;
+}
+
+.industry-risk-scope-strip {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin-top: 22px;
+  padding: 13px 0;
+  border-top: 1px solid var(--reading-separator);
+  border-bottom: 1px solid var(--reading-separator);
+  color: var(--text-soft);
+  font-size: 11px;
+}
+
+.industry-risk-scope-strip [data-slot="badge"] {
+  margin-left: auto;
+  border-color: color-mix(in oklch, var(--accent-amber) 34%, var(--border));
+  background: color-mix(in oklch, var(--accent-amber) 9%, transparent);
+  color: color-mix(in oklch, var(--accent-amber) 72%, var(--text-strong));
+}
+
+.industry-risk-body {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(220px, 0.31fr) minmax(0, 1fr);
+  gap: 22px;
+  margin-top: 22px;
+}
+
+.industry-risk-ranking {
+  min-width: 0;
+  padding-right: 20px;
+  border-right: 1px solid var(--reading-separator);
+}
+
+.industry-risk-section-heading,
+.industry-risk-section-heading > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.industry-risk-section-heading {
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.industry-risk-section-heading svg {
+  width: 16px;
+  color: var(--brand-strong);
+}
+
+.industry-risk-section-heading h3 {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: 14px;
+  font-weight: 720;
+}
+
+.industry-risk-ranking ol {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.industry-risk-ranking li > button {
+  display: grid;
+  width: 100%;
+  min-height: 52px;
+  grid-template-columns: 20px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 8px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    background-color var(--motion-fast) var(--ease-fluid),
+    border-color var(--motion-fast) var(--ease-fluid);
+}
+
+.industry-risk-ranking li > button[data-active="true"] {
+  border-color: color-mix(in oklch, var(--brand) 30%, var(--reading-border));
+  background: color-mix(in oklch, var(--brand-soft) 42%, transparent);
+}
+
+.industry-risk-ranking li > button:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.industry-risk-ranking button > span {
+  color: var(--text-soft);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.industry-risk-ranking button > div {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 7px;
+}
+
+.industry-risk-ranking strong,
+.industry-risk-ranking small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.industry-risk-ranking strong {
+  color: var(--text-strong);
+  font-size: 12px;
+  font-weight: 680;
+}
+
+.industry-risk-ranking small {
+  color: var(--text-soft);
+  font-size: 9px;
+}
+
+.industry-risk-ranking i {
+  position: relative;
+  display: block;
+  width: 0;
+  height: 3px;
+  grid-column: 1 / -1;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--brand), var(--accent-cyan));
+  opacity: 0.72;
+}
+
+.industry-risk-ranking b {
+  min-width: 32px;
+  color: var(--text-strong);
+  font-size: 12px;
+  font-weight: 760;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.industry-risk-ranking b[data-tone="critical"],
+.industry-risk-metric-grid article[data-tone="critical"]
+  .industry-risk-metric-value
+  strong {
+  color: var(--danger);
+}
+
+.industry-risk-ranking b[data-tone="high"],
+.industry-risk-metric-grid article[data-tone="high"]
+  .industry-risk-metric-value
+  strong {
+  color: color-mix(in oklch, var(--accent-amber) 80%, var(--text-strong));
+}
+
+.industry-risk-ranking b[data-tone="low"],
+.industry-risk-metric-grid article[data-tone="low"]
+  .industry-risk-metric-value
+  strong {
+  color: var(--success);
+}
+
+.industry-risk-assessment {
+  min-width: 0;
+}
+
+.industry-risk-assessment-state,
+.industry-risk-state {
+  display: flex;
+  min-height: 160px;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px;
+  color: var(--text-body);
+  text-align: center;
+}
+
+.industry-risk-state {
+  min-height: 220px;
+  flex-wrap: wrap;
+  border-radius: 22px;
+}
+
+.industry-risk-state svg,
+.industry-risk-assessment-state > svg {
+  width: 24px;
+  height: 24px;
+  color: var(--brand-strong);
+}
+
+.industry-risk-state strong {
+  color: var(--text-strong);
+}
+
+.industry-risk-state p,
+.industry-risk-assessment-state p {
+  margin: 5px 0 0;
+  font-size: 12px;
+}
+
+.industry-risk-company-summary {
+  display: flex;
+  min-width: 0;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.industry-risk-company-summary > div:first-child {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.industry-risk-company-summary > div:first-child > span {
+  color: var(--brand-strong);
+  font-size: 10px;
+  font-weight: 720;
+}
+
+.industry-risk-company-summary h3 {
+  margin: 4px 0 0;
+  color: var(--text-strong);
+  font-size: 25px;
+  font-weight: 760;
+}
+
+.industry-risk-company-summary p {
+  margin: 4px 0 0;
+  overflow: hidden;
+  color: var(--text-soft);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.industry-risk-candidate-scores {
+  display: grid;
+  min-width: 250px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid var(--reading-border);
+  border-radius: 15px;
+  background: color-mix(in oklch, var(--glass-reading-bg) 72%, transparent);
+}
+
+.industry-risk-candidate-scores article {
+  display: grid;
+  gap: 3px;
+  padding: 12px 15px;
+  border-right: 1px solid var(--reading-separator);
+}
+
+.industry-risk-candidate-scores article:last-child {
+  border-right: 0;
+}
+
+.industry-risk-candidate-scores span,
+.industry-risk-candidate-scores small {
+  color: var(--text-soft);
+  font-size: 9px;
+}
+
+.industry-risk-candidate-scores strong {
+  color: var(--text-strong);
+  font-size: 24px;
+  font-weight: 780;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.industry-risk-metric-grid {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: repeat(5, minmax(145px, 1fr));
+  gap: 9px;
+  margin-top: 18px;
+}
+
+.industry-risk-metric-grid > article {
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid var(--reading-border);
+  border-top: 3px solid
+    color-mix(in oklch, var(--brand) 46%, var(--reading-border));
+  border-radius: 14px;
+  background: color-mix(in oklch, var(--glass-reading-bg) 73%, transparent);
+}
+
+.industry-risk-metric-grid > article[data-tone="critical"] {
+  border-top-color: color-mix(in oklch, var(--danger) 68%, var(--border));
+}
+
+.industry-risk-metric-grid > article[data-tone="high"] {
+  border-top-color: color-mix(in oklch, var(--accent-amber) 68%, var(--border));
+}
+
+.industry-risk-metric-grid > article[data-tone="low"] {
+  border-top-color: color-mix(in oklch, var(--success) 68%, var(--border));
+}
+
+.industry-risk-metric-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.industry-risk-metric-title svg {
+  width: 13px;
+  height: 13px;
+  color: var(--text-soft);
+}
+
+.industry-risk-metric-grid h4 {
+  min-height: 34px;
+  margin: 10px 0 0;
+  color: var(--text-strong);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.industry-risk-metric-value {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-top: 9px;
+}
+
+.industry-risk-metric-value strong {
+  overflow: hidden;
+  color: var(--brand-strong);
+  font-size: 20px;
+  font-weight: 770;
+  line-height: 1;
+  text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
+}
+
+.industry-risk-metric-value span {
+  color: var(--text-soft);
+  font-size: 9px;
+}
+
+.industry-risk-metric-grid dl {
+  display: grid;
+  gap: 5px;
+  margin: 13px 0 0;
+}
+
+.industry-risk-metric-grid dl > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 5px;
+  border-top: 1px solid var(--reading-separator);
+}
+
+.industry-risk-metric-grid dt {
+  color: var(--text-soft);
+  font-size: 8px;
+}
+
+.industry-risk-metric-grid dd {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: 10px;
+  font-weight: 720;
+  font-variant-numeric: tabular-nums;
+}
+
+.industry-risk-metric-grid details {
+  margin-top: 10px;
+  color: var(--text-soft);
+  font-size: 9px;
+  line-height: 1.55;
+}
+
+.industry-risk-metric-grid summary {
+  color: var(--brand-strong);
+  cursor: pointer;
+  font-weight: 680;
+}
+
+.industry-risk-metric-grid details p {
+  margin: 7px 0 0;
+}
+
+.industry-risk-method-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 13px;
+  border: 1px solid var(--reading-border);
+  border-radius: 13px;
+  background: color-mix(in oklch, var(--brand-soft) 22%, transparent);
+}
+
+.industry-risk-method-note > svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  color: var(--brand-strong);
+}
+
+.industry-risk-method-note p {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 9px;
+  line-height: 1.6;
+}
+
+.industry-risk-method-note strong {
+  color: var(--text-strong);
+  font-size: 10px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .industry-risk-ranking li > button:hover {
+    border-color: var(--reading-border);
+    background: color-mix(in oklch, var(--glass-reading-hover) 68%, transparent);
+  }
+}
+
+@media (max-width: 1180px) {
+  .industry-risk-metric-grid {
+    grid-template-columns: repeat(3, minmax(145px, 1fr));
+  }
+}
+
+@media (max-width: 860px) {
+  .industry-risk-workspace {
+    padding: 20px;
+  }
+
+  .industry-risk-header,
+  .industry-risk-company-summary {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .industry-risk-company-control,
+  .industry-risk-candidate-scores {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .industry-risk-scope-strip [data-slot="badge"] {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .industry-risk-body {
+    grid-template-columns: 1fr;
+  }
+
+  .industry-risk-ranking {
+    padding: 0 0 18px;
+    border-right: 0;
+    border-bottom: 1px solid var(--reading-separator);
+  }
+
+  .industry-risk-ranking ol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .industry-risk-workspace {
+    padding: 16px;
+  }
+
+  .industry-risk-ranking ol,
+  .industry-risk-metric-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .industry-risk-metric-grid h4 {
+    min-height: 0;
+  }
+}
+
 /* KCR V3 lightweight risk knowledge graph */
 .kcr-risk-graph-glass {
   min-width: 0;
