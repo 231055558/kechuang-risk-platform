@@ -9,6 +9,7 @@ import {
 } from "lucide-react"
 
 import { GlassPanel } from "@/components/dashboard/shared"
+import { IndustryRiskReviewPanel } from "@/components/dashboard/industry-risk-review-panel"
 import { KcrEvidenceDrilldown } from "@/components/dashboard/kcr-evidence-drilldown"
 import { KcrMvpReviewWorkspace } from "@/components/dashboard/kcr-mvp-review-workspace"
 import { KcrRiskKnowledgeGraph } from "@/components/dashboard/kcr-risk-knowledge-graph"
@@ -366,6 +367,8 @@ export function KcrV3AssessmentPanel({
           </div>
         </GlassPanel>
       </Reveal>
+
+      <IndustryRiskReviewPanel />
 
       <Reveal>
         <KcrRiskKnowledgeGraph

@@ -11,6 +11,8 @@ async function startTestServer(options?: {
   calculateTechnologyBaseline?: (request: unknown) => unknown | Promise<unknown>
   calculateKcrAssessment?: (request: unknown) => unknown | Promise<unknown>
   getKcrAssessment?: (companyId: string) => unknown | Promise<unknown>
+  listIndustryRiskCompanies?: () => unknown | Promise<unknown>
+  getIndustryRiskAssessment?: (companyId: string) => unknown | Promise<unknown>
   maxBodyBytes?: number
 }) {
   const staticRoot = mkdtempSync(join(tmpdir(), "risk-platform-server-test-"))
@@ -42,6 +44,8 @@ async function startTestServer(options?: {
     calculateTechnologyBaseline: options?.calculateTechnologyBaseline,
     calculateKcrAssessment: options?.calculateKcrAssessment,
     getKcrAssessment: options?.getKcrAssessment,
+    listIndustryRiskCompanies: options?.listIndustryRiskCompanies,
+    getIndustryRiskAssessment: options?.getIndustryRiskAssessment,
     maxBodyBytes: options?.maxBodyBytes,
   })
 
@@ -212,6 +216,84 @@ test("KCR assessment POST forwards JSON to the V3 calculator", async () => {
       },
       provenance: { assessmentInputSource: "api-request" },
     })
+  } finally {
+    await testServer.close()
+  }
+})
+
+test("industry risk GET endpoints expose the directory and selected assessment", async () => {
+  const received: string[] = []
+  const testServer = await startTestServer({
+    listIndustryRiskCompanies() {
+      return {
+        methodVersion: "IRAWC-MVP-2026.08-v1",
+        companies: [{ companyId: "star-688256", companyName: "寒武纪" }],
+      }
+    },
+    getIndustryRiskAssessment(companyId) {
+      received.push(companyId)
+      return {
+        assessment: { companyId, metrics: [{ indicatorId: "R07" }] },
+      }
+    },
+  })
+
+  try {
+    const directory = await fetch(
+      `${testServer.baseUrl}/api/v1/industry-risk/companies`
+    )
+    assert.equal(directory.status, 200)
+    assert.equal(directory.headers.get("cache-control"), "no-store")
+    assert.deepEqual(await directory.json(), {
+      methodVersion: "IRAWC-MVP-2026.08-v1",
+      companies: [{ companyId: "star-688256", companyName: "寒武纪" }],
+    })
+
+    const assessment = await fetch(
+      `${testServer.baseUrl}/api/v1/industry-risk/companies/star-688256/assessment`
+    )
+    assert.equal(assessment.status, 200)
+    assert.deepEqual(received, ["star-688256"])
+    assert.deepEqual(await assessment.json(), {
+      assessment: {
+        companyId: "star-688256",
+        metrics: [{ indicatorId: "R07" }],
+      },
+    })
+  } finally {
+    await testServer.close()
+  }
+})
+
+test("industry risk API returns safe 404 and method errors", async () => {
+  const testServer = await startTestServer({
+    listIndustryRiskCompanies: () => ({ companies: [] }),
+    getIndustryRiskAssessment(companyId) {
+      throw Object.assign(new Error(`企业 ${companyId} 不在当前行业样本中。`), {
+        code: "INDUSTRY_RISK_COMPANY_NOT_FOUND",
+        statusCode: 404,
+      })
+    },
+  })
+
+  try {
+    const missing = await fetch(
+      `${testServer.baseUrl}/api/v1/industry-risk/companies/unknown/assessment`
+    )
+    assert.equal(missing.status, 404)
+    assert.deepEqual(await missing.json(), {
+      error: {
+        code: "INDUSTRY_RISK_COMPANY_NOT_FOUND",
+        message: "企业 unknown 不在当前行业样本中。",
+      },
+    })
+
+    const wrongMethod = await fetch(
+      `${testServer.baseUrl}/api/v1/industry-risk/companies`,
+      { method: "POST" }
+    )
+    assert.equal(wrongMethod.status, 405)
+    assert.equal(wrongMethod.headers.get("allow"), "GET")
   } finally {
     await testServer.close()
   }

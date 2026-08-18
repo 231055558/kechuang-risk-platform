@@ -12,12 +12,15 @@ import {
   KCR_ASSESSMENT_SCORE_API_PATH,
   KCR_COMPANY_ASSESSMENT_API_PREFIX,
 } from "../src/domain/kcr-v1/assessment-api.ts"
+import { INDUSTRY_RISK_COMPANIES_API_PATH } from "../src/domain/industry-risk-v1/assessment-api.ts"
 
 const TECHNOLOGY_SCORE_PATH = "/api/v1/technology-risk/score"
 const TECHNOLOGY_BASELINE_QUANTIFY_PATH =
   "/api/v1/technology-risk/baseline-quantify"
 const KCR_ASSESSMENT_SCORE_PATH = `/${KCR_ASSESSMENT_SCORE_API_PATH}`
 const KCR_COMPANY_ASSESSMENT_PATH_PREFIX = `/${KCR_COMPANY_ASSESSMENT_API_PREFIX}/`
+const INDUSTRY_RISK_COMPANIES_PATH = `/${INDUSTRY_RISK_COMPANIES_API_PATH}`
+const INDUSTRY_RISK_COMPANY_PATH_PREFIX = `${INDUSTRY_RISK_COMPANIES_PATH}/`
 const DEFAULT_MAX_BODY_BYTES = 1024 * 1024
 
 const contentTypes: Record<string, string> = {
@@ -45,6 +48,8 @@ export type KcrAssessmentCalculator = TechnologyRiskCalculator
 export type KcrAssessmentReader = (
   companyId: string
 ) => unknown | Promise<unknown>
+export type IndustryRiskCompanyLister = () => unknown | Promise<unknown>
+export type IndustryRiskAssessmentReader = KcrAssessmentReader
 
 export interface ProductionServerOptions {
   staticRoot: string
@@ -52,6 +57,8 @@ export interface ProductionServerOptions {
   calculateTechnologyBaseline?: TechnologyBaselineCalculator
   calculateKcrAssessment?: KcrAssessmentCalculator
   getKcrAssessment?: KcrAssessmentReader
+  listIndustryRiskCompanies?: IndustryRiskCompanyLister
+  getIndustryRiskAssessment?: IndustryRiskAssessmentReader
   basePath?: string
   maxBodyBytes?: number
 }
@@ -502,6 +509,116 @@ async function handleKcrCompanyAssessment(
   }
 }
 
+function getIndustryRiskCompanyId(pathname: string) {
+  if (
+    !pathname.startsWith(INDUSTRY_RISK_COMPANY_PATH_PREFIX) ||
+    !pathname.endsWith("/assessment")
+  ) {
+    return null
+  }
+
+  const encodedCompanyId = pathname.slice(
+    INDUSTRY_RISK_COMPANY_PATH_PREFIX.length,
+    -"/assessment".length
+  )
+  if (!encodedCompanyId || encodedCompanyId.includes("/")) return null
+
+  try {
+    return decodeURIComponent(encodedCompanyId)
+  } catch {
+    return null
+  }
+}
+
+async function handleIndustryRiskCompanyDirectory(
+  request: IncomingMessage,
+  response: ServerResponse,
+  listCompanies?: IndustryRiskCompanyLister
+) {
+  if (request.method !== "GET") {
+    sendApiError(
+      response,
+      405,
+      "METHOD_NOT_ALLOWED",
+      "该接口仅支持 GET 请求。",
+      { allow: "GET" }
+    )
+    return
+  }
+  if (!listCompanies) {
+    sendApiError(
+      response,
+      503,
+      "INDUSTRY_RISK_UNAVAILABLE",
+      "行业风险样本服务尚未配置。"
+    )
+    return
+  }
+  try {
+    sendJson(response, 200, await listCompanies())
+  } catch (error) {
+    console.error("Industry risk company directory failed", error)
+    sendApiError(
+      response,
+      500,
+      "INDUSTRY_RISK_FAILED",
+      "行业风险样本暂时不可用。"
+    )
+  }
+}
+
+async function handleIndustryRiskAssessment(
+  request: IncomingMessage,
+  response: ServerResponse,
+  companyId: string,
+  getAssessment?: IndustryRiskAssessmentReader
+) {
+  if (request.method !== "GET") {
+    sendApiError(
+      response,
+      405,
+      "METHOD_NOT_ALLOWED",
+      "该接口仅支持 GET 请求。",
+      { allow: "GET" }
+    )
+    return
+  }
+  if (!getAssessment) {
+    sendApiError(
+      response,
+      503,
+      "INDUSTRY_RISK_UNAVAILABLE",
+      "行业风险评估服务尚未配置。"
+    )
+    return
+  }
+  try {
+    sendJson(response, 200, await getAssessment(companyId))
+  } catch (error) {
+    const publicError = getPublicError(
+      error,
+      "INDUSTRY_RISK_REQUEST_INVALID",
+      "行业风险评估查询无效。"
+    )
+    if (publicError) {
+      sendApiError(
+        response,
+        publicError.statusCode,
+        publicError.code,
+        publicError.message
+      )
+      return
+    }
+    console.error("Industry risk assessment retrieval failed", error)
+    sendApiError(
+      response,
+      500,
+      "INDUSTRY_RISK_FAILED",
+      "行业风险评估暂时不可用。"
+    )
+  }
+}
+
 function isPrivateStaticPath(pathname: string) {
   const segments = pathname.split("/").filter(Boolean)
   return (
@@ -666,6 +783,26 @@ export function createProductionServer(
           calculateKcrAssessment: options.calculateKcrAssessment,
           maxBodyBytes,
         })
+        return
+      }
+
+      if (pathname === INDUSTRY_RISK_COMPANIES_PATH) {
+        await handleIndustryRiskCompanyDirectory(
+          request,
+          response,
+          options.listIndustryRiskCompanies
+        )
+        return
+      }
+
+      const industryRiskCompanyId = getIndustryRiskCompanyId(pathname)
+      if (industryRiskCompanyId !== null) {
+        await handleIndustryRiskAssessment(
+          request,
+          response,
+          industryRiskCompanyId,
+          options.getIndustryRiskAssessment
+        )
         return
       }
 
