@@ -1,0 +1,4 @@
+data/raw/**/*.pdf binary
+data/raw/**/*.sqlite binary
+data/raw/**/*.xlsx binary
+data/raw/**/*.zip binary
