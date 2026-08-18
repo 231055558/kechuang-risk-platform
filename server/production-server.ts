@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url"
 import { calculateTechnologyBaseline } from "../src/lib/technology-baseline-engine.ts"
 import { calculateTechnologyRisk } from "../src/lib/technology-risk-engine.ts"
 import { createProductionServer } from "./http-server.ts"
+import { IFindNewsService } from "./ifind-news-service.ts"
 import {
   getKcrCompanyAssessment,
   scoreKcrAssessment,
@@ -30,6 +31,7 @@ const server = createProductionServer({
   calculateTechnologyBaseline,
   calculateKcrAssessment: scoreKcrAssessment,
   getKcrAssessment: getKcrCompanyAssessment,
+  ifindNewsService: new IFindNewsService(),
 })
 
 server.listen(port, host, () => {

@@ -58,9 +58,9 @@ import {
   indicatorTaxonomy,
   manifest,
   realtimeData,
-  realtimeSignals,
   riskIndicators,
 } from "@/lib/data"
+import { loadIFindRealtimeNews, mergeRealtimeNews } from "@/lib/ifind-realtime-news"
 import {
   createPromotedSignalKey,
   createInitialDemoState,
@@ -338,6 +338,7 @@ function App() {
   const [lastUpdatedAt, setLastUpdatedAt] = useState(
     restoredState.lastUpdatedAt
   )
+  const [runtimeRealtimeData, setRuntimeRealtimeData] = useState(realtimeData)
   const [focusedRealtimeSignalId, setFocusedRealtimeSignalId] = useState<
     string | null
   >(null)
@@ -389,6 +390,13 @@ function App() {
   } = useKcrMvpWorkspace()
 
   const detail = useMemo(() => getCompanyDetail(companyId), [companyId])
+  useEffect(() => {
+    let active = true
+    void loadIFindRealtimeNews(companyId).then((signals) => {
+      if (active) setRuntimeRealtimeData(mergeRealtimeNews(realtimeData, signals))
+    })
+    return () => { active = false }
+  }, [companyId])
   const runtimeAssessmentRegistry = useMemo(
     () =>
       buildAssessmentRegistry(
@@ -1024,7 +1032,7 @@ function App() {
           assessment,
           resolvedEvents,
           manifest,
-          realtimeData.snapshotAt,
+          runtimeRealtimeData.snapshotAt,
           scoringWorkspace.evidenceBindings
         )
       } else if (kind === "csv") {
@@ -1033,7 +1041,7 @@ function App() {
           assessment,
           resolvedEvents,
           manifest,
-          realtimeData.snapshotAt,
+          runtimeRealtimeData.snapshotAt,
           scoringWorkspace.evidenceBindings
         )
       } else {
@@ -1042,7 +1050,7 @@ function App() {
           assessment,
           resolvedEvents,
           manifest,
-          realtimeData.snapshotAt,
+          runtimeRealtimeData.snapshotAt,
           scoringWorkspace.evidenceBindings
         )
       }
@@ -1091,7 +1099,7 @@ function App() {
       onResetDemo={handleResetDemo}
       onToggleTheme={() => setTheme(theme === "dark" ? "light" : "dark")}
       feedback={feedback}
-      signals={realtimeSignals}
+      signals={runtimeRealtimeData.signals}
     >
       <div className="content-stack">
         <ViewLoadErrorBoundary
@@ -1129,7 +1137,7 @@ function App() {
               {activeView === "realtime" ? (
                 <RealtimeTab
                   detail={detail}
-                  data={realtimeData}
+                  data={runtimeRealtimeData}
                   focusSignalId={focusedRealtimeSignalId}
                   promotedSignalIds={promotedSignalIdsForCompany}
                   onFocusSignalHandled={handleRealtimeSignalFocusHandled}

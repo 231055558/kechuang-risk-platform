@@ -8,6 +8,8 @@ import {
 } from "node:http"
 import { extname, resolve, sep } from "node:path"
 
+import { IFindNewsService } from "./ifind-news-service.ts"
+
 import {
   KCR_ASSESSMENT_SCORE_API_PATH,
   KCR_COMPANY_ASSESSMENT_API_PREFIX,
@@ -19,6 +21,7 @@ const TECHNOLOGY_BASELINE_QUANTIFY_PATH =
 const KCR_ASSESSMENT_SCORE_PATH = `/${KCR_ASSESSMENT_SCORE_API_PATH}`
 const KCR_COMPANY_ASSESSMENT_PATH_PREFIX = `/${KCR_COMPANY_ASSESSMENT_API_PREFIX}/`
 const DEFAULT_MAX_BODY_BYTES = 1024 * 1024
+const IFIND_REALTIME_NEWS_PATH = "/api/v1/realtime-signals/ifind"
 
 const contentTypes: Record<string, string> = {
   ".css": "text/css; charset=utf-8",
@@ -54,6 +57,30 @@ export interface ProductionServerOptions {
   getKcrAssessment?: KcrAssessmentReader
   basePath?: string
   maxBodyBytes?: number
+  ifindNewsService?: IFindNewsService
+}
+
+async function handleIFindRealtimeNews(
+  request: IncomingMessage,
+  response: ServerResponse,
+  service?: IFindNewsService
+) {
+  if (request.method !== "GET") {
+    sendApiError(response, 405, "METHOD_NOT_ALLOWED", "该接口仅支持 GET 请求。", { allow: "GET" })
+    return
+  }
+  if (!service?.configured) {
+    sendApiError(response, 503, "IFIND_MCP_NOT_CONFIGURED", "未配置同花顺 iFinD MCP；请设置 IFIND_MCP_NEWS_URL 和 IFIND_MCP_AUTHORIZATION。")
+    return
+  }
+  const url = new URL(request.url ?? "/", "http://127.0.0.1")
+  const companyId = url.searchParams.get("companyId") ?? ""
+  try {
+    sendJson(response, 200, { signals: await service.collect(companyId) })
+  } catch (error) {
+    console.error("iFinD realtime news collection failed", error)
+    sendApiError(response, 502, "IFIND_MCP_FAILED", "同花顺 iFinD 实时新闻暂时不可用。")
+  }
 }
 
 interface HttpErrorShape {
@@ -666,6 +693,11 @@ export function createProductionServer(
           calculateKcrAssessment: options.calculateKcrAssessment,
           maxBodyBytes,
         })
+        return
+      }
+
+      if (pathname === IFIND_REALTIME_NEWS_PATH) {
+        await handleIFindRealtimeNews(request, response, options.ifindNewsService)
         return
       }
 
