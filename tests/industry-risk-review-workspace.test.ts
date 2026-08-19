@@ -21,17 +21,18 @@ const graphSource = readFileSync(
   "utf8"
 )
 
-test("industry workspace exposes company switching, comparison, and audit detail", () => {
+test("industry workspace exposes missing-aware scoring and source audit detail", () => {
   assert.match(panelSource, /sampleSize.*家数字芯片设计企业风险研判/s)
   assert.match(panelSource, /candidateAggregateCompanyCount/)
   assert.match(panelSource, /onValueChange=\{selectCompany\}/)
-  assert.match(panelSource, /CRITIC 候选/)
+  assert.match(panelSource, /全指标候选基线/)
+  assert.match(panelSource, /缺失项不补零、不插值、不进入分母/)
   assert.match(panelSource, /公式、来源与限制/)
   assert.match(panelSource, /正式报告可得性/)
-  assert.match(panelSource, /补充事实/)
-  assert.match(panelSource, /候选加分定义 · 未启用/)
-  assert.match(panelSource, /行业风险当前为 0\.5 占位值/)
-  assert.match(graphSource, /useState<"full" \| "company">\("company"\)/)
+  assert.match(panelSource, /上交所深搜事件/)
+  assert.doesNotMatch(panelSource, /CRITIC|熵权|候选加分定义|补充事实/)
+  assert.match(graphSource, /单企业完整图谱/)
+  assert.doesNotMatch(graphSource, /完整网络|useState<"full"/)
 })
 
 test("Cambricon MVP mounts only the industry workspace in its default route", () => {

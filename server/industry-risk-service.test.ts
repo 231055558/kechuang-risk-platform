@@ -11,15 +11,15 @@ test("industry risk service exposes the 37-company design sample", () => {
   const directory = listIndustryRiskCompanies()
   assert.equal(directory.companies.length, 37)
   assert.equal(directory.sampleSize, 37)
-  assert.equal(directory.scoreReadyIndicatorCount, 5)
-  assert.equal(directory.candidateAggregateCompanyCount, 16)
-  assert.equal(directory.industryRiskStatus, "placeholder")
+  assert.equal(directory.numericIndicatorCount, 18)
+  assert.equal(directory.candidateMetricCount, 14)
+  assert.equal(directory.candidateAggregateCompanyCount, 37)
   assert.ok(
     directory.companies.every(
       (company) =>
-        company.candidateAggregates.length === 2 &&
-        company.scoredIndicatorCount >= 2 &&
-        company.totalIndicatorCount === 22
+        company.candidateAggregate.status === "partial-candidate" &&
+        company.scoredIndicatorCount >= 6 &&
+        company.totalIndicatorCount === 18
     )
   )
 })
@@ -27,9 +27,14 @@ test("industry risk service exposes the 37-company design sample", () => {
 test("industry assessment keeps raw values, formula traces, and sources together", () => {
   const response = getIndustryRiskAssessment("star-688256")
   assert.equal(response.company.shortName, "寒武纪")
-  assert.equal(response.assessment.metrics.length, 5)
-  assert.ok(response.assessment.metrics.every((metric) => metric.sourceId))
-  assert.equal(response.assessment.metrics[0].asOfDate, "2026-06-30")
+  assert.equal(response.assessment.metrics.length, 18)
+  assert.equal(response.assessment.scoredIndicatorCount, 13)
+  assert.equal(response.assessment.candidateAggregate.score, 37.47)
+  assert.equal(
+    response.assessment.metrics.find((metric) => metric.indicatorId === "R07")
+      ?.asOfDate,
+    "2026-06-30"
+  )
   assert.equal(response.reportAvailability?.latestPeriod, "2026H1")
   assert.equal(response.deepSearchEvents.length, 4)
   assert.equal(response.supplementaryObservations.length, 9)
