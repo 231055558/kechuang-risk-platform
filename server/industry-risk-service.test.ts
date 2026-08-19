@@ -30,6 +30,19 @@ test("industry assessment keeps raw values, formula traces, and sources together
   assert.equal(response.assessment.metrics.length, 5)
   assert.ok(response.assessment.metrics.every((metric) => metric.sourceId))
   assert.equal(response.assessment.metrics[0].asOfDate, "2026-06-30")
+  assert.equal(response.reportAvailability?.latestPeriod, "2026H1")
+  assert.equal(response.supplementaryObservations.length, 6)
+  assert.ok(
+    response.supplementaryObservations.every(
+      (item) => item.affectsScore === false
+    )
+  )
+  assert.equal(response.bonusDefinitions.length, 3)
+  assert.ok(
+    response.bonusDefinitions.every(
+      (item) => item.status === "definition-only" && !item.affectsScore
+    )
+  )
   assert.ok(response.sources.length > 0)
   assert.equal(response.provenance.methodStatus, "mvp-candidate")
 })

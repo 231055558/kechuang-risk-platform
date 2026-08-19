@@ -37,6 +37,9 @@ test("industry risk client validates directory and assessment responses", async 
     },
   })
   assert.equal(assessment.company.shortName, "寒武纪")
+  assert.equal(assessment.reportAvailability?.latestPeriod, "2026H1")
+  assert.equal(assessment.supplementaryObservations.length, 6)
+  assert.equal(assessment.bonusDefinitions.length, 3)
   assert.deepEqual(paths, [
     "api/v1/industry-risk/companies",
     "api/v1/industry-risk/companies/star-688256/assessment",
