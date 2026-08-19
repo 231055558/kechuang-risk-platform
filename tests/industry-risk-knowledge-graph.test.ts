@@ -11,12 +11,12 @@ const graph = getIndustryRiskKnowledgeGraph()
 
 test("industry graph preserves every source dataset relationship class", () => {
   assert.deepEqual(graph.counts, {
-    nodes: 209,
-    edges: 526,
-    scoredCompanies: 10,
+    nodes: 341,
+    edges: 1_708,
+    scoredCompanies: 37,
     evidenceOnlyCompanies: 6,
     indicators: 22,
-    events: 48,
+    events: 71,
     artifacts: 84,
   })
   const kinds = graph.edges.reduce<Record<string, number>>((counts, edge) => {
@@ -24,10 +24,10 @@ test("industry graph preserves every source dataset relationship class", () => {
     return counts
   }, {})
   assert.deepEqual(kinds, {
-    hierarchy: 17,
-    coverage: 220,
-    provenance: 109,
-    "event-link": 96,
+    hierarchy: 38,
+    coverage: 814,
+    provenance: 630,
+    "event-link": 142,
     material: 84,
   })
   const nodeIds = new Set(graph.nodes.map((node) => node.id))

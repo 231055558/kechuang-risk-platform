@@ -48,6 +48,7 @@ function isCandidateAggregate(value: unknown) {
     (value.method === "entropy" || value.method === "critic") &&
     (value.score === null || isFiniteNumber(value.score)) &&
     isRecord(value.weights) &&
+    Number.isInteger(value.sampleSize) &&
     (value.status === "partial-candidate" || value.status === "unavailable") &&
     typeof value.note === "string"
   )
@@ -74,12 +75,13 @@ function isDirectoryResponse(
   return (
     isRecord(value) &&
     value.schemaVersion === "KCR-INDUSTRY-DATA-2026.08-v1" &&
-    value.methodVersion === "IRAWC-MVP-2026.08-v1" &&
+    value.methodVersion === "IRAWC-MVP-2026.08-v2" &&
     typeof value.dataVersion === "string" &&
     typeof value.reportingPeriod === "string" &&
     typeof value.sectorLabel === "string" &&
     Number.isInteger(value.sampleSize) &&
     Number.isInteger(value.scoreReadyIndicatorCount) &&
+    Number.isInteger(value.candidateAggregateCompanyCount) &&
     value.industryRiskStatus === "placeholder" &&
     Array.isArray(value.companies) &&
     value.companies.length === value.sampleSize &&
@@ -99,9 +101,12 @@ function isMetricScore(value: unknown) {
     (value.riskScore === null || isFiniteNumber(value.riskScore)) &&
     Number.isInteger(value.sampleSize) &&
     (value.sourceId === null || typeof value.sourceId === "string") &&
+    (value.asOfDate === null || typeof value.asOfDate === "string") &&
+    typeof value.coverageStatus === "string" &&
+    typeof value.providerMarkedUsable === "boolean" &&
     (value.status === "scored" ||
       value.status === "missing" ||
-      value.status === "not-score-ready") &&
+      value.status === "insufficient-sample") &&
     (value.direction === "higher-is-riskier" ||
       value.direction === "lower-is-riskier") &&
     typeof value.formulaTrace === "string" &&
@@ -122,7 +127,7 @@ function isAssessmentResponse(
   }
   const assessment = value.assessment
   return (
-    assessment.methodVersion === "IRAWC-MVP-2026.08-v1" &&
+    assessment.methodVersion === "IRAWC-MVP-2026.08-v2" &&
     typeof assessment.companyId === "string" &&
     typeof assessment.companyName === "string" &&
     typeof assessment.stockCode === "string" &&

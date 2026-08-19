@@ -4,9 +4,11 @@ import type {
   IndustryRiskObservation,
 } from "./model.ts"
 
-export const INDUSTRY_RISK_MVP_METHOD_VERSION = "IRAWC-MVP-2026.08-v1" as const
+export const INDUSTRY_RISK_MVP_METHOD_VERSION = "IRAWC-MVP-2026.08-v2" as const
 export const INDUSTRY_RISK_FULL_METHOD_VERSION =
   "IRAWC-FULL-2026.08-v1" as const
+export const INDUSTRY_RISK_MINIMUM_COMPARABLE_SAMPLE_SIZE = 20
+export const INDUSTRY_RISK_MINIMUM_AGGREGATE_SAMPLE_SIZE = 10
 
 export type IndustryRiskDirection = "higher-is-riskier" | "lower-is-riskier"
 export type IndustryRiskWeightMethod = "entropy" | "critic"
@@ -74,7 +76,10 @@ export interface IndustryRiskMetricScore {
   riskScore: number | null
   sampleSize: number
   sourceId: string | null
-  status: "scored" | "missing" | "not-score-ready"
+  asOfDate: string | null
+  coverageStatus: string
+  providerMarkedUsable: boolean
+  status: "scored" | "missing" | "insufficient-sample"
   direction: IndustryRiskDirection
   formulaTrace: string
   limitation: string
@@ -84,8 +89,17 @@ export interface IndustryRiskCandidateAggregate {
   method: IndustryRiskWeightMethod
   score: number | null
   weights: Record<string, number>
+  sampleSize: number
   status: "partial-candidate" | "unavailable"
   note: string
+}
+
+export interface IndustryRiskMetricReadiness {
+  indicatorId: IndustryRiskIndicatorId
+  metricName: string
+  sampleSize: number
+  minimumSampleSize: number
+  scoreReady: boolean
 }
 
 export interface IndustryRiskCompanyAssessment {
@@ -283,16 +297,51 @@ export function calculateObjectiveWeights(
   return normalizeWeights(information).map((weight) => round(weight, 6))
 }
 
-function findMetricObservation(
+function observationDate(observation: IndustryRiskObservation) {
+  return (
+    observation.asOfDate ??
+    observation.periodEnd ??
+    observation.periodStart ??
+    ""
+  )
+}
+
+function compareObservationRecency(
+  left: IndustryRiskObservation,
+  right: IndustryRiskObservation
+) {
+  const dateOrder = observationDate(left).localeCompare(observationDate(right))
+  if (dateOrder !== 0) return dateOrder
+  return left.id.localeCompare(right.id, undefined, { numeric: true })
+}
+
+export function findLatestMetricObservation(
   dataset: IndustryRiskDataset,
   companyId: string,
   metric: IndustryRiskMetricDefinition
 ) {
-  return dataset.observations.find(
+  return dataset.observations
+    .filter(
+      (item) =>
+        item.companyId === companyId &&
+        item.indicatorId === metric.indicatorId &&
+        item.metricName === metric.metricName
+    )
+    .reduce<IndustryRiskObservation | undefined>(
+      (latest, item) =>
+        !latest || compareObservationRecency(item, latest) > 0 ? item : latest,
+      undefined
+    )
+}
+
+function coverageForMetric(
+  dataset: IndustryRiskDataset,
+  companyId: string,
+  indicatorId: IndustryRiskIndicatorId
+) {
+  return dataset.coverage.find(
     (item) =>
-      item.companyId === companyId &&
-      item.indicatorId === metric.indicatorId &&
-      item.metricName === metric.metricName
+      item.companyId === companyId && item.indicatorId === indicatorId
   )
 }
 
@@ -304,31 +353,61 @@ function usableNumericValue(observation: IndustryRiskObservation | undefined) {
     : null
 }
 
+function buildMetricSample(
+  dataset: IndustryRiskDataset,
+  metric: IndustryRiskMetricDefinition
+) {
+  return dataset.companies.flatMap((company) => {
+    const coverage = coverageForMetric(dataset, company.id, metric.indicatorId)
+    if (!coverage?.usableForScoring) return []
+    const observation = findLatestMetricObservation(dataset, company.id, metric)
+    const value = usableNumericValue(observation)
+    return value === null ? [] : [{ companyId: company.id, observation, value }]
+  })
+}
+
+export function getIndustryRiskPilotMetricReadiness(
+  dataset: IndustryRiskDataset
+): IndustryRiskMetricReadiness[] {
+  return INDUSTRY_RISK_PILOT_METRICS.map((metric) => {
+    const sampleSize = buildMetricSample(dataset, metric).length
+    return {
+      indicatorId: metric.indicatorId,
+      metricName: metric.metricName,
+      sampleSize,
+      minimumSampleSize: INDUSTRY_RISK_MINIMUM_COMPARABLE_SAMPLE_SIZE,
+      scoreReady:
+        sampleSize >= INDUSTRY_RISK_MINIMUM_COMPARABLE_SAMPLE_SIZE,
+    }
+  })
+}
+
 function scoreMetric(
   dataset: IndustryRiskDataset,
   companyId: string,
   metric: IndustryRiskMetricDefinition,
   industryRisk: number
 ): IndustryRiskMetricScore {
-  const observation = findMetricObservation(dataset, companyId, metric)
+  const observation = findLatestMetricObservation(dataset, companyId, metric)
   const value = usableNumericValue(observation)
-  const scoreReady = dataset.metadata.scoreReadyIndicatorIds.includes(
-    metric.indicatorId
-  )
-  const sample = dataset.companies
-    .map((company) =>
-      usableNumericValue(findMetricObservation(dataset, company.id, metric))
-    )
-    .filter((item): item is number => item !== null)
+  const coverage = coverageForMetric(dataset, companyId, metric.indicatorId)
+  const providerMarkedUsable = coverage?.usableForScoring === true
+  const sample = buildMetricSample(dataset, metric)
+  const scoreReady =
+    sample.length >= INDUSTRY_RISK_MINIMUM_COMPARABLE_SAMPLE_SIZE
   const percentile =
-    value === null || !scoreReady
+    value === null || !providerMarkedUsable || !scoreReady
       ? null
-      : calculateRiskPercentile(value, sample, metric.direction)
+      : calculateRiskPercentile(
+          value,
+          sample.map((item) => item.value),
+          metric.direction
+        )
   const riskScore =
     percentile === null ? null : calculateMvpRiskScore(percentile, industryRisk)
   const status = !scoreReady
-    ? "not-score-ready"
-    : riskScore === null
+    ? "insufficient-sample"
+    : value === null || !providerMarkedUsable
       ? "missing"
       : "scored"
 
@@ -342,14 +421,28 @@ function scoreMetric(
     riskScore,
     sampleSize: sample.length,
     sourceId: observation?.sourceId ?? null,
+    asOfDate: observation?.asOfDate ?? observation?.periodEnd ?? null,
+    coverageStatus: coverage?.status ?? "未登记",
+    providerMarkedUsable,
     status,
     direction: metric.direction,
     formulaTrace:
-      riskScore === null
-        ? "数据或可比样本不足，未评分。"
-        : `100 × (0.5 × ${round(industryRisk)} + 0.5 × ${percentile}) = ${riskScore}`,
+      status === "insufficient-sample"
+        ? `可比样本 ${sample.length} 家，低于最低 ${INDUSTRY_RISK_MINIMUM_COMPARABLE_SAMPLE_SIZE} 家，未评分。`
+        : status === "missing"
+          ? "该企业缺少数据方认可的同口径观测，未评分。"
+          : `100 × (0.5 × ${round(industryRisk)} + 0.5 × ${percentile}) = ${riskScore}`,
     limitation: metric.limitation,
   }
+}
+
+function completeMetricValues(
+  assessment: Omit<IndustryRiskCompanyAssessment, "candidateAggregates">
+) {
+  const values = assessment.metrics.map((metric) => metric.riskScore)
+  return values.every((value): value is number => value !== null)
+    ? values
+    : null
 }
 
 function buildCandidateAggregates(
@@ -359,25 +452,31 @@ function buildCandidateAggregates(
   >[],
   companyId: string
 ) {
-  const matrix = assessments.map((assessment) =>
-    assessment.metrics.map((metric) => metric.riskScore)
+  const completeAssessments = assessments.flatMap((assessment) => {
+    const values = completeMetricValues(assessment)
+    return values === null ? [] : [{ assessment, values }]
+  })
+  const sampleSize = completeAssessments.length
+  const target = completeAssessments.find(
+    (item) => item.assessment.companyId === companyId
   )
-  const complete = matrix.every((row) =>
-    row.every((value): value is number => value !== null)
-  )
-  if (!complete) {
+  if (
+    !target ||
+    sampleSize < INDUSTRY_RISK_MINIMUM_AGGREGATE_SAMPLE_SIZE
+  ) {
     return (["entropy", "critic"] as const).map((method) => ({
       method,
       score: null,
       weights: {},
+      sampleSize,
       status: "unavailable" as const,
-      note: "五项试验指标存在缺失，未做插值或补零。",
+      note: target
+        ? `完整样本仅 ${sampleSize} 家，低于候选汇总最低 ${INDUSTRY_RISK_MINIMUM_AGGREGATE_SAMPLE_SIZE} 家。`
+        : "该企业五项试验指标存在缺失，未做插值或补零。",
     }))
   }
-  const numericMatrix = matrix as number[][]
-  const targetIndex = assessments.findIndex(
-    (assessment) => assessment.companyId === companyId
-  )
+  const numericMatrix = completeAssessments.map((item) => item.values)
+  const targetIndex = completeAssessments.indexOf(target)
   return (["entropy", "critic"] as const).map((method) => {
     const weights = calculateObjectiveWeights(numericMatrix, method)
     const weightMap = Object.fromEntries(
@@ -397,8 +496,9 @@ function buildCandidateAggregates(
       method,
       score,
       weights: weightMap,
+      sampleSize,
       status: "partial-candidate" as const,
-      note: "仅由当前 5 项可评分指标形成候选基线，不是 R05–R22 官方总分。",
+      note: `仅由 ${sampleSize} 家五项完整样本形成候选基线，不是 R05–R22 官方总分。`,
     }
   })
 }

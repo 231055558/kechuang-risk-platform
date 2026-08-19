@@ -18,7 +18,8 @@ const assessmentSource = readFileSync(
 )
 
 test("industry workspace exposes company switching, comparison, and audit detail", () => {
-  assert.match(panelSource, /10 家芯片企业风险基线/)
+  assert.match(panelSource, /sampleSize.*家数字芯片设计企业风险基线/s)
+  assert.match(panelSource, /candidateAggregateCompanyCount/)
   assert.match(panelSource, /onValueChange=\{selectCompany\}/)
   assert.match(panelSource, /CRITIC 候选/)
   assert.match(panelSource, /公式、来源与限制/)

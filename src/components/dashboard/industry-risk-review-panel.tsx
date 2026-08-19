@@ -144,7 +144,7 @@ export function IndustryRiskReviewPanel() {
         >
           <DatabaseZapIcon aria-hidden="true" />
           <div>
-            <strong>正在读取 10 家行业样本</strong>
+            <strong>正在读取行业样本</strong>
             <p>加载毛同学提供的 R01–R22 脱敏数据底座。</p>
           </div>
         </GlassPanel>
@@ -200,10 +200,14 @@ export function IndustryRiskReviewPanel() {
           <header className="industry-risk-header">
             <div>
               <span className="eyebrow">R01–R22 · 行业横截面试验</span>
-              <h2 id="industry-risk-title">10 家芯片企业风险基线</h2>
+              <h2 id="industry-risk-title">
+                {directory.value.sampleSize} 家数字芯片设计企业风险基线
+              </h2>
               <p>
-                已接入毛同学数据；当前仅 5
-                项指标可评分，候选总分不等于正式结论。
+                当前 {directory.value.scoreReadyIndicatorCount} 项试验指标满足
+                至少 20 家可比样本；
+                {directory.value.candidateAggregateCompanyCount}
+                家五项完整企业提供候选综合分。
               </p>
             </div>
             <div className="industry-risk-company-control">
@@ -332,7 +336,7 @@ function IndustryRiskAssessmentContent({
             >
               <span>{aggregate.method === "critic" ? "CRITIC" : "熵权"}</span>
               <strong>{aggregate.score ?? "—"}</strong>
-              <small>5 项部分候选</small>
+              <small>{aggregate.sampleSize} 家完整样本</small>
             </article>
           ))}
         </div>
@@ -376,10 +380,18 @@ function IndustryRiskAssessmentContent({
                   <dt>MVP 指标分</dt>
                   <dd>{metric.riskScore ?? "—"}</dd>
                 </div>
+                <div>
+                  <dt>可比样本</dt>
+                  <dd>{metric.sampleSize} 家</dd>
+                </div>
               </dl>
               <details>
                 <summary>公式、来源与限制</summary>
                 <p>{metric.formulaTrace}</p>
+                <p>
+                  观测时点：{metric.asOfDate ?? "待核验"} · 数据覆盖：
+                  {metric.coverageStatus}
+                </p>
                 <p>
                   {source
                     ? `${source.institution} · ${source.title}`
