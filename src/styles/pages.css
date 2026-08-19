@@ -7142,6 +7142,133 @@
   margin: 7px 0 0;
 }
 
+.industry-risk-context-grid {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(230px, 0.8fr) minmax(0, 1.2fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.industry-risk-report-card,
+.industry-risk-supplementary-card,
+.industry-risk-bonus-definitions {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--reading-border);
+  border-radius: 14px;
+  background: color-mix(in oklch, var(--glass-reading-bg) 70%, transparent);
+}
+
+.industry-risk-report-card > strong {
+  display: block;
+  margin-top: 13px;
+  color: var(--text-strong);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.industry-risk-report-card > p,
+.industry-risk-report-card > small,
+.industry-risk-supplementary-card > p,
+.industry-risk-bonus-definitions > p {
+  display: block;
+  margin: 7px 0 0;
+  color: var(--text-soft);
+  font-size: 11px;
+  line-height: 1.65;
+}
+
+.industry-risk-report-card > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 12px;
+  color: var(--brand-strong);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.industry-risk-report-card > a svg {
+  width: 12px;
+  height: 12px;
+}
+
+.industry-risk-supplementary-card ul,
+.industry-risk-bonus-definitions ul {
+  display: grid;
+  gap: 0;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.industry-risk-supplementary-card ul {
+  max-height: 280px;
+  overflow: auto;
+}
+
+.industry-risk-supplementary-card li {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 14px;
+  padding: 9px 0;
+  border-top: 1px solid var(--reading-separator);
+}
+
+.industry-risk-supplementary-card li > div {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.industry-risk-supplementary-card li span,
+.industry-risk-supplementary-card li small,
+.industry-risk-bonus-definitions li span,
+.industry-risk-bonus-definitions li small {
+  color: var(--text-soft);
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.industry-risk-supplementary-card li strong,
+.industry-risk-bonus-definitions li strong {
+  color: var(--text-strong);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.industry-risk-supplementary-card li > b {
+  align-self: center;
+  color: var(--brand-strong);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.industry-risk-supplementary-card li > small {
+  grid-column: 1 / -1;
+}
+
+.industry-risk-bonus-definitions {
+  margin-top: 10px;
+  color: var(--text-soft);
+  font-size: 11px;
+}
+
+.industry-risk-bonus-definitions summary {
+  color: var(--brand-strong);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.industry-risk-bonus-definitions li {
+  display: grid;
+  gap: 3px;
+  padding: 9px 0;
+  border-top: 1px solid var(--reading-separator);
+}
+
 .industry-risk-method-note {
   display: flex;
   align-items: flex-start;
@@ -7210,6 +7337,10 @@
   }
 
   .industry-risk-body {
+    grid-template-columns: 1fr;
+  }
+
+  .industry-risk-context-grid {
     grid-template-columns: 1fr;
   }
 
@@ -7400,6 +7531,27 @@
 
 .industry-graph-edges line[data-kind="material"] {
   stroke: color-mix(in oklch, var(--success) 48%, transparent);
+}
+
+.industry-graph[data-mode="full"]
+  .industry-graph-edges
+  line[data-kind="coverage"] {
+  opacity: 0.035;
+}
+
+.industry-graph[data-mode="full"]
+  .industry-graph-edges
+  line[data-kind="provenance"] {
+  opacity: 0.055;
+}
+
+.industry-graph[data-mode="full"]
+  .industry-graph-edges
+  line[data-kind="event-link"],
+.industry-graph[data-mode="full"]
+  .industry-graph-edges
+  line[data-kind="material"] {
+  opacity: 0.1;
 }
 
 .industry-graph-edges line[data-active="true"] {

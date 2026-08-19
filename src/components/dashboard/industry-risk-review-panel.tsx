@@ -4,6 +4,7 @@ import {
   ArrowUpIcon,
   BarChart3Icon,
   DatabaseZapIcon,
+  ExternalLinkIcon,
   FlaskConicalIcon,
   InfoIcon,
   RefreshCwIcon,
@@ -25,6 +26,7 @@ import {
 import type {
   IndustryRiskAssessmentApiResponse,
   IndustryRiskCompanyDirectoryResponse,
+  IndustryRiskSupplementaryObservation,
 } from "@/domain/industry-risk-v1/index.ts"
 import {
   fetchIndustryRiskAssessment,
@@ -67,11 +69,18 @@ function scoreTone(score: number | null) {
   return "low"
 }
 
-function sourceForMetric(
+function sourceForId(
   response: IndustryRiskAssessmentApiResponse,
   sourceId: string | null
 ) {
   return response.sources.find((source) => source.id === sourceId)
+}
+
+function supplementaryFactValue(item: IndustryRiskSupplementaryObservation) {
+  if (item.numericValue !== null) {
+    return `${numberFormatter.format(item.numericValue)}${item.unit ? ` ${item.unit}` : ""}`
+  }
+  return item.textValue ?? "—"
 }
 
 export function IndustryRiskReviewPanel() {
@@ -320,6 +329,13 @@ function IndustryRiskAssessmentContent({
   response: IndustryRiskAssessmentApiResponse
 }) {
   const { assessment, company } = response
+  const supplementaryObservations = [
+    ...response.supplementaryObservations,
+  ].sort((left, right) =>
+    (right.asOfDate ?? right.period ?? "").localeCompare(
+      left.asOfDate ?? left.period ?? ""
+    )
+  )
   return (
     <>
       <div className="industry-risk-company-summary">
@@ -344,7 +360,7 @@ function IndustryRiskAssessmentContent({
 
       <div className="industry-risk-metric-grid">
         {assessment.metrics.map((metric) => {
-          const source = sourceForMetric(response, metric.sourceId)
+          const source = sourceForId(response, metric.sourceId)
           const DirectionIcon =
             metric.direction === "higher-is-riskier"
               ? ArrowUpIcon
@@ -403,6 +419,105 @@ function IndustryRiskAssessmentContent({
           )
         })}
       </div>
+
+      <div className="industry-risk-context-grid">
+        <article className="industry-risk-report-card">
+          <div className="industry-risk-section-heading">
+            <div>
+              <DatabaseZapIcon aria-hidden="true" />
+              <h3>正式报告可得性</h3>
+            </div>
+            <Badge variant="outline">
+              {response.reportAvailability?.latestPeriod ?? "待核验"}
+            </Badge>
+          </div>
+          {response.reportAvailability ? (
+            <>
+              <strong>{response.reportAvailability.latestReportTitle}</strong>
+              <p>
+                {response.reportAvailability.latestReportDate ?? "日期待核验"} ·
+                2025 年报{response.reportAvailability.annual2025Status}
+              </p>
+              <small>{response.reportAvailability.notes}</small>
+              {response.reportAvailability.latestReportUrl ? (
+                <a
+                  href={response.reportAvailability.latestReportUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  查看官方报告
+                  <ExternalLinkIcon aria-hidden="true" />
+                </a>
+              ) : null}
+            </>
+          ) : (
+            <p>当前企业没有报告可得性记录。</p>
+          )}
+        </article>
+
+        <section
+          className="industry-risk-supplementary-card"
+          aria-labelledby="industry-risk-supplementary-title"
+        >
+          <div className="industry-risk-section-heading">
+            <div>
+              <InfoIcon aria-hidden="true" />
+              <h3 id="industry-risk-supplementary-title">补充事实</h3>
+            </div>
+            <Badge variant="outline">
+              {supplementaryObservations.length} 条 · 不计分
+            </Badge>
+          </div>
+          {supplementaryObservations.length > 0 ? (
+            <ul>
+              {supplementaryObservations.map((item) => {
+                const source = sourceForId(response, item.sourceId)
+                return (
+                  <li key={item.id}>
+                    <div>
+                      <span>
+                        {item.relatedIndicatorId ?? "经营背景"} ·{" "}
+                        {item.period ?? item.asOfDate ?? "时点待核验"}
+                      </span>
+                      <strong>{item.factName}</strong>
+                    </div>
+                    <b>{supplementaryFactValue(item)}</b>
+                    <small>
+                      {source
+                        ? `${source.institution} · ${source.title}`
+                        : "来源待核验"}
+                    </small>
+                  </li>
+                )
+              })}
+            </ul>
+          ) : (
+            <p>当前企业没有不计分补充事实。</p>
+          )}
+        </section>
+      </div>
+
+      <details className="industry-risk-bonus-definitions">
+        <summary>
+          {response.bonusDefinitions.length} 项候选加分定义 · 未启用
+        </summary>
+        <p>
+          这些条目只有方法定义，没有 37 家企业观测，不进入风险分、排名或覆盖率。
+        </p>
+        <ul>
+          {response.bonusDefinitions.map((bonus) => (
+            <li key={bonus.id}>
+              <strong>
+                {bonus.id} · {bonus.name}
+              </strong>
+              <span>{bonus.definition}</span>
+              <small>
+                上限 {bonus.maxScore} 分 · {bonus.dataSource}
+              </small>
+            </li>
+          ))}
+        </ul>
+      </details>
 
       <footer className="industry-risk-method-note">
         <FlaskConicalIcon aria-hidden="true" />

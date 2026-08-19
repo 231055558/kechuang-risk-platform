@@ -114,6 +114,59 @@ function isMetricScore(value: unknown) {
   )
 }
 
+function isReportAvailability(value: unknown) {
+  return (
+    value === null ||
+    (isRecord(value) &&
+      typeof value.companyId === "string" &&
+      typeof value.annual2025Status === "string" &&
+      typeof value.latestPeriod === "string" &&
+      (value.latestReportDate === null ||
+        typeof value.latestReportDate === "string") &&
+      typeof value.latestReportTitle === "string" &&
+      isSafeSourceUrl(value.latestReportUrl) &&
+      typeof value.notes === "string")
+  )
+}
+
+function isSupplementaryObservation(value: unknown) {
+  return (
+    isRecord(value) &&
+    typeof value.id === "string" &&
+    typeof value.companyId === "string" &&
+    typeof value.factName === "string" &&
+    (value.period === null || typeof value.period === "string") &&
+    (value.asOfDate === null || typeof value.asOfDate === "string") &&
+    (value.numericValue === null || isFiniteNumber(value.numericValue)) &&
+    (value.textValue === null || typeof value.textValue === "string") &&
+    (value.unit === null || typeof value.unit === "string") &&
+    (value.relatedIndicatorId === null ||
+      typeof value.relatedIndicatorId === "string") &&
+    (value.sourceId === null || typeof value.sourceId === "string") &&
+    (value.sourcePage === null || isFiniteNumber(value.sourcePage)) &&
+    typeof value.confidenceLabel === "string" &&
+    isFiniteNumber(value.confidence) &&
+    typeof value.confidenceReason === "string" &&
+    typeof value.limitations === "string" &&
+    value.affectsScore === false
+  )
+}
+
+function isBonusDefinition(value: unknown) {
+  return (
+    isRecord(value) &&
+    typeof value.id === "string" &&
+    typeof value.name === "string" &&
+    typeof value.definition === "string" &&
+    typeof value.scoringRule === "string" &&
+    isFiniteNumber(value.maxScore) &&
+    typeof value.dataSource === "string" &&
+    typeof value.basis === "string" &&
+    value.affectsScore === false &&
+    value.status === "definition-only"
+  )
+}
+
 function isAssessmentResponse(
   value: unknown
 ): value is IndustryRiskAssessmentApiResponse {
@@ -156,6 +209,19 @@ function isAssessmentResponse(
         typeof source.title === "string" &&
         isSafeSourceUrl(source.url)
     ) &&
+    isReportAvailability(value.reportAvailability) &&
+    (value.reportAvailability === null ||
+      (isRecord(value.reportAvailability) &&
+        value.reportAvailability.companyId === assessment.companyId)) &&
+    Array.isArray(value.supplementaryObservations) &&
+    value.supplementaryObservations.every(
+      (item) =>
+        isSupplementaryObservation(item) &&
+        isRecord(item) &&
+        item.companyId === assessment.companyId
+    ) &&
+    Array.isArray(value.bonusDefinitions) &&
+    value.bonusDefinitions.every(isBonusDefinition) &&
     typeof value.provenance.sourceAttribution === "string" &&
     typeof value.provenance.sourceDate === "string" &&
     typeof value.provenance.scopeNote === "string" &&

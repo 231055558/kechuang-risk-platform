@@ -119,7 +119,7 @@ export function buildIndustryRiskKnowledgeGraph(
       entityId: company.companyId,
       kind: "company",
       label: company.displayName,
-      caption: `${company.artifactCount} 份私有材料元数据 · 未纳入本次行业评分`,
+      caption: `${company.artifactCount} 份材料目录元数据 · 未纳入本次行业评分`,
       score: null,
       tone: "neutral",
       companyIds: [company.companyId],
@@ -379,8 +379,8 @@ export function buildIndustryRiskKnowledgeGraph(
       source: nodeId("company", artifact.companyId),
       target: nodeId("artifact", artifact.id),
       kind: "material",
-      label: "私有材料目录",
-      detail: "仅登记派生元数据，原文件内容未进入公开仓库。",
+      label: "材料目录",
+      detail: "页面使用派生目录元数据；原始文件另随项目数据快照归档。",
       companyIds: [artifact.companyId],
     })),
   ]
@@ -399,6 +399,6 @@ export function buildIndustryRiskKnowledgeGraph(
       artifacts: evidenceCatalog.artifacts.length,
     },
     scopeNote:
-      "图谱重组毛同学行业数据库与学生企业材料的脱敏目录；关系表示数据覆盖、来源或材料归属，不新增因果结论。",
+      "图谱重组 37 家数字芯片设计企业数据库与学生企业材料目录；关系表示数据覆盖、来源或材料归属，不新增因果结论。",
   }
 }

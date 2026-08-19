@@ -74,15 +74,24 @@ export function getIndustryRiskAssessment(
   if (!assessment || !company)
     throw new IndustryRiskCompanyNotFoundError(companyId)
 
+  const supplementaryObservations = dataset.supplementaryObservations.filter(
+    (item) => item.companyId === companyId
+  )
   const sourceIds = new Set(
-    assessment.metrics
-      .map((metric) => metric.sourceId)
-      .filter((sourceId): sourceId is string => sourceId !== null)
+    [
+      ...assessment.metrics.map((metric) => metric.sourceId),
+      ...supplementaryObservations.map((item) => item.sourceId),
+    ].filter((sourceId): sourceId is string => sourceId !== null)
   )
   return {
     assessment,
     company,
     sources: dataset.sources.filter((source) => sourceIds.has(source.id)),
+    reportAvailability:
+      dataset.reportAvailability.find((item) => item.companyId === companyId) ??
+      null,
+    supplementaryObservations,
+    bonusDefinitions: dataset.bonusDefinitions,
     provenance: {
       sourceAttribution: dataset.metadata.sourceAttribution,
       sourceDate: dataset.metadata.sourceDate,

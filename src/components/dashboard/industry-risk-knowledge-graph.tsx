@@ -44,7 +44,7 @@ const nodeKindLabels: Record<IndustryRiskGraphNodeKind, string> = {
   indicator: "风险指标",
   source: "数据来源",
   event: "风险事件",
-  artifact: "私有材料元数据",
+  artifact: "材料目录元数据",
 }
 
 function shortLabel(node: IndustryRiskGraphNode) {
@@ -59,7 +59,7 @@ export function IndustryRiskKnowledgeGraph({
 }) {
   const [attempt, setAttempt] = useState(0)
   const [state, setState] = useState<GraphState>({ status: "loading" })
-  const [mode, setMode] = useState<"full" | "company">("full")
+  const [mode, setMode] = useState<"full" | "company">("company")
   const [focusedCompanyId, setFocusedCompanyId] = useState(selectedCompanyId)
   const [activeNodeId, setActiveNodeId] = useState<string | null>(null)
 
@@ -187,6 +187,7 @@ function IndustryRiskKnowledgeGraphContent({
       >
         <section
           className="industry-graph"
+          data-mode={mode}
           aria-labelledby="industry-graph-title"
         >
           <header className="industry-graph-header">
@@ -223,12 +224,16 @@ function IndustryRiskKnowledgeGraphContent({
             <Badge variant="outline">{graph.counts.nodes} 个节点</Badge>
             <Badge variant="outline">{graph.counts.edges} 条关系</Badge>
             <Badge variant="outline">
-              {graph.counts.scoredCompanies} 家评分企业 +{" "}
+              {graph.counts.scoredCompanies} 家行业样本 +{" "}
               {graph.counts.evidenceOnlyCompanies} 家证据企业
             </Badge>
             <Badge variant="outline">{graph.counts.events} 个风险事件</Badge>
             <Badge variant="outline">
-              {graph.counts.artifacts} 份私有材料元数据
+              {graph.counts.artifacts} 份材料目录元数据
+            </Badge>
+            <Badge variant="outline">
+              当前视图 {visibleGraph.nodes.length} 个节点 ·{" "}
+              {visibleGraph.edges.length} 条关系
             </Badge>
             {mode === "company" ? (
               <Select

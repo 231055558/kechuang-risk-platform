@@ -1,7 +1,10 @@
 import type {
+  IndustryRiskBonusDefinition,
   IndustryRiskCompany,
   IndustryRiskDatasetMetadata,
+  IndustryRiskReportAvailability,
   IndustryRiskSource,
+  IndustryRiskSupplementaryObservation,
 } from "./model.ts"
 import type {
   IndustryRiskCandidateAggregate,
@@ -40,6 +43,9 @@ export interface IndustryRiskAssessmentApiResponse {
   assessment: IndustryRiskCompanyAssessment
   company: IndustryRiskCompany
   sources: IndustryRiskSource[]
+  reportAvailability: IndustryRiskReportAvailability | null
+  supplementaryObservations: IndustryRiskSupplementaryObservation[]
+  bonusDefinitions: IndustryRiskBonusDefinition[]
   provenance: {
     sourceAttribution: string
     sourceDate: string
