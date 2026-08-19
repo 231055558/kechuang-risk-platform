@@ -45,10 +45,12 @@ function isSafeSourceUrl(value: unknown) {
 function isCandidateAggregate(value: unknown) {
   return (
     isRecord(value) &&
-    (value.method === "entropy" || value.method === "critic") &&
+    value.method === "available-equal" &&
     (value.score === null || isFiniteNumber(value.score)) &&
     isRecord(value.weights) &&
-    Number.isInteger(value.sampleSize) &&
+    Number.isInteger(value.availableIndicatorCount) &&
+    Number.isInteger(value.totalIndicatorCount) &&
+    isFiniteNumber(value.coverageRate) &&
     (value.status === "partial-candidate" || value.status === "unavailable") &&
     typeof value.note === "string"
   )
@@ -63,9 +65,7 @@ function isCompanySummary(value: unknown) {
     typeof value.chainSegment === "string" &&
     Number.isInteger(value.scoredIndicatorCount) &&
     Number.isInteger(value.totalIndicatorCount) &&
-    Array.isArray(value.candidateAggregates) &&
-    value.candidateAggregates.length === 2 &&
-    value.candidateAggregates.every(isCandidateAggregate)
+    isCandidateAggregate(value.candidateAggregate)
   )
 }
 
@@ -75,14 +75,14 @@ function isDirectoryResponse(
   return (
     isRecord(value) &&
     value.schemaVersion === "KCR-INDUSTRY-DATA-2026.08-v1" &&
-    value.methodVersion === "IRAWC-MVP-2026.08-v2" &&
+    value.methodVersion === "IRAWC-MISSING-AWARE-2026.08-v3" &&
     typeof value.dataVersion === "string" &&
     typeof value.reportingPeriod === "string" &&
     typeof value.sectorLabel === "string" &&
     Number.isInteger(value.sampleSize) &&
-    Number.isInteger(value.scoreReadyIndicatorCount) &&
+    Number.isInteger(value.numericIndicatorCount) &&
+    Number.isInteger(value.candidateMetricCount) &&
     Number.isInteger(value.candidateAggregateCompanyCount) &&
-    value.industryRiskStatus === "placeholder" &&
     Array.isArray(value.companies) &&
     value.companies.length === value.sampleSize &&
     value.companies.every(isCompanySummary)
@@ -93,7 +93,7 @@ function isMetricScore(value: unknown) {
   return (
     isRecord(value) &&
     typeof value.indicatorId === "string" &&
-    typeof value.metricName === "string" &&
+    (value.metricName === null || typeof value.metricName === "string") &&
     typeof value.label === "string" &&
     typeof value.unit === "string" &&
     (value.rawValue === null || isFiniteNumber(value.rawValue)) &&
@@ -103,12 +103,16 @@ function isMetricScore(value: unknown) {
     (value.sourceId === null || typeof value.sourceId === "string") &&
     (value.asOfDate === null || typeof value.asOfDate === "string") &&
     typeof value.coverageStatus === "string" &&
-    typeof value.providerMarkedUsable === "boolean" &&
+    typeof value.sourceMarkedUsableForScoring === "boolean" &&
     (value.status === "scored" ||
       value.status === "missing" ||
-      value.status === "insufficient-sample") &&
+      value.status === "insufficient-sample" ||
+      value.status === "unavailable") &&
     (value.direction === "higher-is-riskier" ||
       value.direction === "lower-is-riskier") &&
+    (value.basis === "source-formula" ||
+      value.basis === "partial-proxy" ||
+      value.basis === "unavailable") &&
     typeof value.formulaTrace === "string" &&
     typeof value.limitation === "string"
   )
@@ -198,22 +202,19 @@ function isAssessmentResponse(
   }
   const assessment = value.assessment
   return (
-    assessment.methodVersion === "IRAWC-MVP-2026.08-v2" &&
+    assessment.methodVersion === "IRAWC-MISSING-AWARE-2026.08-v3" &&
     typeof assessment.companyId === "string" &&
     typeof assessment.companyName === "string" &&
     typeof assessment.stockCode === "string" &&
     typeof assessment.reportingPeriod === "string" &&
     typeof assessment.sectorLabel === "string" &&
-    isFiniteNumber(assessment.industryRisk) &&
-    assessment.industryRiskStatus === "placeholder" &&
     Array.isArray(assessment.metrics) &&
-    assessment.metrics.length === 5 &&
+    assessment.metrics.length === 18 &&
     assessment.metrics.every(isMetricScore) &&
-    Array.isArray(assessment.candidateAggregates) &&
-    assessment.candidateAggregates.length === 2 &&
-    assessment.candidateAggregates.every(isCandidateAggregate) &&
+    isCandidateAggregate(assessment.candidateAggregate) &&
     Number.isInteger(assessment.scoredIndicatorCount) &&
     Number.isInteger(assessment.totalIndicatorCount) &&
+    Number.isInteger(assessment.narrativeIndicatorCount) &&
     assessment.isOfficialTotalScore === false &&
     value.company.id === assessment.companyId &&
     typeof value.company.shortName === "string" &&
@@ -255,26 +256,22 @@ function isAssessmentResponse(
 }
 
 const graphNodeKinds = new Set([
-  "sector",
-  "segment",
   "company",
+  "category",
   "indicator",
   "source",
   "event",
-  "artifact",
 ])
 const graphEdgeKinds = new Set([
   "hierarchy",
-  "coverage",
   "provenance",
   "event-link",
-  "material",
 ])
 
 function isKnowledgeGraph(value: unknown): value is IndustryRiskKnowledgeGraph {
   if (
     !isRecord(value) ||
-    value.schemaVersion !== "KCR-INDUSTRY-GRAPH-2026.08-v1" ||
+    value.schemaVersion !== "KCR-INDUSTRY-GRAPH-2026.08-v2" ||
     !Array.isArray(value.nodes) ||
     !Array.isArray(value.edges) ||
     !isRecord(value.counts) ||
@@ -295,6 +292,8 @@ function isKnowledgeGraph(value: unknown): value is IndustryRiskKnowledgeGraph {
         typeof node.label !== "string" ||
         typeof node.caption !== "string" ||
         (node.score !== null && !isFiniteNumber(node.score)) ||
+        !isRecord(node.scoresByCompany) ||
+        !Object.values(node.scoresByCompany).every(isFiniteNumber) ||
         !Array.isArray(node.companyIds) ||
         !node.companyIds.every((id) => typeof id === "string")
       ) {
@@ -335,11 +334,11 @@ function isKnowledgeGraph(value: unknown): value is IndustryRiskKnowledgeGraph {
   return (
     value.counts.nodes === value.nodes.length &&
     value.counts.edges === value.edges.length &&
-    Number.isInteger(value.counts.scoredCompanies) &&
-    Number.isInteger(value.counts.evidenceOnlyCompanies) &&
+    Number.isInteger(value.counts.companies) &&
+    Number.isInteger(value.counts.categories) &&
     Number.isInteger(value.counts.indicators) &&
-    Number.isInteger(value.counts.events) &&
-    Number.isInteger(value.counts.artifacts)
+    Number.isInteger(value.counts.sources) &&
+    Number.isInteger(value.counts.events)
   )
 }
 

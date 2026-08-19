@@ -24,7 +24,7 @@ export interface IndustryRiskCompanySummary {
   chainSegment: string
   scoredIndicatorCount: number
   totalIndicatorCount: number
-  candidateAggregates: IndustryRiskCandidateAggregate[]
+  candidateAggregate: IndustryRiskCandidateAggregate
 }
 
 export interface IndustryRiskCompanyDirectoryResponse {
@@ -34,9 +34,9 @@ export interface IndustryRiskCompanyDirectoryResponse {
   reportingPeriod: string
   sectorLabel: string
   sampleSize: number
-  scoreReadyIndicatorCount: number
+  numericIndicatorCount: number
+  candidateMetricCount: number
   candidateAggregateCompanyCount: number
-  industryRiskStatus: "placeholder"
   companies: IndustryRiskCompanySummary[]
 }
 

@@ -19,97 +19,168 @@ export interface IndustryRiskGraphLayout {
 }
 
 function dimensions(node: IndustryRiskGraphNode) {
-  if (node.kind === "sector")
-    return { width: 170, height: 62, shape: "label" as const }
   if (node.kind === "company")
-    return { width: 126, height: 44, shape: "label" as const }
-  if (node.kind === "segment")
-    return { width: 112, height: 36, shape: "label" as const }
+    return { width: 168, height: 58, shape: "label" as const }
+  if (node.kind === "category")
+    return { width: 148, height: 44, shape: "label" as const }
   if (node.kind === "indicator")
-    return { width: 120, height: 38, shape: "label" as const }
+    return { width: 132, height: 40, shape: "label" as const }
   if (node.kind === "event")
-    return { width: 15, height: 15, shape: "dot" as const }
-  if (node.kind === "source")
-    return { width: 12, height: 12, shape: "dot" as const }
-  return { width: 10, height: 10, shape: "dot" as const }
+    return { width: 17, height: 17, shape: "dot" as const }
+  return { width: 12, height: 12, shape: "dot" as const }
 }
 
-function ringPositions(
-  nodes: readonly IndustryRiskGraphNode[],
+function polar(
+  node: IndustryRiskGraphNode,
+  angle: number,
   radiusX: number,
   radiusY: number,
-  center: { x: number; y: number },
-  start = -Math.PI / 2
-) {
-  return nodes.map((node, index) => {
-    const angle = start + (index * Math.PI * 2) / Math.max(nodes.length, 1)
-    return {
-      id: node.id,
-      x: center.x + Math.cos(angle) * radiusX,
-      y: center.y + Math.sin(angle) * radiusY,
-      ...dimensions(node),
-    }
-  })
+  center: { x: number; y: number }
+): IndustryRiskGraphLayoutNode {
+  return {
+    id: node.id,
+    x: center.x + Math.cos(angle) * radiusX,
+    y: center.y + Math.sin(angle) * radiusY,
+    ...dimensions(node),
+  }
 }
 
 export function selectIndustryRiskGraph(
   graph: IndustryRiskKnowledgeGraph,
-  companyId: string | null
+  companyId: string
 ): IndustryRiskKnowledgeGraph {
-  if (!companyId) return graph
-  const edges = graph.edges.filter((edge) =>
-    edge.companyIds.includes(companyId)
-  )
+  const edges = graph.edges.filter((edge) => edge.companyIds.includes(companyId))
   const nodeIds = new Set(edges.flatMap((edge) => [edge.source, edge.target]))
-  for (const node of graph.nodes) {
-    if (node.kind === "sector" && node.companyIds.includes(companyId)) {
-      nodeIds.add(node.id)
-    }
-  }
-  const nodes = graph.nodes.filter((node) => nodeIds.has(node.id))
+  const companyNode = graph.nodes.find(
+    (node) => node.kind === "company" && node.entityId === companyId
+  )
+  if (companyNode) nodeIds.add(companyNode.id)
+  const nodes = graph.nodes
+    .filter((node) => nodeIds.has(node.id))
+    .map((node) => {
+      const companyScore = node.scoresByCompany[companyId]
+      if (companyScore === undefined || node.kind === "company") return node
+      return {
+        ...node,
+        score: companyScore,
+        tone:
+          companyScore >= 65
+            ? ("critical" as const)
+            : companyScore >= 55
+              ? ("high" as const)
+              : companyScore >= 45
+                ? ("medium" as const)
+                : ("low" as const),
+      }
+    })
   return {
     ...graph,
     nodes,
     edges,
-    counts: {
-      ...graph.counts,
-      nodes: nodes.length,
-      edges: edges.length,
-    },
+    counts: { ...graph.counts, nodes: nodes.length, edges: edges.length },
   }
 }
 
 export function buildIndustryRiskGraphLayout(
   graph: IndustryRiskKnowledgeGraph
 ): IndustryRiskGraphLayout {
-  const width = 1900
-  const height = 1680
+  const width = 1400
+  const height = 1250
   const center = { x: width / 2, y: height / 2 }
-  const byKind = (kind: IndustryRiskGraphNode["kind"]) =>
-    graph.nodes.filter((node) => node.kind === kind)
-  const sector = byKind("sector")
-  const segments = byKind("segment")
-  const companies = byKind("company")
-  const indicators = byKind("indicator")
-  const sources = byKind("source")
-  const events = byKind("event")
-  const artifacts = byKind("artifact")
+  const companies = graph.nodes.filter((node) => node.kind === "company")
+  const categories = graph.nodes.filter((node) => node.kind === "category")
+  const indicators = graph.nodes.filter((node) => node.kind === "indicator")
+  const sources = graph.nodes.filter((node) => node.kind === "source")
+  const events = graph.nodes.filter((node) => node.kind === "event")
+
+  const indicatorByCategory = new Map(
+    categories.map((category) => [
+      category.id,
+      graph.edges
+        .filter(
+          (edge) =>
+            edge.kind === "hierarchy" &&
+            edge.source === category.id &&
+            indicators.some((indicator) => indicator.id === edge.target)
+        )
+        .map((edge) => indicators.find((indicator) => indicator.id === edge.target))
+        .filter((node): node is IndustryRiskGraphNode => node !== undefined),
+    ])
+  )
+  const orderedCategories = [...categories].sort((left, right) => {
+    const leftFirst = indicatorByCategory.get(left.id)?.[0]?.entityId ?? ""
+    const rightFirst = indicatorByCategory.get(right.id)?.[0]?.entityId ?? ""
+    return leftFirst.localeCompare(rightFirst, undefined, { numeric: true })
+  })
+  const totalIndicators = Math.max(indicators.length, 1)
+  const indicatorAngles = new Map<string, number>()
+  const categoryAngles = new Map<string, number>()
+  let cursor = -Math.PI / 2
+  for (const category of orderedCategories) {
+    const group = indicatorByCategory.get(category.id) ?? []
+    const span = (group.length / totalIndicators) * Math.PI * 2
+    const step = span / Math.max(group.length, 1)
+    categoryAngles.set(category.id, cursor + span / 2)
+    group.forEach((indicator, index) => {
+      indicatorAngles.set(indicator.id, cursor + step * (index + 0.5))
+    })
+    cursor += span
+  }
+
+  const parentIndicator = (nodeId: string) =>
+    graph.edges.find(
+      (edge) =>
+        edge.target === nodeId &&
+        (edge.kind === "provenance" || edge.kind === "event-link") &&
+        indicatorAngles.has(edge.source)
+    )?.source
+
+  function evidencePositions(
+    nodes: readonly IndustryRiskGraphNode[],
+    baseRadiusX: number,
+    baseRadiusY: number
+  ) {
+    const grouped = new Map<string, IndustryRiskGraphNode[]>()
+    for (const node of nodes) {
+      const parent = parentIndicator(node.id) ?? "company"
+      grouped.set(parent, [...(grouped.get(parent) ?? []), node])
+    }
+    return [...grouped.entries()].flatMap(([parent, group], groupIndex) => {
+      const baseAngle =
+        indicatorAngles.get(parent) ??
+        -Math.PI / 2 + (groupIndex * Math.PI * 2) / Math.max(grouped.size, 1)
+      return group.map((node, index) => {
+        const offset = (index - (group.length - 1) / 2) * 0.032
+        const ringOffset = (index % 3) * 18
+        return polar(
+          node,
+          baseAngle + offset,
+          baseRadiusX + ringOffset,
+          baseRadiusY + ringOffset,
+          center
+        )
+      })
+    })
+  }
+
   return {
     width,
     height,
     nodes: [
-      ...sector.map((node) => ({
+      ...companies.map((node) => ({
         id: node.id,
         x: center.x,
         y: center.y,
         ...dimensions(node),
       })),
-      ...ringPositions(segments, 210, 175, center),
-      ...ringPositions(companies, 365, 300, center, -Math.PI / 2 + 0.08),
-      ...ringPositions(indicators, 545, 450, center),
-      ...ringPositions(sources, 680, 570, center, -Math.PI / 2 + 0.03),
-      ...ringPositions(events, 790, 665, center, -Math.PI / 2 + 0.06),
-      ...ringPositions(artifacts, 900, 770, center),
+      ...orderedCategories.map((node) =>
+        polar(node, categoryAngles.get(node.id) ?? 0, 190, 160, center)
+      ),
+      ...indicators.map((node) =>
+        polar(node, indicatorAngles.get(node.id) ?? 0, 365, 315, center)
+      ),
+      ...evidencePositions(sources, 485, 420),
+      ...evidencePositions(events, 610, 535),
     ],
   }
 }

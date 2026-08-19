@@ -6914,6 +6914,7 @@
 
 .industry-risk-assessment {
   min-width: 0;
+  margin-top: 22px;
 }
 
 .industry-risk-assessment-state,
@@ -6991,7 +6992,7 @@
 .industry-risk-candidate-scores {
   display: grid;
   min-width: 250px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   overflow: hidden;
   border: 1px solid var(--reading-border);
   border-radius: 15px;
@@ -7021,6 +7022,25 @@
   font-weight: 780;
   line-height: 1;
   font-variant-numeric: tabular-nums;
+}
+
+.industry-risk-method-brief {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 11px 13px;
+  border: 1px solid color-mix(in oklch, var(--brand) 24%, var(--reading-border));
+  border-radius: 12px;
+  background: color-mix(in oklch, var(--brand-soft) 26%, transparent);
+  color: var(--text-soft);
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.industry-risk-method-brief strong {
+  flex: 0 0 auto;
+  color: var(--brand-strong);
 }
 
 .industry-risk-metric-grid {
@@ -7056,8 +7076,11 @@
 .industry-risk-metric-title {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
+}
+
+.industry-risk-metric-title svg {
+  margin-left: auto;
 }
 
 .industry-risk-metric-title svg {
@@ -7140,6 +7163,20 @@
 
 .industry-risk-metric-grid details p {
   margin: 7px 0 0;
+}
+
+.industry-risk-metric-grid details a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 7px;
+  color: var(--brand-strong);
+  font-weight: 680;
+}
+
+.industry-risk-metric-grid details a svg {
+  width: 11px;
+  height: 11px;
 }
 
 .industry-risk-context-grid {
@@ -7248,6 +7285,24 @@
 
 .industry-risk-supplementary-card li > small {
   grid-column: 1 / -1;
+}
+
+.industry-risk-supplementary-card li > a {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  color: var(--brand-strong);
+  font-size: 10px;
+  line-height: 1.45;
+  text-align: right;
+}
+
+.industry-risk-supplementary-card li > a svg {
+  width: 11px;
+  height: 11px;
+  flex: 0 0 auto;
 }
 
 .industry-risk-bonus-definitions {
@@ -7433,17 +7488,6 @@
   line-height: 1.7;
 }
 
-.industry-graph-mode-controls {
-  display: flex;
-  flex: 0 0 auto;
-  gap: 8px;
-}
-
-.industry-graph-mode-controls [data-slot="button"] {
-  min-height: 42px;
-  border-radius: 12px;
-}
-
 .industry-graph-summary {
   display: flex;
   min-width: 0;
@@ -7468,7 +7512,7 @@
 .industry-graph-content {
   display: grid;
   min-width: 0;
-  grid-template-columns: minmax(0, 1fr) 280px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 15px;
   margin-top: 16px;
 }
@@ -7497,7 +7541,8 @@
 
 .industry-graph-canvas svg {
   display: block;
-  width: 1420px;
+  width: 100%;
+  min-width: 760px;
   height: auto;
   min-height: 100%;
   margin: 0 auto;
@@ -7517,41 +7562,12 @@
   opacity: 0.32;
 }
 
-.industry-graph-edges line[data-kind="coverage"] {
-  stroke: color-mix(in oklch, var(--accent-violet) 54%, transparent);
-}
-
 .industry-graph-edges line[data-kind="provenance"] {
   stroke: color-mix(in oklch, var(--accent-cyan) 56%, transparent);
 }
 
 .industry-graph-edges line[data-kind="event-link"] {
   stroke: color-mix(in oklch, var(--danger) 58%, transparent);
-}
-
-.industry-graph-edges line[data-kind="material"] {
-  stroke: color-mix(in oklch, var(--success) 48%, transparent);
-}
-
-.industry-graph[data-mode="full"]
-  .industry-graph-edges
-  line[data-kind="coverage"] {
-  opacity: 0.035;
-}
-
-.industry-graph[data-mode="full"]
-  .industry-graph-edges
-  line[data-kind="provenance"] {
-  opacity: 0.055;
-}
-
-.industry-graph[data-mode="full"]
-  .industry-graph-edges
-  line[data-kind="event-link"],
-.industry-graph[data-mode="full"]
-  .industry-graph-edges
-  line[data-kind="material"] {
-  opacity: 0.1;
 }
 
 .industry-graph-edges line[data-active="true"] {
@@ -7588,19 +7604,14 @@
   font-weight: 680;
 }
 
-.industry-graph-node[data-kind="sector"] rect {
-  fill: color-mix(in oklch, var(--brand) 16%, var(--glass-floating-bg));
-  stroke: color-mix(in oklch, var(--brand) 72%, var(--border));
-}
-
-.industry-graph-node[data-kind="segment"] rect {
-  fill: color-mix(in oklch, var(--accent-cyan) 13%, var(--glass-floating-bg));
-  stroke: color-mix(in oklch, var(--accent-cyan) 60%, var(--border));
-}
-
 .industry-graph-node[data-kind="company"] rect {
   fill: color-mix(in oklch, var(--brand-soft) 62%, var(--glass-floating-bg));
   stroke: color-mix(in oklch, var(--brand) 58%, var(--border));
+}
+
+.industry-graph-node[data-kind="category"] rect {
+  fill: color-mix(in oklch, var(--accent-amber) 15%, var(--glass-floating-bg));
+  stroke: color-mix(in oklch, var(--accent-amber) 62%, var(--border));
 }
 
 .industry-graph-node[data-kind="company"][data-tone="critical"] rect {
@@ -7628,11 +7639,6 @@
   stroke: color-mix(in oklch, white 72%, var(--danger));
 }
 
-.industry-graph-node[data-kind="artifact"] circle {
-  fill: var(--success);
-  stroke: color-mix(in oklch, white 72%, var(--success));
-}
-
 .industry-graph-node[data-selected="true"] rect,
 .industry-graph-node[data-selected="true"] circle,
 .industry-graph-node:focus-visible rect,
@@ -7647,7 +7653,7 @@
 
 .industry-graph-inspector {
   min-width: 0;
-  max-height: 760px;
+  max-height: 300px;
   overflow: auto;
   padding: 18px;
   border: 1px solid var(--reading-border);
@@ -7717,7 +7723,7 @@
 
 .industry-graph-inspector-empty {
   display: flex;
-  min-height: 240px;
+  min-height: 140px;
   align-items: center;
   justify-content: center;
   flex-direction: column;
@@ -7754,9 +7760,12 @@
   content: "";
 }
 
-.industry-graph-legend > span[data-kind="segment"]::before,
 .industry-graph-legend > span[data-kind="source"]::before {
   background: var(--accent-cyan);
+}
+
+.industry-graph-legend > span[data-kind="category"]::before {
+  background: var(--accent-amber);
 }
 
 .industry-graph-legend > span[data-kind="indicator"]::before {
@@ -7765,10 +7774,6 @@
 
 .industry-graph-legend > span[data-kind="event"]::before {
   background: var(--danger);
-}
-
-.industry-graph-legend > span[data-kind="artifact"]::before {
-  background: var(--success);
 }
 
 .industry-graph-legend > p {
@@ -7791,14 +7796,6 @@
 
   .industry-graph-header {
     flex-direction: column;
-  }
-
-  .industry-graph-mode-controls {
-    width: 100%;
-  }
-
-  .industry-graph-mode-controls [data-slot="button"] {
-    flex: 1;
   }
 
   .industry-graph-content {

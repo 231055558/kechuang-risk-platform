@@ -9,26 +9,24 @@ import {
 
 const graph = getIndustryRiskKnowledgeGraph()
 
-test("industry graph preserves every source dataset relationship class", () => {
+test("industry graph keeps the agreed company-category-indicator-evidence structure", () => {
   assert.deepEqual(graph.counts, {
-    nodes: 508,
-    edges: 2_120,
-    scoredCompanies: 37,
-    evidenceOnlyCompanies: 6,
+    nodes: 416,
+    edges: 1_257,
+    companies: 37,
+    categories: 6,
     indicators: 22,
+    sources: 180,
     events: 171,
-    artifacts: 84,
   })
   const kinds = graph.edges.reduce<Record<string, number>>((counts, edge) => {
     counts[edge.kind] = (counts[edge.kind] ?? 0) + 1
     return counts
   }, {})
   assert.deepEqual(kinds, {
-    hierarchy: 38,
-    coverage: 814,
+    hierarchy: 244,
     provenance: 842,
-    "event-link": 342,
-    material: 84,
+    "event-link": 171,
   })
   const nodeIds = new Set(graph.nodes.map((node) => node.id))
   assert.ok(
@@ -38,34 +36,43 @@ test("industry graph preserves every source dataset relationship class", () => {
   )
 })
 
-test("company focus keeps only relations belonging to the selected company", () => {
+test("company focus is complete but contains no other enterprise", () => {
   const focus = selectIndustryRiskGraph(graph, "star-688256")
-  assert.ok(focus.nodes.length < graph.nodes.length)
-  assert.ok(focus.edges.length < graph.edges.length)
+  assert.equal(focus.nodes.filter((node) => node.kind === "company").length, 1)
+  assert.equal(focus.nodes.filter((node) => node.kind === "category").length, 6)
+  assert.equal(focus.nodes.filter((node) => node.kind === "indicator").length, 22)
+  assert.equal(focus.nodes.filter((node) => node.kind === "source").length, 8)
+  assert.equal(focus.nodes.filter((node) => node.kind === "event").length, 22)
+  assert.equal(focus.nodes.length, 59)
+  assert.equal(focus.edges.length, 81)
   assert.ok(
     focus.edges.every((edge) => edge.companyIds.includes("star-688256"))
   )
   assert.ok(focus.nodes.some((node) => node.id === "company:star-688256"))
-  assert.ok(focus.nodes.some((node) => node.kind === "artifact"))
+  assert.equal(
+    focus.nodes.find((node) => node.id === "indicator:R19")?.score,
+    93.06
+  )
+  assert.ok(
+    focus.nodes.every(
+      (node) => node.kind !== "company" || node.entityId === "star-688256"
+    )
+  )
 })
 
-test("complete and focused graph layouts are deterministic and bounded", () => {
-  for (const candidate of [
-    graph,
-    selectIndustryRiskGraph(graph, "star-688256"),
-  ]) {
-    const first = buildIndustryRiskGraphLayout(candidate)
-    const second = buildIndustryRiskGraphLayout(candidate)
-    assert.deepEqual(first, second)
-    assert.equal(first.nodes.length, candidate.nodes.length)
-    assert.ok(
-      first.nodes.every(
-        (node) =>
-          node.x >= 0 &&
-          node.x <= first.width &&
-          node.y >= 0 &&
-          node.y <= first.height
-      )
+test("focused radial graph layout is deterministic and bounded", () => {
+  const focus = selectIndustryRiskGraph(graph, "star-688256")
+  const first = buildIndustryRiskGraphLayout(focus)
+  const second = buildIndustryRiskGraphLayout(focus)
+  assert.deepEqual(first, second)
+  assert.equal(first.nodes.length, focus.nodes.length)
+  assert.ok(
+    first.nodes.every(
+      (node) =>
+        node.x >= 0 &&
+        node.x <= first.width &&
+        node.y >= 0 &&
+        node.y <= first.height
     )
-  }
+  )
 })

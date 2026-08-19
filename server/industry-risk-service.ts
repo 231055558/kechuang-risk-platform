@@ -1,5 +1,4 @@
 import pilotData from "../src/data/industry/design37-risk-pilot.json" with { type: "json" }
-import enterpriseEvidenceData from "../src/data/industry/enterprise-evidence-catalog.json" with { type: "json" }
 import {
   buildIndustryRiskKnowledgeGraph,
   getIndustryRiskPilotMetricReadiness,
@@ -8,18 +7,11 @@ import {
   type IndustryRiskCompanyDirectoryResponse,
   type IndustryRiskDataset,
 } from "../src/domain/industry-risk-v1/index.ts"
-import type { EnterpriseEvidenceCatalog } from "../src/domain/enterprise-evidence-v1/index.ts"
 
 const dataset = pilotData as IndustryRiskDataset
-const enterpriseEvidenceCatalog =
-  enterpriseEvidenceData as EnterpriseEvidenceCatalog
 const assessments = scoreIndustryRiskDataset(dataset)
 const metricReadiness = getIndustryRiskPilotMetricReadiness(dataset)
-const knowledgeGraph = buildIndustryRiskKnowledgeGraph(
-  dataset,
-  assessments,
-  enterpriseEvidenceCatalog
-)
+const knowledgeGraph = buildIndustryRiskKnowledgeGraph(dataset, assessments)
 
 export class IndustryRiskCompanyNotFoundError extends Error {
   readonly statusCode = 404
@@ -39,14 +31,13 @@ export function listIndustryRiskCompanies(): IndustryRiskCompanyDirectoryRespons
     reportingPeriod: dataset.metadata.reportingPeriod,
     sectorLabel: dataset.metadata.sectorLabel,
     sampleSize: dataset.companies.length,
-    scoreReadyIndicatorCount: metricReadiness.filter((item) => item.scoreReady)
+    numericIndicatorCount: assessments[0].totalIndicatorCount,
+    candidateMetricCount: metricReadiness.filter((item) => item.scoreReady)
       .length,
-    candidateAggregateCompanyCount: assessments.filter((assessment) =>
-      assessment.candidateAggregates.some(
-        (aggregate) => aggregate.status === "partial-candidate"
-      )
+    candidateAggregateCompanyCount: assessments.filter(
+      (assessment) =>
+        assessment.candidateAggregate.status === "partial-candidate"
     ).length,
-    industryRiskStatus: "placeholder",
     companies: assessments.map((assessment) => {
       const company = dataset.companies.find(
         (item) => item.id === assessment.companyId
@@ -60,7 +51,7 @@ export function listIndustryRiskCompanies(): IndustryRiskCompanyDirectoryRespons
         chainSegment: company.chainSegment,
         scoredIndicatorCount: assessment.scoredIndicatorCount,
         totalIndicatorCount: assessment.totalIndicatorCount,
-        candidateAggregates: assessment.candidateAggregates,
+        candidateAggregate: assessment.candidateAggregate,
       }
     }),
   }

@@ -21,9 +21,10 @@ test("Cambricon overview uses the R01–R22 industry workspace by default", () =
   assert.match(overview, /detail\.id === "cambricon"/)
   assert.match(overview, /<IndustryRiskReviewPanel/)
   assert.doesNotMatch(overview, /KcrV3AssessmentPanel/)
-  assert.match(panel, /R01–R22 · 团队行业主数据契约/)
-  assert.match(panel, /项统一指标全部保留/)
-  assert.match(panel, /旧寒武纪 KCR 18\+4 或[\s\S]*35\.6[\s\S]*基线/)
+  assert.match(panel, /R01–R22 · 团队统一指标/)
+  assert.match(panel, /R05–R22 共[\s\S]*项全部进入候选范围/)
+  assert.match(panel, /缺失项不补零、不插值、不进入分母/)
+  assert.doesNotMatch(panel, /CRITIC|熵权|行业风险当前为 0\.5/)
 })
 
 test("application shell no longer depends on the KCR V3 runtime result", () => {
