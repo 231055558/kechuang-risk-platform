@@ -192,6 +192,11 @@ export function IndustryRiskReviewPanel() {
   const selectedSummary = directory.value.companies.find(
     (company) => company.companyId === selectedCompanyId
   )
+  const indicatorCount = directory.value.companies[0]?.totalIndicatorCount ?? 22
+  const evidenceOnlyIndicatorCount = Math.max(
+    0,
+    indicatorCount - directory.value.scoreReadyIndicatorCount
+  )
   const selectCompany = (companyId: string) => {
     setAssessment({ status: "loading" })
     setSelectedCompanyId(companyId)
@@ -208,13 +213,14 @@ export function IndustryRiskReviewPanel() {
         >
           <header className="industry-risk-header">
             <div>
-              <span className="eyebrow">R01–R22 · 行业横截面试验</span>
+              <span className="eyebrow">R01–R22 · 团队行业主数据契约</span>
               <h2 id="industry-risk-title">
-                {directory.value.sampleSize} 家数字芯片设计企业风险基线
+                {directory.value.sampleSize} 家数字芯片设计企业风险研判
               </h2>
               <p>
-                当前 {directory.value.scoreReadyIndicatorCount} 项试验指标满足
-                至少 20 家可比样本；
+                {indicatorCount} 项统一指标全部保留；当前仅
+                {directory.value.scoreReadyIndicatorCount} 项满足至少 20
+                家可比样本，
                 {directory.value.candidateAggregateCompanyCount}
                 家五项完整企业提供候选综合分。
               </p>
@@ -244,14 +250,16 @@ export function IndustryRiskReviewPanel() {
           <div className="industry-risk-scope-strip">
             <span>{directory.value.sectorLabel}</span>
             <span>{directory.value.sampleSize} 家同业样本</span>
+            <span>{indicatorCount} 项统一指标</span>
+            <span>{evidenceOnlyIndicatorCount} 项保留证据或缺失状态</span>
             <span>{directory.value.reportingPeriod}</span>
-            <Badge variant="outline">行业风险 0.5 为会议占位值</Badge>
+            <Badge variant="outline">候选评分 · 非正式总分</Badge>
           </div>
 
           <div className="industry-risk-body">
             <aside
               className="industry-risk-ranking"
-              aria-label="CRITIC 候选基线排序"
+              aria-label="CRITIC 候选排序"
             >
               <div className="industry-risk-section-heading">
                 <div>
@@ -525,8 +533,9 @@ function IndustryRiskAssessmentContent({
           <strong>{assessment.methodVersion}</strong>
           <span>
             风险分 = 100 ×（0.5 × 行业风险 + 0.5 ×
-            企业同业风险分位）；行业风险当前为 0.5 占位值。两套候选基线均非
-            R05–R22 正式总分。
+            企业同业风险分位）；行业风险当前为 0.5 占位值。当前页面只使用
+            R01–R22 主指标契约，不读取旧寒武纪 KCR 18+4 或 35.6
+            基线；两套候选汇总均非 R05–R22 正式总分。
           </span>
         </p>
       </footer>
