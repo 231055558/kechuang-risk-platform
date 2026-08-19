@@ -73,6 +73,20 @@ function scoreTone(score: number | null): IndustryRiskGraphNode["tone"] {
   return "low"
 }
 
+function deepEventTone(eventType: string): IndustryRiskGraphNode["tone"] {
+  if (eventType.includes("处罚") || eventType.includes("调查"))
+    return "critical"
+  if (
+    eventType.includes("延期") ||
+    eventType.includes("诉讼") ||
+    eventType.includes("仲裁")
+  ) {
+    return "high"
+  }
+  if (eventType.includes("结项")) return "low"
+  return "medium"
+}
+
 function nodeId(kind: IndustryRiskGraphNodeKind, id: string) {
   return `${kind}:${id}`
 }
@@ -192,6 +206,16 @@ export function buildIndustryRiskKnowledgeGraph(
       caption: `${event.role} · ${event.hearingTime ?? "日期待核验"}`,
       score: null,
       tone: "high",
+      companyIds: [event.companyId],
+    })),
+    ...dataset.deepSearchEvents.map((event): IndustryRiskGraphNode => ({
+      id: nodeId("event", `deep:${event.id}`),
+      entityId: `deep:${event.id}`,
+      kind: "event",
+      label: event.eventType,
+      caption: `${event.title} · ${event.eventDate ?? "日期待核验"}`,
+      score: null,
+      tone: deepEventTone(event.eventType),
       companyIds: [event.companyId],
     })),
   ]
@@ -374,6 +398,31 @@ export function buildIndustryRiskKnowledgeGraph(
         companyIds: [event.companyId],
       },
     ]),
+    ...dataset.deepSearchEvents.flatMap((event): IndustryRiskGraphEdge[] => {
+      const eventNodeId = nodeId("event", `deep:${event.id}`)
+      const companyEdge: IndustryRiskGraphEdge = {
+        id: `event-company:deep:${event.id}`,
+        source: nodeId("company", event.companyId),
+        target: eventNodeId,
+        kind: "event-link",
+        label: event.eventType,
+        detail: event.notes || event.title,
+        companyIds: [event.companyId],
+      }
+      if (event.relatedIndicatorId === null) return [companyEdge]
+      return [
+        companyEdge,
+        {
+          id: `event-indicator:deep:${event.id}`,
+          source: nodeId("indicator", event.relatedIndicatorId),
+          target: eventNodeId,
+          kind: "event-link",
+          label: `${event.relatedIndicatorId} 证据`,
+          detail: `${event.sourceChannel} · ${event.confidenceLabel}置信度`,
+          companyIds: [event.companyId],
+        },
+      ]
+    }),
     ...evidenceCatalog.artifacts.map((artifact): IndustryRiskGraphEdge => ({
       id: `material:${artifact.id}`,
       source: nodeId("company", artifact.companyId),

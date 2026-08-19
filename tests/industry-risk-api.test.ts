@@ -38,7 +38,8 @@ test("industry risk client validates directory and assessment responses", async 
   })
   assert.equal(assessment.company.shortName, "寒武纪")
   assert.equal(assessment.reportAvailability?.latestPeriod, "2026H1")
-  assert.equal(assessment.supplementaryObservations.length, 6)
+  assert.equal(assessment.deepSearchEvents.length, 4)
+  assert.equal(assessment.supplementaryObservations.length, 9)
   assert.equal(assessment.bonusDefinitions.length, 3)
   assert.deepEqual(paths, [
     "api/v1/industry-risk/companies",
@@ -53,8 +54,8 @@ test("industry graph client validates all node and edge references", async () =>
       return jsonResponse(getIndustryRiskKnowledgeGraph())
     },
   })
-  assert.equal(graph.counts.nodes, 341)
-  assert.equal(graph.counts.edges, 1_708)
+  assert.equal(graph.counts.nodes, 508)
+  assert.equal(graph.counts.edges, 2_120)
 
   const malformed = structuredClone(graph)
   malformed.edges[0].target = "node:missing"

@@ -90,6 +90,9 @@ export function getIndustryRiskAssessment(
     reportAvailability:
       dataset.reportAvailability.find((item) => item.companyId === companyId) ??
       null,
+    deepSearchEvents: dataset.deepSearchEvents.filter(
+      (item) => item.companyId === companyId
+    ),
     supplementaryObservations,
     bonusDefinitions: dataset.bonusDefinitions,
     provenance: {

@@ -52,12 +52,12 @@ test("tracked raw snapshot contains the complete authorized input set", () => {
     {}
   )
 
-  assert.equal(originals.length, 89)
+  assert.equal(originals.length, 92)
   assert.deepEqual(extensionCounts, {
-    ".md": 2,
+    ".md": 3,
     ".pdf": 8,
-    ".sqlite": 2,
-    ".xlsx": 76,
+    ".sqlite": 3,
+    ".xlsx": 77,
     ".zip": 1,
   })
   assert.ok(originals.every((path) => statSync(path).size < 100_000_000))
@@ -77,10 +77,7 @@ test("raw snapshot matches its SHA-256 manifest", async () => {
     .filter((path) => path !== checksumPath)
     .map((path) => `./${relative(rawRoot, path)}`)
     .sort()
-  assert.deepEqual(
-    entries.map((entry) => entry.path).sort(),
-    manifestFiles
-  )
+  assert.deepEqual(entries.map((entry) => entry.path).sort(), manifestFiles)
 
   for (const entry of entries) {
     assert.equal(await digestFile(join(rawRoot, entry.path)), entry.checksum)

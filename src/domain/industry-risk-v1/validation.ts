@@ -109,6 +109,27 @@ export function collectIndustryRiskDatasetIssues(dataset: IndustryRiskDataset) {
   }
 
   const supplementaryIds = new Set<string>()
+
+  const deepEventIds = new Set<string>()
+  for (const event of dataset.deepSearchEvents) {
+    if (deepEventIds.has(event.id)) {
+      issues.push(`深搜事件 ID 重复：${event.id}。`)
+    }
+    deepEventIds.add(event.id)
+    if (!companyIds.has(event.companyId)) {
+      issues.push(`深搜事件 ${event.id} 引用了未知企业。`)
+    }
+    if (
+      event.relatedIndicatorId !== null &&
+      !indicatorIds.has(event.relatedIndicatorId)
+    ) {
+      issues.push(`深搜事件 ${event.id} 引用了未知指标。`)
+    }
+    if (event.confidence < 0 || event.confidence > 1) {
+      issues.push(`深搜事件 ${event.id} 的置信度越界。`)
+    }
+  }
+
   for (const item of dataset.supplementaryObservations) {
     if (supplementaryIds.has(item.id)) {
       issues.push(`补充事实 ID 重复：${item.id}。`)

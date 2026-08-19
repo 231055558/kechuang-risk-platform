@@ -152,6 +152,24 @@ function isSupplementaryObservation(value: unknown) {
   )
 }
 
+function isDeepSearchEvent(value: unknown) {
+  return (
+    isRecord(value) &&
+    typeof value.id === "string" &&
+    typeof value.companyId === "string" &&
+    typeof value.eventType === "string" &&
+    (value.eventDate === null || typeof value.eventDate === "string") &&
+    typeof value.title === "string" &&
+    isSafeSourceUrl(value.url) &&
+    typeof value.sourceChannel === "string" &&
+    typeof value.confidenceLabel === "string" &&
+    isFiniteNumber(value.confidence) &&
+    (value.relatedIndicatorId === null ||
+      typeof value.relatedIndicatorId === "string") &&
+    typeof value.notes === "string"
+  )
+}
+
 function isBonusDefinition(value: unknown) {
   return (
     isRecord(value) &&
@@ -213,6 +231,13 @@ function isAssessmentResponse(
     (value.reportAvailability === null ||
       (isRecord(value.reportAvailability) &&
         value.reportAvailability.companyId === assessment.companyId)) &&
+    Array.isArray(value.deepSearchEvents) &&
+    value.deepSearchEvents.every(
+      (item) =>
+        isDeepSearchEvent(item) &&
+        isRecord(item) &&
+        item.companyId === assessment.companyId
+    ) &&
     Array.isArray(value.supplementaryObservations) &&
     value.supplementaryObservations.every(
       (item) =>
