@@ -52,12 +52,12 @@ test("tracked raw snapshot contains the complete authorized input set", () => {
     {}
   )
 
-  assert.equal(originals.length, 86)
+  assert.equal(originals.length, 89)
   assert.deepEqual(extensionCounts, {
-    ".md": 1,
+    ".md": 2,
     ".pdf": 8,
-    ".sqlite": 1,
-    ".xlsx": 75,
+    ".sqlite": 2,
+    ".xlsx": 76,
     ".zip": 1,
   })
   assert.ok(originals.every((path) => statSync(path).size < 100_000_000))

@@ -195,6 +195,47 @@ export interface IndustryRiskLitigationEvidence {
   redistribution: "licensed-derived"
 }
 
+export interface IndustryRiskSupplementaryObservation {
+  id: string
+  companyId: string
+  factName: string
+  period: string | null
+  asOfDate: string | null
+  numericValue: number | null
+  textValue: string | null
+  unit: string | null
+  relatedIndicatorId: IndustryRiskIndicatorId | null
+  sourceId: string | null
+  sourcePage: number | null
+  confidenceLabel: string
+  confidence: number
+  confidenceReason: string
+  limitations: string
+  affectsScore: false
+}
+
+export interface IndustryRiskReportAvailability {
+  companyId: string
+  annual2025Status: string
+  latestPeriod: string
+  latestReportDate: string | null
+  latestReportTitle: string
+  latestReportUrl: string | null
+  notes: string
+}
+
+export interface IndustryRiskBonusDefinition {
+  id: string
+  name: string
+  definition: string
+  scoringRule: string
+  maxScore: number
+  dataSource: string
+  basis: string
+  affectsScore: false
+  status: "definition-only"
+}
+
 export interface IndustryRiskDataset {
   metadata: IndustryRiskDatasetMetadata
   companies: IndustryRiskCompany[]
@@ -205,4 +246,7 @@ export interface IndustryRiskDataset {
   screeningHits: IndustryRiskScreeningHit[]
   inquiryEvidence: IndustryRiskInquiryEvidence[]
   litigationEvidence: IndustryRiskLitigationEvidence[]
+  supplementaryObservations: IndustryRiskSupplementaryObservation[]
+  reportAvailability: IndustryRiskReportAvailability[]
+  bonusDefinitions: IndustryRiskBonusDefinition[]
 }

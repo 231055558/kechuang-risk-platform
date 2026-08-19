@@ -35,6 +35,24 @@ function rows(database: DatabaseSync, sql: string) {
   return database.prepare(sql).all() as SqlRow[]
 }
 
+function tableExists(database: DatabaseSync, tableName: string) {
+  return Boolean(
+    database
+      .prepare(
+        "SELECT name FROM sqlite_master WHERE type = 'table' AND name = ?"
+      )
+      .get(tableName)
+  )
+}
+
+function optionalRows(
+  database: DatabaseSync,
+  tableName: string,
+  sql: string
+) {
+  return tableExists(database, tableName) ? rows(database, sql) : []
+}
+
 function metadata(database: DatabaseSync) {
   return Object.fromEntries(
     rows(database, "SELECT key, value FROM metadata ORDER BY key").map(
@@ -49,6 +67,10 @@ function companyId(stockCode: SqlValue) {
 
 function sourceId(value: SqlValue) {
   return `source-${number(value)}`
+}
+
+function nullableSourceId(value: SqlValue) {
+  return value === null ? null : sourceId(value)
 }
 
 function redistribution(row: SqlRow): IndustryRiskRedistribution {
@@ -93,6 +115,9 @@ export function importIndustryRiskSqlite(
     }))
     const companyIds = new Map(
       companies.map((company) => [company.sourceCompanyId, company.id])
+    )
+    const segmentNames = new Set(
+      companies.map((company) => company.chainSegment).filter(Boolean)
     )
 
     const narrativeIds = new Set<string>(INDUSTRY_RISK_NARRATIVE_INDICATOR_IDS)
@@ -187,13 +212,20 @@ export function importIndustryRiskSqlite(
         schemaVersion: INDUSTRY_RISK_DATA_SCHEMA_VERSION,
         dataVersion: meta.data_version,
         sourceDate: meta.created_at,
-        reportingPeriod: meta.reporting_period,
-        sectorLabel: "科创板芯片产业链",
+        reportingPeriod:
+          meta.reporting_period || `截至 ${meta.created_at || "未知日期"}`,
+        sectorLabel:
+          segmentNames.size === 1
+            ? `科创板${[...segmentNames][0]}企业`
+            : "科创板芯片产业链",
         board: "科创板",
         sampleSize: companies.length,
         indicatorCount: indicators.length,
         sourceAttribution: "团队提供的科创板芯片企业风险指标数据库",
-        scopeNote: meta.scope_note,
+        scopeNote:
+          meta.scope_note ||
+          meta.report_scope ||
+          "团队行业风险样本快照；不同企业使用各自最新可得正式报告。",
         scoreReadyIndicatorIds,
       },
       companies,
@@ -249,6 +281,58 @@ export function importIndustryRiskSqlite(
         confidence: number(row.confidence_score),
         limitations: text(row.limitations),
         redistribution: "licensed-derived" as const,
+      })),
+      supplementaryObservations: optionalRows(
+        database,
+        "supplementary_observations",
+        "SELECT * FROM supplementary_observations ORDER BY supplementary_id"
+      ).map((row) => ({
+        id: `supplementary-${number(row.supplementary_id)}`,
+        companyId: companyIds.get(number(row.company_id)) ?? "",
+        factName: text(row.fact_name),
+        period: nullableText(row.period),
+        asOfDate: nullableText(row.as_of_date),
+        numericValue: nullableNumber(row.numeric_value),
+        textValue: nullableText(row.text_value),
+        unit: nullableText(row.unit),
+        relatedIndicatorId: nullableText(
+          row.related_indicator_id
+        ) as IndustryRiskIndicatorId | null,
+        sourceId: nullableSourceId(row.source_id),
+        sourcePage: nullableNumber(row.source_page),
+        confidenceLabel: text(row.confidence),
+        confidence: number(row.confidence_score),
+        confidenceReason: text(row.confidence_reason),
+        limitations: text(row.limitations),
+        affectsScore: false as const,
+      })),
+      reportAvailability: optionalRows(
+        database,
+        "report_availability",
+        "SELECT * FROM report_availability ORDER BY company_id"
+      ).map((row) => ({
+        companyId: companyIds.get(number(row.company_id)) ?? "",
+        annual2025Status: text(row.annual_2025_status),
+        latestPeriod: text(row.latest_period),
+        latestReportDate: nullableText(row.latest_report_date),
+        latestReportTitle: text(row.latest_report_title),
+        latestReportUrl: nullableText(row.latest_report_url),
+        notes: text(row.notes),
+      })),
+      bonusDefinitions: optionalRows(
+        database,
+        "bonus_catalog",
+        "SELECT * FROM bonus_catalog ORDER BY bonus_id"
+      ).map((row) => ({
+        id: text(row.bonus_id),
+        name: text(row.name),
+        definition: text(row.definition),
+        scoringRule: text(row.scoring_rule),
+        maxScore: number(row.max_score),
+        dataSource: text(row.data_source),
+        basis: text(row.basis),
+        affectsScore: false as const,
+        status: "definition-only" as const,
       })),
     }
     return assertIndustryRiskDataset(dataset)
