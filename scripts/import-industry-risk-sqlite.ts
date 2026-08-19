@@ -45,11 +45,7 @@ function tableExists(database: DatabaseSync, tableName: string) {
   )
 }
 
-function optionalRows(
-  database: DatabaseSync,
-  tableName: string,
-  sql: string
-) {
+function optionalRows(database: DatabaseSync, tableName: string, sql: string) {
   return tableExists(database, tableName) ? rows(database, sql) : []
 }
 
@@ -281,6 +277,25 @@ export function importIndustryRiskSqlite(
         confidence: number(row.confidence_score),
         limitations: text(row.limitations),
         redistribution: "licensed-derived" as const,
+      })),
+      deepSearchEvents: optionalRows(
+        database,
+        "deep_search_events",
+        "SELECT * FROM deep_search_events ORDER BY event_id"
+      ).map((row) => ({
+        id: `deep-event-${number(row.event_id)}`,
+        companyId: companyIds.get(number(row.company_id)) ?? "",
+        eventType: text(row.event_type),
+        eventDate: nullableText(row.event_date),
+        title: text(row.title),
+        url: nullableText(row.url),
+        sourceChannel: text(row.source_channel),
+        confidenceLabel: text(row.confidence),
+        confidence: number(row.confidence_score),
+        relatedIndicatorId: nullableText(
+          row.related_indicator_id
+        ) as IndustryRiskIndicatorId | null,
+        notes: text(row.notes),
       })),
       supplementaryObservations: optionalRows(
         database,

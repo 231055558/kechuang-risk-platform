@@ -9,9 +9,11 @@
 - `科创板芯片企业风险指标数据库_数据说明.md`：数据库口径和表结构说明；
 - `industry-risk/design37-20260819/`：毛同学提供的 37 家数字芯片设计企业版本，保留
   SQLite、Excel 核对版和数据说明三份原始文件；
+- `industry-risk/design37-deep-20260819/`：毛同学提供的 37 家深搜增强版，新增 96 个
+  上交所事件、融资成本代理、供应链披露、叙事一致性代理和公开可见风险线索；
 - `企业信息/`：7 家企业共 84 份学生材料，包括 75 个 Excel、8 份 PDF 和 1 个 ZIP。
 
-以上共 89 个原始文件，约 46 MB。它们按原样提交，不在导入过程中覆盖或回写。37 家
+以上共 92 个原始文件，约 48 MB。它们按原样提交，不在导入过程中覆盖或回写。37 家
 SQLite 与 Excel 中保留了数据提供方的本机证据路径和官方报告摘录；应用派生 JSON 会删除
 本机路径和原始摘录。
 
@@ -37,7 +39,7 @@ npm run import:industry-risk -- \
   src/data/industry/semiconductor-risk-pilot.json
 
 npm run import:industry-risk -- \
-  data/raw/industry-risk/design37-20260819/科创板数字芯片设计企业风险指标数据库_37家_20260819.sqlite \
+  data/raw/industry-risk/design37-deep-20260819/科创板数字芯片设计企业风险指标数据库_37家_深搜增强版_20260819.sqlite \
   src/data/industry/design37-risk-pilot.json
 
 npm run import:enterprise-evidence -- \

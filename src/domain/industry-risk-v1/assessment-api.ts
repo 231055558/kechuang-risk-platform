@@ -2,6 +2,7 @@ import type {
   IndustryRiskBonusDefinition,
   IndustryRiskCompany,
   IndustryRiskDatasetMetadata,
+  IndustryRiskDeepSearchEvent,
   IndustryRiskReportAvailability,
   IndustryRiskSource,
   IndustryRiskSupplementaryObservation,
@@ -44,6 +45,7 @@ export interface IndustryRiskAssessmentApiResponse {
   company: IndustryRiskCompany
   sources: IndustryRiskSource[]
   reportAvailability: IndustryRiskReportAvailability | null
+  deepSearchEvents: IndustryRiskDeepSearchEvent[]
   supplementaryObservations: IndustryRiskSupplementaryObservation[]
   bonusDefinitions: IndustryRiskBonusDefinition[]
   provenance: {

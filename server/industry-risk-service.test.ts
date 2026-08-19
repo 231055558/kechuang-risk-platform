@@ -31,7 +31,8 @@ test("industry assessment keeps raw values, formula traces, and sources together
   assert.ok(response.assessment.metrics.every((metric) => metric.sourceId))
   assert.equal(response.assessment.metrics[0].asOfDate, "2026-06-30")
   assert.equal(response.reportAvailability?.latestPeriod, "2026H1")
-  assert.equal(response.supplementaryObservations.length, 6)
+  assert.equal(response.deepSearchEvents.length, 4)
+  assert.equal(response.supplementaryObservations.length, 9)
   assert.ok(
     response.supplementaryObservations.every(
       (item) => item.affectsScore === false

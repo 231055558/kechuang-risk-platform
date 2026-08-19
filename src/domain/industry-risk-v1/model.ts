@@ -195,6 +195,20 @@ export interface IndustryRiskLitigationEvidence {
   redistribution: "licensed-derived"
 }
 
+export interface IndustryRiskDeepSearchEvent {
+  id: string
+  companyId: string
+  eventType: string
+  eventDate: string | null
+  title: string
+  url: string | null
+  sourceChannel: string
+  confidenceLabel: string
+  confidence: number
+  relatedIndicatorId: IndustryRiskIndicatorId | null
+  notes: string
+}
+
 export interface IndustryRiskSupplementaryObservation {
   id: string
   companyId: string
@@ -246,6 +260,7 @@ export interface IndustryRiskDataset {
   screeningHits: IndustryRiskScreeningHit[]
   inquiryEvidence: IndustryRiskInquiryEvidence[]
   litigationEvidence: IndustryRiskLitigationEvidence[]
+  deepSearchEvents: IndustryRiskDeepSearchEvent[]
   supplementaryObservations: IndustryRiskSupplementaryObservation[]
   reportAvailability: IndustryRiskReportAvailability[]
   bonusDefinitions: IndustryRiskBonusDefinition[]

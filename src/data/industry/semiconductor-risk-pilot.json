@@ -10,7 +10,13 @@
     "indicatorCount": 22,
     "sourceAttribution": "团队提供的科创板芯片企业风险指标数据库",
     "scopeNote": "最新完整年度公开披露样本库，不等同于专业专利、司法、工商或全网舆情数据库。",
-    "scoreReadyIndicatorIds": ["R07", "R13", "R14", "R16", "R18"]
+    "scoreReadyIndicatorIds": [
+      "R07",
+      "R13",
+      "R14",
+      "R16",
+      "R18"
+    ]
   },
   "companies": [
     {
@@ -20,7 +26,9 @@
       "shortName": "澜起科技",
       "exchangeName": "澜起科技",
       "fullName": "澜起科技股份有限公司",
-      "aliases": ["Montage Technology Co., Ltd."],
+      "aliases": [
+        "Montage Technology Co., Ltd."
+      ],
       "chainSegment": "芯片设计",
       "board": "科创板",
       "exchange": "上海证券交易所",
@@ -38,7 +46,10 @@
       "shortName": "中微公司",
       "exchangeName": "中微公司",
       "fullName": "中微半导体设备（上海）股份有限公司",
-      "aliases": ["Advanced Micro-Fabrication Equipment Inc. China", "AMEC"],
+      "aliases": [
+        "Advanced Micro-Fabrication Equipment Inc. China",
+        "AMEC"
+      ],
       "chainSegment": "半导体设备",
       "board": "科创板",
       "exchange": "上海证券交易所",
@@ -56,7 +67,10 @@
       "shortName": "芯源微",
       "exchangeName": "芯源微",
       "fullName": "沈阳芯源微电子设备股份有限公司",
-      "aliases": ["Kingsemi", "Shenyang Xinyuan Microelectronic Equipment"],
+      "aliases": [
+        "Kingsemi",
+        "Shenyang Xinyuan Microelectronic Equipment"
+      ],
       "chainSegment": "半导体设备",
       "board": "科创板",
       "exchange": "上海证券交易所",
@@ -74,7 +88,10 @@
       "shortName": "龙芯中科",
       "exchangeName": "龙芯中科",
       "fullName": "龙芯中科技术股份有限公司",
-      "aliases": ["Loongson Technology Corporation Limited", "Godson Zhongke"],
+      "aliases": [
+        "Loongson Technology Corporation Limited",
+        "Godson Zhongke"
+      ],
       "chainSegment": "CPU芯片设计",
       "board": "科创板",
       "exchange": "上海证券交易所",
@@ -92,7 +109,10 @@
       "shortName": "拓荆科技",
       "exchangeName": "拓荆科技",
       "fullName": "拓荆科技股份有限公司",
-      "aliases": ["Piotech", "Tuojing Technology"],
+      "aliases": [
+        "Piotech",
+        "Tuojing Technology"
+      ],
       "chainSegment": "半导体设备",
       "board": "科创板",
       "exchange": "上海证券交易所",
@@ -110,7 +130,10 @@
       "shortName": "晶晨股份",
       "exchangeName": "晶晨股份",
       "fullName": "晶晨半导体（上海）股份有限公司",
-      "aliases": ["Amlogic (Shanghai) Co., Ltd.", "Amlogic"],
+      "aliases": [
+        "Amlogic (Shanghai) Co., Ltd.",
+        "Amlogic"
+      ],
       "chainSegment": "SoC芯片设计",
       "board": "科创板",
       "exchange": "上海证券交易所",
@@ -128,7 +151,10 @@
       "shortName": "寒武纪",
       "exchangeName": "寒武纪",
       "fullName": "中科寒武纪科技股份有限公司",
-      "aliases": ["Cambricon Technologies Corporation Limited", "Cambrian"],
+      "aliases": [
+        "Cambricon Technologies Corporation Limited",
+        "Cambrian"
+      ],
       "chainSegment": "AI芯片设计",
       "board": "科创板",
       "exchange": "上海证券交易所",
@@ -146,7 +172,10 @@
       "shortName": "华虹公司",
       "exchangeName": "华虹宏力",
       "fullName": "华虹半导体有限公司",
-      "aliases": ["Hua Hong Semiconductor Limited", "Huahong Grace"],
+      "aliases": [
+        "Hua Hong Semiconductor Limited",
+        "Huahong Grace"
+      ],
       "chainSegment": "晶圆制造",
       "board": "科创板",
       "exchange": "上海证券交易所",
@@ -164,7 +193,9 @@
       "shortName": "芯原股份",
       "exchangeName": "芯原股份",
       "fullName": "芯原微电子（上海）股份有限公司",
-      "aliases": ["VeriSilicon Microelectronics (Shanghai) Co., Ltd."],
+      "aliases": [
+        "VeriSilicon Microelectronics (Shanghai) Co., Ltd."
+      ],
       "chainSegment": "半导体IP与设计服务",
       "board": "科创板",
       "exchange": "上海证券交易所",
@@ -8693,6 +8724,7 @@
       "redistribution": "licensed-derived"
     }
   ],
+  "deepSearchEvents": [],
   "supplementaryObservations": [],
   "reportAvailability": [],
   "bonusDefinitions": [
