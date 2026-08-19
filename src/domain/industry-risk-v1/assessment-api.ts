@@ -31,6 +31,7 @@ export interface IndustryRiskCompanyDirectoryResponse {
   sectorLabel: string
   sampleSize: number
   scoreReadyIndicatorCount: number
+  candidateAggregateCompanyCount: number
   industryRiskStatus: "placeholder"
   companies: IndustryRiskCompanySummary[]
 }

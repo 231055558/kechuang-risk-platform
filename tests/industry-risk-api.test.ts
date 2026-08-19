@@ -28,7 +28,7 @@ test("industry risk client validates directory and assessment responses", async 
       return jsonResponse(listIndustryRiskCompanies())
     },
   })
-  assert.equal(directory.companies.length, 10)
+  assert.equal(directory.companies.length, 37)
 
   const assessment = await fetchIndustryRiskAssessment("star-688256", {
     fetch: async (input) => {
@@ -50,8 +50,8 @@ test("industry graph client validates all node and edge references", async () =>
       return jsonResponse(getIndustryRiskKnowledgeGraph())
     },
   })
-  assert.equal(graph.counts.nodes, 209)
-  assert.equal(graph.counts.edges, 526)
+  assert.equal(graph.counts.nodes, 341)
+  assert.equal(graph.counts.edges, 1_708)
 
   const malformed = structuredClone(graph)
   malformed.edges[0].target = "node:missing"

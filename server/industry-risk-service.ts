@@ -1,7 +1,8 @@
-import pilotData from "../src/data/industry/semiconductor-risk-pilot.json" with { type: "json" }
+import pilotData from "../src/data/industry/design37-risk-pilot.json" with { type: "json" }
 import enterpriseEvidenceData from "../src/data/industry/enterprise-evidence-catalog.json" with { type: "json" }
 import {
   buildIndustryRiskKnowledgeGraph,
+  getIndustryRiskPilotMetricReadiness,
   scoreIndustryRiskDataset,
   type IndustryRiskAssessmentApiResponse,
   type IndustryRiskCompanyDirectoryResponse,
@@ -13,6 +14,7 @@ const dataset = pilotData as IndustryRiskDataset
 const enterpriseEvidenceCatalog =
   enterpriseEvidenceData as EnterpriseEvidenceCatalog
 const assessments = scoreIndustryRiskDataset(dataset)
+const metricReadiness = getIndustryRiskPilotMetricReadiness(dataset)
 const knowledgeGraph = buildIndustryRiskKnowledgeGraph(
   dataset,
   assessments,
@@ -37,7 +39,13 @@ export function listIndustryRiskCompanies(): IndustryRiskCompanyDirectoryRespons
     reportingPeriod: dataset.metadata.reportingPeriod,
     sectorLabel: dataset.metadata.sectorLabel,
     sampleSize: dataset.companies.length,
-    scoreReadyIndicatorCount: dataset.metadata.scoreReadyIndicatorIds.length,
+    scoreReadyIndicatorCount: metricReadiness.filter((item) => item.scoreReady)
+      .length,
+    candidateAggregateCompanyCount: assessments.filter((assessment) =>
+      assessment.candidateAggregates.some(
+        (aggregate) => aggregate.status === "partial-candidate"
+      )
+    ).length,
     industryRiskStatus: "placeholder",
     companies: assessments.map((assessment) => {
       const company = dataset.companies.find(

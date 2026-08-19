@@ -228,7 +228,7 @@ test("industry risk GET endpoints expose the directory and selected assessment",
   const testServer = await startTestServer({
     listIndustryRiskCompanies() {
       return {
-        methodVersion: "IRAWC-MVP-2026.08-v1",
+        methodVersion: "IRAWC-MVP-2026.08-v2",
         companies: [{ companyId: "star-688256", companyName: "寒武纪" }],
       }
     },
@@ -254,7 +254,7 @@ test("industry risk GET endpoints expose the directory and selected assessment",
     assert.equal(directory.status, 200)
     assert.equal(directory.headers.get("cache-control"), "no-store")
     assert.deepEqual(await directory.json(), {
-      methodVersion: "IRAWC-MVP-2026.08-v1",
+      methodVersion: "IRAWC-MVP-2026.08-v2",
       companies: [{ companyId: "star-688256", companyName: "寒武纪" }],
     })
 
