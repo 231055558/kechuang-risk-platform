@@ -11,7 +11,7 @@ function readProjectFile(path: string) {
   return readFileSync(join(projectRoot, path), "utf8")
 }
 
-test("new MVP sessions default to the company with the KCR knowledge graph", () => {
+test("new MVP sessions default to the company with the R01–R22 industry workspace", () => {
   const dataSource = readProjectFile("src/lib/data.ts")
 
   assert.match(dataSource, /const mvpDefaultCompanyId = "cambricon"/)

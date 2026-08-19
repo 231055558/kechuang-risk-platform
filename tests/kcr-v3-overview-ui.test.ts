@@ -12,36 +12,34 @@ function readProjectFile(path: string) {
   return readFileSync(join(projectRoot, path), "utf8")
 }
 
-test("Cambricon overview switches from the legacy shell to the KCR V3 panel", () => {
+test("Cambricon overview uses the R01–R22 industry workspace by default", () => {
   const overview = readProjectFile("src/components/dashboard/overview-tab.tsx")
   const panel = readProjectFile(
-    "src/components/dashboard/kcr-v3-assessment-panel.tsx"
+    "src/components/dashboard/industry-risk-review-panel.tsx"
   )
 
   assert.match(overview, /detail\.id === "cambricon"/)
-  assert.match(overview, /<KcrV3AssessmentPanel/)
-  assert.match(panel, /fetchKcrCompanyAssessment\(companyId/)
-  assert.match(panel, /寒武纪客观风险基线/)
-  assert.match(panel, /五维风险分布/)
-  assert.match(panel, /红旗事件/)
-  assert.match(panel, /团队工作簿复算/)
-  assert.match(panel, /工程默认仍待团队确认/)
+  assert.match(overview, /<IndustryRiskReviewPanel/)
+  assert.doesNotMatch(overview, /KcrV3AssessmentPanel/)
+  assert.match(panel, /R01–R22 · 团队行业主数据契约/)
+  assert.match(panel, /项统一指标全部保留/)
+  assert.match(panel, /旧寒武纪 KCR 18\+4 或[\s\S]*35\.6[\s\S]*基线/)
 })
 
-test("KCR V3 result updates shell copy and routes export to the V3 report", () => {
+test("application shell no longer depends on the KCR V3 runtime result", () => {
   const app = readProjectFile("src/App.tsx")
   const sidebar = readProjectFile("src/components/layout/sidebar-nav.tsx")
 
-  assert.match(app, /KCR V3 客观风险基线/)
-  assert.match(app, /printKcrAssessmentReport/)
-  assert.match(app, /KCR V3 完整审计报告/)
-  assert.match(app, /不会混入旧六维口径/)
-  assert.match(app, /<KcrMethodSheet/)
-  assert.match(app, /区分团队工作簿结论、程序复算结果与待团队确认/)
+  assert.match(app, /R01–R22 行业主契约/)
+  assert.match(app, /37 家同业样本/)
+  assert.match(app, /INDUSTRY_RISK_MVP_METHOD_VERSION/)
+  assert.doesNotMatch(app, /kcrAssessmentResponse/)
+  assert.doesNotMatch(app, /printKcrAssessmentReport/)
+  assert.doesNotMatch(app, /KcrMethodSheet/)
   assert.match(sidebar, /assessmentSummaryOverride\.methodVersion/)
 })
 
-test("MVP review workspace exposes a bounded scenario and traceable task flow", () => {
+test("legacy KCR workflow stays isolated and testable for historical replay", () => {
   const workspace = readProjectFile(
     "src/components/dashboard/kcr-mvp-review-workspace.tsx"
   )
