@@ -8692,5 +8692,42 @@
       "limitations": "来自网页可见开庭公告；同一案号已去重，未获得诉讼标的额。",
       "redistribution": "licensed-derived"
     }
+  ],
+  "supplementaryObservations": [],
+  "reportAvailability": [],
+  "bonusDefinitions": [
+    {
+      "id": "B01",
+      "name": "科技项目承担与标准制定",
+      "definition": "企业承担国家级/省级科技项目数量，主导或参与国家/行业标准制定数量",
+      "scoringRule": "国家级科技项目每项+2分，标准制定每项+1分，省级项目每项+0.5分",
+      "maxScore": 10,
+      "dataSource": "科技部项目数据库、国家标准信息公共服务平台",
+      "basis": "科技部创新积分制2.0附件1：创新影响加分项，累计10分封顶",
+      "affectsScore": false,
+      "status": "definition-only"
+    },
+    {
+      "id": "B02",
+      "name": "行业排名与科技资质",
+      "definition": "企业行业排名情况，及科技领军企业/国家高新技术企业/专精特新小巨人等科技资质",
+      "scoringRule": "科技领军企业+5分，专精特新小巨人+3分，高新技术企业+2分，其他资质+1分",
+      "maxScore": 10,
+      "dataSource": "工信部专精特新企业名录、科技部高新技术企业认定管理工作网",
+      "basis": "科技部创新积分制2.0附件1：创新影响加分项，累计10分封顶",
+      "affectsScore": false,
+      "status": "definition-only"
+    },
+    {
+      "id": "B03",
+      "name": "累计融资金额",
+      "definition": "企业历轮融资金额累计总额，反映资本市场认可度",
+      "scoringRule": "累计融资>=2000万+5分，500-2000万+3分，100-500万+1分，<100万+0分",
+      "maxScore": 10,
+      "dataSource": "企查查/天眼查融资历史、CVSource/IT桔子创投数据库",
+      "basis": "科技部创新积分制2.0：累计融资金额反映企业融资能力，作为创新发展维度加分项",
+      "affectsScore": false,
+      "status": "definition-only"
+    }
   ]
 }
