@@ -3,9 +3,11 @@ import test from "node:test"
 
 import { getIndustryRiskKnowledgeGraph } from "../server/industry-risk-service.ts"
 import {
-  buildIndustryRiskGraphLayout,
+  buildIndustryRiskCytoscapeElements,
+  riskHeatColor,
   selectIndustryRiskGraph,
-} from "../src/lib/industry-risk-graph-layout.ts"
+  type IndustryRiskCytoscapeNodeData,
+} from "../src/lib/industry-risk-graph-view.ts"
 
 const graph = getIndustryRiskKnowledgeGraph()
 
@@ -69,61 +71,127 @@ test("company focus is complete but contains no other enterprise", () => {
   )
 })
 
-test("focused radial graph layout is deterministic and bounded", () => {
-  const focus = selectIndustryRiskGraph(graph, "star-688256")
-  const first = buildIndustryRiskGraphLayout(focus)
-  const second = buildIndustryRiskGraphLayout(focus)
-  assert.deepEqual(first, second)
-  assert.equal(first.nodes.length, focus.nodes.length)
-  assert.equal(first.zones.length, 6)
-  assert.ok(
-    first.nodes.every(
-      (node) =>
-        node.x - node.width / 2 >= 0 &&
-        node.x + node.width / 2 <= first.width &&
-        node.y - node.height / 2 >= 0 &&
-        node.y + node.height / 2 <= first.height
+function nodeData(
+  companyGraph: ReturnType<typeof selectIndustryRiskGraph>,
+  id: string
+) {
+  return buildIndustryRiskCytoscapeElements(companyGraph)
+    .map((element) => element.data)
+    .find(
+      (data): data is IndustryRiskCytoscapeNodeData =>
+        "entityId" in data && data.id === id
     )
+}
+
+test("Cytoscape view uses compound risk groups without dropping relations", () => {
+  const focus = selectIndustryRiskGraph(graph, "star-688256")
+  const elements = buildIndustryRiskCytoscapeElements(focus)
+  const nodes = elements
+    .map((element) => element.data)
+    .filter(
+      (data): data is IndustryRiskCytoscapeNodeData => "entityId" in data
+    )
+  const edges = elements
+    .map((element) => element.data)
+    .filter((data) => "source" in data)
+
+  assert.equal(nodes.length, 59)
+  assert.equal(edges.length, 59)
+  assert.equal(nodes.filter((node) => node.kind === "category").length, 6)
+  assert.ok(
+    nodes
+      .filter((node) => node.kind === "indicator")
+      .every(
+        (node) =>
+          node.parent?.startsWith("category:") &&
+          nodes.some((candidate) => candidate.id === node.parent)
+      )
+  )
+  assert.ok(
+    focus.edges
+      .filter(
+        (edge) =>
+          edge.kind === "hierarchy" && edge.source.startsWith("category:")
+      )
+      .every((edge) => nodeData(focus, edge.target)?.parent === edge.source)
+  )
+  assert.ok(
+    nodes
+      .filter((node) => node.kind === "source")
+      .every(
+        (node) =>
+          !node.label.startsWith("source-") && !node.label.startsWith("S-")
+      )
   )
 })
 
-test("risk intensity changes graph area, heat zones, and company layout", () => {
+test("risk data controls Cytoscape node area and continuous heat color", () => {
   const cambricon = selectIndustryRiskGraph(graph, "star-688256")
-  const highRiskPeer = selectIndustryRiskGraph(graph, "star-688213")
-  const cambriconLayout = buildIndustryRiskGraphLayout(cambricon)
-  const highRiskLayout = buildIndustryRiskGraphLayout(highRiskPeer)
+  const peer = selectIndustryRiskGraph(graph, "star-688213")
+  const lowRiskIndicator = nodeData(cambricon, "indicator:R05")
+  const highRiskIndicator = nodeData(cambricon, "indicator:R19")
+  const missingIndicator = nodeData(cambricon, "indicator:R09")
+  const peerR19 = nodeData(peer, "indicator:R19")
 
-  const lowRiskIndicator = cambriconLayout.nodes.find(
-    (node) => node.id === "indicator:R05"
-  )
-  const highRiskIndicator = cambriconLayout.nodes.find(
-    (node) => node.id === "indicator:R19"
-  )
   assert.ok(lowRiskIndicator)
   assert.ok(highRiskIndicator)
-  assert.ok(highRiskIndicator.width > lowRiskIndicator.width)
-  assert.ok(highRiskIndicator.height > lowRiskIndicator.height)
+  assert.ok(missingIndicator)
+  assert.ok(peerR19)
+  assert.ok(highRiskIndicator.size > lowRiskIndicator.size)
+  assert.notEqual(highRiskIndicator.color, lowRiskIndicator.color)
+  assert.equal(missingIndicator.scored, false)
+  assert.equal(missingIndicator.color, "#64748b")
+  assert.equal(missingIndicator.size, 34)
+  assert.notEqual(highRiskIndicator.size, peerR19.size)
+  assert.notEqual(highRiskIndicator.color, peerR19.color)
 
-  const cambriconTechnology = cambriconLayout.zones.find(
-    (zone) => zone.id === "category:技术风险"
+  assert.equal(riskHeatColor(null), "#64748b")
+  assert.equal(riskHeatColor(0), "#22d3ee")
+  assert.equal(riskHeatColor(50), "#facc15")
+  assert.equal(riskHeatColor(100), "#ef4444")
+})
+
+test("every Cytoscape relationship resolves to a visible node", () => {
+  const focus = selectIndustryRiskGraph(graph, "star-688256")
+  const elements = buildIndustryRiskCytoscapeElements(focus)
+  const nodes = new Set(
+    elements
+      .map((element) => element.data)
+      .filter((data) => "entityId" in data)
+      .map((data) => data.id)
   )
-  const peerTechnology = highRiskLayout.zones.find(
-    (zone) => zone.id === "category:技术风险"
-  )
-  assert.equal(cambriconTechnology?.score, 31.48)
-  assert.equal(peerTechnology?.score, 67.59)
+  const edges = elements
+    .map((element) => element.data)
+    .filter(
+      (data): data is Extract<
+        (typeof elements)[number]["data"],
+        { source: string }
+      > => "source" in data
+    )
   assert.ok(
-    (peerTechnology?.radiusX ?? 0) > (cambriconTechnology?.radiusX ?? 0)
+    edges.every((edge) => nodes.has(edge.source) && nodes.has(edge.target))
   )
+})
 
-  const cambriconR19 = cambriconLayout.nodes.find(
-    (node) => node.id === "indicator:R19"
-  )
-  const peerR19 = highRiskLayout.nodes.find(
-    (node) => node.id === "indicator:R19"
-  )
-  assert.notDeepEqual(
-    { x: cambriconR19?.x, y: cambriconR19?.y },
-    { x: peerR19?.x, y: peerR19?.y }
-  )
+test("all 37 companies produce distinct risk-driven visual signatures", () => {
+  const signatures = graph.nodes
+    .filter((node) => node.kind === "company")
+    .map((company) => {
+      const focus = selectIndustryRiskGraph(graph, company.entityId)
+      return buildIndustryRiskCytoscapeElements(focus)
+        .map((element) => element.data)
+        .filter(
+          (data): data is IndustryRiskCytoscapeNodeData =>
+            "entityId" in data && data.kind === "indicator"
+        )
+        .map((indicator) =>
+          indicator.score === null
+            ? `${indicator.entityId}:missing`
+            : `${indicator.entityId}:${indicator.size}:${indicator.color}`
+        )
+        .join("|")
+    })
+
+  assert.equal(signatures.length, 37)
+  assert.equal(new Set(signatures).size, 37)
 })

@@ -7488,6 +7488,21 @@
   line-height: 1.7;
 }
 
+.industry-graph-toolbar {
+  display: flex;
+  max-width: 410px;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.industry-graph-toolbar button {
+  min-height: 36px;
+  border-color: color-mix(in oklch, var(--brand) 24%, var(--reading-border));
+  background: color-mix(in oklch, var(--glass-floating-bg) 84%, transparent);
+}
+
 .industry-graph-summary {
   display: flex;
   min-width: 0;
@@ -7512,217 +7527,78 @@
 .industry-graph-content {
   display: grid;
   min-width: 0;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 290px;
   gap: 15px;
   margin-top: 16px;
 }
 
-.industry-graph-canvas {
+.industry-graph-canvas-shell {
+  position: relative;
   min-width: 0;
-  height: 760px;
-  overflow: auto;
-  border: 1px solid var(--reading-border);
+  height: 780px;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklch, var(--brand) 24%, #1e293b);
   border-radius: 18px;
   background:
-    linear-gradient(
-        color-mix(in oklch, var(--reading-separator) 40%, transparent) 1px,
-        transparent 1px
-      )
-      0 0 / 32px 32px,
-    linear-gradient(
-        90deg,
-        color-mix(in oklch, var(--reading-separator) 40%, transparent) 1px,
-        transparent 1px
-      )
-      0 0 / 32px 32px,
-    color-mix(in oklch, var(--glass-reading-bg) 84%, transparent);
-  scrollbar-color: color-mix(in oklch, var(--brand) 28%, transparent) transparent;
+    radial-gradient(circle at 50% 48%, rgb(30 41 59 / 0.84), transparent 48%),
+    radial-gradient(circle at 8% 0%, rgb(14 165 233 / 0.12), transparent 34%),
+    linear-gradient(rgb(148 163 184 / 0.045) 1px, transparent 1px) 0 0 / 34px
+      34px,
+    linear-gradient(90deg, rgb(148 163 184 / 0.045) 1px, transparent 1px) 0 0 /
+      34px 34px,
+    #07111f;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.06),
+    inset 0 0 80px rgb(2 6 23 / 0.5);
+  isolation: isolate;
 }
 
-.industry-graph-canvas svg {
-  display: block;
+.industry-graph-cytoscape {
   width: 100%;
-  min-width: 760px;
-  height: auto;
-  min-height: 100%;
-  margin: 0 auto;
+  height: 100%;
+  touch-action: none;
 }
 
-.industry-graph-zones ellipse {
-  fill: color-mix(in oklch, var(--text-soft) 5%, transparent);
-  stroke: color-mix(in oklch, var(--text-soft) 18%, transparent);
-  stroke-width: 1.5;
-  stroke-dasharray: 6 8;
-  vector-effect: non-scaling-stroke;
-}
-
-.industry-graph-zones ellipse[data-scored="true"] {
-  fill: color-mix(in oklch, var(--graph-risk-color) 17%, transparent);
-  stroke: color-mix(in oklch, var(--graph-risk-color) 44%, transparent);
-  stroke-dasharray: none;
-}
-
-.industry-graph-edges line {
-  stroke: color-mix(in oklch, var(--text-soft) 38%, transparent);
-  stroke-width: 1.1;
-  opacity: 0.15;
-  vector-effect: non-scaling-stroke;
-  transition: opacity var(--motion-fast) var(--ease-fluid);
-}
-
-.industry-graph-edges line[data-kind="hierarchy"] {
-  stroke: color-mix(in oklch, var(--brand) 65%, transparent);
-  stroke-width: 1.8;
-  opacity: 0.32;
-}
-
-.industry-graph-edges line[data-kind="provenance"] {
-  stroke: color-mix(in oklch, var(--accent-cyan) 56%, transparent);
-}
-
-.industry-graph-edges line[data-kind="event-link"] {
-  stroke: color-mix(in oklch, var(--danger) 58%, transparent);
-}
-
-.industry-graph-edges line[data-scored="true"] {
-  stroke: color-mix(in oklch, var(--graph-risk-color) 62%, transparent);
-  stroke-width: 1.55;
-  opacity: 0.34;
-}
-
-.industry-graph-edges line[data-kind="hierarchy"][data-scored="true"] {
-  stroke-width: 2.1;
-  opacity: 0.5;
-}
-
-.industry-graph-edges line[data-active="true"] {
-  stroke-width: 2.5;
-  opacity: 0.92;
-}
-
-.industry-graph-edges line[data-dimmed="true"] {
-  opacity: 0.025;
-}
-
-.industry-graph-node {
-  cursor: pointer;
-  outline: none;
-  transform-box: view-box;
-  transform-origin: 0 0;
-  transition:
-    opacity var(--motion-fast) var(--ease-fluid),
-    transform 560ms var(--ease-fluid);
-}
-
-.industry-graph-node rect,
-.industry-graph-node circle {
-  fill: color-mix(in oklch, var(--glass-floating-bg) 90%, var(--background));
-  stroke: var(--reading-border);
-  stroke-width: 2;
-  vector-effect: non-scaling-stroke;
-  transition:
-    fill var(--motion-fast) var(--ease-fluid),
-    stroke var(--motion-fast) var(--ease-fluid),
-    stroke-width var(--motion-fast) var(--ease-fluid);
-}
-
-.industry-graph-node text {
+.industry-graph-canvas-hint {
+  position: absolute;
+  right: 14px;
+  bottom: 12px;
+  z-index: 4;
+  padding: 6px 9px;
+  border: 1px solid rgb(148 163 184 / 0.16);
+  border-radius: 999px;
+  background: rgb(2 6 23 / 0.72);
+  color: rgb(203 213 225 / 0.82);
+  font-size: 9px;
   pointer-events: none;
-  fill: var(--text-strong);
-  font-size: 17px;
-  font-weight: 680;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
 
-.industry-graph-node .industry-graph-node-score {
-  fill: color-mix(in oklch, var(--text-strong) 88%, var(--graph-risk-color));
+.industry-graph-engine-error {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  background: rgb(2 6 23 / 0.88);
+  color: #fecaca;
   font-size: 12px;
-  font-weight: 790;
-  letter-spacing: 0.01em;
+  text-align: center;
 }
 
-.industry-graph-node[data-kind="company"] rect {
-  fill: color-mix(in oklch, var(--brand-soft) 62%, var(--glass-floating-bg));
-  stroke: color-mix(in oklch, var(--brand) 58%, var(--border));
-}
-
-.industry-graph-node[data-kind="category"] rect {
-  fill: color-mix(in oklch, var(--accent-amber) 15%, var(--glass-floating-bg));
-  stroke: color-mix(in oklch, var(--accent-amber) 62%, var(--border));
-}
-
-.industry-graph-node[data-kind="company"][data-tone="critical"] rect {
-  fill: color-mix(in oklch, var(--danger-bg) 74%, var(--glass-floating-bg));
-  stroke: var(--danger);
-}
-
-.industry-graph-node[data-kind="company"][data-tone="high"] rect {
-  fill: color-mix(in oklch, var(--warning-bg) 72%, var(--glass-floating-bg));
-  stroke: var(--warning);
-}
-
-.industry-graph-node[data-kind="indicator"] rect {
-  fill: color-mix(in oklch, var(--accent-violet) 11%, var(--glass-floating-bg));
-  stroke: color-mix(in oklch, var(--accent-violet) 52%, var(--border));
-}
-
-.industry-graph-node[data-kind="source"] circle {
-  fill: var(--accent-cyan);
-  stroke: color-mix(in oklch, white 72%, var(--accent-cyan));
-}
-
-.industry-graph-node[data-kind="event"] circle {
-  fill: var(--danger);
-  stroke: color-mix(in oklch, white 72%, var(--danger));
-}
-
-.industry-graph-node[data-scored="true"] rect {
-  fill: color-mix(
-    in oklch,
-    var(--graph-risk-color) 54%,
-    var(--glass-floating-bg)
-  );
-  stroke: color-mix(in oklch, var(--graph-risk-color) 88%, var(--text-strong));
-  filter: drop-shadow(
-    0 7px 13px color-mix(in oklch, var(--graph-risk-color) 22%, transparent)
-  );
-}
-
-.industry-graph-node[data-kind="indicator"][data-scored="false"] rect {
-  fill: color-mix(in oklch, var(--text-soft) 8%, var(--glass-floating-bg));
-  stroke: color-mix(in oklch, var(--text-soft) 38%, var(--border));
-  stroke-dasharray: 5 4;
-}
-
-.industry-graph-node[data-kind="event"][data-tone="low"] circle {
-  fill: var(--accent-cyan);
-  stroke: color-mix(in oklch, white 72%, var(--accent-cyan));
-}
-
-.industry-graph-node[data-kind="event"][data-tone="medium"] circle {
-  fill: var(--accent-amber);
-  stroke: color-mix(in oklch, white 72%, var(--accent-amber));
-}
-
-.industry-graph-node[data-kind="event"][data-tone="high"] circle {
-  fill: var(--warning);
-  stroke: color-mix(in oklch, white 72%, var(--warning));
-}
-
-.industry-graph-node[data-selected="true"] rect,
-.industry-graph-node[data-selected="true"] circle,
-.industry-graph-node:focus-visible rect,
-.industry-graph-node:focus-visible circle {
-  stroke: var(--text-strong);
-  stroke-width: 4;
-}
-
-.industry-graph-node[data-dimmed="true"] {
-  opacity: 0.12;
+.industry-graph-engine-error svg {
+  width: 20px;
+  height: 20px;
 }
 
 .industry-graph-inspector {
   min-width: 0;
-  max-height: 300px;
+  height: 780px;
+  max-height: 780px;
   overflow: auto;
   padding: 18px;
   border: 1px solid var(--reading-border);
@@ -7824,25 +7700,32 @@
 .industry-graph-legend > span::before {
   width: 8px;
   height: 8px;
-  border-radius: 3px;
+  border-radius: 999px;
   background: var(--brand);
   content: "";
 }
 
 .industry-graph-legend > span[data-kind="source"]::before {
   background: var(--accent-cyan);
+  border-radius: 1px;
+  transform: rotate(45deg);
 }
 
 .industry-graph-legend > span[data-kind="category"]::before {
-  background: var(--accent-amber);
+  box-sizing: border-box;
+  border: 1px dashed var(--text-soft);
+  border-radius: 3px;
+  background: transparent;
 }
 
 .industry-graph-legend > span[data-kind="indicator"]::before {
-  background: var(--accent-violet);
+  background: linear-gradient(135deg, #22d3ee, #facc15, #ef4444);
 }
 
 .industry-graph-legend > span[data-kind="event"]::before {
   background: var(--danger);
+  border-radius: 2px;
+  clip-path: polygon(25% 7%, 75% 7%, 100% 50%, 75% 93%, 25% 93%, 0 50%);
 }
 
 .industry-graph-heat-legend {
@@ -7899,15 +7782,21 @@
     flex-direction: column;
   }
 
+  .industry-graph-toolbar {
+    max-width: none;
+    justify-content: flex-start;
+  }
+
   .industry-graph-content {
     grid-template-columns: 1fr;
   }
 
-  .industry-graph-canvas {
+  .industry-graph-canvas-shell {
     height: 620px;
   }
 
   .industry-graph-inspector {
+    height: auto;
     max-height: none;
   }
 
@@ -7936,8 +7825,12 @@
     padding: 16px;
   }
 
-  .industry-graph-canvas {
+  .industry-graph-canvas-shell {
     height: 540px;
+  }
+
+  .industry-graph-toolbar button {
+    flex: 1 1 calc(50% - 7px);
   }
 }
 
