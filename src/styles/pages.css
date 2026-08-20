@@ -7548,6 +7548,20 @@
   margin: 0 auto;
 }
 
+.industry-graph-zones ellipse {
+  fill: color-mix(in oklch, var(--text-soft) 5%, transparent);
+  stroke: color-mix(in oklch, var(--text-soft) 18%, transparent);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 8;
+  vector-effect: non-scaling-stroke;
+}
+
+.industry-graph-zones ellipse[data-scored="true"] {
+  fill: color-mix(in oklch, var(--graph-risk-color) 17%, transparent);
+  stroke: color-mix(in oklch, var(--graph-risk-color) 44%, transparent);
+  stroke-dasharray: none;
+}
+
 .industry-graph-edges line {
   stroke: color-mix(in oklch, var(--text-soft) 38%, transparent);
   stroke-width: 1.1;
@@ -7570,6 +7584,17 @@
   stroke: color-mix(in oklch, var(--danger) 58%, transparent);
 }
 
+.industry-graph-edges line[data-scored="true"] {
+  stroke: color-mix(in oklch, var(--graph-risk-color) 62%, transparent);
+  stroke-width: 1.55;
+  opacity: 0.34;
+}
+
+.industry-graph-edges line[data-kind="hierarchy"][data-scored="true"] {
+  stroke-width: 2.1;
+  opacity: 0.5;
+}
+
 .industry-graph-edges line[data-active="true"] {
   stroke-width: 2.5;
   opacity: 0.92;
@@ -7582,7 +7607,11 @@
 .industry-graph-node {
   cursor: pointer;
   outline: none;
-  transition: opacity var(--motion-fast) var(--ease-fluid);
+  transform-box: view-box;
+  transform-origin: 0 0;
+  transition:
+    opacity var(--motion-fast) var(--ease-fluid),
+    transform 560ms var(--ease-fluid);
 }
 
 .industry-graph-node rect,
@@ -7602,6 +7631,13 @@
   fill: var(--text-strong);
   font-size: 17px;
   font-weight: 680;
+}
+
+.industry-graph-node .industry-graph-node-score {
+  fill: color-mix(in oklch, var(--text-strong) 88%, var(--graph-risk-color));
+  font-size: 12px;
+  font-weight: 790;
+  letter-spacing: 0.01em;
 }
 
 .industry-graph-node[data-kind="company"] rect {
@@ -7637,6 +7673,39 @@
 .industry-graph-node[data-kind="event"] circle {
   fill: var(--danger);
   stroke: color-mix(in oklch, white 72%, var(--danger));
+}
+
+.industry-graph-node[data-scored="true"] rect {
+  fill: color-mix(
+    in oklch,
+    var(--graph-risk-color) 54%,
+    var(--glass-floating-bg)
+  );
+  stroke: color-mix(in oklch, var(--graph-risk-color) 88%, var(--text-strong));
+  filter: drop-shadow(
+    0 7px 13px color-mix(in oklch, var(--graph-risk-color) 22%, transparent)
+  );
+}
+
+.industry-graph-node[data-kind="indicator"][data-scored="false"] rect {
+  fill: color-mix(in oklch, var(--text-soft) 8%, var(--glass-floating-bg));
+  stroke: color-mix(in oklch, var(--text-soft) 38%, var(--border));
+  stroke-dasharray: 5 4;
+}
+
+.industry-graph-node[data-kind="event"][data-tone="low"] circle {
+  fill: var(--accent-cyan);
+  stroke: color-mix(in oklch, white 72%, var(--accent-cyan));
+}
+
+.industry-graph-node[data-kind="event"][data-tone="medium"] circle {
+  fill: var(--accent-amber);
+  stroke: color-mix(in oklch, white 72%, var(--accent-amber));
+}
+
+.industry-graph-node[data-kind="event"][data-tone="high"] circle {
+  fill: var(--warning);
+  stroke: color-mix(in oklch, white 72%, var(--warning));
 }
 
 .industry-graph-node[data-selected="true"] rect,
@@ -7776,6 +7845,38 @@
   background: var(--danger);
 }
 
+.industry-graph-heat-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 5px;
+  color: var(--text-soft);
+}
+
+.industry-graph-heat-legend i {
+  width: 112px;
+  height: 9px;
+  border: 1px solid color-mix(in oklch, var(--text-soft) 24%, transparent);
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    hsl(198 82% 48%),
+    hsl(44 88% 51%),
+    hsl(5 82% 48%)
+  );
+  box-shadow: inset 0 1px 2px color-mix(in oklch, black 12%, transparent);
+}
+
+.industry-graph-heat-legend b {
+  color: var(--text-body);
+  font-weight: 700;
+}
+
+.industry-graph-heat-legend small {
+  color: var(--text-soft);
+  font-size: inherit;
+}
+
 .industry-graph-legend > p {
   display: inline-flex;
   align-items: center;
@@ -7822,6 +7923,11 @@
   .industry-graph-legend > p {
     width: 100%;
     margin-left: 0;
+  }
+
+  .industry-graph-heat-legend {
+    width: 100%;
+    flex-wrap: wrap;
   }
 }
 

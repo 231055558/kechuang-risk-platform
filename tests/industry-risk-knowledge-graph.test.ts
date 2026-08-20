@@ -53,6 +53,15 @@ test("company focus is complete but contains no other enterprise", () => {
     focus.nodes.find((node) => node.id === "indicator:R19")?.score,
     93.06
   )
+  assert.equal(
+    focus.nodes.find((node) => node.id === "category:叙事风险（主观校验项，不直接计入总权重）")
+      ?.score,
+    null
+  )
+  assert.equal(
+    focus.nodes.find((node) => node.id === "category:技术风险")?.score,
+    31.48
+  )
   assert.ok(
     focus.nodes.every(
       (node) => node.kind !== "company" || node.entityId === "star-688256"
@@ -66,13 +75,55 @@ test("focused radial graph layout is deterministic and bounded", () => {
   const second = buildIndustryRiskGraphLayout(focus)
   assert.deepEqual(first, second)
   assert.equal(first.nodes.length, focus.nodes.length)
+  assert.equal(first.zones.length, 6)
   assert.ok(
     first.nodes.every(
       (node) =>
-        node.x >= 0 &&
-        node.x <= first.width &&
-        node.y >= 0 &&
-        node.y <= first.height
+        node.x - node.width / 2 >= 0 &&
+        node.x + node.width / 2 <= first.width &&
+        node.y - node.height / 2 >= 0 &&
+        node.y + node.height / 2 <= first.height
     )
+  )
+})
+
+test("risk intensity changes graph area, heat zones, and company layout", () => {
+  const cambricon = selectIndustryRiskGraph(graph, "star-688256")
+  const highRiskPeer = selectIndustryRiskGraph(graph, "star-688213")
+  const cambriconLayout = buildIndustryRiskGraphLayout(cambricon)
+  const highRiskLayout = buildIndustryRiskGraphLayout(highRiskPeer)
+
+  const lowRiskIndicator = cambriconLayout.nodes.find(
+    (node) => node.id === "indicator:R05"
+  )
+  const highRiskIndicator = cambriconLayout.nodes.find(
+    (node) => node.id === "indicator:R19"
+  )
+  assert.ok(lowRiskIndicator)
+  assert.ok(highRiskIndicator)
+  assert.ok(highRiskIndicator.width > lowRiskIndicator.width)
+  assert.ok(highRiskIndicator.height > lowRiskIndicator.height)
+
+  const cambriconTechnology = cambriconLayout.zones.find(
+    (zone) => zone.id === "category:技术风险"
+  )
+  const peerTechnology = highRiskLayout.zones.find(
+    (zone) => zone.id === "category:技术风险"
+  )
+  assert.equal(cambriconTechnology?.score, 31.48)
+  assert.equal(peerTechnology?.score, 67.59)
+  assert.ok(
+    (peerTechnology?.radiusX ?? 0) > (cambriconTechnology?.radiusX ?? 0)
+  )
+
+  const cambriconR19 = cambriconLayout.nodes.find(
+    (node) => node.id === "indicator:R19"
+  )
+  const peerR19 = highRiskLayout.nodes.find(
+    (node) => node.id === "indicator:R19"
+  )
+  assert.notDeepEqual(
+    { x: cambriconR19?.x, y: cambriconR19?.y },
+    { x: peerR19?.x, y: peerR19?.y }
   )
 })
