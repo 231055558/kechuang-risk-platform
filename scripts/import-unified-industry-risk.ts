@@ -378,6 +378,7 @@ export function importUnifiedIndustryRisk(
     supplementaryObservations,
     deepSearchEvents,
     reportAvailability,
+    bonusDefinitions: [],
   }
   return assertIndustryRiskDataset(dataset)
 }

@@ -10,6 +10,7 @@ import {
   RefreshCwIcon,
 } from "lucide-react"
 
+import { IndustryRiskKnowledgeGraph } from "@/components/dashboard/industry-risk-knowledge-graph"
 import { GlassPanel } from "@/components/dashboard/shared"
 import { Reveal } from "@/components/motion/workflow-transition"
 import { Badge } from "@/components/ui/badge"
@@ -207,82 +208,91 @@ export function IndustryRiskReviewPanel({ companyId }: { companyId: string }) {
     rankedCompanies.findIndex((company) => company.companyId === companyId) + 1
 
   return (
-    <Reveal>
-      <GlassPanel
-        className="industry-risk-workspace"
-        surfaceClassName="industry-risk-workspace-glass"
-        variant="floating"
-        aria-labelledby="industry-risk-title"
-      >
-        <header className="industry-risk-header">
-          <div>
-            <span className="eyebrow">最新公式 · R01–R22 同业基准</span>
-            <h2 id="industry-risk-title">
-              {selectedSummary?.companyName ?? "当前企业"}风险基准
-            </h2>
-            <p>
-              当前企业是主视图；行业样本只用于风险分位、CRITIC权重和排名参考，单项缺失不阻断其余指标与总分。
-            </p>
-          </div>
-          <div className="industry-risk-formula-summary">
-            <Badge variant="outline">Aₛₖ = 0.5</Badge>
-            <Badge variant="outline">α = 0.5 · β = 0.5</Badge>
-            <Badge variant="outline">两级 CRITIC</Badge>
-          </div>
-        </header>
+    <>
+      <Reveal>
+        <GlassPanel
+          className="industry-risk-workspace"
+          surfaceClassName="industry-risk-workspace-glass"
+          variant="floating"
+          aria-labelledby="industry-risk-title"
+        >
+          <header className="industry-risk-header">
+            <div>
+              <span className="eyebrow">最新公式 · R01–R22 同业基准</span>
+              <h2 id="industry-risk-title">
+                {selectedSummary?.companyName ?? "当前企业"}风险基准
+              </h2>
+              <p>
+                当前企业是主视图；行业样本只用于风险分位、CRITIC权重和排名参考，单项缺失不阻断其余指标与总分。
+              </p>
+            </div>
+            <div className="industry-risk-formula-summary">
+              <Badge variant="outline">Aₛₖ = 0.5</Badge>
+              <Badge variant="outline">α = 0.5 · β = 0.5</Badge>
+              <Badge variant="outline">两级 CRITIC</Badge>
+            </div>
+          </header>
 
-        <div className="industry-risk-scope-strip">
-          <span>{selectedSummary?.benchmarkGroupLabel ?? "行业基准"}</span>
-          <span>{selectedSummary?.benchmarkSampleSize ?? 0} 家同业样本</span>
-          <span>当前排名 {selectedRank || "—"}</span>
-          <span>R01–R04 仅形成 NRI</span>
-          <Badge variant="outline">数据截至 2026-08-19</Badge>
-        </div>
+          <div className="industry-risk-scope-strip">
+            <span>{selectedSummary?.benchmarkGroupLabel ?? "行业基准"}</span>
+            <span>{selectedSummary?.benchmarkSampleSize ?? 0} 家同业样本</span>
+            <span>当前排名 {selectedRank || "—"}</span>
+            <span>R01–R04 仅形成 NRI</span>
+            <Badge variant="outline">数据截至 2026-08-19</Badge>
+          </div>
 
-        <div className="industry-risk-body">
-          <section className="industry-risk-assessment" aria-live="polite">
-            {assessment.status === "success" ? (
-              <IndustryRiskAssessmentContent response={assessment.value} />
-            ) : assessment.status === "error" ? (
-              <div className="industry-risk-assessment-state" role="alert">
-                <InfoIcon aria-hidden="true" />
-                <p>{assessment.message}</p>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setAssessment({ status: "loading" })
-                    setAssessmentAttempt((value) => value + 1)
-                  }}
+          <div className="industry-risk-body">
+            <section className="industry-risk-assessment" aria-live="polite">
+              {assessment.status === "success" ? (
+                <IndustryRiskAssessmentContent response={assessment.value} />
+              ) : assessment.status === "error" ? (
+                <div className="industry-risk-assessment-state" role="alert">
+                  <InfoIcon aria-hidden="true" />
+                  <p>{assessment.message}</p>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setAssessment({ status: "loading" })
+                      setAssessmentAttempt((value) => value + 1)
+                    }}
+                  >
+                    重新加载
+                  </Button>
+                </div>
+              ) : (
+                <div className="industry-risk-assessment-state" role="status">
+                  <DatabaseZapIcon aria-hidden="true" />
+                  <p>正在读取 {selectedSummary?.companyName ?? "当前企业"}…</p>
+                </div>
+              )}
+            </section>
+          </div>
+          <details className="industry-risk-peer-reference">
+            <summary>
+              <BarChart3Icon aria-hidden="true" />
+              查看行业参考样本（{visibleCompanies.length} 家）
+            </summary>
+            <ol>
+              {rankedCompanies.slice(0, 12).map((company, index) => (
+                <li
+                  key={company.companyId}
+                  data-active={company.companyId === companyId}
                 >
-                  重新加载
-                </Button>
-              </div>
-            ) : (
-              <div className="industry-risk-assessment-state" role="status">
-                <DatabaseZapIcon aria-hidden="true" />
-                <p>正在读取 {selectedSummary?.companyName ?? "当前企业"}…</p>
-              </div>
-            )}
-          </section>
-        </div>
-        <details className="industry-risk-peer-reference">
-          <summary>
-            <BarChart3Icon aria-hidden="true" />
-            查看行业参考样本（{visibleCompanies.length} 家）
-          </summary>
-          <ol>
-            {rankedCompanies.slice(0, 12).map((company, index) => (
-              <li key={company.companyId} data-active={company.companyId === companyId}>
-                <span>{index + 1}</span>
-                <strong>{company.companyName}</strong>
-                <small>{company.stockCode}</small>
-                <b>{company.totalRiskScore ?? "—"}</b>
-              </li>
-            ))}
-          </ol>
-        </details>
-      </GlassPanel>
-    </Reveal>
+                  <span>{index + 1}</span>
+                  <strong>{company.companyName}</strong>
+                  <small>{company.stockCode}</small>
+                  <b>{company.totalRiskScore ?? "—"}</b>
+                </li>
+              ))}
+            </ol>
+          </details>
+        </GlassPanel>
+      </Reveal>
+      <IndustryRiskKnowledgeGraph
+        key={companyId}
+        selectedCompanyId={companyId}
+      />
+    </>
   )
 }
 
@@ -394,7 +404,9 @@ function IndustryRiskAssessmentContent({
               data-tone={scoreTone(aggregate.score)}
             >
               <span>
-                {aggregate.method === "critic" ? "CRITIC 总分" : "熵权稳健性对照"}
+                {aggregate.method === "critic"
+                  ? "CRITIC 总分"
+                  : "熵权稳健性对照"}
               </span>
               <strong>{aggregate.score ?? "—"}</strong>
               <small>{aggregate.note}</small>
@@ -407,8 +419,9 @@ function IndustryRiskAssessmentContent({
               <span>{dimension.label}</span>
               <strong>{dimension.score ?? "—"}</strong>
               <small>
-                {dimension.availableIndicatorCount}/{dimension.totalIndicatorCount}
-                项 · 维度权重 {percentFormatter.format(dimension.weight)}
+                {dimension.availableIndicatorCount}/
+                {dimension.totalIndicatorCount}项 · 维度权重{" "}
+                {percentFormatter.format(dimension.weight)}
               </small>
             </article>
           ))}

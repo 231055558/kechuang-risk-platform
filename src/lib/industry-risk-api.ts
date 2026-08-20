@@ -164,7 +164,9 @@ function isDimensionScore(value: unknown) {
     Number.isInteger(value.availableIndicatorCount) &&
     Number.isInteger(value.totalIndicatorCount) &&
     Array.isArray(value.indicatorIds) &&
-    value.indicatorIds.every((indicatorId) => typeof indicatorId === "string") &&
+    value.indicatorIds.every(
+      (indicatorId) => typeof indicatorId === "string"
+    ) &&
     isRecord(value.indicatorWeights) &&
     (value.status === "scored" || value.status === "missing")
   )
@@ -273,26 +275,18 @@ function isAssessmentResponse(
 }
 
 const graphNodeKinds = new Set([
-  "sector",
-  "segment",
   "company",
+  "category",
   "indicator",
   "source",
   "event",
-  "artifact",
 ])
-const graphEdgeKinds = new Set([
-  "hierarchy",
-  "coverage",
-  "provenance",
-  "event-link",
-  "material",
-])
+const graphEdgeKinds = new Set(["hierarchy", "provenance", "event-link"])
 
 function isKnowledgeGraph(value: unknown): value is IndustryRiskKnowledgeGraph {
   if (
     !isRecord(value) ||
-    value.schemaVersion !== "KCR-INDUSTRY-GRAPH-2026.08-v1" ||
+    value.schemaVersion !== "KCR-INDUSTRY-GRAPH-2026.08-v2" ||
     !Array.isArray(value.nodes) ||
     !Array.isArray(value.edges) ||
     !isRecord(value.counts) ||
@@ -313,6 +307,8 @@ function isKnowledgeGraph(value: unknown): value is IndustryRiskKnowledgeGraph {
         typeof node.label !== "string" ||
         typeof node.caption !== "string" ||
         (node.score !== null && !isFiniteNumber(node.score)) ||
+        !isRecord(node.scoresByCompany) ||
+        !Object.values(node.scoresByCompany).every(isFiniteNumber) ||
         !Array.isArray(node.companyIds) ||
         !node.companyIds.every((id) => typeof id === "string")
       ) {
@@ -353,11 +349,11 @@ function isKnowledgeGraph(value: unknown): value is IndustryRiskKnowledgeGraph {
   return (
     value.counts.nodes === value.nodes.length &&
     value.counts.edges === value.edges.length &&
-    Number.isInteger(value.counts.scoredCompanies) &&
-    Number.isInteger(value.counts.evidenceOnlyCompanies) &&
+    Number.isInteger(value.counts.companies) &&
+    Number.isInteger(value.counts.categories) &&
     Number.isInteger(value.counts.indicators) &&
-    Number.isInteger(value.counts.events) &&
-    Number.isInteger(value.counts.artifacts)
+    Number.isInteger(value.counts.sources) &&
+    Number.isInteger(value.counts.events)
   )
 }
 

@@ -1,5 +1,4 @@
 import unifiedData from "../src/data/industry/r01-r22-unified.json" with { type: "json" }
-import enterpriseEvidenceData from "../src/data/industry/enterprise-evidence-catalog.json" with { type: "json" }
 import {
   buildIndustryRiskKnowledgeGraph,
   scoreIndustryRiskDataset,
@@ -8,17 +7,10 @@ import {
   type IndustryRiskDataset,
   type IndustryRiskEvent,
 } from "../src/domain/industry-risk-v1/index.ts"
-import type { EnterpriseEvidenceCatalog } from "../src/domain/enterprise-evidence-v1/index.ts"
 
 const dataset = unifiedData as IndustryRiskDataset
-const enterpriseEvidenceCatalog =
-  enterpriseEvidenceData as EnterpriseEvidenceCatalog
 const assessments = scoreIndustryRiskDataset(dataset)
-const knowledgeGraph = buildIndustryRiskKnowledgeGraph(
-  dataset,
-  assessments,
-  enterpriseEvidenceCatalog
-)
+const knowledgeGraph = buildIndustryRiskKnowledgeGraph(dataset, assessments)
 
 function getCompanyEvents(companyId: string): IndustryRiskEvent[] {
   const events: IndustryRiskEvent[] = [

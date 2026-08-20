@@ -11,24 +11,22 @@ const graph = getIndustryRiskKnowledgeGraph()
 
 test("industry graph preserves every source dataset relationship class", () => {
   assert.deepEqual(graph.counts, {
-    nodes: 1016,
-    edges: 4783,
-    scoredCompanies: 94,
-    evidenceOnlyCompanies: 6,
+    nodes: 1289,
+    edges: 3291,
+    companies: 94,
+    categories: 6,
     indicators: 22,
-    events: 218,
-    artifacts: 84,
+    sources: 558,
+    events: 609,
   })
   const kinds = graph.edges.reduce<Record<string, number>>((counts, edge) => {
     counts[edge.kind] = (counts[edge.kind] ?? 0) + 1
     return counts
   }, {})
   assert.deepEqual(kinds, {
-    hierarchy: 99,
-    coverage: 2068,
+    hierarchy: 586,
     provenance: 2096,
-    "event-link": 436,
-    material: 84,
+    "event-link": 609,
   })
   const nodeIds = new Set(graph.nodes.map((node) => node.id))
   assert.ok(
@@ -46,7 +44,7 @@ test("company focus keeps only relations belonging to the selected company", () 
     focus.edges.every((edge) => edge.companyIds.includes("star-688256"))
   )
   assert.ok(focus.nodes.some((node) => node.id === "company:star-688256"))
-  assert.ok(focus.nodes.some((node) => node.kind === "artifact"))
+  assert.ok(focus.nodes.some((node) => node.kind === "source"))
 })
 
 test("complete and focused graph layouts are deterministic and bounded", () => {

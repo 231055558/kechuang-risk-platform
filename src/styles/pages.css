@@ -7296,6 +7296,7 @@
 
 .industry-risk-assessment {
   min-width: 0;
+  margin-top: 22px;
 }
 
 .industry-risk-assessment-state,
@@ -7373,7 +7374,7 @@
 .industry-risk-candidate-scores {
   display: grid;
   min-width: 250px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   overflow: hidden;
   border: 1px solid var(--reading-border);
   border-radius: 15px;
@@ -7517,6 +7518,25 @@
   font-variant-numeric: tabular-nums;
 }
 
+.industry-risk-method-brief {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 11px 13px;
+  border: 1px solid color-mix(in oklch, var(--brand) 24%, var(--reading-border));
+  border-radius: 12px;
+  background: color-mix(in oklch, var(--brand-soft) 26%, transparent);
+  color: var(--text-soft);
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.industry-risk-method-brief strong {
+  flex: 0 0 auto;
+  color: var(--brand-strong);
+}
+
 .industry-risk-metric-grid {
   display: grid;
   min-width: 0;
@@ -7550,8 +7570,11 @@
 .industry-risk-metric-title {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
+}
+
+.industry-risk-metric-title svg {
+  margin-left: auto;
 }
 
 .industry-risk-metric-title svg {
@@ -7636,6 +7659,165 @@
   margin: 7px 0 0;
 }
 
+.industry-risk-metric-grid details a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 7px;
+  color: var(--brand-strong);
+  font-weight: 680;
+}
+
+.industry-risk-metric-grid details a svg {
+  width: 11px;
+  height: 11px;
+}
+
+.industry-risk-context-grid {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(230px, 0.8fr) minmax(0, 1.2fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.industry-risk-report-card,
+.industry-risk-supplementary-card,
+.industry-risk-bonus-definitions {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--reading-border);
+  border-radius: 14px;
+  background: color-mix(in oklch, var(--glass-reading-bg) 70%, transparent);
+}
+
+.industry-risk-report-card > strong {
+  display: block;
+  margin-top: 13px;
+  color: var(--text-strong);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.industry-risk-report-card > p,
+.industry-risk-report-card > small,
+.industry-risk-supplementary-card > p,
+.industry-risk-bonus-definitions > p {
+  display: block;
+  margin: 7px 0 0;
+  color: var(--text-soft);
+  font-size: 11px;
+  line-height: 1.65;
+}
+
+.industry-risk-report-card > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 12px;
+  color: var(--brand-strong);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.industry-risk-report-card > a svg {
+  width: 12px;
+  height: 12px;
+}
+
+.industry-risk-supplementary-card ul,
+.industry-risk-bonus-definitions ul {
+  display: grid;
+  gap: 0;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.industry-risk-supplementary-card ul {
+  max-height: 280px;
+  overflow: auto;
+}
+
+.industry-risk-supplementary-card li {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 14px;
+  padding: 9px 0;
+  border-top: 1px solid var(--reading-separator);
+}
+
+.industry-risk-supplementary-card li > div {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.industry-risk-supplementary-card li span,
+.industry-risk-supplementary-card li small,
+.industry-risk-bonus-definitions li span,
+.industry-risk-bonus-definitions li small {
+  color: var(--text-soft);
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.industry-risk-supplementary-card li strong,
+.industry-risk-bonus-definitions li strong {
+  color: var(--text-strong);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.industry-risk-supplementary-card li > b {
+  align-self: center;
+  color: var(--brand-strong);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.industry-risk-supplementary-card li > small {
+  grid-column: 1 / -1;
+}
+
+.industry-risk-supplementary-card li > a {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  color: var(--brand-strong);
+  font-size: 10px;
+  line-height: 1.45;
+  text-align: right;
+}
+
+.industry-risk-supplementary-card li > a svg {
+  width: 11px;
+  height: 11px;
+  flex: 0 0 auto;
+}
+
+.industry-risk-bonus-definitions {
+  margin-top: 10px;
+  color: var(--text-soft);
+  font-size: 11px;
+}
+
+.industry-risk-bonus-definitions summary {
+  color: var(--brand-strong);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.industry-risk-bonus-definitions li {
+  display: grid;
+  gap: 3px;
+  padding: 9px 0;
+  border-top: 1px solid var(--reading-separator);
+}
+
 .industry-risk-method-note {
   display: flex;
   align-items: flex-start;
@@ -7715,6 +7897,10 @@
   }
 
   .industry-risk-body {
+    grid-template-columns: 1fr;
+  }
+
+  .industry-risk-context-grid {
     grid-template-columns: 1fr;
   }
 
@@ -7813,17 +7999,6 @@
   line-height: 1.7;
 }
 
-.industry-graph-mode-controls {
-  display: flex;
-  flex: 0 0 auto;
-  gap: 8px;
-}
-
-.industry-graph-mode-controls [data-slot="button"] {
-  min-height: 42px;
-  border-radius: 12px;
-}
-
 .industry-graph-summary {
   display: flex;
   min-width: 0;
@@ -7848,7 +8023,7 @@
 .industry-graph-content {
   display: grid;
   min-width: 0;
-  grid-template-columns: minmax(0, 1fr) 280px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 15px;
   margin-top: 16px;
 }
@@ -7877,10 +8052,25 @@
 
 .industry-graph-canvas svg {
   display: block;
-  width: 1420px;
+  width: 100%;
+  min-width: 760px;
   height: auto;
   min-height: 100%;
   margin: 0 auto;
+}
+
+.industry-graph-zones ellipse {
+  fill: color-mix(in oklch, var(--text-soft) 5%, transparent);
+  stroke: color-mix(in oklch, var(--text-soft) 18%, transparent);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 8;
+  vector-effect: non-scaling-stroke;
+}
+
+.industry-graph-zones ellipse[data-scored="true"] {
+  fill: color-mix(in oklch, var(--graph-risk-color) 17%, transparent);
+  stroke: color-mix(in oklch, var(--graph-risk-color) 44%, transparent);
+  stroke-dasharray: none;
 }
 
 .industry-graph-edges line {
@@ -7897,10 +8087,6 @@
   opacity: 0.32;
 }
 
-.industry-graph-edges line[data-kind="coverage"] {
-  stroke: color-mix(in oklch, var(--accent-violet) 54%, transparent);
-}
-
 .industry-graph-edges line[data-kind="provenance"] {
   stroke: color-mix(in oklch, var(--accent-cyan) 56%, transparent);
 }
@@ -7909,8 +8095,15 @@
   stroke: color-mix(in oklch, var(--danger) 58%, transparent);
 }
 
-.industry-graph-edges line[data-kind="material"] {
-  stroke: color-mix(in oklch, var(--success) 48%, transparent);
+.industry-graph-edges line[data-scored="true"] {
+  stroke: color-mix(in oklch, var(--graph-risk-color) 62%, transparent);
+  stroke-width: 1.55;
+  opacity: 0.34;
+}
+
+.industry-graph-edges line[data-kind="hierarchy"][data-scored="true"] {
+  stroke-width: 2.1;
+  opacity: 0.5;
 }
 
 .industry-graph-edges line[data-active="true"] {
@@ -7925,7 +8118,11 @@
 .industry-graph-node {
   cursor: pointer;
   outline: none;
-  transition: opacity var(--motion-fast) var(--ease-fluid);
+  transform-box: view-box;
+  transform-origin: 0 0;
+  transition:
+    opacity var(--motion-fast) var(--ease-fluid),
+    transform 560ms var(--ease-fluid);
 }
 
 .industry-graph-node rect,
@@ -7947,19 +8144,21 @@
   font-weight: 680;
 }
 
-.industry-graph-node[data-kind="sector"] rect {
-  fill: color-mix(in oklch, var(--brand) 16%, var(--glass-floating-bg));
-  stroke: color-mix(in oklch, var(--brand) 72%, var(--border));
-}
-
-.industry-graph-node[data-kind="segment"] rect {
-  fill: color-mix(in oklch, var(--accent-cyan) 13%, var(--glass-floating-bg));
-  stroke: color-mix(in oklch, var(--accent-cyan) 60%, var(--border));
+.industry-graph-node .industry-graph-node-score {
+  fill: color-mix(in oklch, var(--text-strong) 88%, var(--graph-risk-color));
+  font-size: 12px;
+  font-weight: 790;
+  letter-spacing: 0.01em;
 }
 
 .industry-graph-node[data-kind="company"] rect {
   fill: color-mix(in oklch, var(--brand-soft) 62%, var(--glass-floating-bg));
   stroke: color-mix(in oklch, var(--brand) 58%, var(--border));
+}
+
+.industry-graph-node[data-kind="category"] rect {
+  fill: color-mix(in oklch, var(--accent-amber) 15%, var(--glass-floating-bg));
+  stroke: color-mix(in oklch, var(--accent-amber) 62%, var(--border));
 }
 
 .industry-graph-node[data-kind="company"][data-tone="critical"] rect {
@@ -7987,9 +8186,37 @@
   stroke: color-mix(in oklch, white 72%, var(--danger));
 }
 
-.industry-graph-node[data-kind="artifact"] circle {
-  fill: var(--success);
-  stroke: color-mix(in oklch, white 72%, var(--success));
+.industry-graph-node[data-scored="true"] rect {
+  fill: color-mix(
+    in oklch,
+    var(--graph-risk-color) 54%,
+    var(--glass-floating-bg)
+  );
+  stroke: color-mix(in oklch, var(--graph-risk-color) 88%, var(--text-strong));
+  filter: drop-shadow(
+    0 7px 13px color-mix(in oklch, var(--graph-risk-color) 22%, transparent)
+  );
+}
+
+.industry-graph-node[data-kind="indicator"][data-scored="false"] rect {
+  fill: color-mix(in oklch, var(--text-soft) 8%, var(--glass-floating-bg));
+  stroke: color-mix(in oklch, var(--text-soft) 38%, var(--border));
+  stroke-dasharray: 5 4;
+}
+
+.industry-graph-node[data-kind="event"][data-tone="low"] circle {
+  fill: var(--accent-cyan);
+  stroke: color-mix(in oklch, white 72%, var(--accent-cyan));
+}
+
+.industry-graph-node[data-kind="event"][data-tone="medium"] circle {
+  fill: var(--accent-amber);
+  stroke: color-mix(in oklch, white 72%, var(--accent-amber));
+}
+
+.industry-graph-node[data-kind="event"][data-tone="high"] circle {
+  fill: var(--warning);
+  stroke: color-mix(in oklch, white 72%, var(--warning));
 }
 
 .industry-graph-node[data-selected="true"] rect,
@@ -8006,7 +8233,7 @@
 
 .industry-graph-inspector {
   min-width: 0;
-  max-height: 760px;
+  max-height: 300px;
   overflow: auto;
   padding: 18px;
   border: 1px solid var(--reading-border);
@@ -8076,7 +8303,7 @@
 
 .industry-graph-inspector-empty {
   display: flex;
-  min-height: 240px;
+  min-height: 140px;
   align-items: center;
   justify-content: center;
   flex-direction: column;
@@ -8113,9 +8340,12 @@
   content: "";
 }
 
-.industry-graph-legend > span[data-kind="segment"]::before,
 .industry-graph-legend > span[data-kind="source"]::before {
   background: var(--accent-cyan);
+}
+
+.industry-graph-legend > span[data-kind="category"]::before {
+  background: var(--accent-amber);
 }
 
 .industry-graph-legend > span[data-kind="indicator"]::before {
@@ -8126,8 +8356,36 @@
   background: var(--danger);
 }
 
-.industry-graph-legend > span[data-kind="artifact"]::before {
-  background: var(--success);
+.industry-graph-heat-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 5px;
+  color: var(--text-soft);
+}
+
+.industry-graph-heat-legend i {
+  width: 112px;
+  height: 9px;
+  border: 1px solid color-mix(in oklch, var(--text-soft) 24%, transparent);
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    hsl(198 82% 48%),
+    hsl(44 88% 51%),
+    hsl(5 82% 48%)
+  );
+  box-shadow: inset 0 1px 2px color-mix(in oklch, black 12%, transparent);
+}
+
+.industry-graph-heat-legend b {
+  color: var(--text-body);
+  font-weight: 700;
+}
+
+.industry-graph-heat-legend small {
+  color: var(--text-soft);
+  font-size: inherit;
 }
 
 .industry-graph-legend > p {
@@ -8150,14 +8408,6 @@
 
   .industry-graph-header {
     flex-direction: column;
-  }
-
-  .industry-graph-mode-controls {
-    width: 100%;
-  }
-
-  .industry-graph-mode-controls [data-slot="button"] {
-    flex: 1;
   }
 
   .industry-graph-content {
@@ -8184,6 +8434,11 @@
   .industry-graph-legend > p {
     width: 100%;
     margin-left: 0;
+  }
+
+  .industry-graph-heat-legend {
+    width: 100%;
+    flex-wrap: wrap;
   }
 }
 

@@ -53,8 +53,8 @@ test("industry graph client validates all node and edge references", async () =>
       return jsonResponse(getIndustryRiskKnowledgeGraph())
     },
   })
-  assert.equal(graph.counts.nodes, 1016)
-  assert.equal(graph.counts.edges, 4783)
+  assert.equal(graph.counts.nodes, 1289)
+  assert.equal(graph.counts.edges, 3291)
 
   const malformed = structuredClone(graph)
   malformed.edges[0].target = "node:missing"

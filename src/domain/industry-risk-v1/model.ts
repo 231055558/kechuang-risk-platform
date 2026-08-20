@@ -223,6 +223,7 @@ export interface IndustryRiskSupplementaryObservation {
   confidence: number
   confidenceReason: string
   limitations: string
+  affectsScore?: false
 }
 
 export interface IndustryRiskDeepSearchEvent {
@@ -247,6 +248,18 @@ export interface IndustryRiskReportAvailability {
   latestReportTitle: string | null
   latestReportUrl: string | null
   notes: string
+}
+
+export interface IndustryRiskBonusDefinition {
+  id: string
+  name: string
+  definition: string
+  scoringRule: string
+  maxScore: number
+  dataSource: string
+  basis: string
+  affectsScore: false
+  status: "definition-only"
 }
 
 export type IndustryRiskEventKind =
@@ -276,7 +289,8 @@ export interface IndustryRiskDataset {
   screeningHits: IndustryRiskScreeningHit[]
   inquiryEvidence: IndustryRiskInquiryEvidence[]
   litigationEvidence: IndustryRiskLitigationEvidence[]
-  supplementaryObservations?: IndustryRiskSupplementaryObservation[]
-  deepSearchEvents?: IndustryRiskDeepSearchEvent[]
-  reportAvailability?: IndustryRiskReportAvailability[]
+  supplementaryObservations: IndustryRiskSupplementaryObservation[]
+  deepSearchEvents: IndustryRiskDeepSearchEvent[]
+  reportAvailability: IndustryRiskReportAvailability[]
+  bonusDefinitions: IndustryRiskBonusDefinition[]
 }

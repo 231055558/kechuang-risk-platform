@@ -228,7 +228,7 @@ test("industry risk GET endpoints expose the directory and selected assessment",
   const testServer = await startTestServer({
     listIndustryRiskCompanies() {
       return {
-        methodVersion: "IRAWC-MVP-2026.08-v1",
+        methodVersion: "IRAWC-MISSING-AWARE-2026.08-v3",
         companies: [{ companyId: "star-688256", companyName: "寒武纪" }],
       }
     },
@@ -240,7 +240,7 @@ test("industry risk GET endpoints expose the directory and selected assessment",
     },
     getIndustryRiskGraph() {
       return {
-        schemaVersion: "KCR-INDUSTRY-GRAPH-2026.08-v1",
+        schemaVersion: "KCR-INDUSTRY-GRAPH-2026.08-v2",
         nodes: [{ id: "company:star-688256", kind: "company" }],
         edges: [],
       }
@@ -254,7 +254,7 @@ test("industry risk GET endpoints expose the directory and selected assessment",
     assert.equal(directory.status, 200)
     assert.equal(directory.headers.get("cache-control"), "no-store")
     assert.deepEqual(await directory.json(), {
-      methodVersion: "IRAWC-MVP-2026.08-v1",
+      methodVersion: "IRAWC-MISSING-AWARE-2026.08-v3",
       companies: [{ companyId: "star-688256", companyName: "寒武纪" }],
     })
 
@@ -275,7 +275,7 @@ test("industry risk GET endpoints expose the directory and selected assessment",
     )
     assert.equal(graph.status, 200)
     assert.deepEqual(await graph.json(), {
-      schemaVersion: "KCR-INDUSTRY-GRAPH-2026.08-v1",
+      schemaVersion: "KCR-INDUSTRY-GRAPH-2026.08-v2",
       nodes: [{ id: "company:star-688256", kind: "company" }],
       edges: [],
     })
