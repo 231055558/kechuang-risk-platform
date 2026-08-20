@@ -125,10 +125,13 @@ export function OverviewTab({
       right.identifiedAt.localeCompare(left.identifiedAt)
     )[0]
 
-  if (detail.id === "star-688256") {
+  if (detail.id) {
     return (
       <div className="page-stack">
-        <IndustryRiskReviewPanel companyId={detail.id} />
+        <IndustryRiskReviewPanel
+          companyId={detail.id}
+          onNavigate={onNavigate}
+        />
       </div>
     )
   }

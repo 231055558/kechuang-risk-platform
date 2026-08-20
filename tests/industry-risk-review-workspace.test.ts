@@ -10,10 +10,7 @@ const panelSource = readFileSync(
   "utf8"
 )
 const overviewSource = readFileSync(
-  new URL(
-    "../src/components/dashboard/overview-tab.tsx",
-    import.meta.url
-  ),
+  new URL("../src/components/dashboard/overview-tab.tsx", import.meta.url),
   "utf8"
 )
 const graphSource = readFileSync(
@@ -24,24 +21,28 @@ const graphSource = readFileSync(
   "utf8"
 )
 
-test("industry workspace keeps the current company primary and exposes auditable CRITIC detail", () => {
-  assert.match(panelSource, /最新公式 · R01–R22 同业基准/)
-  assert.match(panelSource, /当前企业是主视图/)
-  assert.match(panelSource, /22项指标/)
-  assert.match(panelSource, /风险分基准/)
+test("industry workspace leads with customer conclusions and preserves auditable detail", () => {
+  assert.match(panelSource, /企业风险画像/)
+  assert.match(panelSource, /风险概览/)
+  assert.match(panelSource, /当前最值得关注的风险/)
+  assert.match(panelSource, /数据与方法/)
   assert.match(panelSource, /companyId/)
   assert.match(panelSource, /查看行业参考样本/)
-  assert.match(panelSource, /口径、来源与缺口/)
-  assert.match(panelSource, /缺失不补零/)
+  assert.match(panelSource, /待补充数据/)
+  assert.match(panelSource, /缺失项不补零/)
   assert.match(panelSource, /公式、来源与限制/)
+  assert.doesNotMatch(panelSource, /observation\.textValue/)
+  assert.doesNotMatch(panelSource, /coverage\?\.status \?\? "NA"/)
   assert.match(graphSource, /单企业语义径向图/)
   assert.match(graphSource, /沉浸查看/)
   assert.match(graphSource, /createPortal\(graphContent, document\.body\)/)
   assert.doesNotMatch(graphSource, /完整网络|useState<"full"/)
 })
 
-test("Cambricon MVP mounts the unified industry workspace in its default route", () => {
-  assert.match(overviewSource, /<IndustryRiskReviewPanel companyId=\{detail\.id\}/)
+test("every enterprise mounts the unified industry workspace in its default route", () => {
+  assert.match(overviewSource, /<IndustryRiskReviewPanel/)
+  assert.match(overviewSource, /companyId=\{detail\.id\}/)
+  assert.match(overviewSource, /onNavigate=\{onNavigate\}/)
   assert.doesNotMatch(overviewSource, /KcrV3AssessmentPanel/)
   assert.match(panelSource, /<IndustryRiskKnowledgeGraph/)
 })

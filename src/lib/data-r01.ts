@@ -761,9 +761,7 @@ function buildBaseAssessment(companyId: string): RiskAssessment {
     label: "风险辅助研判指数",
     score: totalRiskScore,
     scoreLabel:
-      totalRiskScore === null
-        ? "数据不足"
-        : `${totalRiskScore.toFixed(2)} 分`,
+      totalRiskScore === null ? "数据不足" : `${totalRiskScore.toFixed(2)} 分`,
     dimensions,
     assessableDimensionCount,
     effectiveEvidenceCoverage: Math.round(
@@ -771,9 +769,7 @@ function buildBaseAssessment(companyId: string): RiskAssessment {
     ),
     indicatorAvailability,
     reviewStatus:
-      totalRiskScore === null
-        ? "insufficient-evidence"
-        : "manual-review",
+      totalRiskScore === null ? "insufficient-evidence" : "manual-review",
     scoreBasisLabel: "指标观测与人工复核",
     reviewedAt: snapshotAt,
     disclaimer:
@@ -1120,8 +1116,9 @@ export function getObservationIndicators(indicatorIds: string[] = []) {
 }
 
 export const tabs: Array<{ value: TabValue; label: string }> = [
-  { value: "overview", label: "风险研判" },
-  { value: "realtime", label: "实时情报" },
+  { value: "overview", label: "风险总览" },
+  { value: "realtime", label: "风险资讯" },
+  { value: "reports", label: "风险报告" },
   { value: "intelligence", label: "企业详情" },
   { value: "compare", label: "对比分析" },
   { value: "events", label: "事件处理" },

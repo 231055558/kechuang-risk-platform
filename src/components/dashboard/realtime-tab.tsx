@@ -221,7 +221,7 @@ export function RealtimeTab({
           className="feed-toolbar"
           surfaceClassName="filter-toolbar-glass"
           variant="floating"
-          aria-label="实时情报筛选"
+          aria-label="风险资讯筛选"
         >
           <div className="feed-search">
             <SearchIcon aria-hidden="true" />
@@ -235,7 +235,7 @@ export function RealtimeTab({
                 setVisibleCount(PAGE_SIZE)
               }}
               placeholder="搜索标题、关键事实、论文、专利、诉讼或来源…"
-              aria-label="搜索实时情报"
+              aria-label="搜索风险资讯"
             />
           </div>
           <div className="feed-filters">
@@ -320,7 +320,7 @@ export function RealtimeTab({
 
         <div className="feed-summary">
           <div className="feed-summary-primary">
-            <span>实时情报流</span>
+            <span>风险资讯</span>
             <strong>{filteredSignals.length} 条</strong>
           </div>
           <time dateTime={data.snapshotAt}>
@@ -490,7 +490,7 @@ export function RealtimeTab({
                       <dd>
                         {selectedIndicatorNames.length > 0
                           ? selectedIndicatorNames.join("、")
-                          : "仅作情报观察，未建立正式指标关联"}
+                          : "仅作资讯观察，未建立正式指标关联"}
                       </dd>
                     </div>
                     <div>

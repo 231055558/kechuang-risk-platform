@@ -44,6 +44,7 @@ type StoredDemoState = {
 const canonicalViews = new Set<TabValue>([
   "overview",
   "realtime",
+  "reports",
   "intelligence",
   "compare",
   "events",

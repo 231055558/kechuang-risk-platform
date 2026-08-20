@@ -110,6 +110,9 @@ const loadOverviewTab = cachedImport(
 const loadRealtimeTab = cachedImport(
   () => import("@/components/dashboard/realtime-tab")
 )
+const loadReportsTab = cachedImport(
+  () => import("@/components/dashboard/risk-reports-tab")
+)
 const loadIntelligenceTab = cachedImport(
   () => import("@/components/dashboard/intelligence-tab")
 )
@@ -123,6 +126,7 @@ const loadEventsTab = cachedImport(
 type ViewComponentRegistry = {
   overview: typeof import("@/components/dashboard/overview-tab").OverviewTab
   realtime: typeof import("@/components/dashboard/realtime-tab").RealtimeTab
+  reports: typeof import("@/components/dashboard/risk-reports-tab").RiskReportsTab
   intelligence: typeof import("@/components/dashboard/intelligence-tab").IntelligenceTab
   compare: typeof import("@/components/dashboard/compare-tab").CompareTab
   events: typeof import("@/components/dashboard/events-tab").EventsTab
@@ -134,6 +138,9 @@ const VIEW_COMPONENT_LOADERS = {
   ),
   realtime: cachedImport(() =>
     loadRealtimeTab().then((module) => module.RealtimeTab)
+  ),
+  reports: cachedImport(() =>
+    loadReportsTab().then((module) => module.RiskReportsTab)
   ),
   intelligence: cachedImport(() =>
     loadIntelligenceTab().then((module) => module.IntelligenceTab)
@@ -158,6 +165,11 @@ const LazyRealtimeTab = lazy(() =>
     default: component,
   }))
 )
+const LazyReportsTab = lazy(() =>
+  VIEW_COMPONENT_LOADERS.reports().then((component) => ({
+    default: component,
+  }))
+)
 const LazyIntelligenceTab = lazy(() =>
   VIEW_COMPONENT_LOADERS.intelligence().then((component) => ({
     default: component,
@@ -177,6 +189,7 @@ const LazyEventsTab = lazy(() =>
 type LazyViewRegistry = {
   overview: typeof LazyOverviewTab
   realtime: typeof LazyRealtimeTab
+  reports: typeof LazyReportsTab
   intelligence: typeof LazyIntelligenceTab
   compare: typeof LazyCompareTab
   events: typeof LazyEventsTab
@@ -185,6 +198,7 @@ type LazyViewRegistry = {
 const INITIAL_LAZY_TABS = {
   overview: LazyOverviewTab,
   realtime: LazyRealtimeTab,
+  reports: LazyReportsTab,
   intelligence: LazyIntelligenceTab,
   compare: LazyCompareTab,
   events: LazyEventsTab,
@@ -357,6 +371,7 @@ function App() {
   const {
     overview: OverviewTab,
     realtime: RealtimeTab,
+    reports: ReportsTab,
     intelligence: IntelligenceTab,
     compare: CompareTab,
     events: EventsTab,
@@ -397,16 +412,12 @@ function App() {
   const assessment =
     runtimeAssessmentRegistry[companyId] ??
     runtimeAssessmentRegistry[defaultCompanyId]
-  const industryAssessmentSummary =
-    companyId === "star-688256"
-      ? {
-          label: "R01–R22 企业风险基准",
-          scoreLabel: "芯片 64 家基准",
-          methodVersion: INDUSTRY_RISK_MVP_METHOD_VERSION,
-          overviewDescription:
-            "当前企业为主视图；行业样本仅用于风险分位、CRITIC权重和排名参考",
-        }
-      : undefined
+  const industryAssessmentSummary = {
+    label: "企业风险基准",
+    scoreLabel: assessment.scoreLabel,
+    methodVersion: INDUSTRY_RISK_MVP_METHOD_VERSION,
+    overviewDescription: "汇总企业风险结论、同业位置、关键事件与可追溯证据",
+  }
   const promotedSignalIdsForCompany = useMemo(
     () => getPromotedSignalIdsForCompany(promotedSignalIds, detail.id),
     [detail.id, promotedSignalIds]
@@ -1021,7 +1032,9 @@ function App() {
       detail={detail}
       assessment={assessment}
       assessmentSummaryOverride={
-        activeView === "overview" ? industryAssessmentSummary : undefined
+        activeView === "overview" || activeView === "reports"
+          ? industryAssessmentSummary
+          : undefined
       }
       companySummaries={runtimeCompanySummaries}
       theme={theme}
@@ -1071,6 +1084,16 @@ function App() {
                   onFocusSignalHandled={handleRealtimeSignalFocusHandled}
                   onCompanyChange={handleRealtimeCompanyChange}
                   onPromote={handlePromoteSignal}
+                />
+              ) : null}
+              {activeView === "reports" ? (
+                <ReportsTab
+                  companyId={companyId}
+                  detail={detail}
+                  onOpenExports={handleOpenExports}
+                  onNavigate={(target) => {
+                    void handleNavigationTarget(target)
+                  }}
                 />
               ) : null}
               {activeView === "intelligence" ? (
