@@ -60,7 +60,7 @@ import {
   realtimeData,
   realtimeSignals,
   riskIndicators,
-} from "@/lib/data"
+} from "@/lib/data-r01"
 import {
   createPromotedSignalKey,
   createInitialDemoState,

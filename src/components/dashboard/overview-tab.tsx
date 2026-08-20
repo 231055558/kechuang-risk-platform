@@ -239,7 +239,7 @@ export function OverviewTab({
                   ? assessment.assessableDimensionCount === 0
                     ? "技术自动评分或人工复核观测待建立"
                     : `仅 ${assessment.assessableDimensionCount}/6 个维度具备评分依据`
-                  : `${assessment.scoreBasisLabel}下的可评估维度等权汇总`
+                  : "R05–R22可用指标经两级CRITIC加权形成，行业仅用于分位基准"
               }
             />
             <AssessmentKpi
@@ -248,9 +248,9 @@ export function OverviewTab({
               note="自动评分或人工观测均须完成证据闭环"
             />
             <AssessmentKpi
-              label="评分证据覆盖率"
+              label="加权指标覆盖率"
               value={`${assessment.effectiveEvidenceCoverage}%`}
-              note="进入评分配对的来源 URL 占比"
+              note="按现有R05–R22可计分项统计；缺失不补零"
             />
             <AssessmentKpi
               label="指标可用度"

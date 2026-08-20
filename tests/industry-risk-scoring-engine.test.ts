@@ -28,7 +28,7 @@ test("risk percentile applies direction and averages tied ranks", () => {
   assert.equal(calculateRiskPercentile(10, [10, 20, 30], "lower-is-riskier"), 1)
 })
 
-test("MVP formula keeps the industry placeholder visible", () => {
+test("single-indicator formula combines the fixed anchor and peer percentile", () => {
   assert.equal(calculateMvpRiskScore(0, 0.5), 25)
   assert.equal(calculateMvpRiskScore(0.5, 0.5), 50)
   assert.equal(calculateMvpRiskScore(1, 0.5), 75)
@@ -58,7 +58,7 @@ test("full IRAWC uses the agreed historical anchor and beta correction", () => {
   })
   assert.equal(result.methodVersion, INDUSTRY_RISK_FULL_METHOD_VERSION)
   assert.equal(result.historicalAnchor, 0.5)
-  assert.equal(result.score, 60)
+  assert.equal(result.score, 62.5)
   assert.equal(result.status, "scored")
 })
 
@@ -77,32 +77,40 @@ test("entropy and CRITIC weights are normalized", () => {
   }
 })
 
-test("pilot scoring produces traceable five-indicator candidate baselines", () => {
+test("pilot scoring produces missing-aware R01-R22 usable baselines", () => {
   const assessments = scoreIndustryRiskDataset(dataset)
   assert.equal(assessments.length, 10)
   for (const assessment of assessments) {
     assert.equal(assessment.methodVersion, INDUSTRY_RISK_MVP_METHOD_VERSION)
     assert.equal(assessment.industryRisk, 0.5)
-    assert.equal(assessment.industryRiskStatus, "placeholder")
-    assert.equal(assessment.metrics.length, 5)
-    assert.equal(assessment.scoredIndicatorCount, 5)
+    assert.equal(assessment.industryRiskStatus, "fixed-anchor")
+    assert.equal(assessment.metrics.length, 22)
+    assert.equal(assessment.scoredIndicatorCount, 9)
+    assert.equal(assessment.weightedScoredIndicatorCount, 9)
     assert.equal(assessment.totalIndicatorCount, 22)
     assert.equal(assessment.isOfficialTotalScore, false)
+    assert.equal(assessment.dimensionScores.length, 5)
+    assert.ok(assessment.totalRiskScore !== null)
     assert.ok(
-      assessment.metrics.every(
-        (metric) =>
-          metric.status === "scored" &&
-          metric.riskScore !== null &&
-          metric.sourceId !== null &&
-          metric.sampleSize === 10
-      )
+      assessment.metrics
+        .filter((metric) => metric.status === "scored")
+        .every(
+          (metric) =>
+            metric.riskScore !== null &&
+            metric.sourceId !== null &&
+            metric.sampleSize === assessment.benchmarkSampleSize
+        )
+    )
+    assert.equal(
+      assessment.candidateAggregates.find(
+        (aggregate) => aggregate.method === "critic"
+      )?.status,
+      "usable-benchmark"
     )
     assert.ok(
       assessment.candidateAggregates.every(
         (aggregate) =>
-          aggregate.status === "partial-candidate" &&
-          aggregate.score !== null &&
-          aggregate.note.includes("不是 R05–R22 官方总分")
+          aggregate.score !== null && aggregate.note.includes("缺失不补零")
       )
     )
   }

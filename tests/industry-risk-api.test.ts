@@ -28,7 +28,8 @@ test("industry risk client validates directory and assessment responses", async 
       return jsonResponse(listIndustryRiskCompanies())
     },
   })
-  assert.equal(directory.companies.length, 10)
+  assert.equal(directory.companies.length, 94)
+  assert.equal(directory.peerGroups.length, 4)
 
   const assessment = await fetchIndustryRiskAssessment("star-688256", {
     fetch: async (input) => {
@@ -37,6 +38,8 @@ test("industry risk client validates directory and assessment responses", async 
     },
   })
   assert.equal(assessment.company.shortName, "寒武纪")
+  assert.equal(assessment.indicators.length, 22)
+  assert.equal(assessment.coverage.length, 22)
   assert.deepEqual(paths, [
     "api/v1/industry-risk/companies",
     "api/v1/industry-risk/companies/star-688256/assessment",
@@ -50,8 +53,8 @@ test("industry graph client validates all node and edge references", async () =>
       return jsonResponse(getIndustryRiskKnowledgeGraph())
     },
   })
-  assert.equal(graph.counts.nodes, 209)
-  assert.equal(graph.counts.edges, 526)
+  assert.equal(graph.counts.nodes, 1016)
+  assert.equal(graph.counts.edges, 4783)
 
   const malformed = structuredClone(graph)
   malformed.edges[0].target = "node:missing"

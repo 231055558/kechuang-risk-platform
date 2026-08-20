@@ -17,12 +17,15 @@ const assessmentSource = readFileSync(
   "utf8"
 )
 
-test("industry workspace exposes company switching, comparison, and audit detail", () => {
-  assert.match(panelSource, /10 家芯片企业风险基线/)
-  assert.match(panelSource, /onValueChange=\{selectCompany\}/)
-  assert.match(panelSource, /CRITIC 候选/)
-  assert.match(panelSource, /公式、来源与限制/)
-  assert.match(panelSource, /行业风险 0\.5 为会议占位值/)
+test("industry workspace keeps the current company primary and peers referential", () => {
+  assert.match(panelSource, /最新公式 · R01–R22 同业基准/)
+  assert.match(panelSource, /当前企业是主视图/)
+  assert.match(panelSource, /22项指标/)
+  assert.match(panelSource, /风险分基准/)
+  assert.match(panelSource, /companyId/)
+  assert.match(panelSource, /查看行业参考样本/)
+  assert.match(panelSource, /口径、来源与缺口/)
+  assert.match(panelSource, /缺失不补零/)
 })
 
 test("Cambricon MVP mounts the industry workspace before its knowledge graph", () => {

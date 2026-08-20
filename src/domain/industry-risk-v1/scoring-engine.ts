@@ -1,81 +1,431 @@
-import type {
-  IndustryRiskDataset,
-  IndustryRiskIndicatorId,
-  IndustryRiskObservation,
+import {
+  resolveIndustryRiskBenchmarkGroup,
+  resolveIndustryRiskBenchmarkGroupId,
+} from "./benchmark-classification.ts"
+import {
+  INDUSTRY_RISK_INDICATOR_IDS,
+  INDUSTRY_RISK_WEIGHTED_INDICATOR_IDS,
+  type IndustryRiskDataset,
+  type IndustryRiskIndicatorId,
+  type IndustryRiskObservation,
 } from "./model.ts"
 
-export const INDUSTRY_RISK_MVP_METHOD_VERSION = "IRAWC-MVP-2026.08-v1" as const
+export const INDUSTRY_RISK_MVP_METHOD_VERSION =
+  "IRAWC-CRITIC-2026.08-v2" as const
 export const INDUSTRY_RISK_FULL_METHOD_VERSION =
-  "IRAWC-FULL-2026.08-v1" as const
+  "IRAWC-FULL-2026.08-v2" as const
 
 export type IndustryRiskDirection = "higher-is-riskier" | "lower-is-riskier"
 export type IndustryRiskWeightMethod = "entropy" | "critic"
+export type IndustryRiskWeightedDimensionId =
+  | "technology"
+  | "compliance"
+  | "finance"
+  | "external"
+  | "personnel"
+
+interface IndustryRiskMetricCandidate {
+  metricName: string
+  comparableGroup: string
+}
 
 export interface IndustryRiskMetricDefinition {
   indicatorId: IndustryRiskIndicatorId
   metricName: string
+  metricCandidates: readonly IndustryRiskMetricCandidate[]
   label: string
   unit: string
   direction: IndustryRiskDirection
   limitation: string
+  kind: "narrative" | "weighted"
+  dimensionId: IndustryRiskWeightedDimensionId | null
+  composite?: "sanctions-list-sum"
 }
 
-export const INDUSTRY_RISK_PILOT_METRICS: readonly IndustryRiskMetricDefinition[] =
+const metric = (
+  indicatorId: IndustryRiskIndicatorId,
+  label: string,
+  unit: string,
+  direction: IndustryRiskDirection,
+  limitation: string,
+  kind: IndustryRiskMetricDefinition["kind"],
+  dimensionId: IndustryRiskWeightedDimensionId | null,
+  candidates: readonly (readonly [string, string])[],
+  composite?: IndustryRiskMetricDefinition["composite"]
+): IndustryRiskMetricDefinition => ({
+  indicatorId,
+  metricName: candidates[0]?.[0] ?? indicatorId,
+  metricCandidates: candidates.map(([metricName, comparableGroup]) => ({
+    metricName,
+    comparableGroup,
+  })),
+  label,
+  unit,
+  direction,
+  limitation,
+  kind,
+  dimensionId,
+  composite,
+})
+
+export const INDUSTRY_RISK_BENCHMARK_METRICS: readonly IndustryRiskMetricDefinition[] =
   [
-    {
-      indicatorId: "R07",
-      metricName: "rd_intensity_pct",
-      label: "研发投入强度",
-      unit: "%",
-      direction: "lower-is-riskier",
-      limitation: "高投入但里程碑未兑现的联合预警需等待 R08 数据。",
-    },
-    {
-      indicatorId: "R13",
-      metricName: "revenue_growth_pct",
-      label: "营业收入增长率",
-      unit: "%",
-      direction: "lower-is-riskier",
-      limitation: "当前为单年度横截面，尚未覆盖持续负增长与增速骤降趋势。",
-    },
-    {
-      indicatorId: "R14",
-      metricName: "intangible_assets_ratio_change_pp",
-      label: "无形资产占比变动",
-      unit: "百分点",
-      direction: "higher-is-riskier",
-      limitation: "仅反映账面占比变动，尚未接入减值事件。",
-    },
-    {
-      indicatorId: "R16",
-      metricName: "ocf_short_debt_coverage",
-      label: "经营现金流短债覆盖率",
-      unit: "倍",
-      direction: "lower-is-riskier",
-      limitation: "当前为年度横截面，近 8 季度趋势待补。",
-    },
-    {
-      indicatorId: "R18",
-      metricName: "overseas_revenue_ratio_pct",
-      label: "海外业务收入占比",
-      unit: "%",
-      direction: "higher-is-riskier",
-      limitation: "收入暴露不等于实际损失，需与 R19 管制命中联合解释。",
-    },
+    metric(
+      "R01",
+      "叙事热度基本面背离度",
+      "条",
+      "higher-is-riskier",
+      "当前使用财经新闻检索量代理叙事热度，尚未扣除基本面增长差异。",
+      "narrative",
+      null,
+      [["finance_news_retrieved_count_proxy", "finance-news-volume"]]
+    ),
+    metric(
+      "R02",
+      "第三方与自身表述偏差",
+      "%",
+      "higher-is-riskier",
+      "当前以第三方负面新闻占比代理表述偏差，不能替代公告全文词频差。",
+      "narrative",
+      null,
+      [["third_party_negative_news_share_pct_proxy", "negative-news-share"]]
+    ),
+    metric(
+      "R03",
+      "自身评价一致性/稳定性",
+      "余弦相似度",
+      "lower-is-riskier",
+      "报告文本相似度为代理值；上市时间较短的企业可能缺少连续四季度。",
+      "narrative",
+      null,
+      [["formal_report_narrative_similarity_proxy", "narrative-similarity"]]
+    ),
+    metric(
+      "R04",
+      "概念股标签关联度",
+      "%",
+      "higher-is-riskier",
+      "当前以概念关键词新闻占比代理概念暴露，不是概念业务收入占比。",
+      "narrative",
+      null,
+      [["concept_keyword_news_share_pct_proxy", "concept-news-share"]]
+    ),
+    metric(
+      "R05",
+      "技术先进性—专利质量",
+      "项",
+      "lower-is-riskier",
+      "当前使用有效/授权/专利存量代理，尚缺专利族、去自引前向引用和IPC年份标准化。",
+      "weighted",
+      "technology",
+      [
+        ["cnipa_core_operating_entity_valid_count", "cnipa-valid-count"],
+        ["cnipa_listed_entity_valid_count", "cnipa-valid-count"],
+        ["patent_authorized_count_proxy", "authorized-patent-count"],
+        ["patent_total_count_proxy", "patent-total-count"],
+        ["tyc_paid_patent_total_asof", "tyc-patent-total"],
+      ]
+    ),
+    metric(
+      "R06",
+      "核心技术人员占比",
+      "%",
+      "lower-is-riskier",
+      "以研发人员占比作为核心技术人员占比的统一代理。",
+      "weighted",
+      "technology",
+      [["rd_personnel_ratio_pct", "rd-personnel-ratio"]]
+    ),
+    metric(
+      "R07",
+      "研发投入强度与趋势",
+      "%",
+      "lower-is-riskier",
+      "以最新研发投入强度做横截面基准，趋势信息作为后续解释。",
+      "weighted",
+      "technology",
+      [["rd_intensity_pct", "rd-intensity"]]
+    ),
+    metric(
+      "R08",
+      "研发/募投里程碑兑现度",
+      "次",
+      "higher-is-riskier",
+      "以延期、负面或变更事件数代理未兑现程度，未获得统一加权兑现率。",
+      "weighted",
+      "technology",
+      [
+        ["fundraising_project_delay_event_count", "milestone-delay-events"],
+        ["rd_negative_milestone_event_count", "negative-milestone-events"],
+        ["fundraising_project_change_event_count", "project-change-events"],
+      ]
+    ),
+    metric(
+      "R09",
+      "重大技术与知识产权事件",
+      "项",
+      "higher-is-riskier",
+      "不利状态和质量事件是事件数量代理，未建立损失、责任与时间系数。",
+      "weighted",
+      "technology",
+      [
+        ["tyc_paid_patent_page_adverse_status_count", "patent-adverse-sample"],
+        ["cnipa_verified_adverse_patent_legal_event_count", "cnipa-adverse-events"],
+        ["technology_ip_quality_event_count", "technology-ip-events"],
+        ["manufacturing_quality_inspection_event_count", "quality-events"],
+      ]
+    ),
+    metric(
+      "R10",
+      "监管处罚次数",
+      "条",
+      "higher-is-riskier",
+      "累计处罚代理不完全等同于单季度处罚次数。",
+      "weighted",
+      "compliance",
+      [
+        ["tyc_paid_admin_penalty_total_asof", "administrative-penalties"],
+        [
+          "securities_regulatory_penalty_or_measure_count_last5y",
+          "securities-regulatory-measures",
+        ],
+        [
+          "official_penalty_related_announcement_count",
+          "official-penalty-events",
+        ],
+      ]
+    ),
+    metric(
+      "R11",
+      "交易所问询次数",
+      "次",
+      "higher-is-riskier",
+      "按同口径报告期问询主题数进行行业内比较。",
+      "weighted",
+      "compliance",
+      [
+        ["exchange_inquiry_topic_count", "exchange-inquiry-count"],
+        ["exchange_inquiry_topic_count_ytd", "exchange-inquiry-count-ytd"],
+      ]
+    ),
+    metric(
+      "R12",
+      "诉讼风险",
+      "件",
+      "higher-is-riskier",
+      "不同来源分别比较案件总数、被告判决或重大诉讼披露，未统一金额占营收口径。",
+      "weighted",
+      "compliance",
+      [
+        ["tyc_paid_lawsuit_total_asof", "tyc-lawsuit-count"],
+        ["defendant_judgment_count", "defendant-judgment-count"],
+        ["major_litigation_disclosure", "major-litigation-count"],
+        [
+          "litigation_arbitration_announcement_count",
+          "litigation-announcement-count",
+        ],
+      ]
+    ),
+    metric(
+      "R13",
+      "营业收入增长率",
+      "%",
+      "lower-is-riskier",
+      "使用最新可比报告期的营业收入同比增长率。",
+      "weighted",
+      "finance",
+      [["revenue_growth_pct", "revenue-growth"]]
+    ),
+    metric(
+      "R14",
+      "无形资产减值风险",
+      "%/百分点",
+      "higher-is-riskier",
+      "同口径比较无形资产占比变动或占比水平，不能替代正式减值测试。",
+      "weighted",
+      "finance",
+      [
+        ["intangible_assets_ratio_change_pp", "intangible-ratio-change"],
+        [
+          "intangible_assets_to_total_assets_pct",
+          "intangible-assets-ratio",
+        ],
+        ["intangible_assets_ratio_pct", "intangible-assets-ratio"],
+      ]
+    ),
+    metric(
+      "R15",
+      "融资成本",
+      "%/元",
+      "higher-is-riskier",
+      "债务成本率与利息支出分别在同口径样本内排名，未形成完整WACC。",
+      "weighted",
+      "finance",
+      [
+        [
+          "debt_financing_cost_average_debt_proxy_pct",
+          "average-debt-cost",
+        ],
+        [
+          "debt_financing_cost_ending_debt_proxy_pct",
+          "ending-debt-cost",
+        ],
+        ["interest_expense_yuan", "interest-expense"],
+      ]
+    ),
+    metric(
+      "R16",
+      "经营现金流与短期偿债压力",
+      "倍",
+      "lower-is-riskier",
+      "优先使用经营现金流短债覆盖率，缺失时使用现金短债比。",
+      "weighted",
+      "finance",
+      [
+        ["ocf_short_debt_coverage", "ocf-short-debt-coverage"],
+        ["cash_short_debt_ratio", "cash-short-debt-ratio"],
+      ]
+    ),
+    metric(
+      "R17",
+      "关键供应链进口依赖度",
+      "家",
+      "lower-is-riskier",
+      "以已核验境内供应商数代理，样本较小且注册地不等于生产国。",
+      "weighted",
+      "external",
+      [
+        [
+          "tyc_paid_supplier_domestic_profile_count",
+          "domestic-supplier-profile-count",
+        ],
+      ]
+    ),
+    metric(
+      "R18",
+      "海外业务收入占比",
+      "%",
+      "higher-is-riskier",
+      "海外收入暴露不等同于实际损失，需与管制命中联合解释。",
+      "weighted",
+      "external",
+      [["overseas_revenue_ratio_pct", "overseas-revenue-ratio"]]
+    ),
+    metric(
+      "R19",
+      "出口管制与制裁暴露度",
+      "类清单",
+      "higher-is-riskier",
+      "合并美国CSL与欧盟FSD精确命中数；尚缺BOM/ECCN影响比例和集团穿透。",
+      "weighted",
+      "external",
+      [["export_control_list_hit_count", "export-control-list-hits"]],
+      "sanctions-list-sum"
+    ),
+    metric(
+      "R20",
+      "控制权稀释与稳定性",
+      "%",
+      "lower-is-riskier",
+      "以可获得的最大控制人持股比例代理，尚缺表决权协议和一致行动关系。",
+      "weighted",
+      "personnel",
+      [["maximum_controller_ratio_pct", "controller-ratio"]]
+    ),
+    metric(
+      "R21",
+      "高管关联风险暴露度",
+      "条",
+      "higher-is-riskier",
+      "以企业/境内主体风险聚合代理高管关联暴露，关联风险不等于人员本人违法。",
+      "weighted",
+      "personnel",
+      [
+        [
+          "tyc_core_entity_enterprise_risk_total_asof",
+          "enterprise-risk-total",
+        ],
+        ["tyc_paid_enterprise_risk_total_asof", "enterprise-risk-total"],
+      ]
+    ),
+    metric(
+      "R22",
+      "关键管理与技术人员稳定性",
+      "人/事件",
+      "higher-is-riskier",
+      "以核心技术人员离职/变更事件数代理流失率，尚缺统一期初人数分母。",
+      "weighted",
+      "personnel",
+      [
+        ["core_tech_departure_event_count", "core-personnel-events"],
+        [
+          "core_tech_departure_event_count_annual_report",
+          "core-personnel-events",
+        ],
+        [
+          "core_tech_personnel_change_announcement_count",
+          "core-personnel-events",
+        ],
+        [
+          "core_tech_change_official_announcement_count",
+          "core-personnel-events",
+        ],
+      ]
+    ),
   ]
+
+export const INDUSTRY_RISK_PILOT_METRICS =
+  INDUSTRY_RISK_BENCHMARK_METRICS.filter((item) => item.kind === "weighted")
+
+export const INDUSTRY_RISK_WEIGHTED_DIMENSIONS: readonly {
+  id: IndustryRiskWeightedDimensionId
+  label: string
+  indicatorIds: readonly IndustryRiskIndicatorId[]
+}[] = [
+  {
+    id: "technology",
+    label: "技术风险",
+    indicatorIds: ["R05", "R06", "R07", "R08", "R09"],
+  },
+  {
+    id: "compliance",
+    label: "合规风险",
+    indicatorIds: ["R10", "R11", "R12"],
+  },
+  {
+    id: "finance",
+    label: "财务与融资风险",
+    indicatorIds: ["R13", "R14", "R15", "R16"],
+  },
+  {
+    id: "external",
+    label: "外部风险",
+    indicatorIds: ["R17", "R18", "R19"],
+  },
+  {
+    id: "personnel",
+    label: "人员风险",
+    indicatorIds: ["R20", "R21", "R22"],
+  },
+]
 
 export interface IndustryRiskMetricScore {
   indicatorId: IndustryRiskIndicatorId
   metricName: string
+  comparableGroup: string
   label: string
   unit: string
   rawValue: number | null
   riskPercentile: number | null
   riskScore: number | null
+  centeredRiskScore: number | null
   sampleSize: number
   sourceId: string | null
+  sourceIds: string[]
   status: "scored" | "missing" | "not-score-ready"
   direction: IndustryRiskDirection
+  kind: "narrative" | "weighted"
+  dimensionId: IndustryRiskWeightedDimensionId | null
   formulaTrace: string
   limitation: string
 }
@@ -84,22 +434,54 @@ export interface IndustryRiskCandidateAggregate {
   method: IndustryRiskWeightMethod
   score: number | null
   weights: Record<string, number>
-  status: "partial-candidate" | "unavailable"
+  status: "usable-benchmark" | "partial-candidate" | "unavailable"
   note: string
+}
+
+export interface IndustryRiskNarrativeIndex {
+  score: number | null
+  availableIndicatorCount: number
+  totalIndicatorCount: 4
+  status: "usable-reference" | "unavailable"
+  note: string
+}
+
+export interface IndustryRiskDimensionScore {
+  id: IndustryRiskWeightedDimensionId
+  label: string
+  score: number | null
+  weight: number
+  availableIndicatorCount: number
+  totalIndicatorCount: number
+  indicatorIds: IndustryRiskIndicatorId[]
+  indicatorWeights: Record<string, number>
+  status: "scored" | "missing"
 }
 
 export interface IndustryRiskCompanyAssessment {
   companyId: string
   companyName: string
   stockCode: string
+  peerGroupId: string
+  benchmarkGroupId: string
+  benchmarkGroupLabel: string
+  benchmarkSampleSize: number
   methodVersion: typeof INDUSTRY_RISK_MVP_METHOD_VERSION
   reportingPeriod: string
   sectorLabel: string
   industryRisk: number
-  industryRiskStatus: "placeholder"
+  industryRiskStatus: "fixed-anchor"
+  alpha: number
+  beta: number
   metrics: IndustryRiskMetricScore[]
+  narrativeIndex: IndustryRiskNarrativeIndex
+  dimensionScores: IndustryRiskDimensionScore[]
+  totalRiskScore: number | null
+  totalRiskStatus: "usable-benchmark" | "unavailable"
+  weightedDataCoverage: number
   candidateAggregates: IndustryRiskCandidateAggregate[]
   scoredIndicatorCount: number
+  weightedScoredIndicatorCount: number
   totalIndicatorCount: number
   isOfficialTotalScore: false
 }
@@ -118,6 +500,21 @@ export interface FullIrawcScoreResult {
   formulaTrace: string
 }
 
+interface ResolvedMetricValue {
+  value: number
+  metricName: string
+  comparableGroup: string
+  unit: string
+  sourceId: string
+  sourceIds: string[]
+}
+
+interface IndustryRiskScoringOptions {
+  industryRisk?: number
+  alpha?: number
+  beta?: number
+}
+
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value))
 const round = (value: number, digits = 4) => Number(value.toFixed(digits))
 
@@ -134,7 +531,6 @@ export function calculateRiskPercentile(
   if (!Number.isFinite(value)) return null
   const comparable = finiteValues(sample)
   if (comparable.length < 2) return null
-
   const toRiskDirection = (item: number) =>
     direction === "higher-is-riskier" ? item : -item
   const target = toRiskDirection(value)
@@ -142,16 +538,24 @@ export function calculateRiskPercentile(
   const first = sorted.findIndex((item) => item === target)
   if (first === -1) return null
   const last = sorted.findLastIndex((item) => item === target)
-  const averageZeroBasedRank = (first + last) / 2
-  return round(averageZeroBasedRank / (sorted.length - 1))
+  return round(((first + last) / 2) / (sorted.length - 1))
 }
 
 export function calculateMvpRiskScore(
   riskPercentile: number,
-  industryRisk = 0.5
+  industryRisk = 0.5,
+  alpha = 0.5,
+  beta = 0.5
 ) {
+  const total = alpha + beta
+  const normalizedAlpha = total > 0 ? alpha / total : 0.5
+  const normalizedBeta = total > 0 ? beta / total : 0.5
   return round(
-    100 * (0.5 * clamp01(industryRisk) + 0.5 * clamp01(riskPercentile)),
+    100 *
+      clamp01(
+        normalizedAlpha * clamp01(industryRisk) +
+          normalizedBeta * clamp01(riskPercentile)
+      ),
     2
   )
 }
@@ -184,7 +588,8 @@ export function calculateFullIrawcScore(
   input: FullIrawcScoreInput
 ): FullIrawcScoreResult {
   const anchor = calculateHistoricalAnchor(input.historicalRiskDirectedValues)
-  const beta = input.beta ?? 0.4
+  const beta = clamp01(input.beta ?? 0.5)
+  const alpha = 1 - beta
   if (anchor === null) {
     return {
       methodVersion: INDUSTRY_RISK_FULL_METHOD_VERSION,
@@ -195,13 +600,13 @@ export function calculateFullIrawcScore(
     }
   }
   const percentile = clamp01(input.relativeRiskPercentile)
-  const score = round(100 * clamp01(anchor + beta * (percentile - 0.5)), 2)
+  const score = round(100 * clamp01(alpha * anchor + beta * percentile), 2)
   return {
     methodVersion: INDUSTRY_RISK_FULL_METHOD_VERSION,
     score,
     historicalAnchor: anchor,
     status: "scored",
-    formulaTrace: `100 × clamp(${anchor} + ${beta} × (${round(percentile)} - 0.5), 0, 1) = ${score}`,
+    formulaTrace: `100 × (${round(alpha)} × ${anchor} + ${round(beta)} × ${round(percentile)}) = ${score}`,
   }
 }
 
@@ -210,6 +615,7 @@ function mean(values: readonly number[]) {
 }
 
 function standardDeviation(values: readonly number[]) {
+  if (values.length < 2) return 0
   const average = mean(values)
   return Math.sqrt(mean(values.map((value) => (value - average) ** 2)))
 }
@@ -229,10 +635,24 @@ function correlation(left: readonly number[], right: readonly number[]) {
   return denominator === 0 ? 0 : numerator / denominator
 }
 
-function normalizeWeights(values: readonly number[]) {
-  const total = values.reduce((sum, value) => sum + value, 0)
-  if (total <= 0) return values.map(() => 1 / values.length)
-  return values.map((value) => value / total)
+function normalizeWeights(values: readonly number[], active?: readonly boolean[]) {
+  const activeIndexes = values.flatMap((_, index) =>
+    active && !active[index] ? [] : [index]
+  )
+  if (activeIndexes.length === 0) return values.map(() => 0)
+  const total = activeIndexes.reduce(
+    (sum, index) => sum + Math.max(0, values[index]),
+    0
+  )
+  if (total <= 0) {
+    const equal = 1 / activeIndexes.length
+    return values.map((_, index) =>
+      activeIndexes.includes(index) ? equal : 0
+    )
+  }
+  return values.map((value, index) =>
+    activeIndexes.includes(index) ? Math.max(0, value) / total : 0
+  )
 }
 
 export function calculateObjectiveWeights(
@@ -249,192 +669,463 @@ export function calculateObjectiveWeights(
   ) {
     return []
   }
+  return calculateObjectiveWeightsWithMissing(matrix, method)
+}
+
+export function calculateObjectiveWeightsWithMissing(
+  matrix: readonly (readonly (number | null)[])[],
+  method: IndustryRiskWeightMethod
+) {
+  if (matrix.length < 2 || matrix[0]?.length === 0) return []
+  const width = matrix[0].length
+  if (matrix.some((row) => row.length !== width)) return []
   const columns = Array.from({ length: width }, (_, column) =>
     matrix.map((row) => row[column])
   )
-
+  const active = columns.map(
+    (column) => column.filter((value): value is number => value !== null).length >= 2
+  )
   if (method === "entropy") {
-    const k = 1 / Math.log(matrix.length)
-    const information = columns.map((column) => {
-      const total = column.reduce((sum, value) => sum + Math.max(0, value), 0)
-      const probabilities =
-        total === 0
-          ? column.map(() => 1 / column.length)
-          : column.map((value) => Math.max(0, value) / total)
+    const information = columns.map((column, index) => {
+      const values = column.filter(
+        (value): value is number => value !== null && Number.isFinite(value)
+      )
+      if (!active[index]) return 0
+      const epsilon = 1e-12
+      const adjusted = values.map((value) => Math.max(0, value) + epsilon)
+      const total = adjusted.reduce((sum, value) => sum + value, 0)
+      const probabilities = adjusted.map((value) => value / total)
       const entropy =
-        -k *
+        -(1 / Math.log(values.length)) *
         probabilities.reduce(
-          (sum, probability) =>
-            probability === 0 ? sum : sum + probability * Math.log(probability),
+          (sum, probability) => sum + probability * Math.log(probability),
           0
         )
       return Math.max(0, 1 - entropy)
     })
-    return normalizeWeights(information).map((weight) => round(weight, 6))
-  }
-
-  const information = columns.map((column) => {
-    const conflict = columns.reduce(
-      (sum, other) => sum + (1 - correlation(column, other)),
-      0
+    return normalizeWeights(information, active).map((weight) =>
+      round(weight, 6)
     )
-    return standardDeviation(column) * conflict
+  }
+  const information = columns.map((column, columnIndex) => {
+    const values = column.filter(
+      (value): value is number => value !== null && Number.isFinite(value)
+    )
+    if (!active[columnIndex]) return 0
+    const conflict = columns.reduce((sum, other, otherIndex) => {
+      if (otherIndex === columnIndex || !active[otherIndex]) return sum
+      const left: number[] = []
+      const right: number[] = []
+      for (let row = 0; row < matrix.length; row += 1) {
+        const leftValue = column[row]
+        const rightValue = other[row]
+        if (leftValue !== null && rightValue !== null) {
+          left.push(leftValue)
+          right.push(rightValue)
+        }
+      }
+      const rho = left.length >= 2 ? correlation(left, right) : 0
+      return sum + (1 - Math.abs(rho))
+    }, 0)
+    return standardDeviation(values) * conflict
   })
-  return normalizeWeights(information).map((weight) => round(weight, 6))
+  return normalizeWeights(information, active).map((weight) => round(weight, 6))
 }
 
-function findMetricObservation(
+function observationDate(observation: IndustryRiskObservation) {
+  return observation.asOfDate ?? observation.periodEnd ?? observation.periodStart ?? ""
+}
+
+function latestObservationForMetric(
   dataset: IndustryRiskDataset,
   companyId: string,
-  metric: IndustryRiskMetricDefinition
+  metricName: string
 ) {
-  return dataset.observations.find(
-    (item) =>
-      item.companyId === companyId &&
-      item.indicatorId === metric.indicatorId &&
-      item.metricName === metric.metricName
-  )
+  return dataset.observations
+    .filter(
+      (item) =>
+        item.companyId === companyId &&
+        item.metricName === metricName &&
+        item.numericValue !== null &&
+        Number.isFinite(item.numericValue)
+    )
+    .sort(
+      (left, right) =>
+        observationDate(right).localeCompare(observationDate(left)) ||
+        right.id.localeCompare(left.id)
+    )[0]
 }
 
-function usableNumericValue(observation: IndustryRiskObservation | undefined) {
-  return observation &&
-    observation.numericValue !== null &&
-    Number.isFinite(observation.numericValue)
-    ? observation.numericValue
-    : null
+function resolveMetricValue(
+  dataset: IndustryRiskDataset,
+  companyId: string,
+  definition: IndustryRiskMetricDefinition
+): ResolvedMetricValue | null {
+  if (definition.composite === "sanctions-list-sum") {
+    const observations = [
+      latestObservationForMetric(
+        dataset,
+        companyId,
+        "us_csl_distinct_list_hit_count"
+      ),
+      latestObservationForMetric(
+        dataset,
+        companyId,
+        "eu_fsd_exact_name_hit_count"
+      ),
+    ].filter((item): item is IndustryRiskObservation => Boolean(item))
+    if (observations.length === 0) return null
+    return {
+      value: observations.reduce(
+        (sum, item) => sum + (item.numericValue ?? 0),
+        0
+      ),
+      metricName: "export_control_list_hit_count",
+      comparableGroup: "export-control-list-hits",
+      unit: definition.unit,
+      sourceId: observations[0].sourceId,
+      sourceIds: [
+        ...new Set(observations.flatMap((item) => item.sourceIds ?? [item.sourceId])),
+      ],
+    }
+  }
+  for (const candidate of definition.metricCandidates) {
+    const observation = latestObservationForMetric(
+      dataset,
+      companyId,
+      candidate.metricName
+    )
+    if (!observation || observation.numericValue === null) continue
+    return {
+      value: observation.numericValue,
+      metricName: candidate.metricName,
+      comparableGroup: candidate.comparableGroup,
+      unit: observation.unit ?? definition.unit,
+      sourceId: observation.sourceId,
+      sourceIds: observation.sourceIds ?? [observation.sourceId],
+    }
+  }
+  return null
 }
 
 function scoreMetric(
   dataset: IndustryRiskDataset,
   companyId: string,
-  metric: IndustryRiskMetricDefinition,
-  industryRisk: number
+  definition: IndustryRiskMetricDefinition,
+  benchmarkCompanyIds: readonly string[],
+  industryRisk: number,
+  alpha: number,
+  beta: number
 ): IndustryRiskMetricScore {
-  const observation = findMetricObservation(dataset, companyId, metric)
-  const value = usableNumericValue(observation)
-  const scoreReady = dataset.metadata.scoreReadyIndicatorIds.includes(
-    metric.indicatorId
-  )
-  const sample = dataset.companies
-    .map((company) =>
-      usableNumericValue(findMetricObservation(dataset, company.id, metric))
-    )
-    .filter((item): item is number => item !== null)
-  const percentile =
-    value === null || !scoreReady
-      ? null
-      : calculateRiskPercentile(value, sample, metric.direction)
+  const resolved = resolveMetricValue(dataset, companyId, definition)
+  const sample = resolved
+    ? benchmarkCompanyIds
+        .map((peerId) => resolveMetricValue(dataset, peerId, definition))
+        .filter(
+          (item): item is ResolvedMetricValue =>
+            item !== null && item.comparableGroup === resolved.comparableGroup
+        )
+        .map((item) => item.value)
+    : []
+  const percentile = resolved
+    ? calculateRiskPercentile(resolved.value, sample, definition.direction)
+    : null
   const riskScore =
-    percentile === null ? null : calculateMvpRiskScore(percentile, industryRisk)
-  const status = !scoreReady
-    ? "not-score-ready"
-    : riskScore === null
-      ? "missing"
-      : "scored"
-
+    percentile === null
+      ? null
+      : calculateMvpRiskScore(percentile, industryRisk, alpha, beta)
   return {
-    indicatorId: metric.indicatorId,
-    metricName: metric.metricName,
-    label: metric.label,
-    unit: metric.unit,
-    rawValue: value,
+    indicatorId: definition.indicatorId,
+    metricName: resolved?.metricName ?? definition.metricName,
+    comparableGroup:
+      resolved?.comparableGroup ??
+      definition.metricCandidates[0]?.comparableGroup ??
+      definition.indicatorId,
+    label: definition.label,
+    unit: resolved?.unit ?? definition.unit,
+    rawValue: resolved?.value ?? null,
     riskPercentile: percentile,
     riskScore,
+    centeredRiskScore: riskScore === null ? null : round(riskScore - 50, 2),
     sampleSize: sample.length,
-    sourceId: observation?.sourceId ?? null,
-    status,
-    direction: metric.direction,
+    sourceId: resolved?.sourceId ?? null,
+    sourceIds: resolved?.sourceIds ?? [],
+    status: riskScore === null ? "missing" : "scored",
+    direction: definition.direction,
+    kind: definition.kind,
+    dimensionId: definition.dimensionId,
     formulaTrace:
       riskScore === null
-        ? "数据或可比样本不足，未评分。"
-        : `100 × (0.5 × ${round(industryRisk)} + 0.5 × ${percentile}) = ${riskScore}`,
-    limitation: metric.limitation,
+        ? resolved
+          ? `已取得原值，但同口径同业样本仅 ${sample.length} 家，无法形成风险分位。`
+          : "当前企业缺少可用数值；不补零，其他指标仍参与基准计算。"
+        : `r_rel=${round(percentile ?? 0)}；r=100×(${round(alpha)}×${round(industryRisk)}+${round(beta)}×${round(percentile ?? 0)})=${riskScore}`,
+    limitation: definition.limitation,
   }
 }
 
-function buildCandidateAggregates(
-  assessments: readonly Omit<
-    IndustryRiskCompanyAssessment,
-    "candidateAggregates"
-  >[],
-  companyId: string
+function weightedAverage(
+  metrics: readonly IndustryRiskMetricScore[],
+  weights: readonly number[]
 ) {
-  const matrix = assessments.map((assessment) =>
-    assessment.metrics.map((metric) => metric.riskScore)
+  const scored = metrics.flatMap((item, index) =>
+    item.riskScore === null
+      ? []
+      : [{ score: item.riskScore / 100, weight: weights[index] ?? 0 }]
   )
-  const complete = matrix.every((row) =>
-    row.every((value): value is number => value !== null)
-  )
-  if (!complete) {
-    return (["entropy", "critic"] as const).map((method) => ({
-      method,
-      score: null,
-      weights: {},
-      status: "unavailable" as const,
-      note: "五项试验指标存在缺失，未做插值或补零。",
-    }))
+  if (!scored.length) return null
+  const weighted = scored.filter((item) => item.weight > 0)
+  const weightTotal = weighted.reduce((sum, item) => sum + item.weight, 0)
+  if (weightTotal <= 0) {
+    return round(100 * mean(scored.map((item) => item.score)), 2)
   }
-  const numericMatrix = matrix as number[][]
-  const targetIndex = assessments.findIndex(
-    (assessment) => assessment.companyId === companyId
-  )
-  return (["entropy", "critic"] as const).map((method) => {
-    const weights = calculateObjectiveWeights(numericMatrix, method)
-    const weightMap = Object.fromEntries(
-      INDUSTRY_RISK_PILOT_METRICS.map((metric, index) => [
-        metric.indicatorId,
-        weights[index],
-      ])
-    )
-    const score = round(
-      numericMatrix[targetIndex].reduce(
-        (sum, value, index) => sum + value * weights[index],
+  return round(
+    100 *
+      (weighted.reduce(
+        (sum, item) => sum + item.score * item.weight,
         0
-      ),
-      2
+      ) /
+        weightTotal),
+    2
+  )
+}
+
+function narrativeIndex(metrics: readonly IndustryRiskMetricScore[]) {
+  const values = metrics
+    .filter((item) => item.kind === "narrative")
+    .flatMap((item) => (item.riskScore === null ? [] : [item.riskScore]))
+  return {
+    score: values.length ? round(mean(values), 2) : null,
+    availableIndicatorCount: values.length,
+    totalIndicatorCount: 4 as const,
+    status: values.length
+      ? ("usable-reference" as const)
+      : ("unavailable" as const),
+    note: values.length
+      ? "R01–R04按现有指标分等权求均值形成NRI，仅作叙事校验，不进入总风险分。"
+      : "R01–R04暂无足够同业数值，NRI保持缺失。",
+  }
+}
+
+function buildMethodResults(
+  assessments: readonly { companyId: string; metrics: IndustryRiskMetricScore[] }[],
+  method: IndustryRiskWeightMethod
+) {
+  const weightedDefinitions = INDUSTRY_RISK_BENCHMARK_METRICS.filter(
+    (item) => item.kind === "weighted"
+  )
+  const metricMatrix = assessments.map((assessment) =>
+    weightedDefinitions.map((definition) => {
+      const score = assessment.metrics.find(
+        (item) => item.indicatorId === definition.indicatorId
+      )?.riskScore
+      return score === null || score === undefined ? null : score / 100
+    })
+  )
+  const indicatorWeights = calculateObjectiveWeightsWithMissing(
+    metricMatrix,
+    method
+  )
+  const dimensionScoresByCompany = assessments.map((assessment) =>
+    INDUSTRY_RISK_WEIGHTED_DIMENSIONS.map((dimension) => {
+      const metrics = dimension.indicatorIds.map(
+        (indicatorId) =>
+          assessment.metrics.find((item) => item.indicatorId === indicatorId)!
+      )
+      const weights = dimension.indicatorIds.map((indicatorId) => {
+        const index = weightedDefinitions.findIndex(
+          (item) => item.indicatorId === indicatorId
+        )
+        return indicatorWeights[index] ?? 0
+      })
+      return weightedAverage(metrics, weights)
+    })
+  )
+  const dimensionWeights = calculateObjectiveWeightsWithMissing(
+    dimensionScoresByCompany.map((row) =>
+      row.map((score) => (score === null ? null : score / 100))
+    ),
+    method
+  )
+  const totalScores = dimensionScoresByCompany.map((scores) => {
+    const scored = scores.flatMap((score, index) =>
+      score === null
+        ? []
+        : [{ score, weight: dimensionWeights[index] ?? 0 }]
     )
-    return {
-      method,
-      score,
-      weights: weightMap,
-      status: "partial-candidate" as const,
-      note: "仅由当前 5 项可评分指标形成候选基线，不是 R05–R22 官方总分。",
-    }
+    if (!scored.length) return null
+    const weighted = scored.filter((item) => item.weight > 0)
+    const totalWeight = weighted.reduce((sum, item) => sum + item.weight, 0)
+    return totalWeight <= 0
+      ? round(mean(scored.map((item) => item.score)), 2)
+      : round(
+          weighted.reduce(
+            (sum, item) => sum + item.score * item.weight,
+            0
+          ) / totalWeight,
+          2
+        )
   })
+  return {
+    weightedDefinitions,
+    indicatorWeights,
+    dimensionScoresByCompany,
+    dimensionWeights,
+    totalScores,
+  }
 }
 
 export function scoreIndustryRiskDataset(
   dataset: IndustryRiskDataset,
-  industryRisk = 0.5
+  options: IndustryRiskScoringOptions | number = {}
 ): IndustryRiskCompanyAssessment[] {
-  const clampedIndustryRisk = clamp01(industryRisk)
-  const withoutAggregates = dataset.companies.map((company) => {
-    const metrics = INDUSTRY_RISK_PILOT_METRICS.map((metric) =>
-      scoreMetric(dataset, company.id, metric, clampedIndustryRisk)
+  const normalizedOptions =
+    typeof options === "number" ? { industryRisk: options } : options
+  const industryRisk = clamp01(normalizedOptions.industryRisk ?? 0.5)
+  const suppliedAlpha = Math.max(0, normalizedOptions.alpha ?? 0.5)
+  const suppliedBeta = Math.max(0, normalizedOptions.beta ?? 0.5)
+  const coefficientTotal = suppliedAlpha + suppliedBeta
+  const alpha = coefficientTotal > 0 ? suppliedAlpha / coefficientTotal : 0.5
+  const beta = coefficientTotal > 0 ? suppliedBeta / coefficientTotal : 0.5
+  const companiesByBenchmark = new Map<string, string[]>()
+  for (const company of dataset.companies) {
+    const groupId = resolveIndustryRiskBenchmarkGroupId(company)
+    companiesByBenchmark.set(groupId, [
+      ...(companiesByBenchmark.get(groupId) ?? []),
+      company.id,
+    ])
+  }
+  const baseAssessments = dataset.companies.map((company) => {
+    const peerGroup = dataset.metadata.peerGroups?.find(
+      (item) => item.id === company.peerGroupId
     )
+    const benchmark = resolveIndustryRiskBenchmarkGroup(company)
+    const benchmarkCompanyIds = companiesByBenchmark.get(benchmark.id) ?? [
+      company.id,
+    ]
+    const metrics = INDUSTRY_RISK_BENCHMARK_METRICS.map((definition) =>
+      scoreMetric(
+        dataset,
+        company.id,
+        definition,
+        benchmarkCompanyIds,
+        industryRisk,
+        alpha,
+        beta
+      )
+    )
+    const weightedScoredIndicatorCount = metrics.filter(
+      (item) => item.kind === "weighted" && item.riskScore !== null
+    ).length
     return {
       companyId: company.id,
       companyName: company.shortName,
       stockCode: company.stockCode,
+      peerGroupId: company.peerGroupId ?? "default",
+      benchmarkGroupId: benchmark.id,
+      benchmarkGroupLabel: benchmark.label,
+      benchmarkSampleSize: benchmarkCompanyIds.length,
       methodVersion: INDUSTRY_RISK_MVP_METHOD_VERSION,
-      reportingPeriod: dataset.metadata.reportingPeriod,
-      sectorLabel: dataset.metadata.sectorLabel,
-      industryRisk: clampedIndustryRisk,
-      industryRiskStatus: "placeholder" as const,
+      reportingPeriod:
+        peerGroup?.reportingPeriod ?? dataset.metadata.reportingPeriod,
+      sectorLabel: benchmark.label,
+      industryRisk,
+      industryRiskStatus: "fixed-anchor" as const,
+      alpha: round(alpha),
+      beta: round(beta),
       metrics,
-      scoredIndicatorCount: metrics.filter(
-        (metric) => metric.status === "scored"
-      ).length,
-      totalIndicatorCount: dataset.indicators.length,
+      narrativeIndex: narrativeIndex(metrics),
+      scoredIndicatorCount: metrics.filter((item) => item.riskScore !== null)
+        .length,
+      weightedScoredIndicatorCount,
+      totalIndicatorCount: INDUSTRY_RISK_INDICATOR_IDS.length,
+      weightedDataCoverage: round(
+        weightedScoredIndicatorCount /
+          INDUSTRY_RISK_WEIGHTED_INDICATOR_IDS.length,
+        4
+      ),
       isOfficialTotalScore: false as const,
     }
   })
-
-  return withoutAggregates.map((assessment) => ({
-    ...assessment,
-    candidateAggregates: buildCandidateAggregates(
-      withoutAggregates,
-      assessment.companyId
-    ),
-  }))
+  const resultByCompany = new Map<string, IndustryRiskCompanyAssessment>()
+  for (const [benchmarkGroupId, companyIds] of companiesByBenchmark) {
+    const groupAssessments = companyIds.map(
+      (companyId) =>
+        baseAssessments.find((item) => item.companyId === companyId)!
+    )
+    const methodResults = Object.fromEntries(
+      (["critic", "entropy"] as const).map((method) => [
+        method,
+        buildMethodResults(groupAssessments, method),
+      ])
+    ) as Record<IndustryRiskWeightMethod, ReturnType<typeof buildMethodResults>>
+    groupAssessments.forEach((assessment, companyIndex) => {
+      const critic = methodResults.critic
+      const dimensionScores: IndustryRiskDimensionScore[] =
+        INDUSTRY_RISK_WEIGHTED_DIMENSIONS.map((dimension, dimensionIndex) => {
+          const score =
+            critic.dimensionScoresByCompany[companyIndex][dimensionIndex]
+          const availableIndicatorIds = dimension.indicatorIds.filter(
+            (indicatorId) =>
+              assessment.metrics.find((item) => item.indicatorId === indicatorId)
+                ?.riskScore !== null
+          )
+          return {
+            id: dimension.id,
+            label: dimension.label,
+            score,
+            weight: critic.dimensionWeights[dimensionIndex] ?? 0,
+            availableIndicatorCount: availableIndicatorIds.length,
+            totalIndicatorCount: dimension.indicatorIds.length,
+            indicatorIds: [...availableIndicatorIds],
+            indicatorWeights: Object.fromEntries(
+              dimension.indicatorIds.map((indicatorId) => {
+                const index = critic.weightedDefinitions.findIndex(
+                  (item) => item.indicatorId === indicatorId
+                )
+                return [indicatorId, critic.indicatorWeights[index] ?? 0]
+              })
+            ),
+            status: score === null ? "missing" : "scored",
+          }
+        })
+      const candidateAggregates = (["critic", "entropy"] as const).map(
+        (method): IndustryRiskCandidateAggregate => {
+          const result = methodResults[method]
+          const score = result.totalScores[companyIndex]
+          return {
+            method,
+            score,
+            weights: Object.fromEntries(
+              INDUSTRY_RISK_WEIGHTED_DIMENSIONS.map((dimension, index) => [
+                dimension.id,
+                result.dimensionWeights[index] ?? 0,
+              ])
+            ),
+            status:
+              score === null
+                ? "unavailable"
+                : method === "critic"
+                  ? "usable-benchmark"
+                  : "partial-candidate",
+            note:
+              score === null
+                ? "当前企业没有可形成维度分的数值观测。"
+                : `${method === "critic" ? "CRITIC可用基准" : "稳健性对照"}：按现有 ${assessment.weightedScoredIndicatorCount}/18 项加权指标计算，缺失不补零，权重在可用指标和维度内重新归一化。${assessment.benchmarkSampleSize < 5 ? ` 当前行业样本仅${assessment.benchmarkSampleSize}家，结果只宜作方向性参考。` : ""}`,
+          }
+        }
+      )
+      const totalRiskScore = critic.totalScores[companyIndex]
+      resultByCompany.set(assessment.companyId, {
+        ...assessment,
+        benchmarkGroupId,
+        dimensionScores,
+        totalRiskScore,
+        totalRiskStatus:
+          totalRiskScore === null ? "unavailable" : "usable-benchmark",
+        candidateAggregates,
+      })
+    })
+  }
+  return dataset.companies.map((company) => resultByCompany.get(company.id)!)
 }

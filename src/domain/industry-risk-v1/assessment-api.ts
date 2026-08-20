@@ -1,7 +1,14 @@
 import type {
   IndustryRiskCompany,
+  IndustryRiskCoverage,
   IndustryRiskDatasetMetadata,
+  IndustryRiskEvent,
+  IndustryRiskIndicator,
+  IndustryRiskObservation,
+  IndustryRiskPeerGroup,
+  IndustryRiskReportAvailability,
   IndustryRiskSource,
+  IndustryRiskSupplementaryObservation,
 } from "./model.ts"
 import type {
   IndustryRiskCandidateAggregate,
@@ -18,8 +25,18 @@ export interface IndustryRiskCompanySummary {
   companyName: string
   stockCode: string
   chainSegment: string
+  peerGroupId: string
+  peerGroupLabel: string
+  benchmarkGroupId: string
+  benchmarkGroupLabel: string
+  benchmarkSampleSize: number
+  totalRiskScore: number | null
+  narrativeRiskIndex: number | null
+  weightedDataCoverage: number
   scoredIndicatorCount: number
   totalIndicatorCount: number
+  coveredIndicatorCount: number
+  eventCount: number
   candidateAggregates: IndustryRiskCandidateAggregate[]
 }
 
@@ -31,7 +48,8 @@ export interface IndustryRiskCompanyDirectoryResponse {
   sectorLabel: string
   sampleSize: number
   scoreReadyIndicatorCount: number
-  industryRiskStatus: "placeholder"
+  industryRiskStatus: "fixed-anchor"
+  peerGroups: IndustryRiskPeerGroup[]
   companies: IndustryRiskCompanySummary[]
 }
 
@@ -39,11 +57,17 @@ export interface IndustryRiskAssessmentApiResponse {
   assessment: IndustryRiskCompanyAssessment
   company: IndustryRiskCompany
   sources: IndustryRiskSource[]
+  indicators: IndustryRiskIndicator[]
+  observations: IndustryRiskObservation[]
+  coverage: IndustryRiskCoverage[]
+  events: IndustryRiskEvent[]
+  supplementaryObservations: IndustryRiskSupplementaryObservation[]
+  reportAvailability: IndustryRiskReportAvailability | null
   provenance: {
     sourceAttribution: string
     sourceDate: string
     scopeNote: string
-    methodStatus: "mvp-candidate"
+    methodStatus: "usable-benchmark"
   }
 }
 

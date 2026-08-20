@@ -75,8 +75,17 @@ export function collectIndustryRiskDatasetIssues(dataset: IndustryRiskDataset) {
     if (!sourceIds.has(observation.sourceId)) {
       issues.push(`观测 ${observation.id} 缺少有效来源。`)
     }
-    if (observation.numericValue === null && observation.textValue === null) {
-      issues.push(`观测 ${observation.id} 没有数值或文本值。`)
+    if (
+      observation.numericValue === null &&
+      observation.textValue === null &&
+      !observation.status.trim()
+    ) {
+      issues.push(`观测 ${observation.id} 没有值或缺失状态。`)
+    }
+    for (const linkedSourceId of observation.sourceIds ?? []) {
+      if (!sourceIds.has(linkedSourceId)) {
+        issues.push(`观测 ${observation.id} 引用了未知补充来源。`)
+      }
     }
     if (observation.confidence < 0 || observation.confidence > 1) {
       issues.push(`观测 ${observation.id} 的置信度越界。`)
@@ -106,6 +115,36 @@ export function collectIndustryRiskDatasetIssues(dataset: IndustryRiskDataset) {
   const expectedCoverageCount = companyIds.size * indicatorIds.size
   if (coverageKeys.size !== expectedCoverageCount) {
     issues.push(`覆盖矩阵应有 ${expectedCoverageCount} 行。`)
+  }
+
+  const peerGroups = dataset.metadata.peerGroups ?? []
+  const peerGroupIds = new Set(peerGroups.map((group) => group.id))
+  if (peerGroupIds.size !== peerGroups.length) {
+    issues.push("同业组 ID 存在重复。")
+  }
+  for (const company of dataset.companies) {
+    if (company.peerGroupId && !peerGroupIds.has(company.peerGroupId)) {
+      issues.push(`企业 ${company.id} 引用了未知同业组。`)
+    }
+  }
+  for (const group of peerGroups) {
+    if (group.companyIds.some((id) => !companyIds.has(id))) {
+      issues.push(`同业组 ${group.id} 引用了未知企业。`)
+    }
+  }
+
+  for (const item of dataset.supplementaryObservations ?? []) {
+    if (!companyIds.has(item.companyId)) {
+      issues.push(`补充观测 ${item.id} 引用了未知企业。`)
+    }
+    if (item.sourceId && !sourceIds.has(item.sourceId)) {
+      issues.push(`补充观测 ${item.id} 引用了未知来源。`)
+    }
+  }
+  for (const event of dataset.deepSearchEvents ?? []) {
+    if (!companyIds.has(event.companyId)) {
+      issues.push(`深搜事件 ${event.id} 引用了未知企业。`)
+    }
   }
 
   const serialized = JSON.stringify(dataset)

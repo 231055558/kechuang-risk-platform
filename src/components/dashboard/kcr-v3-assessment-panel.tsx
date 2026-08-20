@@ -368,7 +368,7 @@ export function KcrV3AssessmentPanel({
         </GlassPanel>
       </Reveal>
 
-      <IndustryRiskReviewPanel />
+      <IndustryRiskReviewPanel companyId={companyId} />
 
       <Reveal>
         <KcrRiskKnowledgeGraph

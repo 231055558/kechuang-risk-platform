@@ -40,7 +40,7 @@ import {
   type QuantificationReadiness,
   type RiskQuantificationCatalogItem,
 } from "@/data/risk-quantification-catalog"
-import { riskIndicators } from "@/lib/data"
+import { riskIndicators } from "@/lib/data-r01"
 import { CANONICAL_RISK_DIMENSION_LABELS } from "@/lib/risk-dimensions"
 import { getScoringRule, previewObservationScore } from "@/lib/scoring-rules"
 import { createStableId } from "@/lib/scoring-workspace"
