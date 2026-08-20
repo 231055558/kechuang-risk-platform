@@ -1,6 +1,7 @@
 import {
   ArrowLeftRightIcon,
   Building2Icon,
+  FileTextIcon,
   GitBranchIcon,
   LandmarkIcon,
   LayoutDashboardIcon,
@@ -16,28 +17,32 @@ import type {
   NavGroup,
   NavItem,
 } from "@/types/nav"
-import type {
-  OperationsSection,
-  ResearchSection,
-  TabValue,
-} from "@/types/risk"
+import type { OperationsSection, ResearchSection, TabValue } from "@/types/risk"
 
 export const navItems: NavItem[] = [
   {
     id: "risk-assessment",
-    label: "风险研判",
+    label: "风险总览",
     group: "研判工作台",
-    description: "辅助结论、六类风险、评分证据覆盖率与近期事件",
+    description: "面向客户展示企业风险结论、重点风险、同业位置与最新事件",
     icon: LayoutDashboardIcon,
     target: { view: "overview" },
   },
   {
     id: "realtime-intelligence",
-    label: "实时情报",
+    label: "风险资讯",
     group: "研判工作台",
-    description: "汇集截至快照时间的公开信息，为风险识别、研究研判和事件转化提供输入",
+    description: "浏览数据库已收录的公告、报告、诉讼、监管与研究资讯",
     icon: RadioTowerIcon,
     target: { view: "realtime" },
+  },
+  {
+    id: "risk-reports",
+    label: "风险报告",
+    group: "研判工作台",
+    description: "查看面向客户的报告摘要、最新正式报告与可下载材料",
+    icon: FileTextIcon,
+    target: { view: "reports" },
   },
   {
     id: "event-register",
@@ -141,16 +146,15 @@ export function resolveActiveNavigationItem(
     return "realtime-intelligence"
   }
 
+  if (activeView === "reports") {
+    return "risk-reports"
+  }
+
   return "risk-assessment"
 }
 
-export function getNavigationItem(
-  id: NavigationItemId
-): NavItem {
-  return (
-    navItems.find((item) => item.id === id) ??
-    navItems[0]
-  )
+export function getNavigationItem(id: NavigationItemId): NavItem {
+  return navItems.find((item) => item.id === id) ?? navItems[0]
 }
 
 export function getNavigationItemIdForTarget(

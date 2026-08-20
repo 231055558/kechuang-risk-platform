@@ -12,28 +12,29 @@ function readProjectFile(path: string) {
   return readFileSync(join(projectRoot, path), "utf8")
 }
 
-test("Cambricon overview uses the R01–R22 industry workspace by default", () => {
+test("all company overviews use the customer-facing industry workspace by default", () => {
   const overview = readProjectFile("src/components/dashboard/overview-tab.tsx")
   const panel = readProjectFile(
     "src/components/dashboard/industry-risk-review-panel.tsx"
   )
 
-  assert.match(overview, /detail\.id === "star-688256"/)
-  assert.match(overview, /<IndustryRiskReviewPanel companyId=\{detail\.id\}/)
+  assert.match(overview, /if \(detail\.id\)/)
+  assert.match(overview, /<IndustryRiskReviewPanel/)
+  assert.match(overview, /companyId=\{detail\.id\}/)
   assert.doesNotMatch(overview, /KcrV3AssessmentPanel/)
-  assert.match(panel, /最新公式 · R01–R22 同业基准/)
-  assert.match(panel, /当前企业是主视图/)
-  assert.match(panel, /R01–R04 仅形成 NRI/)
-  assert.match(panel, /缺失不补零/)
-  assert.match(panel, /两级 CRITIC/)
+  assert.match(panel, /企业风险画像/)
+  assert.match(panel, /风险总览/)
+  assert.match(panel, /当前最值得关注的风险/)
+  assert.match(panel, /单项缺失不补零/)
+  assert.match(panel, /数据与方法/)
 })
 
 test("application shell no longer depends on the KCR V3 runtime result", () => {
   const app = readProjectFile("src/App.tsx")
   const sidebar = readProjectFile("src/components/layout/sidebar-nav.tsx")
 
-  assert.match(app, /R01–R22 企业风险基准/)
-  assert.match(app, /芯片 64 家基准/)
+  assert.match(app, /企业风险基准/)
+  assert.match(app, /汇总企业风险结论、同业位置、关键事件与可追溯证据/)
   assert.match(app, /INDUSTRY_RISK_MVP_METHOD_VERSION/)
   assert.doesNotMatch(app, /kcrAssessmentResponse/)
   assert.doesNotMatch(app, /printKcrAssessmentReport/)

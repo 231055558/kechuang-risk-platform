@@ -1,13 +1,22 @@
 import { useEffect, useMemo, useState } from "react"
 import {
   ArrowDownIcon,
+  ArrowRightIcon,
   ArrowUpIcon,
   BarChart3Icon,
+  CalendarDaysIcon,
+  CheckCircle2Icon,
+  ClipboardListIcon,
   DatabaseZapIcon,
   ExternalLinkIcon,
+  FileTextIcon,
   FileSearchIcon,
+  GaugeIcon,
   InfoIcon,
+  Layers3Icon,
+  NewspaperIcon,
   RefreshCwIcon,
+  ShieldCheckIcon,
 } from "lucide-react"
 
 import { IndustryRiskKnowledgeGraph } from "@/components/dashboard/industry-risk-knowledge-graph"
@@ -19,7 +28,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type {
   IndustryRiskAssessmentApiResponse,
   IndustryRiskCompanyDirectoryResponse,
-  IndustryRiskObservation,
 } from "@/domain/industry-risk-v1/index.ts"
 import {
   fetchIndustryRiskAssessment,
@@ -62,32 +70,23 @@ function scoreTone(score: number | null) {
   return "low"
 }
 
-function latestObservation(observations: IndustryRiskObservation[]) {
-  return [...observations].sort((left, right) =>
-    (
-      right.asOfDate ??
-      right.periodEnd ??
-      right.periodStart ??
-      ""
-    ).localeCompare(left.asOfDate ?? left.periodEnd ?? left.periodStart ?? "")
-  )[0]
+function riskLevel(score: number | null) {
+  if (score === null) return "待评估"
+  if (score >= 65) return "高风险"
+  if (score >= 55) return "较高风险"
+  if (score >= 45) return "中等风险"
+  return "较低风险"
 }
 
-function observationValue(observation: IndustryRiskObservation | undefined) {
-  if (!observation) return "—"
-  if (observation.numericValue !== null) {
-    return `${numberFormatter.format(observation.numericValue)}${observation.unit ? ` ${observation.unit}` : ""}`
-  }
-  return observation.textValue || observation.status || "—"
-}
-
-function coverageTone(status: string) {
-  if (status === "已覆盖") return "low"
-  if (status.startsWith("部分覆盖")) return "medium"
-  return "unknown"
-}
-
-export function IndustryRiskReviewPanel({ companyId }: { companyId: string }) {
+export function IndustryRiskReviewPanel({
+  companyId,
+  onNavigate,
+}: {
+  companyId: string
+  onNavigate?: (
+    view: "reports" | "realtime" | "events" | "intelligence"
+  ) => void
+}) {
   const [directoryAttempt, setDirectoryAttempt] = useState(0)
   const [assessmentAttempt, setAssessmentAttempt] = useState(0)
   const [directory, setDirectory] = useState<DirectoryState>({
@@ -218,18 +217,22 @@ export function IndustryRiskReviewPanel({ companyId }: { companyId: string }) {
         >
           <header className="industry-risk-header">
             <div>
-              <span className="eyebrow">最新公式 · R01–R22 同业基准</span>
+              <span className="eyebrow">
+                企业风险画像 · 数据截至 2026-08-19
+              </span>
               <h2 id="industry-risk-title">
-                {selectedSummary?.companyName ?? "当前企业"}风险基准
+                {selectedSummary?.companyName ?? "当前企业"}风险总览
               </h2>
               <p>
-                当前企业是主视图；行业样本只用于风险分位、CRITIC权重和排名参考，单项缺失不阻断其余指标与总分。
+                从风险结论出发，集中呈现同业位置、重点风险、最新事件和正式报告；缺失项目不补零，也不影响其余有效指标。
               </p>
             </div>
             <div className="industry-risk-formula-summary">
-              <Badge variant="outline">Aₛₖ = 0.5</Badge>
-              <Badge variant="outline">α = 0.5 · β = 0.5</Badge>
-              <Badge variant="outline">两级 CRITIC</Badge>
+              <Badge variant="outline">
+                <ShieldCheckIcon data-icon="inline-start" />
+                公开来源可追溯
+              </Badge>
+              <Badge variant="outline">全指标可用即纳入</Badge>
             </div>
           </header>
 
@@ -237,14 +240,18 @@ export function IndustryRiskReviewPanel({ companyId }: { companyId: string }) {
             <span>{selectedSummary?.benchmarkGroupLabel ?? "行业基准"}</span>
             <span>{selectedSummary?.benchmarkSampleSize ?? 0} 家同业样本</span>
             <span>当前排名 {selectedRank || "—"}</span>
-            <span>R01–R04 仅形成 NRI</span>
-            <Badge variant="outline">数据截至 2026-08-19</Badge>
+            <span>{selectedSummary?.eventCount ?? 0} 条风险事件</span>
+            <Badge variant="outline">毛同学数据库 · 深搜增强版</Badge>
           </div>
 
           <div className="industry-risk-body">
             <section className="industry-risk-assessment" aria-live="polite">
               {assessment.status === "success" ? (
-                <IndustryRiskAssessmentContent response={assessment.value} />
+                <IndustryRiskAssessmentContent
+                  response={assessment.value}
+                  selectedRank={selectedRank}
+                  onNavigate={onNavigate}
+                />
               ) : assessment.status === "error" ? (
                 <div className="industry-risk-assessment-state" role="alert">
                   <InfoIcon aria-hidden="true" />
@@ -298,120 +305,247 @@ export function IndustryRiskReviewPanel({ companyId }: { companyId: string }) {
 
 function IndustryRiskAssessmentContent({
   response,
+  selectedRank,
+  onNavigate,
 }: {
   response: IndustryRiskAssessmentApiResponse
+  selectedRank: number
+  onNavigate?: (
+    view: "reports" | "realtime" | "events" | "intelligence"
+  ) => void
 }) {
   const { assessment } = response
   const sourceById = new Map(
     response.sources.map((source) => [source.id, source])
   )
-  const observationsByIndicator = new Map(
-    response.indicators.map((indicator) => [
-      indicator.id,
-      response.observations.filter((item) => item.indicatorId === indicator.id),
-    ])
+  const indicatorById = new Map(
+    response.indicators.map((indicator) => [indicator.id, indicator])
   )
+  const scoredMetrics = assessment.metrics
+    .filter((metric) => metric.riskScore !== null)
+    .sort((left, right) => (right.riskScore ?? 0) - (left.riskScore ?? 0))
+  const missingMetrics = assessment.metrics.filter(
+    (metric) => metric.riskScore === null
+  )
+  const priorityMetrics = scoredMetrics.slice(0, 5)
+  const latestEvents = [...response.events]
+    .sort((left, right) => (right.date ?? "").localeCompare(left.date ?? ""))
+    .slice(0, 4)
+  const coveragePercent = Math.round(assessment.weightedDataCoverage * 100)
 
   return (
-    <Tabs defaultValue="indicators" className="industry-risk-detail-tabs">
-      <TabsList aria-label="R01到R22企业数据">
-        <TabsTrigger value="indicators">22项指标</TabsTrigger>
-        <TabsTrigger value="scoring">风险分基准</TabsTrigger>
-        <TabsTrigger value="events">事件 {response.events.length}</TabsTrigger>
-        <TabsTrigger value="evidence">
-          来源 {response.sources.length}
+    <Tabs defaultValue="overview" className="industry-risk-detail-tabs">
+      <TabsList aria-label="企业风险信息">
+        <TabsTrigger value="overview">风险概览</TabsTrigger>
+        <TabsTrigger value="breakdown">风险拆解</TabsTrigger>
+        <TabsTrigger value="events">
+          近期事件 {response.events.length}
         </TabsTrigger>
+        <TabsTrigger value="method">数据与方法</TabsTrigger>
       </TabsList>
 
-      <TabsContent value="indicators">
-        <CompanySummary response={response} />
-        <div className="industry-risk-indicator-grid">
-          {response.indicators.map((indicator) => {
-            const coverage = response.coverage.find(
-              (item) => item.indicatorId === indicator.id
-            )
-            const observations = observationsByIndicator.get(indicator.id) ?? []
-            const latest = latestObservation(observations)
-            const source = latest ? sourceById.get(latest.sourceId) : undefined
-            return (
+      <TabsContent value="overview">
+        <section className="customer-risk-hero">
+          <article
+            className="customer-risk-score-card"
+            data-tone={scoreTone(assessment.totalRiskScore)}
+          >
+            <div>
+              <span>综合风险指数</span>
+              <Badge variant="outline">
+                {riskLevel(assessment.totalRiskScore)}
+              </Badge>
+            </div>
+            <strong>{assessment.totalRiskScore ?? "待评估"}</strong>
+            <p>基于当前可用指标进行同业比较，数值越高表示相对风险越突出。</p>
+            <div className="customer-risk-score-track" aria-hidden="true">
+              <span style={{ width: `${assessment.totalRiskScore ?? 0}%` }} />
+            </div>
+          </article>
+          <div className="customer-risk-kpi-grid">
+            <article>
+              <BarChart3Icon aria-hidden="true" />
+              <span>同业位置</span>
+              <strong>
+                {selectedRank || "—"}
+                <small> / {assessment.benchmarkSampleSize}</small>
+              </strong>
+              <p>{assessment.benchmarkGroupLabel}</p>
+            </article>
+            <article>
+              <CheckCircle2Icon aria-hidden="true" />
+              <span>有效指标</span>
+              <strong>
+                {assessment.weightedScoredIndicatorCount}
+                <small> / 18</small>
+              </strong>
+              <p>有数据的指标均已纳入</p>
+            </article>
+            <article>
+              <Layers3Icon aria-hidden="true" />
+              <span>数据覆盖</span>
+              <strong>
+                {coveragePercent}
+                <small>%</small>
+              </strong>
+              <p>缺失项不补零</p>
+            </article>
+            <article>
+              <ClipboardListIcon aria-hidden="true" />
+              <span>风险事件</span>
+              <strong>
+                {response.events.length}
+                <small> 条</small>
+              </strong>
+              <p>可返回原始来源核验</p>
+            </article>
+          </div>
+        </section>
+
+        <section className="customer-risk-section">
+          <header>
+            <div>
+              <span className="eyebrow">优先级</span>
+              <h3>当前最值得关注的风险</h3>
+            </div>
+            <Badge variant="outline">按单项风险影响排序</Badge>
+          </header>
+          {priorityMetrics.length ? (
+            <div className="customer-risk-priority-grid">
+              {priorityMetrics.map((metric, index) => (
+                <article
+                  key={metric.indicatorId}
+                  data-tone={scoreTone(metric.riskScore)}
+                >
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <div>
+                    <Badge variant="outline">{metric.indicatorId}</Badge>
+                    <h4>{metric.label}</h4>
+                    <p>
+                      同业风险分位{" "}
+                      {metric.riskPercentile === null
+                        ? "待补充"
+                        : percentFormatter.format(metric.riskPercentile)}
+                    </p>
+                  </div>
+                  <strong>{metric.riskScore}</strong>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="industry-risk-empty">
+              <FileSearchIcon aria-hidden="true" />
+              <p>当前暂无可计算指标，数据补充后会自动生成重点排序。</p>
+            </div>
+          )}
+        </section>
+
+        <section className="customer-risk-section">
+          <header>
+            <div>
+              <span className="eyebrow">风险结构</span>
+              <h3>五大风险领域</h3>
+            </div>
+          </header>
+          <div className="customer-risk-dimension-grid">
+            {assessment.dimensionScores.map((dimension) => (
               <article
-                key={indicator.id}
-                data-tone={coverageTone(coverage?.status ?? "")}
+                key={dimension.id}
+                data-tone={scoreTone(dimension.score)}
               >
-                <div className="industry-risk-metric-title">
-                  <Badge variant="outline">{indicator.id}</Badge>
-                  <span>{coverage?.status ?? "NA"}</span>
+                <div>
+                  <span>{dimension.label}</span>
+                  <strong>{dimension.score ?? "待评估"}</strong>
                 </div>
-                <h4>{indicator.label}</h4>
-                <strong className="industry-risk-observation-value">
-                  {observationValue(latest)}
-                </strong>
+                <div
+                  className="customer-risk-dimension-track"
+                  aria-hidden="true"
+                >
+                  <span style={{ width: `${dimension.score ?? 0}%` }} />
+                </div>
                 <small>
-                  {latest?.asOfDate ??
-                    latest?.periodEnd ??
-                    latest?.periodStart ??
-                    "暂无观测日期"}
-                  {observations.length
-                    ? ` · ${observations.length} 条观测`
-                    : ""}
+                  {dimension.availableIndicatorCount}/
+                  {dimension.totalIndicatorCount} 项已有有效数据
                 </small>
-                <details>
-                  <summary>口径、来源与缺口</summary>
-                  <p>{indicator.definition}</p>
-                  <p>{indicator.rawValueFormula}</p>
-                  <p>{coverage?.reason || "暂无覆盖说明"}</p>
-                  <p>
-                    {source
-                      ? `${source.institution} · ${source.title}`
-                      : "来源待补"}
-                  </p>
-                </details>
               </article>
-            )
-          })}
-        </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="customer-risk-report-banner">
+          <div className="customer-risk-report-icon">
+            <FileTextIcon aria-hidden="true" />
+          </div>
+          <div>
+            <span className="eyebrow">风险报告</span>
+            <h3>
+              {response.reportAvailability?.latestReportTitle ??
+                `${response.company.shortName}企业风险摘要`}
+            </h3>
+            <p>
+              {response.reportAvailability
+                ? `数据库已收录 ${response.reportAvailability.latestPeriod ?? "最新一期"} 正式报告，可与风险结论和事件资讯交叉核验。`
+                : "查看风险摘要、重点指标、事件清单和已收录公开材料。"}
+            </p>
+          </div>
+          <Button onClick={() => onNavigate?.("reports")}>
+            查看风险报告 <ArrowRightIcon data-icon="inline-end" />
+          </Button>
+        </section>
+
+        {latestEvents.length ? (
+          <section className="customer-risk-section">
+            <header>
+              <div>
+                <span className="eyebrow">最新动态</span>
+                <h3>近期风险事件</h3>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onNavigate?.("realtime")}
+              >
+                浏览全部资讯
+              </Button>
+            </header>
+            <div className="customer-risk-event-preview">
+              {latestEvents.map((event) => (
+                <article key={event.id}>
+                  <CalendarDaysIcon aria-hidden="true" />
+                  <div>
+                    <span>
+                      {event.date ?? "日期待补充"} · {event.eventType}
+                    </span>
+                    <strong>{event.title}</strong>
+                  </div>
+                  {event.url ? (
+                    <a
+                      href={event.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`查看${event.title}原始来源`}
+                    >
+                      <ExternalLinkIcon aria-hidden="true" />
+                    </a>
+                  ) : null}
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
       </TabsContent>
 
-      <TabsContent value="scoring">
-        <CompanySummary response={response} />
-        <div className="industry-risk-current-score">
-          <article data-tone={scoreTone(assessment.totalRiskScore)}>
-            <span>当前企业 CRITIC 基准分</span>
-            <strong>{assessment.totalRiskScore ?? "—"}</strong>
-            <small>
-              现有 {assessment.weightedScoredIndicatorCount}/18 项加权指标 ·
-              缺失不补零
-            </small>
-          </article>
-          <article data-tone={scoreTone(assessment.narrativeIndex.score)}>
-            <span>NRI 叙事风险指数</span>
-            <strong>{assessment.narrativeIndex.score ?? "—"}</strong>
-            <small>
-              {assessment.narrativeIndex.availableIndicatorCount}/4 项 ·
-              不进入总分
-            </small>
-          </article>
-          <article>
-            <span>行业参考</span>
-            <strong>{assessment.benchmarkSampleSize}</strong>
-            <small>{assessment.benchmarkGroupLabel}</small>
-          </article>
-        </div>
-        <div className="industry-risk-candidate-scores">
-          {assessment.candidateAggregates.map((aggregate) => (
-            <article
-              key={aggregate.method}
-              data-tone={scoreTone(aggregate.score)}
-            >
-              <span>
-                {aggregate.method === "critic"
-                  ? "CRITIC 总分"
-                  : "熵权稳健性对照"}
-              </span>
-              <strong>{aggregate.score ?? "—"}</strong>
-              <small>{aggregate.note}</small>
-            </article>
-          ))}
+      <TabsContent value="breakdown">
+        <div className="customer-risk-tab-intro">
+          <div>
+            <span className="eyebrow">风险拆解</span>
+            <h3>只展示已具备计算依据的指标</h3>
+            <p>
+              缺失数据不显示为
+              0，不用占位卡干扰阅读；待补充清单统一放在“数据与方法”中。
+            </p>
+          </div>
+          <Badge variant="outline">{scoredMetrics.length} 项可比较</Badge>
         </div>
         <div className="industry-risk-dimension-grid">
           {assessment.dimensionScores.map((dimension) => (
@@ -427,7 +561,7 @@ function IndustryRiskAssessmentContent({
           ))}
         </div>
         <div className="industry-risk-metric-grid">
-          {assessment.metrics.map((metric) => {
+          {scoredMetrics.map((metric) => {
             const source = metric.sourceId
               ? sourceById.get(metric.sourceId)
               : undefined
@@ -448,7 +582,7 @@ function IndustryRiskAssessmentContent({
                 <div className="industry-risk-metric-value">
                   <strong>
                     {metric.rawValue === null
-                      ? "—"
+                      ? "待补充"
                       : numberFormatter.format(metric.rawValue)}
                   </strong>
                   <span>{metric.unit}</span>
@@ -458,13 +592,13 @@ function IndustryRiskAssessmentContent({
                     <dt>同业风险分位</dt>
                     <dd>
                       {metric.riskPercentile === null
-                        ? "—"
+                        ? "待补充"
                         : percentFormatter.format(metric.riskPercentile)}
                     </dd>
                   </div>
                   <div>
                     <dt>单指标风险分</dt>
-                    <dd>{metric.riskScore ?? "—"}</dd>
+                    <dd>{metric.riskScore ?? "待补充"}</dd>
                   </div>
                 </dl>
                 <details>
@@ -484,7 +618,19 @@ function IndustryRiskAssessmentContent({
       </TabsContent>
 
       <TabsContent value="events">
-        <CompanySummary response={response} />
+        <div className="customer-risk-tab-intro">
+          <div>
+            <span className="eyebrow">风险事件</span>
+            <h3>数据库已收录的企业动态</h3>
+            <p>
+              每条信息保留类型、日期与原始链接，便于继续核验；不把抓取文本直接当作风险结论。
+            </p>
+          </div>
+          <Button variant="outline" onClick={() => onNavigate?.("realtime")}>
+            <NewspaperIcon data-icon="inline-start" />
+            浏览风险资讯
+          </Button>
+        </div>
         <div className="industry-risk-event-list">
           {response.events.length ? (
             response.events.map((event) => (
@@ -495,7 +641,6 @@ function IndustryRiskAssessmentContent({
                   <time>{event.date ?? "日期待核验"}</time>
                 </div>
                 <h4>{event.title}</h4>
-                <p>{event.notes}</p>
                 {event.url ? (
                   <a href={event.url} target="_blank" rel="noreferrer">
                     查看原始来源 <ExternalLinkIcon aria-hidden="true" />
@@ -512,8 +657,89 @@ function IndustryRiskAssessmentContent({
         </div>
       </TabsContent>
 
-      <TabsContent value="evidence">
-        <CompanySummary response={response} />
+      <TabsContent value="method">
+        <div className="customer-risk-method-note">
+          <GaugeIcon aria-hidden="true" />
+          <div>
+            <strong>评分方法与数据状态</strong>
+            <p>
+              R05–R22 的可用指标进入同业 CRITIC 风险基准；R01–R04
+              形成独立叙事风险参考。单项缺失不补零，其余指标仍可参与计算。
+            </p>
+          </div>
+          <div>
+            <Badge variant="outline">Aₛₖ = 0.5</Badge>
+            <Badge variant="outline">α = 0.5 · β = 0.5</Badge>
+            <Badge variant="outline">方法版本 {assessment.methodVersion}</Badge>
+          </div>
+        </div>
+
+        <section className="customer-risk-audit-section">
+          <header>
+            <div>
+              <span className="eyebrow">待补充数据</span>
+              <h3>{missingMetrics.length} 项暂不参与计算</h3>
+              <p>这些项目没有显示为 0，也不会拉低企业总分。</p>
+            </div>
+          </header>
+          <div className="customer-risk-missing-list">
+            {missingMetrics.map((metric) => {
+              const coverage = response.coverage.find(
+                (item) => item.indicatorId === metric.indicatorId
+              )
+              return (
+                <details key={metric.indicatorId}>
+                  <summary>
+                    <Badge variant="outline">{metric.indicatorId}</Badge>
+                    <strong>{metric.label}</strong>
+                    <span>待补充</span>
+                  </summary>
+                  <p>{coverage?.reason || metric.limitation}</p>
+                  <small>
+                    建议来源：
+                    {coverage?.recommendedNextSource ||
+                      "后续正式披露与可信公开来源"}
+                  </small>
+                </details>
+              )
+            })}
+          </div>
+        </section>
+
+        <section className="customer-risk-audit-section">
+          <header>
+            <div>
+              <span className="eyebrow">已纳入指标</span>
+              <h3>公式、来源与计算限制</h3>
+            </div>
+          </header>
+          <div className="customer-risk-audit-metrics">
+            {scoredMetrics.map((metric) => {
+              const source = metric.sourceId
+                ? sourceById.get(metric.sourceId)
+                : undefined
+              const indicator = indicatorById.get(metric.indicatorId)
+              return (
+                <details key={metric.indicatorId}>
+                  <summary>
+                    <Badge variant="outline">{metric.indicatorId}</Badge>
+                    <strong>{metric.label}</strong>
+                    <span>风险分 {metric.riskScore}</span>
+                  </summary>
+                  <p>{indicator?.definition}</p>
+                  <p>{metric.formulaTrace}</p>
+                  <p>
+                    {source
+                      ? `${source.institution} · ${source.title}`
+                      : "来源待核验"}
+                  </p>
+                  <small>{metric.limitation}</small>
+                </details>
+              )
+            })}
+          </div>
+        </section>
+
         {response.reportAvailability ? (
           <article className="industry-risk-report-card">
             <span>正式报告覆盖</span>
@@ -521,6 +747,15 @@ function IndustryRiskAssessmentContent({
               {response.reportAvailability.latestPeriod ?? "最新报告"}
             </strong>
             <p>{response.reportAvailability.latestReportTitle}</p>
+            {response.reportAvailability.latestReportUrl ? (
+              <a
+                href={response.reportAvailability.latestReportUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                查看正式报告 <ExternalLinkIcon aria-hidden="true" />
+              </a>
+            ) : null}
           </article>
         ) : null}
         <div className="industry-risk-source-list">
@@ -540,48 +775,13 @@ function IndustryRiskAssessmentContent({
             </article>
           ))}
         </div>
+        <p className="customer-risk-data-note">
+          共 {response.observations.length} 条指标观测、
+          {response.supplementaryObservations.length} 条补充事实、
+          {response.sources.length} 条来源。原始抓取和 OCR
+          文本仅用于后台核验，不在客户默认页面直接展示。
+        </p>
       </TabsContent>
     </Tabs>
-  )
-}
-
-function CompanySummary({
-  response,
-}: {
-  response: IndustryRiskAssessmentApiResponse
-}) {
-  const covered = response.coverage.filter(
-    (item) => !item.status.startsWith("NA")
-  ).length
-  return (
-    <div className="industry-risk-company-summary">
-      <div>
-        <span>{response.assessment.sectorLabel}</span>
-        <h3>{response.company.shortName}</h3>
-        <p>{response.company.fullName}</p>
-      </div>
-      <dl className="industry-risk-company-stats">
-        <div>
-          <dt>指标覆盖</dt>
-          <dd>{covered}/22</dd>
-        </div>
-        <div>
-          <dt>主观测</dt>
-          <dd>{response.observations.length}</dd>
-        </div>
-        <div>
-          <dt>补充事实</dt>
-          <dd>{response.supplementaryObservations.length}</dd>
-        </div>
-        <div>
-          <dt>事件</dt>
-          <dd>{response.events.length}</dd>
-        </div>
-        <div>
-          <dt>CRITIC基准分</dt>
-          <dd>{response.assessment.totalRiskScore ?? "—"}</dd>
-        </div>
-      </dl>
-    </div>
   )
 }

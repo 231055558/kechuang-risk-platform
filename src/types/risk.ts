@@ -2,7 +2,7 @@ export type RiskLevel = "low" | "attention" | "medium-high" | "high"
 export type EventSeverity = "high" | "medium" | "watch"
 export type EventStatus = "pending" | "in-progress" | "done"
 export type TabValue =
-  "overview" | "realtime" | "intelligence" | "compare" | "events"
+  "overview" | "realtime" | "reports" | "intelligence" | "compare" | "events"
 
 export type LegacyTabValue =
   TabValue | "lifecycle" | "ai-flow" | "transmission" | "governance"
@@ -10,11 +10,7 @@ export type LegacyTabValue =
 export type ResearchSection = "profile" | "metrics" | "lifecycle" | "evidence"
 
 export type OperationsSection =
-  | "events"
-  | "transmission"
-  | "governance"
-  | "investment"
-  | "advice"
+  "events" | "transmission" | "governance" | "investment" | "advice"
 
 export type CanonicalRiskDimensionId =
   | "narrative"
@@ -648,12 +644,7 @@ export interface TechnologyRiskScoreRequest {
 export type TechnologyBaselineLifecycleStage = "startup" | "growth" | "stable"
 
 export type TechnologyBaselineIndicatorId =
-  | "tqi-001"
-  | "tqi-002"
-  | "tqi-003"
-  | "tqi-004"
-  | "tqi-005"
-  | "tqi-006"
+  "tqi-001" | "tqi-002" | "tqi-003" | "tqi-004" | "tqi-005" | "tqi-006"
 
 export type TechnologyBaselineCalibrationIndicatorId =
   | "tqc-001"
@@ -666,8 +657,7 @@ export type TechnologyBaselineCalibrationIndicatorId =
   | "tqc-008"
 
 export type TechnologyBaselineMetricId =
-  | TechnologyBaselineIndicatorId
-  | TechnologyBaselineCalibrationIndicatorId
+  TechnologyBaselineIndicatorId | TechnologyBaselineCalibrationIndicatorId
 
 export interface TechnologyBaselineValues {
   papersPublished?: number
@@ -704,15 +694,10 @@ export interface TechnologyBaselineQuantificationRequest {
 }
 
 export type TechnologyBaselineIndicatorStatus =
-  | "calculated"
-  | "missing"
-  | "ineligible-evidence"
-  | "invalid-input"
+  "calculated" | "missing" | "ineligible-evidence" | "invalid-input"
 
 export type TechnologyBaselineCalibrationStatus =
-  | "pending"
-  | "partial"
-  | "complete"
+  "pending" | "partial" | "complete"
 
 export type TechnologyBaselineRiskBand = "low" | "medium" | "high" | null
 
@@ -799,10 +784,7 @@ export interface TechnologyBaselineQuantificationResult {
 }
 
 export type TechnologyRiskIndicatorStatus =
-  | "scored"
-  | "missing"
-  | "ineligible-evidence"
-  | "invalid-input"
+  "scored" | "missing" | "ineligible-evidence" | "invalid-input"
 
 export interface TechnologyRiskIndicatorResult {
   indicatorId: TechnologyRiskIndicatorId

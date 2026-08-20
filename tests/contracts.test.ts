@@ -67,12 +67,9 @@ test("glass styles keep the standard backdrop declaration last", () => {
   })
 })
 
-test("navigation exposes four business groups and nine direct workflows", () => {
-  assert.equal(navItems.length, 9)
-  assert.equal(
-    new Set(navItems.map((item) => item.id)).size,
-    navItems.length
-  )
+test("navigation exposes four business groups and ten direct workflows", () => {
+  assert.equal(navItems.length, 10)
+  assert.equal(new Set(navItems.map((item) => item.id)).size, navItems.length)
   assert.equal(
     new Set(navItems.map((item) => item.label)).size,
     navItems.length
@@ -87,15 +84,21 @@ test("navigation exposes four business groups and nine direct workflows", () => 
     [
       {
         id: "risk-assessment",
-        label: "风险研判",
+        label: "风险总览",
         group: "研判工作台",
         target: { view: "overview" },
       },
       {
         id: "realtime-intelligence",
-        label: "实时情报",
+        label: "风险资讯",
         group: "研判工作台",
         target: { view: "realtime" },
+      },
+      {
+        id: "risk-reports",
+        label: "风险报告",
+        group: "研判工作台",
+        target: { view: "reports" },
       },
       {
         id: "event-register",
@@ -170,6 +173,10 @@ test("navigation exposes four business groups and nine direct workflows", () => 
     "company-detail"
   )
   assert.equal(
+    resolveActiveNavigationItem("reports", "profile", "events"),
+    "risk-reports"
+  )
+  assert.equal(
     getNavigationItemIdForTarget({
       view: "events",
       operationsSection: "events",
@@ -179,14 +186,9 @@ test("navigation exposes four business groups and nine direct workflows", () => 
 })
 
 test("sidebar notification badges render only for positive realtime counts", () => {
-  const sidebarSource = readProjectFile(
-    "src/components/layout/sidebar-nav.tsx"
-  )
+  const sidebarSource = readProjectFile("src/components/layout/sidebar-nav.tsx")
 
-  assert.match(
-    sidebarSource,
-    /liveCount !== undefined && liveCount > 0 \? \(/
-  )
+  assert.match(sidebarSource, /liveCount !== undefined && liveCount > 0 \? \(/)
   assert.doesNotMatch(sidebarSource, /liveCount !== undefined \? \(/)
 })
 
@@ -466,10 +468,7 @@ test("sticky command bar uses continuous collapse with hysteretic compact state"
     "--command-description-shift",
   ].forEach((property) => {
     assert.match(topBarSource, new RegExp(`"${property}"`))
-    assert.match(
-      topBarSource,
-      new RegExp(`removeProperty\\("${property}"\\)`)
-    )
+    assert.match(topBarSource, new RegExp(`removeProperty\\("${property}"\\)`))
   })
   assert.match(
     topBarSource,
@@ -610,7 +609,7 @@ test("structured research method copy states the snapshot and implementation bou
   )
 })
 
-test("the five pages use the approved enterprise terminology", () => {
+test("the six pages use the approved enterprise terminology", () => {
   const overviewSource = readProjectFile(
     "src/components/dashboard/overview-tab.tsx"
   )
@@ -626,9 +625,12 @@ test("the five pages use the approved enterprise terminology", () => {
   const eventsSource = readProjectFile(
     "src/components/dashboard/events-tab.tsx"
   )
+  const reportsSource = readProjectFile(
+    "src/components/dashboard/risk-reports-tab.tsx"
+  )
 
   assert.match(overviewSource, /当前辅助结论/)
-  assert.match(realtimeSource, /实时情报流/)
+  assert.match(realtimeSource, /风险资讯/)
   assert.match(intelligenceSource, /企业研究档案/)
   assert.match(intelligenceSource, /研究底稿索引/)
   assert.match(intelligenceSource, /公开证据档案/)
@@ -636,6 +638,8 @@ test("the five pages use the approved enterprise terminology", () => {
   assert.match(intelligenceSource, /KTR-2026\.07-v1 专项评分区/)
   assert.match(compareSource, /六维风险对照图/)
   assert.match(eventsSource, /事件清单/)
+  assert.match(reportsSource, /风险报告中心/)
+  assert.match(reportsSource, /数据库已收录的报告与正式来源/)
 })
 
 test("legacy risk-feed terminology is absent from user-facing workflow files", () => {
