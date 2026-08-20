@@ -83,29 +83,33 @@ function nodeData(
     )
 }
 
-test("Cytoscape view uses compound risk groups without dropping relations", () => {
+test("Cytoscape view uses a complete semantic radial graph without dropping relations", () => {
   const focus = selectIndustryRiskGraph(graph, "star-688256")
   const elements = buildIndustryRiskCytoscapeElements(focus)
-  const nodes = elements
-    .map((element) => element.data)
+  const nodeElements = elements
     .filter(
-      (data): data is IndustryRiskCytoscapeNodeData => "entityId" in data
+      (element): element is Extract<
+        (typeof elements)[number],
+        { position: { x: number; y: number } }
+      > => "position" in element
     )
+  const nodes = nodeElements.map((element) => element.data)
   const edges = elements
     .map((element) => element.data)
     .filter((data) => "source" in data)
 
   assert.equal(nodes.length, 59)
-  assert.equal(edges.length, 59)
+  assert.equal(edges.length, 81)
   assert.equal(nodes.filter((node) => node.kind === "category").length, 6)
   assert.ok(
-    nodes
-      .filter((node) => node.kind === "indicator")
-      .every(
-        (node) =>
-          node.parent?.startsWith("category:") &&
-          nodes.some((candidate) => candidate.id === node.parent)
-      )
+    nodeElements.every(
+      (element) =>
+        Number.isFinite(element.position.x) && Number.isFinite(element.position.y)
+    )
+  )
+  assert.deepEqual(
+    nodeElements.find((element) => element.data.kind === "company")?.position,
+    { x: 0, y: 0 }
   )
   assert.ok(
     focus.edges
@@ -113,7 +117,12 @@ test("Cytoscape view uses compound risk groups without dropping relations", () =
         (edge) =>
           edge.kind === "hierarchy" && edge.source.startsWith("category:")
       )
-      .every((edge) => nodeData(focus, edge.target)?.parent === edge.source)
+      .every((edge) =>
+        edges.some(
+          (candidate) =>
+            candidate.source === edge.source && candidate.target === edge.target
+        )
+      )
   )
   assert.ok(
     nodes
@@ -141,7 +150,9 @@ test("risk data controls Cytoscape node area and continuous heat color", () => {
   assert.notEqual(highRiskIndicator.color, lowRiskIndicator.color)
   assert.equal(missingIndicator.scored, false)
   assert.equal(missingIndicator.color, "#64748b")
-  assert.equal(missingIndicator.size, 34)
+  assert.equal(missingIndicator.size, 46)
+  assert.equal(highRiskIndicator.width, highRiskIndicator.size)
+  assert.equal(highRiskIndicator.height, highRiskIndicator.size)
   assert.notEqual(highRiskIndicator.size, peerR19.size)
   assert.notEqual(highRiskIndicator.color, peerR19.color)
 

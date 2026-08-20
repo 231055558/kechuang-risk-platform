@@ -31,7 +31,9 @@ test("industry workspace exposes missing-aware scoring and source audit detail",
   assert.match(panelSource, /正式报告可得性/)
   assert.match(panelSource, /上交所深搜事件/)
   assert.doesNotMatch(panelSource, /CRITIC|熵权|候选加分定义|补充事实/)
-  assert.match(graphSource, /单企业完整图谱/)
+  assert.match(graphSource, /单企业语义径向图/)
+  assert.match(graphSource, /沉浸查看/)
+  assert.match(graphSource, /createPortal\(graphContent, document\.body\)/)
   assert.doesNotMatch(graphSource, /完整网络|useState<"full"/)
 })
 

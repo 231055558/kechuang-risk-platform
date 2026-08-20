@@ -6,13 +6,17 @@ import cytoscape, {
 } from "cytoscape"
 import fcose from "cytoscape-fcose"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { createPortal } from "react-dom"
 import {
   AlertTriangleIcon,
   DatabaseZapIcon,
+  FlameIcon,
   FocusIcon,
   InfoIcon,
-  NetworkIcon,
+  Maximize2Icon,
+  Minimize2Icon,
   RefreshCwIcon,
+  XIcon,
   ZoomInIcon,
   ZoomOutIcon,
 } from "lucide-react"
@@ -50,8 +54,8 @@ const graphStyles: StylesheetJson = [
   {
     selector: "node",
     style: {
-      width: "data(size)",
-      height: "data(size)",
+      width: "data(width)",
+      height: "data(height)",
       shape: "ellipse",
       "background-color": "data(color)",
       "background-opacity": 0.9,
@@ -81,10 +85,13 @@ const graphStyles: StylesheetJson = [
     selector: 'node[kind = "company"]',
     style: {
       "border-color": "#ffffff",
-      "border-width": 4,
-      "font-size": 15,
-      "text-max-width": "90px",
-      "text-outline-width": 2.6,
+      "border-width": 6,
+      "font-size": 16,
+      "text-max-width": "112px",
+      "text-outline-width": 3.2,
+      "underlay-color": "data(color)",
+      "underlay-opacity": 0.3,
+      "underlay-padding": 12,
       "z-index": 20,
     },
   },
@@ -93,29 +100,39 @@ const graphStyles: StylesheetJson = [
     style: {
       shape: "round-rectangle",
       "background-color": "data(color)",
-      "background-opacity": 0.1,
-      "border-color": "data(color)",
+      "background-opacity": 0.9,
+      "border-color": "#f8fafc",
       "border-opacity": 0.72,
-      "border-style": "dashed",
-      "border-width": 2.5,
-      padding: "28px",
+      "border-style": "solid",
+      "border-width": 3,
       color: "#f8fafc",
-      "font-size": 15,
+      "font-size": 13,
       "font-weight": 700,
       "text-halign": "center",
-      "text-valign": "top",
-      "text-margin-y": -12,
-      "text-outline-width": 3,
-      "z-compound-depth": "bottom",
+      "text-valign": "center",
+      "text-max-width": "116px",
+      "text-outline-width": 2.6,
+      "z-index": 14,
     },
   },
   {
-    selector: 'node[kind = "indicator"][scored = false]',
+    selector: 'node[kind = "indicator"][!scored]',
     style: {
-      "background-opacity": 0.36,
+      "background-opacity": 0.42,
       "border-color": "#94a3b8",
       "border-style": "dashed",
       color: "#cbd5e1",
+    },
+  },
+  {
+    selector: 'node[kind = "indicator"][score >= 70]',
+    style: {
+      "border-color": "#fff7ed",
+      "border-width": 4,
+      "underlay-color": "data(color)",
+      "underlay-opacity": 0.24,
+      "underlay-padding": 8,
+      "z-index": 16,
     },
   },
   {
@@ -124,6 +141,7 @@ const graphStyles: StylesheetJson = [
       shape: "diamond",
       "background-opacity": 0.8,
       "border-color": "#bae6fd",
+      label: "",
       "font-size": 9,
       "text-max-width": "68px",
       "text-valign": "bottom",
@@ -136,6 +154,7 @@ const graphStyles: StylesheetJson = [
       shape: "round-hexagon",
       "background-opacity": 0.88,
       "border-color": "#fecdd3",
+      label: "",
       "font-size": 9,
       "text-max-width": "68px",
       "text-valign": "bottom",
@@ -148,10 +167,9 @@ const graphStyles: StylesheetJson = [
       width: "data(width)",
       "line-color": "data(color)",
       "target-arrow-color": "data(color)",
-      "target-arrow-shape": "triangle",
-      "arrow-scale": 0.72,
-      "curve-style": "bezier",
-      opacity: 0.32,
+      "target-arrow-shape": "none",
+      "curve-style": "straight",
+      opacity: 0.28,
       "overlay-opacity": 0,
       "transition-property": "opacity, width, line-color",
       "transition-duration": 180,
@@ -161,10 +179,32 @@ const graphStyles: StylesheetJson = [
   {
     selector: 'edge[kind = "hierarchy"]',
     style: {
-      "curve-style": "unbundled-bezier",
-      "control-point-distances": 28,
-      "control-point-weights": 0.5,
-      opacity: 0.5,
+      opacity: 0.56,
+      width: 2.2,
+      "line-color": "#818cf8",
+    },
+  },
+  {
+    selector: 'edge[kind = "provenance"]',
+    style: {
+      opacity: 0.2,
+      "line-style": "dotted",
+      "curve-style": "bezier",
+    },
+  },
+  {
+    selector: 'edge[kind = "event-link"]',
+    style: {
+      opacity: 0.42,
+      "line-style": "dashed",
+      "curve-style": "bezier",
+    },
+  },
+  {
+    selector:
+      'node[kind = "source"].is-active, node[kind = "event"].is-active',
+    style: {
+      label: "data(label)",
     },
   },
   {
@@ -200,43 +240,49 @@ const graphStyles: StylesheetJson = [
   },
 ]
 
-function layoutOptions(animate: boolean): cytoscapeFcose.FcoseLayoutOptions {
+function layoutOptions(
+  animate: boolean,
+  companyNodeId: string
+): cytoscapeFcose.FcoseLayoutOptions {
   return {
     name: "fcose",
-    quality: "proof",
-    randomize: true,
+    quality: "default",
+    randomize: false,
     animate,
     animationDuration: animate ? 720 : 0,
     animationEasing: "ease-out",
     fit: true,
-    padding: 58,
+    padding: 44,
     nodeDimensionsIncludeLabels: true,
     uniformNodeDimensions: false,
     nodeRepulsion: (node) => {
       const kind = node.data("kind") as IndustryRiskGraphNodeKind
-      if (kind === "company") return 18_000
-      if (kind === "category") return 12_000
-      if (kind === "indicator") return 9_500
-      return 6_000
+      if (kind === "company") return 8_000
+      if (kind === "category") return 6_000
+      if (kind === "indicator") return 4_800
+      return 2_800
     },
     idealEdgeLength: (edge) => {
       const kind = edge.data("kind") as "hierarchy" | "provenance" | "event-link"
-      if (kind === "hierarchy") return 170
-      if (kind === "provenance") return 112
-      return 98
+      if (kind === "hierarchy") return 148
+      if (kind === "provenance") return 92
+      return 82
     },
     edgeElasticity: (edge) =>
       edge.data("kind") === "hierarchy" ? 0.28 : 0.52,
-    nestingFactor: 1.14,
-    numIter: 2_200,
+    nestingFactor: 1,
+    numIter: 1_600,
     tile: true,
     tilingPaddingVertical: 24,
     tilingPaddingHorizontal: 24,
-    gravity: 0.32,
-    gravityRangeCompound: 1.7,
-    gravityCompound: 0.9,
-    gravityRange: 3.7,
+    gravity: 0.38,
+    gravityRangeCompound: 1.5,
+    gravityCompound: 0.8,
+    gravityRange: 3.2,
     initialEnergyOnIncremental: 0.5,
+    fixedNodeConstraint: [
+      { nodeId: companyNodeId, position: { x: 0, y: 0 } },
+    ],
   }
 }
 
@@ -354,12 +400,23 @@ function IndustryRiskKnowledgeGraphContent({
   const canvasRef = useRef<HTMLDivElement>(null)
   const cytoscapeRef = useRef<Core | null>(null)
   const [engineError, setEngineError] = useState<string | null>(null)
+  const [isImmersive, setIsImmersive] = useState(false)
+  const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null)
   const elements = useMemo(
     () =>
       buildIndustryRiskCytoscapeElements(graph) as unknown as ElementDefinition[],
     [graph]
   )
   const activeNode = graph.nodes.find((node) => node.id === activeNodeId)
+  const hoveredNode = graph.nodes.find((node) => node.id === hoveredNodeId)
+  const companyNode = graph.nodes.find((node) => node.kind === "company")
+  const companyNodeId = companyNode?.id ?? ""
+  const topRiskIndicators = graph.nodes
+    .filter(
+      (node) => node.kind === "indicator" && node.score !== null
+    )
+    .sort((left, right) => (right.score ?? 0) - (left.score ?? 0))
+    .slice(0, 5)
   const activeEdges = activeNode
     ? graph.edges.filter(
         (edge) => edge.source === activeNode.id || edge.target === activeNode.id
@@ -382,9 +439,9 @@ function IndustryRiskKnowledgeGraphContent({
         container,
         elements,
         style: graphStyles,
-        layout: layoutOptions(true),
-        minZoom: 0.18,
-        maxZoom: 2.8,
+        layout: { name: "preset", fit: true, padding: 44, animate: false },
+        minZoom: 0.28,
+        maxZoom: 3.4,
         boxSelectionEnabled: false,
         selectionType: "single",
       })
@@ -405,6 +462,11 @@ function IndustryRiskKnowledgeGraphContent({
           .union(node.children())
         cy?.animate({ fit: { eles: focus, padding: 80 }, duration: 380 })
       })
+      cy.on("mouseover", "node", (event) => {
+        const node = event.target as NodeSingular
+        setHoveredNodeId(node.id())
+      })
+      cy.on("mouseout", "node", () => setHoveredNodeId(null))
       const resizeObserver = new ResizeObserver(() => {
         cy?.resize()
       })
@@ -425,7 +487,7 @@ function IndustryRiskKnowledgeGraphContent({
       cy?.destroy()
       cytoscapeRef.current = null
     }
-  }, [elements, onActiveNodeChange])
+  }, [elements, isImmersive, onActiveNodeChange])
 
   useEffect(() => {
     const cy = cytoscapeRef.current
@@ -445,10 +507,41 @@ function IndustryRiskKnowledgeGraphContent({
     })
   }, [activeNodeId, elements])
 
+  useEffect(() => {
+    const cy = cytoscapeRef.current
+    const frame = requestAnimationFrame(() => {
+      cy?.resize()
+      if (cy && !cy.destroyed()) cy.fit(cy.elements(), 44)
+    })
+    const settleTimer = window.setTimeout(() => {
+      cy?.resize()
+      if (cy && !cy.destroyed()) cy.fit(cy.elements(), 44)
+    }, 180)
+    if (!isImmersive) {
+      return () => {
+        cancelAnimationFrame(frame)
+        window.clearTimeout(settleTimer)
+      }
+    }
+
+    const previousOverflow = document.body.style.overflow
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsImmersive(false)
+    }
+    document.body.style.overflow = "hidden"
+    window.addEventListener("keydown", closeOnEscape)
+    return () => {
+      cancelAnimationFrame(frame)
+      window.clearTimeout(settleTimer)
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener("keydown", closeOnEscape)
+    }
+  }, [isImmersive])
+
   const fitGraph = useCallback(() => {
     const cy = cytoscapeRef.current
     if (!cy) return
-    cy.animate({ fit: { eles: cy.elements(), padding: 56 }, duration: 320 })
+    cy.animate({ fit: { eles: cy.elements(), padding: 44 }, duration: 320 })
   }, [])
 
   const zoomBy = useCallback((factor: number) => {
@@ -457,12 +550,93 @@ function IndustryRiskKnowledgeGraphContent({
     cy.animate({ zoom: cy.zoom() * factor, duration: 220 })
   }, [])
 
-  const rerunLayout = useCallback(() => {
+  const rerunLayout = () => {
     const cy = cytoscapeRef.current
-    if (!cy) return
+    if (!cy || !companyNodeId) return
     onActiveNodeChange(null)
-    cy.layout(layoutOptions(true)).run()
-  }, [onActiveNodeChange])
+    const layout = cy.layout(layoutOptions(true, companyNodeId))
+    layout.one("layoutstop", () => {
+      cy.animate({ fit: { eles: cy.elements(), padding: 44 }, duration: 280 })
+    })
+    layout.run()
+  }
+
+  const graphContent = (
+    <div className="industry-graph-content" data-immersive={isImmersive}>
+      {isImmersive ? (
+        <Button
+          variant="outline"
+          size="sm"
+          className="industry-graph-immersive-exit"
+          onClick={() => setIsImmersive(false)}
+        >
+          <Minimize2Icon data-icon="inline-start" />
+          退出沉浸
+        </Button>
+      ) : null}
+      <div className="industry-graph-canvas-shell">
+        <div
+          ref={canvasRef}
+          className="industry-graph-cytoscape"
+          role="application"
+          aria-label={`${companyName}企业风险关系图：${graph.nodes.length} 个节点、${graph.edges.length} 条关系`}
+        />
+        {engineError ? (
+          <div className="industry-graph-engine-error" role="alert">
+            <InfoIcon aria-hidden="true" />
+            <span>{engineError}</span>
+          </div>
+        ) : null}
+        <div className="industry-graph-canvas-hint">
+          拖拽节点 · 滚轮缩放 · 单击下钻 · 双击聚焦
+        </div>
+        {hoveredNode && !activeNode ? (
+          <div className="industry-graph-hover-card" role="status">
+            <span>{nodeKindLabels[hoveredNode.kind]}</span>
+            <strong>{hoveredNode.label}</strong>
+            <small>
+              {hoveredNode.score === null
+                ? hoveredNode.caption
+                : `${hoveredNode.score.toFixed(1)} 候选分 · ${hoveredNode.caption}`}
+            </small>
+          </div>
+        ) : null}
+      </div>
+
+      {activeNode ? (
+        <aside className="industry-graph-inspector" aria-live="polite">
+          <button
+            type="button"
+            className="industry-graph-inspector-close"
+            aria-label="关闭节点详情"
+            onClick={() => onActiveNodeChange(null)}
+          >
+            <XIcon aria-hidden="true" />
+          </button>
+          <Badge variant="outline">{nodeKindLabels[activeNode.kind]}</Badge>
+          <h3>{activeNode.label}</h3>
+          <p>{activeNode.caption}</p>
+          {activeNode.score !== null ? (
+            <strong>{activeNode.score} 候选分</strong>
+          ) : null}
+          <div>
+            <span>直接关系 {activeEdges.length} 条</span>
+          </div>
+          <ul>
+            {activeEdges.slice(0, 12).map((edge) => (
+              <li key={edge.id}>
+                <b>{edge.label}</b>
+                <span>{edge.detail}</span>
+              </li>
+            ))}
+          </ul>
+          {activeEdges.length > 12 ? (
+            <small>另有 {activeEdges.length - 12} 条直接关系。</small>
+          ) : null}
+        </aside>
+      ) : null}
+    </div>
+  )
 
   return (
     <Reveal>
@@ -474,11 +648,11 @@ function IndustryRiskKnowledgeGraphContent({
         <section className="industry-graph" aria-labelledby="industry-graph-title">
           <header className="industry-graph-header">
             <div>
-              <span className="eyebrow">单企业完整图谱 · Cytoscape fCoSE</span>
+              <span className="eyebrow">单企业语义径向图 · Cytoscape + fCoSE</span>
               <h2 id="industry-graph-title">{companyName}企业风险知识图谱</h2>
               <p>
-                风险维度以复合节点聚类，指标、来源与事件由力导向算法自动避让；
-                拖拽节点、滚轮缩放，单击下钻，双击聚焦局部关系。
+                企业位于中心，风险维度构成内环，R01–R22 指标和证据向外展开；
+                节点面积与颜色共同表达风险强度，单击可追溯来源和事件。
               </p>
             </div>
             <div className="industry-graph-toolbar" aria-label="图谱视图控制">
@@ -496,7 +670,15 @@ function IndustryRiskKnowledgeGraphContent({
               </Button>
               <Button variant="outline" size="sm" onClick={rerunLayout}>
                 <RefreshCwIcon data-icon="inline-start" />
-                重新排布
+                力导优化
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsImmersive(true)}
+              >
+                <Maximize2Icon data-icon="inline-start" />
+                沉浸查看
               </Button>
             </div>
           </header>
@@ -507,61 +689,33 @@ function IndustryRiskKnowledgeGraphContent({
             <Badge variant="outline">{countKind("source")} 个数据来源</Badge>
             <Badge variant="outline">{countKind("event")} 个风险事件</Badge>
             <Badge variant="outline">{graph.edges.length} 条可追溯关系</Badge>
-            <Badge variant="outline">复合聚类 · 自动避让</Badge>
+            <Badge variant="outline">语义径向 · 动态避让</Badge>
           </div>
 
-          <div className="industry-graph-content">
-            <div className="industry-graph-canvas-shell">
-              <div
-                ref={canvasRef}
-                className="industry-graph-cytoscape"
-                role="application"
-                aria-label={`${companyName}企业风险关系图：${graph.nodes.length} 个节点、${graph.edges.length} 条关系`}
-              />
-              {engineError ? (
-                <div className="industry-graph-engine-error" role="alert">
-                  <InfoIcon aria-hidden="true" />
-                  <span>{engineError}</span>
-                </div>
-              ) : null}
-              <div className="industry-graph-canvas-hint">
-                拖拽节点 · 滚轮缩放 · 单击下钻 · 双击聚焦
-              </div>
+          <div className="industry-graph-hotspots" aria-label="当前风险热点">
+            <div className="industry-graph-hotspots-heading">
+              <FlameIcon aria-hidden="true" />
+              <span>风险热点</span>
+              <strong>{companyNode?.score?.toFixed(1) ?? "—"}</strong>
+              <small>企业候选基线</small>
             </div>
-
-            <aside className="industry-graph-inspector" aria-live="polite">
-              {activeNode ? (
-                <>
-                  <Badge variant="outline">{nodeKindLabels[activeNode.kind]}</Badge>
-                  <h3>{activeNode.label}</h3>
-                  <p>{activeNode.caption}</p>
-                  {activeNode.score !== null ? (
-                    <strong>{activeNode.score} 候选分</strong>
-                  ) : null}
-                  <div>
-                    <span>直接关系 {activeEdges.length} 条</span>
-                  </div>
-                  <ul>
-                    {activeEdges.slice(0, 12).map((edge) => (
-                      <li key={edge.id}>
-                        <b>{edge.label}</b>
-                        <span>{edge.detail}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  {activeEdges.length > 12 ? (
-                    <small>另有 {activeEdges.length - 12} 条直接关系。</small>
-                  ) : null}
-                </>
-              ) : (
-                <div className="industry-graph-inspector-empty">
-                  <NetworkIcon aria-hidden="true" />
-                  <h3>选择一个节点开始探索</h3>
-                  <p>相邻节点会高亮，其余关系淡出；右侧保留完整来源和风险解释。</p>
-                </div>
-              )}
-            </aside>
+            <ol>
+              {topRiskIndicators.map((node) => (
+                <li key={node.id}>
+                  <button
+                    type="button"
+                    onClick={() => onActiveNodeChange(node.id)}
+                  >
+                    <span>{node.entityId}</span>
+                    <b>{node.label}</b>
+                    <strong>{node.score?.toFixed(0)}</strong>
+                  </button>
+                </li>
+              ))}
+            </ol>
           </div>
+
+          {isImmersive ? createPortal(graphContent, document.body) : graphContent}
 
           <footer className="industry-graph-legend">
             {Object.entries(nodeKindLabels).map(([kind, label]) => (
@@ -579,7 +733,7 @@ function IndustryRiskKnowledgeGraphContent({
             </div>
             <p>
               <AlertTriangleIcon aria-hidden="true" />
-              复合边框表示指标归属；连线仅表示来源或事件证据，不宣称因果关系。
+              连线表示指标归属、来源或事件证据，不宣称因果关系。
             </p>
           </footer>
         </section>

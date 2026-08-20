@@ -16,8 +16,9 @@ export interface IndustryRiskCytoscapeNodeData {
   scoreLabel: string
   color: string
   size: number
+  width: number
+  height: number
   fontSize: number
-  parent?: string
 }
 
 export interface IndustryRiskCytoscapeEdgeData {
@@ -32,7 +33,10 @@ export interface IndustryRiskCytoscapeEdgeData {
 }
 
 export type IndustryRiskCytoscapeElement =
-  | { data: IndustryRiskCytoscapeNodeData }
+  | {
+      data: IndustryRiskCytoscapeNodeData
+      position: { x: number; y: number }
+    }
   | { data: IndustryRiskCytoscapeEdgeData }
 
 function scoreTone(score: number | null): IndustryRiskGraphNode["tone"] {
@@ -153,33 +157,50 @@ function nodeVisual(
   degree: number
 ): Pick<
   IndustryRiskCytoscapeNodeData,
-  "label" | "scoreLabel" | "color" | "size" | "fontSize"
+  | "label"
+  | "scoreLabel"
+  | "color"
+  | "size"
+  | "width"
+  | "height"
+  | "fontSize"
 > {
   if (node.kind === "company") {
+    const scoreLabel = node.score === null ? "待评分" : node.score.toFixed(1)
     return {
-      label: node.label,
-      scoreLabel: node.score === null ? "" : node.score.toFixed(1),
+      label: `${node.label}\n${scoreLabel}`,
+      scoreLabel,
       color: riskHeatColor(node.score),
-      size: 94 + (node.score ?? 30) * 0.18,
-      fontSize: 15,
+      size: 124,
+      width: 124,
+      height: 124,
+      fontSize: 16,
     }
   }
   if (node.kind === "category") {
+    const scoreLabel =
+      node.score === null ? "待补数据" : `均值 ${node.score.toFixed(0)}`
     return {
-      label: node.label,
-      scoreLabel: node.score === null ? "暂无可比值" : `均值 ${node.score.toFixed(1)}`,
+      label: `${node.label}\n${scoreLabel}`,
+      scoreLabel,
       color: riskHeatColor(node.score),
-      size: 0,
-      fontSize: 15,
+      size: 78,
+      width: 132,
+      height: 64,
+      fontSize: 13,
     }
   }
   if (node.kind === "indicator") {
+    const scoreLabel = node.score === null ? "待补" : node.score.toFixed(0)
+    const size = node.score === null ? 46 : 48 + node.score * 0.44
     return {
-      label: `${node.entityId}\n${compactLabel(node.label, 8)}`,
-      scoreLabel: node.score === null ? "无分" : node.score.toFixed(1),
+      label: `${node.entityId} ${compactLabel(node.label, 7)}\n${scoreLabel}`,
+      scoreLabel,
       color: riskHeatColor(node.score),
-      size: node.score === null ? 34 : 38 + node.score * 0.46,
-      fontSize: node.score === null ? 9 : 10 + node.score * 0.025,
+      size,
+      width: size,
+      height: size,
+      fontSize: node.score === null ? 9 : 10.5,
     }
   }
   if (node.kind === "source") {
@@ -189,16 +210,105 @@ function nodeVisual(
       scoreLabel: "",
       color: "#38bdf8",
       size: 22 + Math.min(degree, 8) * 2.2,
+      width: 22 + Math.min(degree, 8) * 2.2,
+      height: 22 + Math.min(degree, 8) * 2.2,
       fontSize: 9,
     }
   }
+  const size = eventSize(node.tone)
   return {
     label: compactLabel(node.label, 10),
     scoreLabel: "",
     color: eventColor(node.tone),
-    size: eventSize(node.tone),
+    size,
+    width: size,
+    height: size,
     fontSize: 9,
   }
+}
+
+function polarPosition(radius: number, angle: number) {
+  return {
+    x: Math.cos(angle) * radius,
+    y: Math.sin(angle) * radius,
+  }
+}
+
+function semanticRadialPositions(graph: IndustryRiskKnowledgeGraph) {
+  const positions = new Map<string, { x: number; y: number }>()
+  const angles = new Map<string, number>()
+  const categories = graph.nodes.filter((node) => node.kind === "category")
+  const categoryByIndicator = new Map(
+    graph.edges.flatMap((edge) =>
+      edge.kind === "hierarchy" &&
+      edge.source.startsWith("category:") &&
+      edge.target.startsWith("indicator:")
+        ? [[edge.target, edge.source] as const]
+        : []
+    )
+  )
+
+  for (const node of graph.nodes) {
+    if (node.kind === "company") {
+      positions.set(node.id, { x: 0, y: 0 })
+      angles.set(node.id, 0)
+    }
+  }
+
+  categories.forEach((category, categoryIndex) => {
+    const angle = -Math.PI / 2 + (categoryIndex * Math.PI * 2) / categories.length
+    positions.set(category.id, polarPosition(205, angle))
+    angles.set(category.id, angle)
+
+    const indicators = graph.nodes
+      .filter(
+        (node) =>
+          node.kind === "indicator" &&
+          categoryByIndicator.get(node.id) === category.id
+      )
+      .sort((left, right) => left.entityId.localeCompare(right.entityId))
+    indicators.forEach((indicator, indicatorIndex) => {
+      const offset =
+        indicators.length === 1
+          ? 0
+          : (indicatorIndex / (indicators.length - 1) - 0.5) * 0.58
+      const indicatorAngle = angle + offset
+      const radius = 370 + (indicatorIndex % 2) * 34
+      positions.set(indicator.id, polarPosition(radius, indicatorAngle))
+      angles.set(indicator.id, indicatorAngle)
+    })
+  })
+
+  const peripheralNodes = graph.nodes.filter(
+    (node) => node.kind === "source" || node.kind === "event"
+  )
+  const peripheralIndexByAnchor = new Map<string, number>()
+  peripheralNodes.forEach((node, index) => {
+    const connectedIndicator = graph.edges.find(
+      (edge) =>
+        (edge.source === node.id && edge.target.startsWith("indicator:")) ||
+        (edge.target === node.id && edge.source.startsWith("indicator:"))
+    )
+    const anchorId = connectedIndicator
+      ? connectedIndicator.source === node.id
+        ? connectedIndicator.target
+        : connectedIndicator.source
+      : null
+    const anchorAngle = anchorId === null ? null : angles.get(anchorId)
+    const anchorKey = anchorId ?? "unanchored"
+    const anchorIndex = peripheralIndexByAnchor.get(anchorKey) ?? 0
+    peripheralIndexByAnchor.set(anchorKey, anchorIndex + 1)
+    const fallbackAngle =
+      -Math.PI / 2 + (index * Math.PI * 2) / Math.max(peripheralNodes.length, 1)
+    const direction = anchorIndex % 2 === 0 ? 1 : -1
+    const fan = Math.ceil(anchorIndex / 2) * 0.105 * direction
+    const angle = (anchorAngle ?? fallbackAngle) + fan
+    const radius = node.kind === "source" ? 535 : 510 + (anchorIndex % 3) * 34
+    positions.set(node.id, polarPosition(radius, angle))
+    angles.set(node.id, angle)
+  })
+
+  return positions
 }
 
 function edgeColor(kind: IndustryRiskGraphEdgeKind) {
@@ -210,6 +320,7 @@ function edgeColor(kind: IndustryRiskGraphEdgeKind) {
 export function buildIndustryRiskCytoscapeElements(
   graph: IndustryRiskKnowledgeGraph
 ): IndustryRiskCytoscapeElement[] {
+  const positions = semanticRadialPositions(graph)
   const degreeByNode = new Map(
     graph.nodes.map((node) => [
       node.id,
@@ -218,19 +329,6 @@ export function buildIndustryRiskCytoscapeElements(
       ).length,
     ])
   )
-  const categoryByIndicator = new Map(
-    graph.edges.flatMap((edge) => {
-      if (
-        edge.kind !== "hierarchy" ||
-        !edge.source.startsWith("category:") ||
-        !edge.target.startsWith("indicator:")
-      ) {
-        return []
-      }
-      return [[edge.target, edge.source] as const]
-    })
-  )
-
   const nodes = graph.nodes.map((node): IndustryRiskCytoscapeElement => {
     const visual = nodeVisual(node, degreeByNode.get(node.id) ?? 0)
     return {
@@ -246,36 +344,27 @@ export function buildIndustryRiskCytoscapeElements(
         scoreLabel: visual.scoreLabel,
         color: visual.color,
         size: visual.size,
+        width: visual.width,
+        height: visual.height,
         fontSize: visual.fontSize,
-        ...(node.kind === "indicator"
-          ? { parent: categoryByIndicator.get(node.id) }
-          : {}),
       },
+      position: positions.get(node.id) ?? { x: 0, y: 0 },
     }
   })
 
-  const edges = graph.edges.flatMap(
-    (edge): IndustryRiskCytoscapeElement[] => {
-      const representedByCompoundContainment =
-        edge.kind === "hierarchy" &&
-        edge.source.startsWith("category:") &&
-        edge.target.startsWith("indicator:")
-      if (representedByCompoundContainment) return []
-      return [
-        {
-          data: {
-            id: edge.id,
-            source: edge.source,
-            target: edge.target,
-            kind: edge.kind,
-            label: edge.label,
-            detail: edge.detail,
-            color: edgeColor(edge.kind),
-            width: edge.kind === "hierarchy" ? 2.4 : 1.4,
-          },
-        },
-      ]
-    }
+  const edges = graph.edges.map(
+    (edge): IndustryRiskCytoscapeElement => ({
+      data: {
+        id: edge.id,
+        source: edge.source,
+        target: edge.target,
+        kind: edge.kind,
+        label: edge.label,
+        detail: edge.detail,
+        color: edgeColor(edge.kind),
+        width: edge.kind === "hierarchy" ? 2.4 : 1.4,
+      },
+    })
   )
 
   return [...nodes, ...edges]

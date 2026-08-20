@@ -7444,7 +7444,7 @@
 
 .industry-graph {
   min-width: 0;
-  padding: 26px;
+  padding: 24px;
 }
 
 .industry-graph-state {
@@ -7525,22 +7525,49 @@
 }
 
 .industry-graph-content {
-  display: grid;
+  position: relative;
   min-width: 0;
-  grid-template-columns: minmax(0, 1fr) 290px;
-  gap: 15px;
   margin-top: 16px;
+}
+
+.industry-graph-content[data-immersive="true"] {
+  position: fixed;
+  inset: 16px;
+  z-index: 100000;
+  margin: 0;
+  padding: 54px 14px 14px;
+  border: 1px solid rgb(148 163 184 / 0.22);
+  border-radius: 20px;
+  background: #050d19;
+  box-shadow: 0 30px 100px rgb(2 6 23 / 0.72);
+}
+
+.industry-graph-content[data-immersive="true"] .industry-graph-canvas-shell {
+  height: 100%;
+  min-height: 0;
+  border-radius: 14px;
+}
+
+.industry-graph-immersive-exit {
+  position: absolute;
+  top: 10px;
+  left: 14px;
+  z-index: 8;
+  border-color: rgb(148 163 184 / 0.3) !important;
+  background: rgb(15 23 42 / 0.86) !important;
+  color: #f8fafc !important;
 }
 
 .industry-graph-canvas-shell {
   position: relative;
   min-width: 0;
-  height: 780px;
+  height: min(74vh, 760px);
+  min-height: 650px;
   overflow: hidden;
   border: 1px solid color-mix(in oklch, var(--brand) 24%, #1e293b);
   border-radius: 18px;
   background:
-    radial-gradient(circle at 50% 48%, rgb(30 41 59 / 0.84), transparent 48%),
+    radial-gradient(circle at 50% 48%, rgb(30 41 59 / 0.72), transparent 54%),
     radial-gradient(circle at 8% 0%, rgb(14 165 233 / 0.12), transparent 34%),
     linear-gradient(rgb(148 163 184 / 0.045) 1px, transparent 1px) 0 0 / 34px
       34px,
@@ -7575,6 +7602,45 @@
   backdrop-filter: blur(12px);
 }
 
+.industry-graph-hover-card {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  z-index: 5;
+  display: grid;
+  width: min(300px, calc(100% - 28px));
+  gap: 4px;
+  padding: 11px 13px;
+  border: 1px solid rgb(148 163 184 / 0.22);
+  border-radius: 11px;
+  background: rgb(8 18 34 / 0.9);
+  box-shadow: 0 14px 34px rgb(2 6 23 / 0.38);
+  color: #f8fafc;
+  pointer-events: none;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+.industry-graph-hover-card span {
+  color: #7dd3fc;
+  font-size: 9px;
+  font-weight: 750;
+}
+
+.industry-graph-hover-card strong {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.industry-graph-hover-card small {
+  overflow: hidden;
+  color: #94a3b8;
+  font-size: 9px;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .industry-graph-engine-error {
   position: absolute;
   inset: 0;
@@ -7596,28 +7662,35 @@
 }
 
 .industry-graph-inspector {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 6;
   min-width: 0;
-  height: 780px;
-  max-height: 780px;
+  width: min(340px, calc(100% - 32px));
+  max-height: calc(100% - 32px);
   overflow: auto;
-  padding: 18px;
-  border: 1px solid var(--reading-border);
-  border-radius: 18px;
-  background: color-mix(in oklch, var(--glass-reading-bg) 82%, transparent);
+  padding: 20px;
+  border: 1px solid rgb(148 163 184 / 0.24);
+  border-radius: 16px;
+  background: rgb(8 18 34 / 0.92);
+  box-shadow: 0 22px 64px rgb(2 6 23 / 0.46);
+  -webkit-backdrop-filter: blur(20px) saturate(1.1);
+  backdrop-filter: blur(20px) saturate(1.1);
 }
 
 .industry-graph-inspector h3 {
   margin: 12px 0 0;
-  color: var(--text-strong);
+  color: #f8fafc;
   font-size: 19px;
   font-weight: 740;
   line-height: 1.35;
 }
 
 .industry-graph-inspector > p,
-.industry-graph-inspector-empty p {
+.industry-graph-hotspots p {
   margin: 8px 0 0;
-  color: var(--text-body);
+  color: #cbd5e1;
   font-size: 11px;
   line-height: 1.65;
 }
@@ -7625,7 +7698,7 @@
 .industry-graph-inspector > strong {
   display: block;
   margin-top: 13px;
-  color: var(--brand-strong);
+  color: #f8fafc;
   font-size: 23px;
   font-variant-numeric: tabular-nums;
 }
@@ -7635,7 +7708,7 @@
   flex-wrap: wrap;
   gap: 5px 12px;
   margin-top: 13px;
-  color: var(--text-soft);
+  color: #94a3b8;
   font-size: 9px;
 }
 
@@ -7651,34 +7724,146 @@
   display: grid;
   gap: 3px;
   padding-top: 8px;
-  border-top: 1px solid var(--reading-separator);
+  border-top: 1px solid rgb(148 163 184 / 0.16);
 }
 
 .industry-graph-inspector li b {
-  color: var(--text-strong);
+  color: #f8fafc;
   font-size: 10px;
 }
 
 .industry-graph-inspector li span,
 .industry-graph-inspector > small {
-  color: var(--text-soft);
+  color: #94a3b8;
   font-size: 9px;
   line-height: 1.55;
 }
 
-.industry-graph-inspector-empty {
-  display: flex;
-  min-height: 140px;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  text-align: center;
+.industry-graph-inspector-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 1px solid rgb(148 163 184 / 0.18);
+  border-radius: 9px;
+  background: rgb(30 41 59 / 0.72);
+  color: #cbd5e1;
+  cursor: pointer;
 }
 
-.industry-graph-inspector-empty svg {
-  width: 32px;
-  height: 32px;
-  color: var(--brand-strong);
+.industry-graph-inspector-close:hover {
+  border-color: rgb(125 211 252 / 0.5);
+  color: #f8fafc;
+}
+
+.industry-graph-inspector-close svg {
+  width: 15px;
+  height: 15px;
+}
+
+.industry-graph-hotspots {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  padding: 9px 10px;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklch, var(--brand) 18%, var(--reading-border));
+  border-radius: 13px;
+  background: color-mix(in oklch, var(--glass-control-bg) 58%, transparent);
+}
+
+.industry-graph-hotspots-heading {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent-amber);
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.industry-graph-hotspots-heading svg {
+  width: 14px;
+  height: 14px;
+}
+
+.industry-graph-hotspots-heading strong {
+  margin-left: 3px;
+  color: var(--text-strong);
+  font-size: 15px;
+  font-weight: 780;
+  line-height: 1;
+}
+
+.industry-graph-hotspots-heading small {
+  color: var(--text-soft);
+  font-size: 9px;
+  font-weight: 550;
+}
+
+.industry-graph-hotspots ol {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  list-style: none;
+  scrollbar-width: none;
+}
+
+.industry-graph-hotspots ol::-webkit-scrollbar {
+  display: none;
+}
+
+.industry-graph-hotspots button {
+  display: flex;
+  min-width: 116px;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 8px;
+  border: 1px solid color-mix(in oklch, var(--border) 72%, transparent);
+  border-radius: 8px;
+  background: color-mix(in oklch, var(--surface-raised) 44%, transparent);
+  color: var(--text-body);
+  text-align: left;
+  cursor: pointer;
+}
+
+.industry-graph-hotspots button:hover {
+  border-color: color-mix(in oklch, var(--brand) 34%, var(--border));
+  background: color-mix(in oklch, var(--brand-soft) 38%, transparent);
+}
+
+.industry-graph-hotspots button span {
+  flex: 0 0 auto;
+  color: var(--accent-amber);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 750;
+}
+
+.industry-graph-hotspots button b {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  font-size: 9px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.industry-graph-hotspots button strong {
+  flex: 0 0 auto;
+  color: var(--danger);
+  font-size: 11px;
+  text-align: right;
 }
 
 .industry-graph-legend {
@@ -7787,17 +7972,9 @@
     justify-content: flex-start;
   }
 
-  .industry-graph-content {
-    grid-template-columns: 1fr;
-  }
-
   .industry-graph-canvas-shell {
-    height: 620px;
-  }
-
-  .industry-graph-inspector {
-    height: auto;
-    max-height: none;
+    height: 680px;
+    min-height: 620px;
   }
 
   .industry-graph-summary [data-slot="select"] {
@@ -7826,7 +8003,17 @@
   }
 
   .industry-graph-canvas-shell {
-    height: 540px;
+    height: 620px;
+    min-height: 560px;
+  }
+
+  .industry-graph-hotspots {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .industry-graph-hotspots ol {
+    width: 100%;
   }
 
   .industry-graph-toolbar button {
