@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState, type CSSProperties } from "react"
 import {
   AlertTriangleIcon,
   DatabaseZapIcon,
@@ -41,6 +41,31 @@ function shortLabel(node: IndustryRiskGraphNode) {
     return `${node.entityId} ${label}`
   }
   return node.label.length > 12 ? `${node.label.slice(0, 11)}…` : node.label
+}
+
+type GraphVisualStyle = CSSProperties & {
+  "--graph-risk-color"?: string
+}
+
+function riskColor(score: number) {
+  const bounded = Math.max(0, Math.min(100, score))
+  const hue =
+    bounded <= 50
+      ? 198 - (bounded / 50) * 154
+      : 44 - ((bounded - 50) / 50) * 39
+  return `hsl(${hue.toFixed(1)} 82% 48%)`
+}
+
+function riskStyle(score: number | null): GraphVisualStyle | undefined {
+  if (score === null) return undefined
+  return { "--graph-risk-color": riskColor(score) }
+}
+
+function nodeScoreLabel(node: IndustryRiskGraphNode) {
+  if (node.score === null) return null
+  if (node.kind === "company") return `综合 ${node.score.toFixed(1)}`
+  if (node.kind === "category") return `维度均值 ${node.score.toFixed(1)}`
+  return `风险 ${node.score.toFixed(1)}`
 }
 
 export function IndustryRiskKnowledgeGraph({
@@ -138,6 +163,7 @@ function IndustryRiskKnowledgeGraphContent({
 }) {
   const layout = useMemo(() => buildIndustryRiskGraphLayout(graph), [graph])
   const positions = new Map(layout.nodes.map((node) => [node.id, node]))
+  const graphNodeById = new Map(graph.nodes.map((node) => [node.id, node]))
   const activeNode = graph.nodes.find((node) => node.id === activeNodeId)
   const activeEdges = activeNode
     ? graph.edges.filter(
@@ -172,6 +198,7 @@ function IndustryRiskKnowledgeGraphContent({
             <Badge variant="outline">{countKind("source")} 个数据来源</Badge>
             <Badge variant="outline">{countKind("event")} 个风险事件</Badge>
             <Badge variant="outline">{graph.edges.length} 条可追溯关系</Badge>
+            <Badge variant="outline">风险驱动自适应布局</Badge>
           </div>
 
           <div className="industry-graph-content">
@@ -185,11 +212,38 @@ function IndustryRiskKnowledgeGraphContent({
                 role="img"
                 aria-label={`${graph.nodes.length} 个节点、${graph.edges.length} 条关系的企业风险知识图谱`}
               >
+                <g className="industry-graph-zones" aria-hidden="true">
+                  {layout.zones.map((zone) => {
+                    const category = graphNodeById.get(zone.id)
+                    return (
+                      <ellipse
+                        key={zone.id}
+                        cx={zone.x}
+                        cy={zone.y}
+                        rx={zone.radiusX}
+                        ry={zone.radiusY}
+                        transform={`rotate(${zone.rotation} ${zone.x} ${zone.y})`}
+                        data-scored={zone.score !== null}
+                        style={riskStyle(zone.score)}
+                      >
+                        <title>{`${category?.label ?? "风险维度"}：${
+                          zone.score === null
+                            ? "暂无可比风险分"
+                            : `维度风险均值 ${zone.score.toFixed(1)}`
+                        }`}</title>
+                      </ellipse>
+                    )
+                  })}
+                </g>
                 <g className="industry-graph-edges">
                   {graph.edges.map((edge) => {
                     const source = positions.get(edge.source)
                     const target = positions.get(edge.target)
                     if (!source || !target) return null
+                    const edgeRiskScore =
+                      graphNodeById.get(edge.target)?.score ??
+                      graphNodeById.get(edge.source)?.score ??
+                      null
                     const active = activeEdges.some((item) => item.id === edge.id)
                     return (
                       <line
@@ -201,6 +255,8 @@ function IndustryRiskKnowledgeGraphContent({
                         data-kind={edge.kind}
                         data-active={active}
                         data-dimmed={Boolean(activeNode && !active)}
+                        data-scored={edgeRiskScore !== null}
+                        style={riskStyle(edgeRiskScore)}
                       >
                         <title>{`${edge.label}：${edge.detail}`}</title>
                       </line>
@@ -223,10 +279,18 @@ function IndustryRiskKnowledgeGraphContent({
                         data-tone={node.tone}
                         data-selected={selected}
                         data-dimmed={dimmed}
-                        transform={`translate(${position.x} ${position.y})`}
+                        data-scored={node.score !== null}
+                        style={{
+                          ...riskStyle(node.score),
+                          transform: `translate(${position.x}px, ${position.y}px)`,
+                        }}
                         role="button"
                         tabIndex={0}
-                        aria-label={`${nodeKindLabels[node.kind]}：${node.label}，${node.caption}`}
+                        aria-label={`${nodeKindLabels[node.kind]}：${node.label}，${
+                          node.score === null
+                            ? "暂无可比风险分"
+                            : `候选风险分 ${node.score}`
+                        }，${node.caption}`}
                         onClick={() =>
                           onActiveNodeChange(selected ? null : node.id)
                         }
@@ -237,7 +301,11 @@ function IndustryRiskKnowledgeGraphContent({
                           }
                         }}
                       >
-                        <title>{`${nodeKindLabels[node.kind]}：${node.label}；${node.caption}`}</title>
+                        <title>{`${nodeKindLabels[node.kind]}：${node.label}；${
+                          node.score === null
+                            ? "暂无可比风险分"
+                            : `候选风险分 ${node.score}`
+                        }；${node.caption}`}</title>
                         {position.shape === "dot" ? (
                           <circle r={position.width / 2} />
                         ) : (
@@ -249,9 +317,24 @@ function IndustryRiskKnowledgeGraphContent({
                               height={position.height}
                               rx={node.kind === "company" ? 18 : 10}
                             />
-                            <text textAnchor="middle" dominantBaseline="middle">
+                            <text
+                              className="industry-graph-node-label"
+                              y={node.score === null ? 0 : -7}
+                              textAnchor="middle"
+                              dominantBaseline="middle"
+                            >
                               {shortLabel(node)}
                             </text>
+                            {nodeScoreLabel(node) ? (
+                              <text
+                                className="industry-graph-node-score"
+                                y={13}
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                              >
+                                {nodeScoreLabel(node)}
+                              </text>
+                            ) : null}
                           </>
                         )}
                       </g>
@@ -299,6 +382,16 @@ function IndustryRiskKnowledgeGraphContent({
             {Object.entries(nodeKindLabels).map(([kind, label]) => (
               <span key={kind} data-kind={kind}>{label}</span>
             ))}
+            <div
+              className="industry-graph-heat-legend"
+              aria-label="冷色表示较低风险分位，暖色和红色表示较高风险分位；节点和色块面积越大，风险影响越突出"
+            >
+              <span>较低</span>
+              <i aria-hidden="true" />
+              <span>较高</span>
+              <b>颜色与面积 = 风险强度</b>
+              <small>灰色 = 暂无可比数值</small>
+            </div>
             <p>
               <AlertTriangleIcon aria-hidden="true" />
               连线只表示指标分类、数据来源或事件证据，不代表已证明的因果关系。
