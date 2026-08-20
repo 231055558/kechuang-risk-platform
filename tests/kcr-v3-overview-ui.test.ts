@@ -18,21 +18,22 @@ test("Cambricon overview uses the R01–R22 industry workspace by default", () =
     "src/components/dashboard/industry-risk-review-panel.tsx"
   )
 
-  assert.match(overview, /detail\.id === "cambricon"/)
-  assert.match(overview, /<IndustryRiskReviewPanel/)
+  assert.match(overview, /detail\.id === "star-688256"/)
+  assert.match(overview, /<IndustryRiskReviewPanel companyId=\{detail\.id\}/)
   assert.doesNotMatch(overview, /KcrV3AssessmentPanel/)
-  assert.match(panel, /R01–R22 · 团队统一指标/)
-  assert.match(panel, /R05–R22 共[\s\S]*项全部进入候选范围/)
-  assert.match(panel, /缺失项不补零、不插值、不进入分母/)
-  assert.doesNotMatch(panel, /CRITIC|熵权|行业风险当前为 0\.5/)
+  assert.match(panel, /最新公式 · R01–R22 同业基准/)
+  assert.match(panel, /当前企业是主视图/)
+  assert.match(panel, /R01–R04 仅形成 NRI/)
+  assert.match(panel, /缺失不补零/)
+  assert.match(panel, /两级 CRITIC/)
 })
 
 test("application shell no longer depends on the KCR V3 runtime result", () => {
   const app = readProjectFile("src/App.tsx")
   const sidebar = readProjectFile("src/components/layout/sidebar-nav.tsx")
 
-  assert.match(app, /R01–R22 行业主契约/)
-  assert.match(app, /37 家同业样本/)
+  assert.match(app, /R01–R22 企业风险基准/)
+  assert.match(app, /芯片 64 家基准/)
   assert.match(app, /INDUSTRY_RISK_MVP_METHOD_VERSION/)
   assert.doesNotMatch(app, /kcrAssessmentResponse/)
   assert.doesNotMatch(app, /printKcrAssessmentReport/)

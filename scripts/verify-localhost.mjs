@@ -31,7 +31,7 @@ const exitPromise = new Promise((resolve) => {
   })
 })
 
-async function waitForFrontend() {
+async function waitForServices() {
   const deadline = Date.now() + 20_000
 
   while (Date.now() < deadline) {
@@ -45,7 +45,20 @@ async function waitForFrontend() {
       })
       if (response.ok) {
         const html = await response.text()
-        if (html.includes('id="root"')) return
+        if (!html.includes('id="root"')) {
+          await delay(250)
+          continue
+        }
+        const apiResponse = await fetch(
+          `${baseUrl}/api/v1/industry-risk/companies`,
+          { signal: AbortSignal.timeout(1_000) }
+        )
+        if (!apiResponse.ok) {
+          await delay(250)
+          continue
+        }
+        const payload = await apiResponse.json()
+        if (Array.isArray(payload?.companies)) return
       }
     } catch {
       // The server is still starting.
@@ -54,7 +67,7 @@ async function waitForFrontend() {
     await delay(250)
   }
 
-  throw new Error("Timed out waiting for the localhost frontend.")
+  throw new Error("Timed out waiting for the localhost frontend and API.")
 }
 
 async function verifyApi(path) {
@@ -93,7 +106,7 @@ async function stopDevelopmentServer() {
 }
 
 try {
-  await waitForFrontend()
+  await waitForServices()
   await verifyApi("/api/v1/technology-risk/score")
   await verifyApi("/api/v1/technology-risk/baseline-quantify")
   console.log(`Localhost verification passed at ${baseUrl}`)

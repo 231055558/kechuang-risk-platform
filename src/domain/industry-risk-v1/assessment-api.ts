@@ -1,8 +1,11 @@
 import type {
-  IndustryRiskBonusDefinition,
   IndustryRiskCompany,
+  IndustryRiskCoverage,
   IndustryRiskDatasetMetadata,
-  IndustryRiskDeepSearchEvent,
+  IndustryRiskEvent,
+  IndustryRiskIndicator,
+  IndustryRiskObservation,
+  IndustryRiskPeerGroup,
   IndustryRiskReportAvailability,
   IndustryRiskSource,
   IndustryRiskSupplementaryObservation,
@@ -22,9 +25,19 @@ export interface IndustryRiskCompanySummary {
   companyName: string
   stockCode: string
   chainSegment: string
+  peerGroupId: string
+  peerGroupLabel: string
+  benchmarkGroupId: string
+  benchmarkGroupLabel: string
+  benchmarkSampleSize: number
+  totalRiskScore: number | null
+  narrativeRiskIndex: number | null
+  weightedDataCoverage: number
   scoredIndicatorCount: number
   totalIndicatorCount: number
-  candidateAggregate: IndustryRiskCandidateAggregate
+  coveredIndicatorCount: number
+  eventCount: number
+  candidateAggregates: IndustryRiskCandidateAggregate[]
 }
 
 export interface IndustryRiskCompanyDirectoryResponse {
@@ -34,9 +47,9 @@ export interface IndustryRiskCompanyDirectoryResponse {
   reportingPeriod: string
   sectorLabel: string
   sampleSize: number
-  numericIndicatorCount: number
-  candidateMetricCount: number
-  candidateAggregateCompanyCount: number
+  scoreReadyIndicatorCount: number
+  industryRiskStatus: "fixed-anchor"
+  peerGroups: IndustryRiskPeerGroup[]
   companies: IndustryRiskCompanySummary[]
 }
 
@@ -44,15 +57,17 @@ export interface IndustryRiskAssessmentApiResponse {
   assessment: IndustryRiskCompanyAssessment
   company: IndustryRiskCompany
   sources: IndustryRiskSource[]
-  reportAvailability: IndustryRiskReportAvailability | null
-  deepSearchEvents: IndustryRiskDeepSearchEvent[]
+  indicators: IndustryRiskIndicator[]
+  observations: IndustryRiskObservation[]
+  coverage: IndustryRiskCoverage[]
+  events: IndustryRiskEvent[]
   supplementaryObservations: IndustryRiskSupplementaryObservation[]
-  bonusDefinitions: IndustryRiskBonusDefinition[]
+  reportAvailability: IndustryRiskReportAvailability | null
   provenance: {
     sourceAttribution: string
     sourceDate: string
     scopeNote: string
-    methodStatus: "mvp-candidate"
+    methodStatus: "usable-benchmark"
   }
 }
 

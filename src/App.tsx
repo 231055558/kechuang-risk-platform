@@ -59,7 +59,7 @@ import {
   realtimeData,
   realtimeSignals,
   riskIndicators,
-} from "@/lib/data"
+} from "@/lib/data-r01"
 import {
   createPromotedSignalKey,
   createInitialDemoState,
@@ -398,13 +398,13 @@ function App() {
     runtimeAssessmentRegistry[companyId] ??
     runtimeAssessmentRegistry[defaultCompanyId]
   const industryAssessmentSummary =
-    companyId === "cambricon"
+    companyId === "star-688256"
       ? {
-          label: "R01–R22 行业主契约",
-          scoreLabel: "37 家同业样本",
+          label: "R01–R22 企业风险基准",
+          scoreLabel: "芯片 64 家基准",
           methodVersion: INDUSTRY_RISK_MVP_METHOD_VERSION,
           overviewDescription:
-            "团队统一的 R01–R22 指标、37 家同业横截面、证据覆盖与风险关系图谱",
+            "当前企业为主视图；行业样本仅用于风险分位、CRITIC权重和排名参考",
         }
       : undefined
   const promotedSignalIdsForCompany = useMemo(

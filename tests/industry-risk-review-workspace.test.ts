@@ -10,7 +10,10 @@ const panelSource = readFileSync(
   "utf8"
 )
 const overviewSource = readFileSync(
-  new URL("../src/components/dashboard/overview-tab.tsx", import.meta.url),
+  new URL(
+    "../src/components/dashboard/overview-tab.tsx",
+    import.meta.url
+  ),
   "utf8"
 )
 const graphSource = readFileSync(
@@ -21,22 +24,24 @@ const graphSource = readFileSync(
   "utf8"
 )
 
-test("industry workspace exposes missing-aware scoring and source audit detail", () => {
-  assert.match(panelSource, /sampleSize.*家数字芯片设计企业风险研判/s)
-  assert.match(panelSource, /candidateAggregateCompanyCount/)
-  assert.match(panelSource, /onValueChange=\{selectCompany\}/)
-  assert.match(panelSource, /全指标候选基线/)
-  assert.match(panelSource, /缺失项不补零、不插值、不进入分母/)
+test("industry workspace keeps the current company primary and exposes auditable CRITIC detail", () => {
+  assert.match(panelSource, /最新公式 · R01–R22 同业基准/)
+  assert.match(panelSource, /当前企业是主视图/)
+  assert.match(panelSource, /22项指标/)
+  assert.match(panelSource, /风险分基准/)
+  assert.match(panelSource, /companyId/)
+  assert.match(panelSource, /查看行业参考样本/)
+  assert.match(panelSource, /口径、来源与缺口/)
+  assert.match(panelSource, /缺失不补零/)
   assert.match(panelSource, /公式、来源与限制/)
-  assert.match(panelSource, /正式报告可得性/)
-  assert.match(panelSource, /上交所深搜事件/)
-  assert.doesNotMatch(panelSource, /CRITIC|熵权|候选加分定义|补充事实/)
-  assert.match(graphSource, /单企业完整图谱/)
+  assert.match(graphSource, /单企业语义径向图/)
+  assert.match(graphSource, /沉浸查看/)
+  assert.match(graphSource, /createPortal\(graphContent, document\.body\)/)
   assert.doesNotMatch(graphSource, /完整网络|useState<"full"/)
 })
 
-test("Cambricon MVP mounts only the industry workspace in its default route", () => {
-  assert.match(overviewSource, /<IndustryRiskReviewPanel/)
+test("Cambricon MVP mounts the unified industry workspace in its default route", () => {
+  assert.match(overviewSource, /<IndustryRiskReviewPanel companyId=\{detail\.id\}/)
   assert.doesNotMatch(overviewSource, /KcrV3AssessmentPanel/)
-  assert.doesNotMatch(overviewSource, /KcrRiskKnowledgeGraph/)
+  assert.match(panelSource, /<IndustryRiskKnowledgeGraph/)
 })
