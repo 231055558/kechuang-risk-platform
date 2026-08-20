@@ -43,7 +43,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
-import { getCompanyName, getCustomerVisibleIndicators } from "@/lib/data"
+import { getCompanyName, getCustomerVisibleIndicators } from "@/lib/data-r01"
 import { formatSourceDateTime, formatSourceListTime } from "@/lib/date-format"
 import { getCanonicalRiskDimensionLabels } from "@/lib/risk-dimensions"
 import { cn } from "@/lib/utils"

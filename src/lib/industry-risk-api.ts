@@ -45,13 +45,12 @@ function isSafeSourceUrl(value: unknown) {
 function isCandidateAggregate(value: unknown) {
   return (
     isRecord(value) &&
-    value.method === "available-equal" &&
+    (value.method === "entropy" || value.method === "critic") &&
     (value.score === null || isFiniteNumber(value.score)) &&
     isRecord(value.weights) &&
-    Number.isInteger(value.availableIndicatorCount) &&
-    Number.isInteger(value.totalIndicatorCount) &&
-    isFiniteNumber(value.coverageRate) &&
-    (value.status === "partial-candidate" || value.status === "unavailable") &&
+    (value.status === "usable-benchmark" ||
+      value.status === "partial-candidate" ||
+      value.status === "unavailable") &&
     typeof value.note === "string"
   )
 }
@@ -63,9 +62,35 @@ function isCompanySummary(value: unknown) {
     typeof value.companyName === "string" &&
     typeof value.stockCode === "string" &&
     typeof value.chainSegment === "string" &&
+    typeof value.peerGroupId === "string" &&
+    typeof value.peerGroupLabel === "string" &&
+    typeof value.benchmarkGroupId === "string" &&
+    typeof value.benchmarkGroupLabel === "string" &&
+    Number.isInteger(value.benchmarkSampleSize) &&
+    (value.totalRiskScore === null || isFiniteNumber(value.totalRiskScore)) &&
+    (value.narrativeRiskIndex === null ||
+      isFiniteNumber(value.narrativeRiskIndex)) &&
+    isFiniteNumber(value.weightedDataCoverage) &&
     Number.isInteger(value.scoredIndicatorCount) &&
     Number.isInteger(value.totalIndicatorCount) &&
-    isCandidateAggregate(value.candidateAggregate)
+    Number.isInteger(value.coveredIndicatorCount) &&
+    Number.isInteger(value.eventCount) &&
+    Array.isArray(value.candidateAggregates) &&
+    value.candidateAggregates.length === 2 &&
+    value.candidateAggregates.every(isCandidateAggregate)
+  )
+}
+
+function isPeerGroup(value: unknown) {
+  return (
+    isRecord(value) &&
+    typeof value.id === "string" &&
+    typeof value.label === "string" &&
+    typeof value.reportingPeriod === "string" &&
+    Array.isArray(value.companyIds) &&
+    value.companyIds.every((id) => typeof id === "string") &&
+    Array.isArray(value.scoreReadyIndicatorIds) &&
+    value.scoreReadyIndicatorIds.every((id) => typeof id === "string")
   )
 }
 
@@ -75,14 +100,15 @@ function isDirectoryResponse(
   return (
     isRecord(value) &&
     value.schemaVersion === "KCR-INDUSTRY-DATA-2026.08-v1" &&
-    value.methodVersion === "IRAWC-MISSING-AWARE-2026.08-v3" &&
+    value.methodVersion === "IRAWC-CRITIC-2026.08-v2" &&
     typeof value.dataVersion === "string" &&
     typeof value.reportingPeriod === "string" &&
     typeof value.sectorLabel === "string" &&
     Number.isInteger(value.sampleSize) &&
-    Number.isInteger(value.numericIndicatorCount) &&
-    Number.isInteger(value.candidateMetricCount) &&
-    Number.isInteger(value.candidateAggregateCompanyCount) &&
+    Number.isInteger(value.scoreReadyIndicatorCount) &&
+    value.industryRiskStatus === "fixed-anchor" &&
+    Array.isArray(value.peerGroups) &&
+    value.peerGroups.every(isPeerGroup) &&
     Array.isArray(value.companies) &&
     value.companies.length === value.sampleSize &&
     value.companies.every(isCompanySummary)
@@ -93,99 +119,56 @@ function isMetricScore(value: unknown) {
   return (
     isRecord(value) &&
     typeof value.indicatorId === "string" &&
-    (value.metricName === null || typeof value.metricName === "string") &&
+    typeof value.metricName === "string" &&
     typeof value.label === "string" &&
     typeof value.unit === "string" &&
     (value.rawValue === null || isFiniteNumber(value.rawValue)) &&
     (value.riskPercentile === null || isFiniteNumber(value.riskPercentile)) &&
     (value.riskScore === null || isFiniteNumber(value.riskScore)) &&
+    (value.centeredRiskScore === null ||
+      isFiniteNumber(value.centeredRiskScore)) &&
     Number.isInteger(value.sampleSize) &&
     (value.sourceId === null || typeof value.sourceId === "string") &&
-    (value.asOfDate === null || typeof value.asOfDate === "string") &&
-    typeof value.coverageStatus === "string" &&
-    typeof value.sourceMarkedUsableForScoring === "boolean" &&
+    Array.isArray(value.sourceIds) &&
+    value.sourceIds.every((sourceId) => typeof sourceId === "string") &&
     (value.status === "scored" ||
       value.status === "missing" ||
-      value.status === "insufficient-sample" ||
-      value.status === "unavailable") &&
+      value.status === "not-score-ready") &&
     (value.direction === "higher-is-riskier" ||
       value.direction === "lower-is-riskier") &&
-    (value.basis === "source-formula" ||
-      value.basis === "partial-proxy" ||
-      value.basis === "unavailable") &&
+    (value.kind === "narrative" || value.kind === "weighted") &&
+    (value.dimensionId === null || typeof value.dimensionId === "string") &&
     typeof value.formulaTrace === "string" &&
     typeof value.limitation === "string"
   )
 }
 
-function isReportAvailability(value: unknown) {
+function isNarrativeIndex(value: unknown) {
   return (
-    value === null ||
-    (isRecord(value) &&
-      typeof value.companyId === "string" &&
-      typeof value.annual2025Status === "string" &&
-      typeof value.latestPeriod === "string" &&
-      (value.latestReportDate === null ||
-        typeof value.latestReportDate === "string") &&
-      typeof value.latestReportTitle === "string" &&
-      isSafeSourceUrl(value.latestReportUrl) &&
-      typeof value.notes === "string")
+    isRecord(value) &&
+    (value.score === null || isFiniteNumber(value.score)) &&
+    Number.isInteger(value.availableIndicatorCount) &&
+    value.totalIndicatorCount === 4 &&
+    (value.status === "usable-reference" || value.status === "unavailable") &&
+    typeof value.note === "string"
   )
 }
 
-function isSupplementaryObservation(value: unknown) {
+function isDimensionScore(value: unknown) {
   return (
     isRecord(value) &&
     typeof value.id === "string" &&
-    typeof value.companyId === "string" &&
-    typeof value.factName === "string" &&
-    (value.period === null || typeof value.period === "string") &&
-    (value.asOfDate === null || typeof value.asOfDate === "string") &&
-    (value.numericValue === null || isFiniteNumber(value.numericValue)) &&
-    (value.textValue === null || typeof value.textValue === "string") &&
-    (value.unit === null || typeof value.unit === "string") &&
-    (value.relatedIndicatorId === null ||
-      typeof value.relatedIndicatorId === "string") &&
-    (value.sourceId === null || typeof value.sourceId === "string") &&
-    (value.sourcePage === null || isFiniteNumber(value.sourcePage)) &&
-    typeof value.confidenceLabel === "string" &&
-    isFiniteNumber(value.confidence) &&
-    typeof value.confidenceReason === "string" &&
-    typeof value.limitations === "string" &&
-    value.affectsScore === false
-  )
-}
-
-function isDeepSearchEvent(value: unknown) {
-  return (
-    isRecord(value) &&
-    typeof value.id === "string" &&
-    typeof value.companyId === "string" &&
-    typeof value.eventType === "string" &&
-    (value.eventDate === null || typeof value.eventDate === "string") &&
-    typeof value.title === "string" &&
-    isSafeSourceUrl(value.url) &&
-    typeof value.sourceChannel === "string" &&
-    typeof value.confidenceLabel === "string" &&
-    isFiniteNumber(value.confidence) &&
-    (value.relatedIndicatorId === null ||
-      typeof value.relatedIndicatorId === "string") &&
-    typeof value.notes === "string"
-  )
-}
-
-function isBonusDefinition(value: unknown) {
-  return (
-    isRecord(value) &&
-    typeof value.id === "string" &&
-    typeof value.name === "string" &&
-    typeof value.definition === "string" &&
-    typeof value.scoringRule === "string" &&
-    isFiniteNumber(value.maxScore) &&
-    typeof value.dataSource === "string" &&
-    typeof value.basis === "string" &&
-    value.affectsScore === false &&
-    value.status === "definition-only"
+    typeof value.label === "string" &&
+    (value.score === null || isFiniteNumber(value.score)) &&
+    isFiniteNumber(value.weight) &&
+    Number.isInteger(value.availableIndicatorCount) &&
+    Number.isInteger(value.totalIndicatorCount) &&
+    Array.isArray(value.indicatorIds) &&
+    value.indicatorIds.every(
+      (indicatorId) => typeof indicatorId === "string"
+    ) &&
+    isRecord(value.indicatorWeights) &&
+    (value.status === "scored" || value.status === "missing")
   )
 }
 
@@ -202,19 +185,38 @@ function isAssessmentResponse(
   }
   const assessment = value.assessment
   return (
-    assessment.methodVersion === "IRAWC-MISSING-AWARE-2026.08-v3" &&
+    assessment.methodVersion === "IRAWC-CRITIC-2026.08-v2" &&
     typeof assessment.companyId === "string" &&
     typeof assessment.companyName === "string" &&
     typeof assessment.stockCode === "string" &&
+    typeof assessment.peerGroupId === "string" &&
+    typeof assessment.benchmarkGroupId === "string" &&
+    typeof assessment.benchmarkGroupLabel === "string" &&
+    Number.isInteger(assessment.benchmarkSampleSize) &&
     typeof assessment.reportingPeriod === "string" &&
     typeof assessment.sectorLabel === "string" &&
+    isFiniteNumber(assessment.industryRisk) &&
+    assessment.industryRiskStatus === "fixed-anchor" &&
+    isFiniteNumber(assessment.alpha) &&
+    isFiniteNumber(assessment.beta) &&
     Array.isArray(assessment.metrics) &&
-    assessment.metrics.length === 18 &&
+    assessment.metrics.length === 22 &&
     assessment.metrics.every(isMetricScore) &&
-    isCandidateAggregate(assessment.candidateAggregate) &&
+    isNarrativeIndex(assessment.narrativeIndex) &&
+    Array.isArray(assessment.dimensionScores) &&
+    assessment.dimensionScores.length === 5 &&
+    assessment.dimensionScores.every(isDimensionScore) &&
+    (assessment.totalRiskScore === null ||
+      isFiniteNumber(assessment.totalRiskScore)) &&
+    (assessment.totalRiskStatus === "usable-benchmark" ||
+      assessment.totalRiskStatus === "unavailable") &&
+    isFiniteNumber(assessment.weightedDataCoverage) &&
+    Array.isArray(assessment.candidateAggregates) &&
+    assessment.candidateAggregates.length === 2 &&
+    assessment.candidateAggregates.every(isCandidateAggregate) &&
     Number.isInteger(assessment.scoredIndicatorCount) &&
+    Number.isInteger(assessment.weightedScoredIndicatorCount) &&
     Number.isInteger(assessment.totalIndicatorCount) &&
-    Number.isInteger(assessment.narrativeIndicatorCount) &&
     assessment.isOfficialTotalScore === false &&
     value.company.id === assessment.companyId &&
     typeof value.company.shortName === "string" &&
@@ -228,30 +230,47 @@ function isAssessmentResponse(
         typeof source.title === "string" &&
         isSafeSourceUrl(source.url)
     ) &&
-    isReportAvailability(value.reportAvailability) &&
-    (value.reportAvailability === null ||
-      (isRecord(value.reportAvailability) &&
-        value.reportAvailability.companyId === assessment.companyId)) &&
-    Array.isArray(value.deepSearchEvents) &&
-    value.deepSearchEvents.every(
+    Array.isArray(value.indicators) &&
+    value.indicators.length === 22 &&
+    value.indicators.every(
+      (indicator) =>
+        isRecord(indicator) &&
+        typeof indicator.id === "string" &&
+        typeof indicator.label === "string"
+    ) &&
+    Array.isArray(value.observations) &&
+    value.observations.every(
+      (observation) =>
+        isRecord(observation) &&
+        typeof observation.id === "string" &&
+        typeof observation.indicatorId === "string" &&
+        typeof observation.metricName === "string"
+    ) &&
+    Array.isArray(value.coverage) &&
+    value.coverage.length === 22 &&
+    value.coverage.every(
       (item) =>
-        isDeepSearchEvent(item) &&
         isRecord(item) &&
-        item.companyId === assessment.companyId
+        typeof item.indicatorId === "string" &&
+        typeof item.status === "string"
+    ) &&
+    Array.isArray(value.events) &&
+    value.events.every(
+      (event) =>
+        isRecord(event) &&
+        typeof event.id === "string" &&
+        typeof event.eventType === "string" &&
+        typeof event.title === "string" &&
+        isSafeSourceUrl(event.url)
     ) &&
     Array.isArray(value.supplementaryObservations) &&
-    value.supplementaryObservations.every(
-      (item) =>
-        isSupplementaryObservation(item) &&
-        isRecord(item) &&
-        item.companyId === assessment.companyId
-    ) &&
-    Array.isArray(value.bonusDefinitions) &&
-    value.bonusDefinitions.every(isBonusDefinition) &&
+    (value.reportAvailability === null ||
+      (isRecord(value.reportAvailability) &&
+        isSafeSourceUrl(value.reportAvailability.latestReportUrl))) &&
     typeof value.provenance.sourceAttribution === "string" &&
     typeof value.provenance.sourceDate === "string" &&
     typeof value.provenance.scopeNote === "string" &&
-    value.provenance.methodStatus === "mvp-candidate"
+    value.provenance.methodStatus === "usable-benchmark"
   )
 }
 
@@ -262,11 +281,7 @@ const graphNodeKinds = new Set([
   "source",
   "event",
 ])
-const graphEdgeKinds = new Set([
-  "hierarchy",
-  "provenance",
-  "event-link",
-])
+const graphEdgeKinds = new Set(["hierarchy", "provenance", "event-link"])
 
 function isKnowledgeGraph(value: unknown): value is IndustryRiskKnowledgeGraph {
   if (

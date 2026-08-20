@@ -12,12 +12,11 @@ function readProjectFile(path: string) {
 }
 
 test("new MVP sessions default to the company with the R01–R22 industry workspace", () => {
-  const dataSource = readProjectFile("src/lib/data.ts")
+  const dataSource = readProjectFile("src/lib/data-r01.ts")
 
-  assert.match(dataSource, /const mvpDefaultCompanyId = "cambricon"/)
   assert.match(
     dataSource,
-    /export const defaultCompanyId = companySummaries\.some\([\s\S]*mvpDefaultCompanyId/
+    /export const defaultCompanyId = detailRegistry\["star-688256"\][\s\S]*\? "star-688256"/
   )
 })
 

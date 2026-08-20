@@ -597,7 +597,7 @@ function IndustryRiskKnowledgeGraphContent({
             <small>
               {hoveredNode.score === null
                 ? hoveredNode.caption
-                : `${hoveredNode.score.toFixed(1)} 候选分 · ${hoveredNode.caption}`}
+                : `${hoveredNode.score.toFixed(1)} 基准分 · ${hoveredNode.caption}`}
             </small>
           </div>
         ) : null}
@@ -617,7 +617,7 @@ function IndustryRiskKnowledgeGraphContent({
           <h3>{activeNode.label}</h3>
           <p>{activeNode.caption}</p>
           {activeNode.score !== null ? (
-            <strong>{activeNode.score} 候选分</strong>
+            <strong>{activeNode.score} 基准分</strong>
           ) : null}
           <div>
             <span>直接关系 {activeEdges.length} 条</span>
@@ -697,7 +697,7 @@ function IndustryRiskKnowledgeGraphContent({
               <FlameIcon aria-hidden="true" />
               <span>风险热点</span>
               <strong>{companyNode?.score?.toFixed(1) ?? "—"}</strong>
-              <small>企业候选基线</small>
+              <small>企业 CRITIC 基准</small>
             </div>
             <ol>
               {topRiskIndicators.map((node) => (
@@ -723,12 +723,12 @@ function IndustryRiskKnowledgeGraphContent({
             ))}
             <div
               className="industry-graph-heat-legend"
-              aria-label="蓝色表示较低风险分位，黄色表示中等风险分位，红色表示较高风险分位；节点面积随候选风险分增大"
+              aria-label="蓝色表示较低风险分位，黄色表示中等风险分位，红色表示较高风险分位；节点面积随风险基准分增大"
             >
               <span>较低</span>
               <i aria-hidden="true" />
               <span>较高</span>
-              <b>颜色 + 面积 = 候选风险强度</b>
+              <b>颜色 + 面积 = 风险基准强度</b>
               <small>灰色虚线 = 暂无可比数值</small>
             </div>
             <p>

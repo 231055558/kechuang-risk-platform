@@ -13,22 +13,22 @@ const graph = getIndustryRiskKnowledgeGraph()
 
 test("industry graph keeps the agreed company-category-indicator-evidence structure", () => {
   assert.deepEqual(graph.counts, {
-    nodes: 416,
-    edges: 1_257,
-    companies: 37,
+    nodes: 1289,
+    edges: 3291,
+    companies: 94,
     categories: 6,
     indicators: 22,
-    sources: 180,
-    events: 171,
+    sources: 558,
+    events: 609,
   })
   const kinds = graph.edges.reduce<Record<string, number>>((counts, edge) => {
     counts[edge.kind] = (counts[edge.kind] ?? 0) + 1
     return counts
   }, {})
   assert.deepEqual(kinds, {
-    hierarchy: 244,
-    provenance: 842,
-    "event-link": 171,
+    hierarchy: 586,
+    provenance: 2096,
+    "event-link": 609,
   })
   const nodeIds = new Set(graph.nodes.map((node) => node.id))
   assert.ok(
@@ -43,26 +43,26 @@ test("company focus is complete but contains no other enterprise", () => {
   assert.equal(focus.nodes.filter((node) => node.kind === "company").length, 1)
   assert.equal(focus.nodes.filter((node) => node.kind === "category").length, 6)
   assert.equal(focus.nodes.filter((node) => node.kind === "indicator").length, 22)
-  assert.equal(focus.nodes.filter((node) => node.kind === "source").length, 8)
+  assert.equal(focus.nodes.filter((node) => node.kind === "source").length, 13)
   assert.equal(focus.nodes.filter((node) => node.kind === "event").length, 22)
-  assert.equal(focus.nodes.length, 59)
-  assert.equal(focus.edges.length, 81)
+  assert.equal(focus.nodes.length, 64)
+  assert.equal(focus.edges.length, 92)
   assert.ok(
     focus.edges.every((edge) => edge.companyIds.includes("star-688256"))
   )
   assert.ok(focus.nodes.some((node) => node.id === "company:star-688256"))
   assert.equal(
     focus.nodes.find((node) => node.id === "indicator:R19")?.score,
-    93.06
+    73.02
   )
   assert.equal(
     focus.nodes.find((node) => node.id === "category:叙事风险（主观校验项，不直接计入总权重）")
       ?.score,
-    null
+    52.63
   )
   assert.equal(
     focus.nodes.find((node) => node.id === "category:技术风险")?.score,
-    31.48
+    43.41
   )
   assert.ok(
     focus.nodes.every(
@@ -98,8 +98,8 @@ test("Cytoscape view uses a complete semantic radial graph without dropping rela
     .map((element) => element.data)
     .filter((data) => "source" in data)
 
-  assert.equal(nodes.length, 59)
-  assert.equal(edges.length, 81)
+  assert.equal(nodes.length, 64)
+  assert.equal(edges.length, 92)
   assert.equal(nodes.filter((node) => node.kind === "category").length, 6)
   assert.ok(
     nodeElements.every(
@@ -139,7 +139,7 @@ test("risk data controls Cytoscape node area and continuous heat color", () => {
   const peer = selectIndustryRiskGraph(graph, "star-688213")
   const lowRiskIndicator = nodeData(cambricon, "indicator:R05")
   const highRiskIndicator = nodeData(cambricon, "indicator:R19")
-  const missingIndicator = nodeData(cambricon, "indicator:R09")
+  const missingIndicator = nodeData(cambricon, "indicator:R08")
   const peerR19 = nodeData(peer, "indicator:R19")
 
   assert.ok(lowRiskIndicator)
@@ -184,7 +184,7 @@ test("every Cytoscape relationship resolves to a visible node", () => {
   )
 })
 
-test("all 37 companies produce distinct risk-driven visual signatures", () => {
+test("all 94 companies produce distinct risk-driven visual signatures", () => {
   const signatures = graph.nodes
     .filter((node) => node.kind === "company")
     .map((company) => {
@@ -203,6 +203,6 @@ test("all 37 companies produce distinct risk-driven visual signatures", () => {
         .join("|")
     })
 
-  assert.equal(signatures.length, 37)
-  assert.equal(new Set(signatures).size, 37)
+  assert.equal(signatures.length, 94)
+  assert.equal(new Set(signatures).size, 94)
 })

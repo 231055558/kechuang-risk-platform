@@ -69,6 +69,15 @@ export interface IndustryRiskDatasetMetadata {
   sourceAttribution: string
   scopeNote: string
   scoreReadyIndicatorIds: IndustryRiskIndicatorId[]
+  peerGroups?: IndustryRiskPeerGroup[]
+}
+
+export interface IndustryRiskPeerGroup {
+  id: string
+  label: string
+  reportingPeriod: string
+  companyIds: string[]
+  scoreReadyIndicatorIds: IndustryRiskIndicatorId[]
 }
 
 export interface IndustryRiskCompany {
@@ -88,6 +97,7 @@ export interface IndustryRiskCompany {
   sourceUrl: string | null
   confidenceLabel: string
   confidence: number
+  peerGroupId?: string
 }
 
 export interface IndustryRiskIndicator {
@@ -117,6 +127,7 @@ export interface IndustryRiskSource {
   accessedAt: string | null
   notes: string
   redistribution: IndustryRiskRedistribution
+  peerGroupId?: string
 }
 
 export interface IndustryRiskObservation {
@@ -139,6 +150,7 @@ export interface IndustryRiskObservation {
   confidence: number
   confidenceReason: string
   limitations: string
+  sourceIds?: string[]
 }
 
 export interface IndustryRiskCoverage {
@@ -195,20 +207,6 @@ export interface IndustryRiskLitigationEvidence {
   redistribution: "licensed-derived"
 }
 
-export interface IndustryRiskDeepSearchEvent {
-  id: string
-  companyId: string
-  eventType: string
-  eventDate: string | null
-  title: string
-  url: string | null
-  sourceChannel: string
-  confidenceLabel: string
-  confidence: number
-  relatedIndicatorId: IndustryRiskIndicatorId | null
-  notes: string
-}
-
 export interface IndustryRiskSupplementaryObservation {
   id: string
   companyId: string
@@ -225,15 +223,29 @@ export interface IndustryRiskSupplementaryObservation {
   confidence: number
   confidenceReason: string
   limitations: string
-  affectsScore: false
+  affectsScore?: false
+}
+
+export interface IndustryRiskDeepSearchEvent {
+  id: string
+  companyId: string
+  eventType: string
+  eventDate: string | null
+  title: string
+  url: string | null
+  sourceChannel: string
+  confidenceLabel: string
+  confidence: number
+  relatedIndicatorId: IndustryRiskIndicatorId | null
+  notes: string
 }
 
 export interface IndustryRiskReportAvailability {
   companyId: string
   annual2025Status: string
-  latestPeriod: string
+  latestPeriod: string | null
   latestReportDate: string | null
-  latestReportTitle: string
+  latestReportTitle: string | null
   latestReportUrl: string | null
   notes: string
 }
@@ -250,6 +262,23 @@ export interface IndustryRiskBonusDefinition {
   status: "definition-only"
 }
 
+export type IndustryRiskEventKind =
+  "deep-search" | "screening-hit" | "exchange-inquiry" | "litigation"
+
+export interface IndustryRiskEvent {
+  id: string
+  companyId: string
+  kind: IndustryRiskEventKind
+  eventType: string
+  date: string | null
+  title: string
+  url: string | null
+  indicatorId: IndustryRiskIndicatorId | null
+  confidenceLabel: string
+  confidence: number
+  notes: string
+}
+
 export interface IndustryRiskDataset {
   metadata: IndustryRiskDatasetMetadata
   companies: IndustryRiskCompany[]
@@ -260,8 +289,8 @@ export interface IndustryRiskDataset {
   screeningHits: IndustryRiskScreeningHit[]
   inquiryEvidence: IndustryRiskInquiryEvidence[]
   litigationEvidence: IndustryRiskLitigationEvidence[]
-  deepSearchEvents: IndustryRiskDeepSearchEvent[]
   supplementaryObservations: IndustryRiskSupplementaryObservation[]
+  deepSearchEvents: IndustryRiskDeepSearchEvent[]
   reportAvailability: IndustryRiskReportAvailability[]
   bonusDefinitions: IndustryRiskBonusDefinition[]
 }

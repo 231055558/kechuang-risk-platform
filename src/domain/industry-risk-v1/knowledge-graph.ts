@@ -2,16 +2,10 @@ import type { IndustryRiskDataset } from "./model.ts"
 import type { IndustryRiskCompanyAssessment } from "./scoring-engine.ts"
 
 export type IndustryRiskGraphNodeKind =
-  | "company"
-  | "category"
-  | "indicator"
-  | "source"
-  | "event"
+  "company" | "category" | "indicator" | "source" | "event"
 
 export type IndustryRiskGraphEdgeKind =
-  | "hierarchy"
-  | "provenance"
-  | "event-link"
+  "hierarchy" | "provenance" | "event-link"
 
 export interface IndustryRiskGraphNode {
   id: string
@@ -60,7 +54,8 @@ function scoreTone(score: number | null): IndustryRiskGraphNode["tone"] {
 }
 
 function deepEventTone(eventType: string): IndustryRiskGraphNode["tone"] {
-  if (eventType.includes("处罚") || eventType.includes("调查")) return "critical"
+  if (eventType.includes("处罚") || eventType.includes("调查"))
+    return "critical"
   if (
     eventType.includes("延期") ||
     eventType.includes("诉讼") ||
@@ -139,9 +134,9 @@ export function buildIndustryRiskKnowledgeGraph(
       averageScoresByIndicator.set(
         indicator.id,
         Number(
-          (scores.reduce((sum, score) => sum + score, 0) / scores.length).toFixed(
-            2
-          )
+          (
+            scores.reduce((sum, score) => sum + score, 0) / scores.length
+          ).toFixed(2)
         )
       )
     }
@@ -181,7 +176,7 @@ export function buildIndustryRiskKnowledgeGraph(
       tone: "high",
       companyIds: [event.companyId],
     })),
-    ...dataset.deepSearchEvents.map((event): IndustryRiskGraphNode => ({
+    ...(dataset.deepSearchEvents ?? []).map((event): IndustryRiskGraphNode => ({
       id: nodeId("event", `deep:${event.id}`),
       entityId: `deep:${event.id}`,
       kind: "event",
@@ -196,14 +191,15 @@ export function buildIndustryRiskKnowledgeGraph(
 
   const companyNodes = dataset.companies.map(
     (company): IndustryRiskGraphNode => {
-      const score = assessmentByCompany.get(company.id)?.candidateAggregate.score ?? null
-      const coverage = assessmentByCompany.get(company.id)?.scoredIndicatorCount ?? 0
+      const assessment = assessmentByCompany.get(company.id)
+      const score = assessment?.totalRiskScore ?? null
+      const coverage = assessment?.weightedScoredIndicatorCount ?? 0
       return {
         id: nodeId("company", company.id),
         entityId: company.id,
         kind: "company",
         label: company.shortName,
-        caption: `${company.stockCode} · ${coverage}/18 项可评分 · ${score ?? "—"} 候选分`,
+        caption: `${company.stockCode} · ${coverage}/18 项可评分 · ${score ?? "—"} 基准分`,
         score,
         scoresByCompany: score === null ? {} : { [company.id]: score },
         tone: scoreTone(score),
@@ -336,7 +332,7 @@ export function buildIndustryRiskKnowledgeGraph(
       detail: event.limitations,
       companyIds: [event.companyId],
     })),
-    ...dataset.deepSearchEvents.map((event): IndustryRiskGraphEdge => ({
+    ...(dataset.deepSearchEvents ?? []).map((event): IndustryRiskGraphEdge => ({
       id: `event-link:deep:${event.id}`,
       source:
         event.relatedIndicatorId === null

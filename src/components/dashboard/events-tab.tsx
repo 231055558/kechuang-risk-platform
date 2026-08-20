@@ -1,9 +1,4 @@
-import {
-  useDeferredValue,
-  useMemo,
-  useRef,
-  useState,
-} from "react"
+import { useDeferredValue, useMemo, useRef, useState } from "react"
 import {
   ArrowRightIcon,
   CircleAlertIcon,
@@ -44,7 +39,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
-import { getAdmittedIndicators, getObservationIndicators } from "@/lib/data"
+import { getAdmittedIndicators, getObservationIndicators } from "@/lib/data-r01"
 import { cn } from "@/lib/utils"
 import type {
   CommonPlaybookItem,
