@@ -43,6 +43,16 @@ test("industry assessment keeps raw values, formula traces, and sources together
   )
   assert.ok(response.sources.length > 0)
   assert.equal(response.provenance.methodStatus, "usable-benchmark")
+  assert.equal(response.narrativeNewsMetric?.retrievedCount, 250)
+  assert.equal(response.narrativeNews.length, 50)
+  assert.ok(
+    response.assessment.metrics
+      .filter((metric) => metric.kind === "narrative")
+      .every(
+        (metric) =>
+          metric.status === "not-score-ready" && metric.riskScore === null
+      )
+  )
 })
 
 test("industry assessment rejects companies outside the sample", () => {

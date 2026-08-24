@@ -321,6 +321,53 @@ export function importIndustryRiskSqlite(
         limitations: text(row.limitations),
         affectsScore: false as const,
       })),
+      narrativeNewsEvidence: optionalRows(
+        database,
+        "narrative_news_evidence",
+        `SELECT * FROM narrative_news_evidence
+         ORDER BY company_id, published_at DESC, news_id DESC`
+      ).map((row) => ({
+        id: `narrative-news-${number(row.news_id)}`,
+        companyId: companyIds.get(number(row.company_id)) ?? "",
+        publishedAt: nullableText(row.published_at),
+        title: text(row.title),
+        summary: text(row.summary),
+        mediaName: text(row.media_name),
+        url: text(row.url),
+        positive: number(row.positive_flag) === 1,
+        negative: number(row.negative_flag) === 1,
+        concept: number(row.concept_flag) === 1,
+        conceptKeywords: text(row.concept_keywords)
+          .split(";")
+          .map((keyword) => keyword.trim())
+          .filter(Boolean),
+        sourceId: sourceId(row.source_id),
+        accessedAt: nullableText(row.accessed_at),
+      })),
+      narrativeNewsMetrics: optionalRows(
+        database,
+        "narrative_news_metrics",
+        "SELECT * FROM narrative_news_metrics ORDER BY company_id"
+      ).map((row) => ({
+        companyId: companyIds.get(number(row.company_id)) ?? "",
+        cutoffDate: text(row.cutoff_date),
+        newestDate: nullableText(row.newest_date),
+        oldestDate: nullableText(row.oldest_date),
+        hitsTotal: nullableNumber(row.hits_total),
+        retrievedCount: number(row.retrieved_count),
+        mediaCount: number(row.media_count),
+        positiveCount: number(row.positive_count),
+        negativeCount: number(row.negative_count),
+        conceptCount: number(row.concept_count),
+        positiveSharePercent: number(row.positive_share_pct),
+        negativeSharePercent: number(row.negative_share_pct),
+        toneBalancePercent: number(row.tone_balance_pct),
+        conceptSharePercent: number(row.concept_share_pct),
+        pagesFetched: number(row.pages_fetched),
+        truncated: number(row.truncated) === 1,
+        sourceId: sourceId(row.source_id),
+        limitations: text(row.limitations),
+      })),
       reportAvailability: optionalRows(
         database,
         "report_availability",

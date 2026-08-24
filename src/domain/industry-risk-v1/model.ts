@@ -240,6 +240,43 @@ export interface IndustryRiskDeepSearchEvent {
   notes: string
 }
 
+export interface IndustryRiskNarrativeNewsEvidence {
+  id: string
+  companyId: string
+  publishedAt: string | null
+  title: string
+  summary: string
+  mediaName: string
+  url: string
+  positive: boolean
+  negative: boolean
+  concept: boolean
+  conceptKeywords: string[]
+  sourceId: string
+  accessedAt: string | null
+}
+
+export interface IndustryRiskNarrativeNewsMetric {
+  companyId: string
+  cutoffDate: string
+  newestDate: string | null
+  oldestDate: string | null
+  hitsTotal: number | null
+  retrievedCount: number
+  mediaCount: number
+  positiveCount: number
+  negativeCount: number
+  conceptCount: number
+  positiveSharePercent: number
+  negativeSharePercent: number
+  toneBalancePercent: number
+  conceptSharePercent: number
+  pagesFetched: number
+  truncated: boolean
+  sourceId: string
+  limitations: string
+}
+
 export interface IndustryRiskReportAvailability {
   companyId: string
   annual2025Status: string
@@ -291,6 +328,8 @@ export interface IndustryRiskDataset {
   litigationEvidence: IndustryRiskLitigationEvidence[]
   supplementaryObservations: IndustryRiskSupplementaryObservation[]
   deepSearchEvents: IndustryRiskDeepSearchEvent[]
+  narrativeNewsEvidence?: IndustryRiskNarrativeNewsEvidence[]
+  narrativeNewsMetrics?: IndustryRiskNarrativeNewsMetric[]
   reportAvailability: IndustryRiskReportAvailability[]
   bonusDefinitions: IndustryRiskBonusDefinition[]
 }

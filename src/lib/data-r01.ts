@@ -288,7 +288,7 @@ function buildSourceEvidence(company: IndustryRiskCompany) {
         sourceUrl: source.url ?? company.sourceUrl ?? fallbackSourceUrl,
         publishedAt: normalizeDate(source.publicationDate ?? source.accessedAt),
         capturedAt: normalizeDate(source.accessedAt),
-        summary: source.notes || "用于 R01–R22 指标观测与覆盖复核。",
+        summary: source.notes || "用于 R01–R22 指标观测与数据覆盖。",
         sourceReliability: sourceReliability(source),
         recommendedUse: "用于指标观测、事件核验和证据追溯。",
         indicatorIds: [
@@ -305,7 +305,7 @@ function buildSourceEvidence(company: IndustryRiskCompany) {
         supportRationale:
           source.redistribution === "licensed-derived"
             ? "第三方派生线索，仅用于辅助核验。"
-            : "公开来源直接披露或可按原公式复核。",
+            : "公开来源直接披露或可按原公式重算。",
         scoringLinks: linkedObservations.slice(0, 20).map((observation) => ({
           indicatorId: observation.indicatorId,
           period: observationDate(observation),
@@ -475,7 +475,7 @@ function buildCompanyDetail(company: IndustryRiskCompany): CompanyDetail {
       },
       {
         id: `${company.id}-review`,
-        label: "下一次复核",
+        label: "下一次更新",
         status: "next",
         riskScore: 0,
         summary: "等待下一期报告、监管公告和重大事件更新。",
@@ -520,9 +520,16 @@ function buildCompanyDetail(company: IndustryRiskCompany): CompanyDetail {
       riskImplication: observation.limitations || observation.status,
     })),
     investmentView: {
-      stance: "待人工研判",
-      riskAppetite: "仅使用 R01–R22 可复核观测",
-      summary: "候选分与覆盖状态用于辅助筛查，不构成投资建议。",
+      stance:
+        candidateScore >= 65
+          ? "优先控制高风险暴露"
+          : candidateScore >= 55
+            ? "重点推进风险缓释"
+            : candidateScore >= 45
+              ? "保持审慎并持续跟踪"
+              : "维持常规风险监测",
+      riskAppetite: "以 R01–R22 自动风险结果确定行动优先级",
+      summary: `系统依据 ${assessment?.weightedScoredIndicatorCount ?? 0}/18 项有效指标自动形成风险结论，并按高影响指标生成行动建议。`,
       preInvestmentChecks: ["核验最新定期报告", "核验重大事件主体与金额"],
       dueDiligenceFocus: coverage
         .filter((item) => item.status.startsWith("NA"))
@@ -532,7 +539,7 @@ function buildCompanyDetail(company: IndustryRiskCompany): CompanyDetail {
             `${item.indicatorId} ${indicatorById.get(item.indicatorId)?.label ?? ""}`
         ),
       valuationConstraints: ["缺失指标不得按零处理", "候选分不得替代估值模型"],
-      postInvestmentMonitoring: ["按季度更新财务观测", "重大事件实时复核"],
+      postInvestmentMonitoring: ["按季度更新财务观测", "重大事件实时预警"],
       stopLossTriggers: ["重大处罚或限制清单命中", "重大技术或知识产权事件"],
       evidenceIds: evidence.slice(0, 8).map((item) => item.id),
     },
@@ -588,9 +595,9 @@ function buildCompanyDetail(company: IndustryRiskCompany): CompanyDetail {
         },
         {
           id: `${company.id}-response`,
-          label: "复核与响应",
+          label: "监测与响应",
           layer: "response",
-          description: "建立责任人、复核时间和补充证据要求。",
+          description: "建立责任人、更新时间和风险触发条件。",
           evidenceIds: [],
         },
       ],
@@ -615,11 +622,11 @@ function buildCompanyDetail(company: IndustryRiskCompany): CompanyDetail {
     governance: dimensionDefinitions.map((dimension, index) => ({
       id: `${company.id}-governance-${dimension.id}`,
       riskType: dimension.label,
-      title: `${dimension.label}复核`,
+      title: `${dimension.label}行动`,
       priority: index < 2 ? "P1" : "P2",
       stage: "持续监测",
       problem: `当前覆盖 ${coverage.filter((item) => dimension.indicatorIds.includes(item.indicatorId) && !item.status.startsWith("NA")).length}/${dimension.indicatorIds.length} 项。`,
-      action: "核验最新来源，补齐缺失值并记录人工复核结论。",
+      action: "跟踪最新来源与指标变化，系统自动更新风险分和建议动作。",
       dataSupport: dimension.indicatorIds.join("、"),
       evidenceIds: evidence
         .filter((item) =>
@@ -647,7 +654,7 @@ export const riskIndicators: RiskIndicator[] = dataset.indicators.map(
       tertiaryRisk: indicator.label,
       definition: indicator.definition,
       formula: indicator.rawValueFormula,
-      threshold: "按同业组可比口径与原始指标规则复核",
+      threshold: "按同业组可比口径与指标规则自动更新",
       entityType: indicator.entityType,
       relatedEntities: indicator.relation,
       dataSource: indicator.academicSource || "公开披露与结构化数据库",
@@ -736,10 +743,10 @@ function buildBaseAssessment(companyId: string): RiskAssessment {
       scoreBasis: score === null ? null : ("indicator-observation" as const),
       summary:
         score === null
-          ? "当前同业组尚无可比评分观测，展示原始覆盖与缺口。"
-          : dimension.id === "narrative"
-            ? `由 ${scoredMetrics.map((metric) => metric.indicatorId).join("、")} 形成NRI叙事校验值，不进入总分。`
-            : `由 ${scoredMetrics.map((metric) => metric.indicatorId).join("、")} 按CRITIC权重形成维度基准分。`,
+          ? dimension.id === "narrative"
+            ? "R01–R04仅展示原始叙事观察，不计算NRI，也不进入总分。"
+            : "当前同业组尚无可比评分观测，展示原始覆盖与缺口。"
+          : `由 ${scoredMetrics.map((metric) => metric.indicatorId).join("、")} 按CRITIC权重形成维度基准分。`,
       evidenceIds,
       indicatorIds: scoredMetrics.map((metric) => metric.indicatorId),
       evidenceIndicatorPairCount: evidenceIds.length,
@@ -769,11 +776,11 @@ function buildBaseAssessment(companyId: string): RiskAssessment {
     ),
     indicatorAvailability,
     reviewStatus:
-      totalRiskScore === null ? "insufficient-evidence" : "manual-review",
-    scoreBasisLabel: "指标观测与人工复核",
+      totalRiskScore === null ? "insufficient-evidence" : "reviewed",
+    scoreBasisLabel: "R05–R22 客观指标自动计算",
     reviewedAt: snapshotAt,
     disclaimer:
-      "总分按现有R05–R22指标、两级CRITIC和同业风险分位形成可用基准；缺失值不补零，行业样本仅用于参照，仍需结合原始证据人工复核。",
+      "总分按现有R05–R22指标、两级CRITIC和同业风险分位自动形成；缺失值不补零，行业样本用于相对风险比较。",
   }
 }
 
@@ -991,7 +998,7 @@ const realtimeSignals: RealTimeSignal[] = dataset.companies.flatMap((company) =>
       severity,
       title: event.title,
       summary: event.notes || event.eventType,
-      keyFacts: [event.eventType, event.notes || "等待后续披露复核"],
+      keyFacts: [event.eventType, event.notes || "等待后续正式披露"],
       historicalContext: `该事件按 ${event.date} 的公开材料归档。`,
       aiInsight: `关联 ${event.indicatorId} ${indicatorById.get(event.indicatorId)?.label ?? ""}。`,
       potentialImpact: `${dimension?.label ?? "风险"}可能发生变化。`,
@@ -1081,9 +1088,9 @@ export const manifest: ManifestRecord = {
 export const commonPlaybook: CommonPlaybookItem[] = dimensionDefinitions.map(
   (dimension, index) => ({
     riskType: dimension.label,
-    title: `${dimension.label}标准复核`,
+    title: `${dimension.label}标准动作`,
     priority: index < 2 ? "P1" : "P2",
-    action: "核验原始来源、缺失原因和后续事件，形成可审计复核记录。",
+    action: "跟踪原始来源、指标变化和后续事件，系统同步更新行动等级。",
     dataSupport: dimension.indicatorIds.join("、"),
   })
 )

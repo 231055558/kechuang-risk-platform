@@ -39,6 +39,90 @@ export type IndustryRiskCytoscapeElement =
     }
   | { data: IndustryRiskCytoscapeEdgeData }
 
+export type IndustryRiskGraphView = "all" | "objective" | "narrative"
+
+const narrativeIndicatorIds = new Set(["R01", "R02", "R03", "R04"])
+
+export function selectIndustryRiskGraphView(
+  graph: IndustryRiskKnowledgeGraph,
+  view: IndustryRiskGraphView
+): IndustryRiskKnowledgeGraph {
+  if (view === "all") return graph
+
+  const nodeById = new Map(graph.nodes.map((node) => [node.id, node]))
+  const narrativeIndicatorNodeIds = new Set(
+    graph.nodes
+      .filter(
+        (node) =>
+          node.kind === "indicator" && narrativeIndicatorIds.has(node.entityId)
+      )
+      .map((node) => node.id)
+  )
+  const narrativeCategoryNodeIds = new Set(
+    graph.edges.flatMap((edge) =>
+      edge.kind === "hierarchy" && narrativeIndicatorNodeIds.has(edge.target)
+        ? [edge.source]
+        : []
+    )
+  )
+  const includedNodeIds = new Set(
+    graph.nodes.flatMap((node) => {
+      if (node.kind === "company") return [node.id]
+      if (node.kind === "category") {
+        return narrativeCategoryNodeIds.has(node.id) === (view === "narrative")
+          ? [node.id]
+          : []
+      }
+      if (node.kind === "indicator") {
+        return narrativeIndicatorNodeIds.has(node.id) === (view === "narrative")
+          ? [node.id]
+          : []
+      }
+      return []
+    })
+  )
+
+  for (const edge of graph.edges) {
+    const source = nodeById.get(edge.source)
+    const target = nodeById.get(edge.target)
+    if (!source || !target) continue
+    if (
+      includedNodeIds.has(source.id) &&
+      (target.kind === "source" || target.kind === "event")
+    ) {
+      includedNodeIds.add(target.id)
+    }
+    if (
+      includedNodeIds.has(target.id) &&
+      (source.kind === "source" || source.kind === "event")
+    ) {
+      includedNodeIds.add(source.id)
+    }
+  }
+
+  const nodes = graph.nodes.filter((node) => includedNodeIds.has(node.id))
+  const edges = graph.edges.filter(
+    (edge) =>
+      includedNodeIds.has(edge.source) && includedNodeIds.has(edge.target)
+  )
+  const count = (kind: IndustryRiskGraphNode["kind"]) =>
+    nodes.filter((node) => node.kind === kind).length
+  return {
+    ...graph,
+    nodes,
+    edges,
+    counts: {
+      nodes: nodes.length,
+      edges: edges.length,
+      companies: count("company"),
+      categories: count("category"),
+      indicators: count("indicator"),
+      sources: count("source"),
+      events: count("event"),
+    },
+  }
+}
+
 function scoreTone(score: number | null): IndustryRiskGraphNode["tone"] {
   if (score === null) return "neutral"
   if (score >= 65) return "critical"
@@ -58,7 +142,9 @@ export function selectIndustryRiskGraph(
   graph: IndustryRiskKnowledgeGraph,
   companyId: string
 ): IndustryRiskKnowledgeGraph {
-  const edges = graph.edges.filter((edge) => edge.companyIds.includes(companyId))
+  const edges = graph.edges.filter((edge) =>
+    edge.companyIds.includes(companyId)
+  )
   const nodeIds = new Set(edges.flatMap((edge) => [edge.source, edge.target]))
   const companyNode = graph.nodes.find(
     (node) => node.kind === "company" && node.entityId === companyId
@@ -157,13 +243,7 @@ function nodeVisual(
   degree: number
 ): Pick<
   IndustryRiskCytoscapeNodeData,
-  | "label"
-  | "scoreLabel"
-  | "color"
-  | "size"
-  | "width"
-  | "height"
-  | "fontSize"
+  "label" | "scoreLabel" | "color" | "size" | "width" | "height" | "fontSize"
 > {
   if (node.kind === "company") {
     const scoreLabel = node.score === null ? "待评分" : node.score.toFixed(1)
@@ -178,12 +258,16 @@ function nodeVisual(
     }
   }
   if (node.kind === "category") {
-    const scoreLabel =
-      node.score === null ? "待补数据" : `均值 ${node.score.toFixed(0)}`
+    const isNarrative = node.label.includes("叙事")
+    const scoreLabel = isNarrative
+      ? "独立观察"
+      : node.score === null
+        ? "待补数据"
+        : `均值 ${node.score.toFixed(0)}`
     return {
       label: `${node.label}\n${scoreLabel}`,
       scoreLabel,
-      color: riskHeatColor(node.score),
+      color: isNarrative ? "#7c3aed" : riskHeatColor(node.score),
       size: 78,
       width: 132,
       height: 64,
@@ -191,12 +275,21 @@ function nodeVisual(
     }
   }
   if (node.kind === "indicator") {
-    const scoreLabel = node.score === null ? "待补" : node.score.toFixed(0)
-    const size = node.score === null ? 46 : 48 + node.score * 0.44
+    const isNarrative = narrativeIndicatorIds.has(node.entityId)
+    const scoreLabel = isNarrative
+      ? "观察"
+      : node.score === null
+        ? "待补"
+        : node.score.toFixed(0)
+    const size = isNarrative
+      ? 62
+      : node.score === null
+        ? 46
+        : 48 + node.score * 0.44
     return {
       label: `${node.entityId} ${compactLabel(node.label, 7)}\n${scoreLabel}`,
       scoreLabel,
-      color: riskHeatColor(node.score),
+      color: isNarrative ? "#8b5cf6" : riskHeatColor(node.score),
       size,
       width: size,
       height: size,
@@ -256,7 +349,8 @@ function semanticRadialPositions(graph: IndustryRiskKnowledgeGraph) {
   }
 
   categories.forEach((category, categoryIndex) => {
-    const angle = -Math.PI / 2 + (categoryIndex * Math.PI * 2) / categories.length
+    const angle =
+      -Math.PI / 2 + (categoryIndex * Math.PI * 2) / categories.length
     positions.set(category.id, polarPosition(205, angle))
     angles.set(category.id, angle)
 
@@ -352,20 +446,18 @@ export function buildIndustryRiskCytoscapeElements(
     }
   })
 
-  const edges = graph.edges.map(
-    (edge): IndustryRiskCytoscapeElement => ({
-      data: {
-        id: edge.id,
-        source: edge.source,
-        target: edge.target,
-        kind: edge.kind,
-        label: edge.label,
-        detail: edge.detail,
-        color: edgeColor(edge.kind),
-        width: edge.kind === "hierarchy" ? 2.4 : 1.4,
-      },
-    })
-  )
+  const edges = graph.edges.map((edge): IndustryRiskCytoscapeElement => ({
+    data: {
+      id: edge.id,
+      source: edge.source,
+      target: edge.target,
+      kind: edge.kind,
+      label: edge.label,
+      detail: edge.detail,
+      color: edgeColor(edge.kind),
+      width: edge.kind === "hierarchy" ? 2.4 : 1.4,
+    },
+  }))
 
   return [...nodes, ...edges]
 }

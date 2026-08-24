@@ -4,6 +4,8 @@ import type {
   IndustryRiskDatasetMetadata,
   IndustryRiskEvent,
   IndustryRiskIndicator,
+  IndustryRiskNarrativeNewsEvidence,
+  IndustryRiskNarrativeNewsMetric,
   IndustryRiskObservation,
   IndustryRiskPeerGroup,
   IndustryRiskReportAvailability,
@@ -61,6 +63,8 @@ export interface IndustryRiskAssessmentApiResponse {
   observations: IndustryRiskObservation[]
   coverage: IndustryRiskCoverage[]
   events: IndustryRiskEvent[]
+  narrativeNews: IndustryRiskNarrativeNewsEvidence[]
+  narrativeNewsMetric: IndustryRiskNarrativeNewsMetric | null
   supplementaryObservations: IndustryRiskSupplementaryObservation[]
   reportAvailability: IndustryRiskReportAvailability | null
   provenance: {

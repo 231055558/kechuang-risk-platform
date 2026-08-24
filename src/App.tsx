@@ -698,7 +698,7 @@ function App() {
       setFeedback(
         saved
           ? observation.reviewStatus === "reviewed"
-            ? "评分观测已复核，风险研判与对比结果已更新。"
+            ? "指标数据已更新，风险结论与对比结果已同步计算。"
             : "评分观测草稿已保存，不会进入当前评分。"
           : "评分修改已在当前页面生效，但浏览器无法写入本地存储。"
       )
@@ -1155,7 +1155,7 @@ function App() {
         </ViewLoadErrorBoundary>
 
         <footer className="app-footer">
-          公开信息快照与辅助研究工具。结论需结合原始披露、人工尽调和持续监测复核。
+          基于公开信息与统一风险规则自动计算。系统建议用于风险识别、尽调和治理优先级排序。
         </footer>
       </div>
 
@@ -1298,14 +1298,14 @@ function MethodSheet({
                 <MethodFlow
                   index="03"
                   icon={ScaleIcon}
-                  title="准入与研判"
-                  content="只有口径准入指标、具备归一化规则与复核记录的企业观测，以及同指标评分配对证据形成闭环后，才汇总六维辅助分值；观察项与候选项不计分。"
+                  title="自动计算与排序"
+                  content="系统使用当前可用的 R05–R22 客观指标、同业风险分位和两级 CRITIC 权重自动形成企业风险指数、主要风险和行动优先级；R01–R04 仅作叙事观察。"
                 />
                 <MethodFlow
                   index="04"
                   icon={WorkflowIcon}
-                  title="人工复核与治理"
-                  content="规则筛查与专家判断提供研究辅助归纳，人工确认结论、事件状态、处置动作与尽调约束。"
+                  title="建议生成与持续更新"
+                  content="高影响指标自动触发对应的风险应对规则；指标、事件或正式披露变化后，系统同步更新结论和建议。"
                 />
               </div>
               <section className="method-detail-section">
@@ -1355,9 +1355,9 @@ function MethodSheet({
                 <p>
                   {indicatorTaxonomy.admissionGovernance.basis} 决策版本{" "}
                   {indicatorTaxonomy.admissionGovernance.decisionVersion}
-                  ，复核日期{" "}
+                  ，数据日期{" "}
                   {indicatorTaxonomy.admissionGovernance.decisionDate}
-                  ，复核角色为
+                  ，数据维护角色为
                   {indicatorTaxonomy.admissionGovernance.reviewerRole}。
                 </p>
               </section>
@@ -1467,13 +1467,13 @@ function MethodSheet({
               <div className="method-boundary-stack">
                 <MethodBoundary
                   icon={ShieldCheckIcon}
-                  title="指数是辅助研判，不是自动评级"
-                  content="分值仅来自经人工复核的企业指标观测与同指标评分配对证据，并按可评估维度等权汇总；不使用缺少归一化与复核依据的历史分数，也不声称由 Excel 草稿公式或模型自动生成。"
+                  title="指数由统一规则自动计算"
+                  content="系统根据当前可用指标、同业风险分位和 CRITIC 权重形成风险指数；缺失指标不补零，也不阻断其他指标计算。"
                 />
                 <MethodBoundary
                   icon={ScaleIcon}
-                  title="少于四个维度不显示精确数字"
-                  content="尚无可评估维度时显示“待建立评分观测”；已有部分维度但不足四个时显示“证据不足，待复核”。"
+                  title="数据覆盖不阻断系统结论"
+                  content="系统使用全部现有有效指标形成结果，并同时展示实际纳入指标数量；只有完全没有可计算数据时才不输出分值。"
                 />
                 <MethodBoundary
                   icon={FileStackIcon}
@@ -1482,8 +1482,8 @@ function MethodSheet({
                 />
                 <MethodBoundary
                   icon={BrainCircuitIcon}
-                  title="结构化辅助方法不替代人工尽调"
-                  content="当前使用公开信息快照与规则/专家辅助整理，未接入持久化模型调用、模型输入输出审计或实时抓取；最终结论、投资约束与监管判断必须由专业人员复核。"
+                  title="系统建议聚焦风险应对"
+                  content="系统自动输出尽调、治理和持续跟踪建议，不输出买入、卖出、估值或收益预测。"
                 />
               </div>
               <div className="method-disclaimer">{manifest.disclaimer}</div>

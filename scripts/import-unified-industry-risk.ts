@@ -9,6 +9,8 @@ import {
   type IndustryRiskDataset,
   type IndustryRiskDeepSearchEvent,
   type IndustryRiskIndicatorId,
+  type IndustryRiskNarrativeNewsEvidence,
+  type IndustryRiskNarrativeNewsMetric,
   type IndustryRiskPeerGroup,
   type IndustryRiskReportAvailability,
   type IndustryRiskSupplementaryObservation,
@@ -207,6 +209,8 @@ export function importUnifiedIndustryRisk(
   const litigationEvidence: IndustryRiskDataset["litigationEvidence"] = []
   const supplementaryObservations: IndustryRiskSupplementaryObservation[] = []
   const deepSearchEvents: IndustryRiskDeepSearchEvent[] = []
+  const narrativeNewsEvidence: IndustryRiskNarrativeNewsEvidence[] = []
+  const narrativeNewsMetrics: IndustryRiskNarrativeNewsMetric[] = []
   const reportAvailability: IndustryRiskReportAvailability[] = []
   const peerGroups: IndustryRiskPeerGroup[] = []
   const dataVersions: string[] = []
@@ -301,6 +305,23 @@ export function importUnifiedIndustryRisk(
           includedCompanyIds
         )
       )
+      narrativeNewsEvidence.push(
+        ...(imported.narrativeNewsEvidence ?? [])
+          .filter((item) => includedCompanyIds.has(item.companyId))
+          .map((item) => ({
+            ...item,
+            id: sourceKey(item.id),
+            sourceId: sourceKey(item.sourceId),
+          }))
+      )
+      narrativeNewsMetrics.push(
+        ...(imported.narrativeNewsMetrics ?? [])
+          .filter((item) => includedCompanyIds.has(item.companyId))
+          .map((item) => ({
+            ...item,
+            sourceId: sourceKey(item.sourceId),
+          }))
+      )
       reportAvailability.push(
         ...readReportAvailability(
           database,
@@ -346,6 +367,8 @@ export function importUnifiedIndustryRisk(
   for (const item of supplementaryObservations) {
     if (item.sourceId) usedSourceIds.add(item.sourceId)
   }
+  for (const item of narrativeNewsEvidence) usedSourceIds.add(item.sourceId)
+  for (const item of narrativeNewsMetrics) usedSourceIds.add(item.sourceId)
 
   const dataset: IndustryRiskDataset = {
     metadata: {
@@ -377,6 +400,8 @@ export function importUnifiedIndustryRisk(
     litigationEvidence,
     supplementaryObservations,
     deepSearchEvents,
+    narrativeNewsEvidence,
+    narrativeNewsMetrics,
     reportAvailability,
     bonusDefinitions: [],
   }

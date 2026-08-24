@@ -17,6 +17,10 @@ import { Reveal } from "@/components/motion/workflow-transition"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { IndustryRiskAssessmentApiResponse } from "@/domain/industry-risk-v1/index.ts"
+import {
+  buildIndustryRiskConclusion,
+  generateIndustryRiskRecommendations,
+} from "@/domain/industry-risk-v1/index.ts"
 import { fetchIndustryRiskAssessment } from "@/lib/industry-risk-api"
 import type { NavigationTarget } from "@/types/nav"
 import type { CompanyDetail } from "@/types/risk"
@@ -142,6 +146,8 @@ function RiskReportContent({
     [response.assessment.metrics]
   )
   const topMetrics = scoredMetrics.slice(0, 5)
+  const conclusion = buildIndustryRiskConclusion(assessment)
+  const recommendations = generateIndustryRiskRecommendations(assessment)
   const recentEvents = [...response.events]
     .sort((left, right) => (right.date ?? "").localeCompare(left.date ?? ""))
     .slice(0, 4)
@@ -169,9 +175,7 @@ function RiskReportContent({
               {formatDate(response.provenance.sourceDate)}
             </span>
             <h2>{response.company.shortName}风险报告中心</h2>
-            <p>
-              将同业风险基准、重点指标、近期事件和正式披露集中成一份可阅读、可核验、可导出的客户报告。
-            </p>
+            <p>{conclusion}</p>
             <div className="risk-report-hero-actions">
               <Button onClick={onOpenExports}>
                 <DownloadIcon data-icon="inline-start" />
@@ -244,6 +248,42 @@ function RiskReportContent({
             </Button>
           </article>
         </section>
+      </Reveal>
+
+      <Reveal>
+        <GlassPanel
+          className="risk-report-section risk-report-advice"
+          variant="floating"
+        >
+          <header>
+            <div>
+              <span className="eyebrow">系统建议</span>
+              <h3>本期建议优先执行的动作</h3>
+            </div>
+            <Badge variant="outline">由高影响指标自动触发</Badge>
+          </header>
+          <div className="automatic-action-grid">
+            {recommendations.map((recommendation, index) => (
+              <article
+                key={recommendation.indicatorId}
+                data-priority={recommendation.priority}
+              >
+                <div className="automatic-action-index">
+                  {String(index + 1).padStart(2, "0")}
+                </div>
+                <div className="automatic-action-main">
+                  <div>
+                    <Badge variant="outline">{recommendation.priority}</Badge>
+                    <span>{recommendation.trigger}</span>
+                  </div>
+                  <h4>{recommendation.title}</h4>
+                  <p>{recommendation.action}</p>
+                </div>
+                <ArrowRightIcon aria-hidden="true" />
+              </article>
+            ))}
+          </div>
+        </GlassPanel>
       </Reveal>
 
       <div className="risk-report-content-grid">
@@ -393,7 +433,7 @@ function RiskReportContent({
             ))}
           </div>
           <p className="risk-report-disclaimer">
-            本页基于数据库已收录公开材料生成，用于辅助研究与风险筛查，不构成投资建议。缺失项目不会显示为
+            本页基于数据库已收录公开材料和统一风险规则自动生成；系统建议用于风险应对和行动排序，不输出买卖或收益预测。缺失项目不会显示为
             0，也不会影响其他已具备数据的指标计算。
           </p>
         </GlassPanel>

@@ -231,7 +231,7 @@ function getDefaultResearchQuestions(signal: RawRealTimeSignal) {
   switch (signal.category) {
     case "技术论文/专利":
       return [
-        "原始材料中的技术、实验或权利口径能否由第三方复核？",
+        "原始材料中的技术、实验或权利口径能否由第三方验证？",
         "该论文或知识产权与当前在售产品、软件版本之间如何对应？",
       ]
     case "资本市场":

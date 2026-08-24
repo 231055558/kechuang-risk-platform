@@ -20,7 +20,7 @@ function formatDimensionScoreBasis(
   }
 
   if (dimension.scoreBasis === "indicator-observation") {
-    return "人工复核观测"
+    return "指标规则计算"
   }
 
   return "已建立辅助研判分值"
@@ -43,11 +43,11 @@ export function RiskRadarChart({ dimensions }: RiskRadarChartProps) {
   )
   const scoreBasisHeading =
     hasAutomaticScore && hasReviewedObservation
-      ? "自动评分与人工复核"
+      ? "自动评分与指标计算"
       : hasAutomaticScore
         ? "技术自动评分"
         : hasReviewedObservation
-          ? "人工复核观测"
+          ? "指标规则计算"
           : "评分证据闭环"
   const accessibleTitleId = useId()
   const accessibleDescriptionId = useId()
@@ -85,7 +85,7 @@ export function RiskRadarChart({ dimensions }: RiskRadarChartProps) {
           >
             <title id={accessibleTitleId}>六维风险辅助研判雷达图</title>
             <desc id={accessibleDescriptionId}>
-              仅绘制已完成评分依据和有效证据闭环的风险维度；技术风险可采用自动评分，其他维度可采用人工复核观测。缺失维度显示待建立，不按零分绘制。
+              风险维度由有效指标和来源数据自动计算；缺失维度不按零分绘制，其余维度继续形成风险结果。
             </desc>
             <defs>
               <linearGradient
@@ -178,7 +178,7 @@ export function RiskRadarChart({ dimensions }: RiskRadarChartProps) {
                     x={axis.labelPoint.x}
                     dy="1.45em"
                   >
-                    {axis.score === null ? "待建立" : `${axis.score} 分`}
+                    {axis.score === null ? "暂无数据" : `${axis.score} 分`}
                   </tspan>
                 </text>
               ))}
@@ -199,13 +199,13 @@ export function RiskRadarChart({ dimensions }: RiskRadarChartProps) {
                   {formatDimensionScoreBasis(dimensionById.get(axis.id))}
                 </small>
               </span>
-              <b>{axis.score === null ? "待建立" : axis.score}</b>
+              <b>{axis.score === null ? "暂无数据" : axis.score}</b>
             </li>
           ))}
         </ul>
 
         <p className="risk-radar-note">
-          待建立表示证据闭环尚未完成，不代表零分或低风险。
+          暂无数据的维度不按零分计算，也不影响其他有效维度。
         </p>
       </div>
     </LiquidGlassSurface>

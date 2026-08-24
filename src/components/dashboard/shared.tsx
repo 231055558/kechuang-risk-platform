@@ -218,13 +218,13 @@ export function ReviewStatusBadge({
   assessableDimensionCount?: number
 }) {
   const labels: Record<AssessmentReviewStatus, string> = {
-    reviewed: "已复核",
-    "manual-review": "需人工复核",
-    "insufficient-evidence": "证据不足",
+    reviewed: "系统已计算",
+    "manual-review": "部分指标已计算",
+    "insufficient-evidence": "数据待补充",
   }
   const label =
     status === "insufficient-evidence" && assessableDimensionCount === 0
-      ? "待建立观测"
+      ? "数据待补充"
       : labels[status]
 
   return (
