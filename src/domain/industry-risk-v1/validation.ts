@@ -2,8 +2,10 @@ import {
   INDUSTRY_RISK_DATA_SCHEMA_VERSION,
   INDUSTRY_RISK_INDICATOR_IDS,
   INDUSTRY_RISK_NARRATIVE_INDICATOR_IDS,
+  INDUSTRY_RISK_NARRATIVE_RUNTIME_SCHEMA_VERSION,
   INDUSTRY_RISK_WEIGHTED_INDICATOR_IDS,
   type IndustryRiskDataset,
+  type IndustryRiskNarrativeRuntime,
 } from "./model.ts"
 
 const localPathPatterns = [
@@ -179,4 +181,31 @@ export function assertIndustryRiskDataset(dataset: IndustryRiskDataset) {
     throw new Error(`行业风险数据无效：${issues.join("；")}`)
   }
   return dataset
+}
+
+export function attachIndustryRiskNarrativeRuntime(
+  dataset: IndustryRiskDataset,
+  runtime: IndustryRiskNarrativeRuntime
+) {
+  if (
+    runtime.schemaVersion !== INDUSTRY_RISK_NARRATIVE_RUNTIME_SCHEMA_VERSION
+  ) {
+    throw new Error(
+      `叙事新闻运行时版本必须为 ${INDUSTRY_RISK_NARRATIVE_RUNTIME_SCHEMA_VERSION}。`
+    )
+  }
+  if (runtime.dataVersion !== dataset.metadata.dataVersion) {
+    throw new Error("叙事新闻运行时与行业数据版本不一致。")
+  }
+  if (
+    !Array.isArray(runtime.narrativeNewsEvidence) ||
+    !Array.isArray(runtime.narrativeNewsMetrics)
+  ) {
+    throw new Error("叙事新闻运行时缺少新闻明细或汇总数组。")
+  }
+  return assertIndustryRiskDataset({
+    ...dataset,
+    narrativeNewsEvidence: runtime.narrativeNewsEvidence,
+    narrativeNewsMetrics: runtime.narrativeNewsMetrics,
+  })
 }
