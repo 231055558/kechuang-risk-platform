@@ -147,6 +147,8 @@ export function collectIndustryRiskDatasetIssues(dataset: IndustryRiskDataset) {
     }
   }
 
+  // Local deployments read an operator-selected SQLite path via environment
+  // variables.  Validate data payloads, not the deployment path itself.
   const serialized = JSON.stringify(dataset)
   for (const pattern of localPathPatterns) {
     if (pattern.test(serialized)) issues.push("公开数据包含本机绝对路径。")

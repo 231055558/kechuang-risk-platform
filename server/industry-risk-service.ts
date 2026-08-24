@@ -1,4 +1,9 @@
+import { existsSync } from "node:fs"
+import { resolve } from "node:path"
+
 import unifiedData from "../src/data/industry/r01-r22-unified.json" with { type: "json" }
+import { importIndustryRiskSqlite } from "../scripts/import-industry-risk-sqlite.ts"
+import { buildRiskTransmissionGraph } from "./risk-transmission-graph.ts"
 import {
   buildIndustryRiskKnowledgeGraph,
   scoreIndustryRiskDataset,
@@ -8,9 +13,31 @@ import {
   type IndustryRiskEvent,
 } from "../src/domain/industry-risk-v1/index.ts"
 
-const dataset = unifiedData as IndustryRiskDataset
+/**
+ * The checked-in JSON remains a reproducible public fallback.  A local
+ * deployment may instead point at the crawler master database; it is opened
+ * read-only during API startup, so the risk platform never writes into the
+ * crawler data chain.
+ */
+function loadDataset(): IndustryRiskDataset {
+  const databasePath = process.env.RISK_CRAWLER_MASTER_DB?.trim()
+  if (!databasePath) return unifiedData as IndustryRiskDataset
+
+  const absolutePath = resolve(databasePath)
+  if (!existsSync(absolutePath)) {
+    throw new Error(
+      `RISK_CRAWLER_MASTER_DB 指向的主数据库不存在：${absolutePath}`
+    )
+  }
+  return importIndustryRiskSqlite(absolutePath)
+}
+
+const crawlerMasterDatabasePath = process.env.RISK_CRAWLER_MASTER_DB?.trim() ?? ""
+const dataset = loadDataset()
 const assessments = scoreIndustryRiskDataset(dataset)
-const knowledgeGraph = buildIndustryRiskKnowledgeGraph(dataset, assessments)
+const knowledgeGraph = crawlerMasterDatabasePath
+  ? buildRiskTransmissionGraph(crawlerMasterDatabasePath, dataset, assessments)
+  : buildIndustryRiskKnowledgeGraph(dataset, assessments)
 
 function getCompanyEvents(companyId: string): IndustryRiskEvent[] {
   const events: IndustryRiskEvent[] = [

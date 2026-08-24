@@ -154,6 +154,28 @@ tests/                数据、评分、交互和可访问性测试
 - 项目包含用于重建派生数据的 SQLite 文件，但运行时不依赖外部数据库服务。
 - 旧 KCI/KCR JSON 和组件保留用于历史审计与迁移参考，不再由浏览器入口加载。
 
+### 连接爬虫主数据库（本地部署）
+
+默认使用仓库内可复现的 JSON 快照。设置 `RISK_CRAWLER_MASTER_DB` 后，
+本地 API 会在启动时以**只读**方式加载指定 SQLite 主库，自动规范化历史重复观测、补齐缺失覆盖记录，并隐藏本机路径；不会修改爬虫数据链。
+
+PowerShell 示例：
+
+```powershell
+$env:RISK_CRAWLER_MASTER_DB = 'D:\codex\risk_crawler_architecture\data\risk_data.sqlite'
+$env:API_PORT = '5000'
+npm run dev:api
+```
+
+另开一个 PowerShell 启动前端代理：
+
+```powershell
+$env:API_PORT = '5000'
+npm run dev:web
+```
+
+该适配会将 `external_subject_evidence` 中已经确认的监管机构、法院、人员等外部主体与其风险事件一并投影到 Cytoscape 图谱；不存在的供应商、客户或关联关系不会被推断生成。
+
 从多个 R01–R22 SQLite 重建统一数据：
 
 ```bash

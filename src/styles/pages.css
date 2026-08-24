@@ -7952,6 +7952,70 @@
 }
 
 /* Complete industry evidence graph */
+.risk-transmission-panel {
+  margin-top: 18px;
+  overflow: hidden;
+}
+
+.risk-transmission-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 22px 24px 18px;
+  border-bottom: 1px solid color-mix(in srgb, var(--reading-separator) 74%, transparent);
+}
+
+.risk-transmission-header h2 {
+  margin: 5px 0 7px;
+  font-size: 1.24rem;
+}
+
+.risk-transmission-header p {
+  max-width: 760px;
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 0.9rem;
+  line-height: 1.62;
+}
+
+.risk-transmission-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.risk-transmission-frame-shell {
+  min-height: 810px;
+  background: #020c19;
+}
+
+.risk-transmission-frame {
+  display: block;
+  width: 100%;
+  min-height: 810px;
+  border: 0;
+  background: #020c19;
+}
+
+@media (max-width: 760px) {
+  .risk-transmission-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .risk-transmission-actions {
+    justify-content: flex-start;
+  }
+
+  .risk-transmission-frame-shell,
+  .risk-transmission-frame {
+    min-height: 680px;
+  }
+}
+
 .industry-graph-glass,
 .industry-graph-state-glass {
   min-width: 0;

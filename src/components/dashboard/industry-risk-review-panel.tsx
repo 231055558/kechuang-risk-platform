@@ -19,7 +19,7 @@ import {
   ShieldCheckIcon,
 } from "lucide-react"
 
-import { IndustryRiskKnowledgeGraph } from "@/components/dashboard/industry-risk-knowledge-graph"
+import { RiskTransmissionGraph } from "@/components/dashboard/risk-transmission-graph"
 import { GlassPanel } from "@/components/dashboard/shared"
 import { Reveal } from "@/components/motion/workflow-transition"
 import { Badge } from "@/components/ui/badge"
@@ -295,10 +295,7 @@ export function IndustryRiskReviewPanel({
           </details>
         </GlassPanel>
       </Reveal>
-      <IndustryRiskKnowledgeGraph
-        key={companyId}
-        selectedCompanyId={companyId}
-      />
+      <RiskTransmissionGraph />
     </>
   )
 }

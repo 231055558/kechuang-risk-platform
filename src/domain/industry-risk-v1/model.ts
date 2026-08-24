@@ -240,6 +240,22 @@ export interface IndustryRiskDeepSearchEvent {
   notes: string
 }
 
+export interface IndustryRiskExternalSubjectEvidence {
+  id: string
+  companyId: string
+  eventId: string | null
+  subjectName: string
+  subjectType: string
+  relationType: string
+  eventDate: string | null
+  sourceTitle: string
+  sourceUrl: string | null
+  sourceInstitution: string
+  evidenceQuote: string
+  confidence: number
+  reviewStatus: string
+}
+
 export interface IndustryRiskReportAvailability {
   companyId: string
   annual2025Status: string
@@ -291,6 +307,7 @@ export interface IndustryRiskDataset {
   litigationEvidence: IndustryRiskLitigationEvidence[]
   supplementaryObservations: IndustryRiskSupplementaryObservation[]
   deepSearchEvents: IndustryRiskDeepSearchEvent[]
+  externalSubjectEvidence?: IndustryRiskExternalSubjectEvidence[]
   reportAvailability: IndustryRiskReportAvailability[]
   bonusDefinitions: IndustryRiskBonusDefinition[]
 }
