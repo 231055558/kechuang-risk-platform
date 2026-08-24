@@ -31,6 +31,20 @@ function nullableNumber(value: SqlValue) {
   return value === null ? null : number(value)
 }
 
+const localPathPattern = /(?:[A-Za-z]:\\|\/Users\/|\/home\/|file:\/\/)/i
+
+function isPublicUrl(value: SqlValue) {
+  const normalized = nullableText(value)
+  return normalized?.startsWith("https://") || normalized?.startsWith("http://")
+    ? normalized
+    : null
+}
+
+function publicText(value: SqlValue) {
+  const normalized = text(value)
+  return localPathPattern.test(normalized) ? "本地受限证据（路径已隐藏）" : normalized
+}
+
 function rows(database: DatabaseSync, sql: string) {
   return database.prepare(sql).all() as SqlRow[]
 }
@@ -105,7 +119,7 @@ export function importIndustryRiskSqlite(
       listDate: nullableText(row.list_date),
       industry: text(row.sse_industry),
       selectionReason: text(row.selection_reason),
-      sourceUrl: nullableText(row.source_url),
+      sourceUrl: isPublicUrl(row.source_url),
       confidenceLabel: text(row.confidence),
       confidence: number(row.confidence_score),
     }))
@@ -146,11 +160,11 @@ export function importIndustryRiskSqlite(
       id: sourceId(row.source_id),
       sourceType: text(row.source_type),
       institution: text(row.institution),
-      title: text(row.title),
+      title: publicText(row.title),
       publicationDate: nullableText(row.publication_date),
-      url: nullableText(row.url),
+      url: isPublicUrl(row.url),
       accessedAt: nullableText(row.accessed_at),
-      notes: text(row.notes),
+      notes: publicText(row.notes),
       redistribution: redistribution(row),
     }))
 
@@ -166,17 +180,17 @@ export function importIndustryRiskSqlite(
       periodEnd: nullableText(row.period_end),
       asOfDate: nullableText(row.as_of_date),
       numericValue: nullableNumber(row.numeric_value),
-      textValue: nullableText(row.text_value),
+      textValue: localPathPattern.test(text(row.text_value)) ? "本地受限证据（路径已隐藏）" : nullableText(row.text_value),
       unit: nullableText(row.unit),
       status: text(row.status),
       derived: number(row.is_derived) === 1,
-      formula: nullableText(row.formula),
+      formula: localPathPattern.test(text(row.formula)) ? "本地受限计算说明（路径已隐藏）" : nullableText(row.formula),
       sourceId: sourceId(row.source_id),
       sourcePage: nullableNumber(row.source_page),
       confidenceLabel: text(row.confidence),
       confidence: number(row.confidence_score),
       confidenceReason: text(row.confidence_reason),
-      limitations: text(row.limitations),
+      limitations: publicText(row.limitations),
     }))
 
     const coverage = rows(
@@ -203,6 +217,45 @@ export function importIndustryRiskSqlite(
        ORDER BY indicator_id`
     ).map((row) => text(row.indicator_id) as IndustryRiskIndicatorId)
 
+    const observationKeys = new Set<string>()
+    const normalizedObservations = [...observations]
+      .sort((left, right) =>
+        right.confidence - left.confidence ||
+        (right.asOfDate ?? "").localeCompare(left.asOfDate ?? "") ||
+        right.id.localeCompare(left.id)
+      )
+      .filter((item) => {
+        const key = [item.companyId, item.indicatorId, item.metricName, item.asOfDate ?? ""].join("::")
+        if (observationKeys.has(key)) return false
+        observationKeys.add(key)
+        return true
+      })
+    const coverageByKey = new Map<string, (typeof coverage)[number]>()
+    for (const item of coverage) {
+      const key = `${item.companyId}::${item.indicatorId}`
+      const current = coverageByKey.get(key)
+      if (!current || Number(item.usableForScoring) > Number(current.usableForScoring) || item.confidence > current.confidence) {
+        coverageByKey.set(key, item)
+      }
+    }
+    for (const company of companies) {
+      for (const indicator of indicators) {
+        const key = `${company.id}::${indicator.id}`
+        if (!coverageByKey.has(key)) {
+          coverageByKey.set(key, {
+            companyId: company.id,
+            indicatorId: indicator.id,
+            status: "missing",
+            usableForScoring: false,
+            confidenceLabel: "低",
+            confidence: 0,
+            reason: "主数据库尚未生成该企业指标的覆盖记录。",
+            recommendedNextSource: "按指标数据需求补充可核验来源。",
+          })
+        }
+      }
+    }
+
     const dataset: IndustryRiskDataset = {
       metadata: {
         schemaVersion: INDUSTRY_RISK_DATA_SCHEMA_VERSION,
@@ -227,8 +280,8 @@ export function importIndustryRiskSqlite(
       companies,
       indicators,
       sources,
-      observations,
-      coverage,
+      observations: normalizedObservations,
+      coverage: [...coverageByKey.values()],
       screeningHits: rows(
         database,
         "SELECT * FROM screening_hits ORDER BY hit_id"
@@ -255,7 +308,7 @@ export function importIndustryRiskSqlite(
         companyId: companyIds.get(number(row.company_id)) ?? "",
         announcementDate: nullableText(row.announcement_date),
         title: text(row.announcement_title),
-        url: nullableText(row.announcement_url),
+        url: isPublicUrl(row.announcement_url),
         topicKey: text(row.inquiry_topic_key),
         countedAsInquiry: number(row.counted_as_inquiry) === 1,
         confidenceLabel: text(row.confidence),
@@ -272,7 +325,7 @@ export function importIndustryRiskSqlite(
         court: text(row.court),
         hearingTime: nullableText(row.hearing_time),
         role: text(row.role),
-        sourceUrl: nullableText(row.source_url),
+        sourceUrl: isPublicUrl(row.source_url),
         confidenceLabel: text(row.confidence),
         confidence: number(row.confidence_score),
         limitations: text(row.limitations),
@@ -288,7 +341,7 @@ export function importIndustryRiskSqlite(
         eventType: text(row.event_type),
         eventDate: nullableText(row.event_date),
         title: text(row.title),
-        url: nullableText(row.url),
+        url: isPublicUrl(row.url),
         sourceChannel: text(row.source_channel),
         confidenceLabel: text(row.confidence),
         confidence: number(row.confidence_score),
@@ -296,6 +349,25 @@ export function importIndustryRiskSqlite(
           row.related_indicator_id
         ) as IndustryRiskIndicatorId | null,
         notes: text(row.notes),
+      })),
+      externalSubjectEvidence: optionalRows(
+        database,
+        "external_subject_evidence",
+        "SELECT * FROM external_subject_evidence ORDER BY evidence_id"
+      ).map((row) => ({
+        id: `external-subject-${number(row.evidence_id)}`,
+        companyId: companyIds.get(number(row.company_id)) ?? "",
+        eventId: row.event_id === null ? null : String(number(row.event_id)),
+        subjectName: text(row.subject_name),
+        subjectType: text(row.subject_type),
+        relationType: text(row.relation_type),
+        eventDate: nullableText(row.event_date),
+        sourceTitle: publicText(row.source_title),
+        sourceUrl: isPublicUrl(row.source_url),
+        sourceInstitution: text(row.source_institution),
+        evidenceQuote: publicText(row.evidence_quote),
+        confidence: number(row.confidence_score),
+        reviewStatus: text(row.review_status),
       })),
       supplementaryObservations: optionalRows(
         database,
@@ -350,7 +422,17 @@ export function importIndustryRiskSqlite(
         status: "definition-only" as const,
       })),
     }
-    return assertIndustryRiskDataset(dataset)
+    // The crawler master contains internal provenance paths.  This adapter is
+    // read-only and must not leak them into the web API, including less common
+    // auxiliary fields added by future collectors.
+    const safeDataset = JSON.parse(
+      JSON.stringify(dataset),
+      (_key, value: unknown) =>
+        typeof value === "string" && localPathPattern.test(value)
+          ? "本地受限证据（路径已隐藏）"
+          : value
+    ) as IndustryRiskDataset
+    return assertIndustryRiskDataset(safeDataset)
   } finally {
     database.close()
   }

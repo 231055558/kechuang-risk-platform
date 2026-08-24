@@ -48,6 +48,8 @@ const nodeKindLabels: Record<IndustryRiskGraphNodeKind, string> = {
   indicator: "R01–R22 指标",
   source: "数据来源",
   event: "风险事件",
+  subject: "外部主体",
+  evolution: "条件演化",
 }
 
 const graphStyles: StylesheetJson = [
@@ -151,14 +153,48 @@ const graphStyles: StylesheetJson = [
   {
     selector: 'node[kind = "event"]',
     style: {
-      shape: "round-hexagon",
+      shape: "round-rectangle",
       "background-opacity": 0.88,
       "border-color": "#fecdd3",
-      label: "",
+      label: "data(label)",
       "font-size": 9,
-      "text-max-width": "68px",
-      "text-valign": "bottom",
-      "text-margin-y": 12,
+      "text-max-width": "106px",
+      "text-valign": "center",
+      "text-outline-width": 1.8,
+    },
+  },
+  {
+    selector: 'node[kind = "subject"]',
+    style: {
+      shape: "round-rectangle",
+      "background-opacity": 0.88,
+      "border-color": "#bbf7d0",
+      label: "data(label)",
+      "font-size": 9,
+      "text-max-width": "78px",
+      "text-valign": "center",
+      "text-outline-width": 1.8,
+    },
+  },
+  {
+    selector: 'node[kind = "indicator"]',
+    style: {
+      shape: "round-rectangle",
+      "background-opacity": 0.84,
+      "border-color": "#bae6fd",
+      "text-max-width": "92px",
+      "text-outline-width": 1.8,
+    },
+  },
+  {
+    selector: 'node[kind = "evolution"]',
+    style: {
+      shape: "round-diamond",
+      "background-opacity": 0.72,
+      "border-color": "#ddd6fe",
+      "border-style": "dashed",
+      "text-max-width": "100px",
+      "text-outline-width": 1.8,
     },
   },
   {
@@ -201,8 +237,16 @@ const graphStyles: StylesheetJson = [
     },
   },
   {
+    selector: 'edge[kind = "impact"]',
+    style: { opacity: 0.6, "curve-style": "bezier" },
+  },
+  {
+    selector: 'edge[kind = "evolution-link"]',
+    style: { opacity: 0.55, "line-style": "dashed", "curve-style": "bezier" },
+  },
+  {
     selector:
-      'node[kind = "source"].is-active, node[kind = "event"].is-active',
+      'node[kind = "source"].is-active, node[kind = "event"].is-active, node[kind = "subject"].is-active, node[kind = "evolution"].is-active',
     style: {
       label: "data(label)",
     },
@@ -257,25 +301,25 @@ function layoutOptions(
     uniformNodeDimensions: false,
     nodeRepulsion: (node) => {
       const kind = node.data("kind") as IndustryRiskGraphNodeKind
-      if (kind === "company") return 8_000
-      if (kind === "category") return 6_000
-      if (kind === "indicator") return 4_800
-      return 2_800
+      if (kind === "company") return 12_000
+      if (kind === "event") return 7_500
+      if (kind === "indicator" || kind === "subject") return 5_400
+      return 4_200
     },
     idealEdgeLength: (edge) => {
-      const kind = edge.data("kind") as "hierarchy" | "provenance" | "event-link"
-      if (kind === "hierarchy") return 148
-      if (kind === "provenance") return 92
-      return 82
+      const kind = edge.data("kind") as "event-link" | "impact" | "subject-link" | "evolution-link"
+      if (kind === "event-link") return 240
+      if (kind === "impact") return 190
+      return 175
     },
     edgeElasticity: (edge) =>
       edge.data("kind") === "hierarchy" ? 0.28 : 0.52,
     nestingFactor: 1,
-    numIter: 1_600,
+    numIter: 2_200,
     tile: true,
     tilingPaddingVertical: 24,
     tilingPaddingHorizontal: 24,
-    gravity: 0.38,
+    gravity: 0.2,
     gravityRangeCompound: 1.5,
     gravityCompound: 0.8,
     gravityRange: 3.2,
@@ -339,7 +383,7 @@ export function IndustryRiskKnowledgeGraph({
         >
           <div className="industry-graph-state" role="status">
             <DatabaseZapIcon aria-hidden="true" />
-            <p>正在构建企业、风险维度、指标、来源与事件关系…</p>
+            <p>正在加载企业风险事件传导关系…</p>
           </div>
         </LiquidGlassSurface>
       </Reveal>
@@ -411,11 +455,8 @@ function IndustryRiskKnowledgeGraphContent({
   const hoveredNode = graph.nodes.find((node) => node.id === hoveredNodeId)
   const companyNode = graph.nodes.find((node) => node.kind === "company")
   const companyNodeId = companyNode?.id ?? ""
-  const topRiskIndicators = graph.nodes
-    .filter(
-      (node) => node.kind === "indicator" && node.score !== null
-    )
-    .sort((left, right) => (right.score ?? 0) - (left.score ?? 0))
+  const keyEvents = graph.nodes
+    .filter((node) => node.kind === "event")
     .slice(0, 5)
   const activeEdges = activeNode
     ? graph.edges.filter(
@@ -651,8 +692,8 @@ function IndustryRiskKnowledgeGraphContent({
               <span className="eyebrow">单企业语义径向图 · Cytoscape + fCoSE</span>
               <h2 id="industry-graph-title">{companyName}企业风险知识图谱</h2>
               <p>
-                企业位于中心，风险维度构成内环，R01–R22 指标和证据向外展开；
-                节点面积与颜色共同表达风险强度，单击可追溯来源和事件。
+                企业位于中心，风险事件向外传导至受影响的二级风险指标、已确认外部主体与条件演化。
+                数据来源仅在节点详情中展示，避免画布成为证据毛球。
               </p>
             </div>
             <div className="industry-graph-toolbar" aria-label="图谱视图控制">
@@ -684,31 +725,31 @@ function IndustryRiskKnowledgeGraphContent({
           </header>
 
           <div className="industry-graph-summary">
-            <Badge variant="outline">{countKind("category")} 个风险维度</Badge>
-            <Badge variant="outline">{countKind("indicator")} 项统一指标</Badge>
-            <Badge variant="outline">{countKind("source")} 个数据来源</Badge>
             <Badge variant="outline">{countKind("event")} 个风险事件</Badge>
+            <Badge variant="outline">{countKind("indicator")} 个受影响指标</Badge>
+            <Badge variant="outline">{countKind("subject")} 个外部主体</Badge>
+            <Badge variant="outline">{countKind("evolution")} 个条件演化</Badge>
             <Badge variant="outline">{graph.edges.length} 条可追溯关系</Badge>
-            <Badge variant="outline">语义径向 · 动态避让</Badge>
+            <Badge variant="outline">事件传导 · 动态避让</Badge>
           </div>
 
           <div className="industry-graph-hotspots" aria-label="当前风险热点">
             <div className="industry-graph-hotspots-heading">
               <FlameIcon aria-hidden="true" />
-              <span>风险热点</span>
+              <span>关键事件</span>
               <strong>{companyNode?.score?.toFixed(1) ?? "—"}</strong>
-              <small>企业 CRITIC 基准</small>
+              <small>优先展示已验证传导关系</small>
             </div>
             <ol>
-              {topRiskIndicators.map((node) => (
+              {keyEvents.map((node) => (
                 <li key={node.id}>
                   <button
                     type="button"
                     onClick={() => onActiveNodeChange(node.id)}
                   >
-                    <span>{node.entityId}</span>
+                    <span>事件</span>
                     <b>{node.label}</b>
-                    <strong>{node.score?.toFixed(0)}</strong>
+                    <strong>{node.tone === "critical" ? "高" : "关注"}</strong>
                   </button>
                 </li>
               ))}
@@ -733,7 +774,7 @@ function IndustryRiskKnowledgeGraphContent({
             </div>
             <p>
               <AlertTriangleIcon aria-hidden="true" />
-              连线表示指标归属、来源或事件证据，不宣称因果关系。
+              连线仅表示主库中已确认的事件关联；紫色节点是条件推演，不代表已发生。
             </p>
           </footer>
         </section>

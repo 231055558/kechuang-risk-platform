@@ -280,13 +280,23 @@ const graphNodeKinds = new Set([
   "indicator",
   "source",
   "event",
+  "subject",
+  "evolution",
 ])
-const graphEdgeKinds = new Set(["hierarchy", "provenance", "event-link"])
+const graphEdgeKinds = new Set([
+  "hierarchy",
+  "provenance",
+  "event-link",
+  "subject-link",
+  "impact",
+  "evolution-link",
+])
 
 function isKnowledgeGraph(value: unknown): value is IndustryRiskKnowledgeGraph {
   if (
     !isRecord(value) ||
-    value.schemaVersion !== "KCR-INDUSTRY-GRAPH-2026.08-v2" ||
+    (value.schemaVersion !== "KCR-INDUSTRY-GRAPH-2026.08-v2" &&
+      value.schemaVersion !== "KCR-RISK-TRANSMISSION-GRAPH-2026.08-v1") ||
     !Array.isArray(value.nodes) ||
     !Array.isArray(value.edges) ||
     !isRecord(value.counts) ||

@@ -9,6 +9,7 @@
     "server/http-server.ts",
     "server/kcr-assessment-service.ts",
     "server/production-server.ts",
+    "scripts/import-industry-risk-sqlite.ts",
     "scripts/import-kcr-workbook.ts",
     "scripts/score-kcr-assessment.ts"
   ]

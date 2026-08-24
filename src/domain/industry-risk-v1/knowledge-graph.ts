@@ -2,10 +2,21 @@ import type { IndustryRiskDataset } from "./model.ts"
 import type { IndustryRiskCompanyAssessment } from "./scoring-engine.ts"
 
 export type IndustryRiskGraphNodeKind =
-  "company" | "category" | "indicator" | "source" | "event"
+  | "company"
+  | "category"
+  | "indicator"
+  | "source"
+  | "event"
+  | "subject"
+  | "evolution"
 
 export type IndustryRiskGraphEdgeKind =
-  "hierarchy" | "provenance" | "event-link"
+  | "hierarchy"
+  | "provenance"
+  | "event-link"
+  | "subject-link"
+  | "impact"
+  | "evolution-link"
 
 export interface IndustryRiskGraphNode {
   id: string
@@ -30,7 +41,9 @@ export interface IndustryRiskGraphEdge {
 }
 
 export interface IndustryRiskKnowledgeGraph {
-  schemaVersion: "KCR-INDUSTRY-GRAPH-2026.08-v2"
+  schemaVersion:
+    | "KCR-INDUSTRY-GRAPH-2026.08-v2"
+    | "KCR-RISK-TRANSMISSION-GRAPH-2026.08-v1"
   nodes: IndustryRiskGraphNode[]
   edges: IndustryRiskGraphEdge[]
   counts: {
@@ -188,6 +201,28 @@ export function buildIndustryRiskKnowledgeGraph(
       companyIds: [event.companyId],
     })),
   ]
+  const externalSubjects = dataset.externalSubjectEvidence ?? []
+  const subjectEvidenceByIdentity = new Map<string, typeof externalSubjects>()
+  for (const evidence of externalSubjects) {
+    const identity = `${evidence.subjectType}:${evidence.subjectName}`
+    subjectEvidenceByIdentity.set(identity, [
+      ...(subjectEvidenceByIdentity.get(identity) ?? []),
+      evidence,
+    ])
+  }
+  const subjectNodes: IndustryRiskGraphNode[] = [
+    ...subjectEvidenceByIdentity.entries(),
+  ].map(([identity, evidence]): IndustryRiskGraphNode => ({
+    id: nodeId("subject", identity),
+    entityId: identity,
+    kind: "subject",
+    label: evidence[0].subjectName,
+    caption: `${evidence[0].subjectType} · ${evidence.length} 条已确认关系`,
+    score: null,
+    scoresByCompany: {},
+    tone: "neutral",
+    companyIds: unique(evidence.map((item) => item.companyId)),
+  }))
 
   const companyNodes = dataset.companies.map(
     (company): IndustryRiskGraphNode => {
@@ -268,6 +303,7 @@ export function buildIndustryRiskKnowledgeGraph(
     ...indicatorNodes,
     ...sourceNodes,
     ...eventNodes,
+    ...subjectNodes,
   ]
 
   const edges: IndustryRiskGraphEdge[] = [
@@ -349,6 +385,18 @@ export function buildIndustryRiskKnowledgeGraph(
       }`,
       companyIds: [event.companyId],
     })),
+    ...externalSubjects.flatMap((evidence): IndustryRiskGraphEdge[] => {
+      if (!evidence.eventId) return []
+      return [{
+        id: `subject-link:${evidence.id}`,
+        source: nodeId("subject", `${evidence.subjectType}:${evidence.subjectName}`),
+        target: nodeId("event", `deep:deep-event-${evidence.eventId}`),
+        kind: "subject-link",
+        label: evidence.relationType,
+        detail: evidence.evidenceQuote,
+        companyIds: [evidence.companyId],
+      }]
+    }),
   ]
 
   return {
@@ -365,6 +413,6 @@ export function buildIndustryRiskKnowledgeGraph(
       events: eventNodes.length,
     },
     scopeNote:
-      "每次只展示一家企业，以企业—风险维度—R01–R22 指标—来源/事件组织关系；连线只表达分类与证据归属，不新增因果结论。",
+      "每次只展示一家企业，以企业—风险维度—R01–R22 指标—来源/事件—已确认外部主体组织关系；连线只表达分类与证据归属，不新增因果结论。",
   }
 }
