@@ -1,14 +1,20 @@
 import unifiedData from "../src/data/industry/r01-r22-unified.json" with { type: "json" }
+import narrativeRuntimeData from "../src/data/industry/r01-r04-narrative-news.json" with { type: "json" }
 import {
+  attachIndustryRiskNarrativeRuntime,
   buildIndustryRiskKnowledgeGraph,
   scoreIndustryRiskDataset,
   type IndustryRiskAssessmentApiResponse,
   type IndustryRiskCompanyDirectoryResponse,
   type IndustryRiskDataset,
   type IndustryRiskEvent,
+  type IndustryRiskNarrativeRuntime,
 } from "../src/domain/industry-risk-v1/index.ts"
 
-const dataset = unifiedData as IndustryRiskDataset
+const dataset = attachIndustryRiskNarrativeRuntime(
+  unifiedData as IndustryRiskDataset,
+  narrativeRuntimeData as IndustryRiskNarrativeRuntime
+)
 const assessments = scoreIndustryRiskDataset(dataset)
 const knowledgeGraph = buildIndustryRiskKnowledgeGraph(dataset, assessments)
 

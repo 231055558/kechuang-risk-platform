@@ -1,6 +1,9 @@
 export const INDUSTRY_RISK_DATA_SCHEMA_VERSION =
   "KCR-INDUSTRY-DATA-2026.08-v1" as const
 
+export const INDUSTRY_RISK_NARRATIVE_RUNTIME_SCHEMA_VERSION =
+  "KCR-INDUSTRY-NARRATIVE-2026.08-v1" as const
+
 export const INDUSTRY_RISK_INDICATOR_IDS = [
   "R01",
   "R02",
@@ -275,6 +278,13 @@ export interface IndustryRiskNarrativeNewsMetric {
   truncated: boolean
   sourceId: string
   limitations: string
+}
+
+export interface IndustryRiskNarrativeRuntime {
+  schemaVersion: typeof INDUSTRY_RISK_NARRATIVE_RUNTIME_SCHEMA_VERSION
+  dataVersion: string
+  narrativeNewsEvidence: IndustryRiskNarrativeNewsEvidence[]
+  narrativeNewsMetrics: IndustryRiskNarrativeNewsMetric[]
 }
 
 export interface IndustryRiskReportAvailability {

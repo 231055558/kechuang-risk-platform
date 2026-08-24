@@ -3,12 +3,19 @@ import { readFileSync } from "node:fs"
 import test from "node:test"
 
 import unifiedData from "../src/data/industry/r01-r22-unified.json" with { type: "json" }
+import narrativeRuntimeData from "../src/data/industry/r01-r04-narrative-news.json" with { type: "json" }
 import {
+  attachIndustryRiskNarrativeRuntime,
   assertIndustryRiskDataset,
   type IndustryRiskDataset,
+  type IndustryRiskNarrativeRuntime,
 } from "../src/domain/industry-risk-v1/index.ts"
 
-const dataset = unifiedData as IndustryRiskDataset
+const baseDataset = unifiedData as IndustryRiskDataset
+const dataset = attachIndustryRiskNarrativeRuntime(
+  baseDataset,
+  narrativeRuntimeData as IndustryRiskNarrativeRuntime
+)
 
 test("the unified runtime contains only the R01-R22 contract across 94 companies", () => {
   assert.doesNotThrow(() => assertIndustryRiskDataset(dataset))
@@ -49,6 +56,21 @@ test("the unified runtime contains only the R01-R22 contract across 94 companies
       (item) => item.indicatorId === "R09" && item.status === "部分覆盖"
     ).length,
     37
+  )
+})
+
+test("the browser snapshot excludes server-only narrative news payloads", () => {
+  assert.equal(Object.hasOwn(baseDataset, "narrativeNewsEvidence"), false)
+  assert.equal(Object.hasOwn(baseDataset, "narrativeNewsMetrics"), false)
+  assert.equal(narrativeRuntimeData.narrativeNewsEvidence.length, 1850)
+  assert.equal(narrativeRuntimeData.narrativeNewsMetrics.length, 37)
+  assert.throws(
+    () =>
+      attachIndustryRiskNarrativeRuntime(baseDataset, {
+        ...(narrativeRuntimeData as IndustryRiskNarrativeRuntime),
+        dataVersion: "mismatched-data-version",
+      }),
+    /版本不一致/
   )
 })
 
