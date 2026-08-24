@@ -314,7 +314,8 @@ function technologyBaselineResult(
       "tqi-005",
       "tqi-006",
     ].map((indicatorId) => ({
-      indicatorId: indicatorId as TechnologyBaselineQuantificationRequest["evidence"][number]["indicatorId"],
+      indicatorId:
+        indicatorId as TechnologyBaselineQuantificationRequest["evidence"][number]["indicatorId"],
       evidenceId: "ds-e2",
       locator: `公开披露第 ${indicatorId.slice(-1)} 节`,
       supportStrength: "direct" as const,
@@ -396,7 +397,7 @@ test("technology automatic scoring replaces the technology dimension with audita
   assert.equal(technology.evidenceIndicatorPairCount, 1)
   assert.match(technology.summary, /KTR-2026\.07-v1/)
   assert.match(technology.summary, /78%/)
-  assert.equal(assessment.scoreBasisLabel, "技术自动评分与人工复核")
+  assert.equal(assessment.scoreBasisLabel, "技术自动评分与指标计算")
   assert.equal(assessment.reviewedAt, "2026-07-18T08:30:00.000Z")
 })
 
@@ -428,7 +429,7 @@ test("a valid reviewed override for the current run takes precedence over the au
   assert.ok(technology)
   assert.equal(technology.score, 91)
   assert.equal(technology.scoreBasis, "technology-auto-score")
-  assert.match(technology.summary, /人工复核覆盖/)
+  assert.match(technology.summary, /确认调整/)
   assert.equal(assessment.reviewedAt, "2026-07-18T10:00:00.000Z")
 })
 
@@ -544,7 +545,7 @@ test("invalid or insufficient automatic results fall back to legacy manual techn
     assert.ok(technology)
     assert.equal(technology.score, 66)
     assert.equal(technology.scoreBasis, "indicator-observation")
-    assert.equal(assessment.scoreBasisLabel, "指标观测与人工复核")
+    assert.equal(assessment.scoreBasisLabel, "R05–R22 客观指标自动计算")
   }
 })
 
@@ -573,7 +574,7 @@ test("a valid TQB v4 raw quantification does not assess technology when KTR is u
   assert.equal(technology.score, null)
   assert.equal(technology.scoreBasis, null)
   assert.equal(technology.assessable, false)
-  assert.equal(assessment.scoreLabel, "待建立评分观测")
+  assert.equal(assessment.scoreLabel, "暂无可用指标")
 })
 
 test("a valid KTR result takes precedence over the TQB baseline result", () => {
@@ -611,7 +612,7 @@ test("automatic technology scoring and manual dimensions produce the mixed basis
     technologyState(detail.id)
   )
 
-  assert.equal(assessment.scoreBasisLabel, "自动评分、指标观测与人工复核")
+  assert.equal(assessment.scoreBasisLabel, "自动评分与指标计算")
 })
 
 test("the auxiliary index is the rounded equal-weight assessable average", () => {
@@ -983,7 +984,7 @@ test("the auxiliary index hides its number below four assessable dimensions", ()
 
   assert.equal(assessment.assessableDimensionCount, 3)
   assert.equal(assessment.score, null)
-  assert.equal(assessment.scoreLabel, "证据不足，待复核")
+  assert.equal(assessment.scoreLabel, "部分指标待补充")
   assert.equal(assessment.reviewStatus, "insufficient-evidence")
 })
 
@@ -1032,8 +1033,8 @@ test("the auxiliary index applies the 0, 1-3, and 4+ dimension bands", () => {
       dimensionCount >= 4
         ? "60"
         : dimensionCount === 0
-          ? "待建立评分观测"
-          : "证据不足，待复核",
+          ? "暂无可用指标"
+          : "部分指标待补充",
       `${dimensionCount} dimensions`
     )
     assert.equal(
@@ -1109,12 +1110,9 @@ test("legacy expert scores stay out of the assessment without observations", () 
   assert.ok(technology)
   assert.equal(technology.score, null)
   assert.equal(technology.assessable, false)
-  assert.equal(
-    technology.summary,
-    "当前公开快照缺少经复核的企业指标观测值，暂不量化。"
-  )
+  assert.equal(technology.summary, "当前公开快照缺少可计算的企业指标观测值。")
   assert.equal(assessment.score, null)
-  assert.equal(assessment.scoreLabel, "待建立评分观测")
+  assert.equal(assessment.scoreLabel, "暂无可用指标")
 })
 
 test("only governed public evidence can enter scoring coverage", () => {

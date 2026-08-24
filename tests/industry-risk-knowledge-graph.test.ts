@@ -6,6 +6,7 @@ import {
   buildIndustryRiskCytoscapeElements,
   riskHeatColor,
   selectIndustryRiskGraph,
+  selectIndustryRiskGraphView,
   type IndustryRiskCytoscapeNodeData,
 } from "../src/lib/industry-risk-graph-view.ts"
 
@@ -42,7 +43,10 @@ test("company focus is complete but contains no other enterprise", () => {
   const focus = selectIndustryRiskGraph(graph, "star-688256")
   assert.equal(focus.nodes.filter((node) => node.kind === "company").length, 1)
   assert.equal(focus.nodes.filter((node) => node.kind === "category").length, 6)
-  assert.equal(focus.nodes.filter((node) => node.kind === "indicator").length, 22)
+  assert.equal(
+    focus.nodes.filter((node) => node.kind === "indicator").length,
+    22
+  )
   assert.equal(focus.nodes.filter((node) => node.kind === "source").length, 13)
   assert.equal(focus.nodes.filter((node) => node.kind === "event").length, 22)
   assert.equal(focus.nodes.length, 64)
@@ -56,9 +60,10 @@ test("company focus is complete but contains no other enterprise", () => {
     73.02
   )
   assert.equal(
-    focus.nodes.find((node) => node.id === "category:叙事风险（主观校验项，不直接计入总权重）")
-      ?.score,
-    52.63
+    focus.nodes.find(
+      (node) => node.id === "category:叙事风险（主观校验项，不直接计入总权重）"
+    )?.score,
+    null
   )
   assert.equal(
     focus.nodes.find((node) => node.id === "category:技术风险")?.score,
@@ -69,6 +74,42 @@ test("company focus is complete but contains no other enterprise", () => {
       (node) => node.kind !== "company" || node.entityId === "star-688256"
     )
   )
+})
+
+test("graph view separates narrative observations from objective risk scores", () => {
+  const focus = selectIndustryRiskGraph(graph, "star-688256")
+  const narrative = selectIndustryRiskGraphView(focus, "narrative")
+  const objective = selectIndustryRiskGraphView(focus, "objective")
+
+  assert.equal(
+    narrative.nodes.filter((node) => node.kind === "indicator").length,
+    4
+  )
+  assert.deepEqual(
+    narrative.nodes
+      .filter((node) => node.kind === "indicator")
+      .map((node) => node.entityId)
+      .sort(),
+    ["R01", "R02", "R03", "R04"]
+  )
+  assert.equal(
+    narrative.nodes.filter((node) => node.kind === "category").length,
+    1
+  )
+  assert.equal(
+    objective.nodes.filter((node) => node.kind === "indicator").length,
+    18
+  )
+  assert.equal(
+    objective.nodes.filter((node) => node.kind === "category").length,
+    5
+  )
+
+  const narrativeR01 = nodeData(narrative, "indicator:R01")
+  assert.ok(narrativeR01)
+  assert.equal(narrativeR01.score, null)
+  assert.equal(narrativeR01.scoreLabel, "观察")
+  assert.equal(narrativeR01.color, "#8b5cf6")
 })
 
 function nodeData(
@@ -86,13 +127,14 @@ function nodeData(
 test("Cytoscape view uses a complete semantic radial graph without dropping relations", () => {
   const focus = selectIndustryRiskGraph(graph, "star-688256")
   const elements = buildIndustryRiskCytoscapeElements(focus)
-  const nodeElements = elements
-    .filter(
-      (element): element is Extract<
-        (typeof elements)[number],
-        { position: { x: number; y: number } }
-      > => "position" in element
-    )
+  const nodeElements = elements.filter(
+    (
+      element
+    ): element is Extract<
+      (typeof elements)[number],
+      { position: { x: number; y: number } }
+    > => "position" in element
+  )
   const nodes = nodeElements.map((element) => element.data)
   const edges = elements
     .map((element) => element.data)
@@ -104,7 +146,8 @@ test("Cytoscape view uses a complete semantic radial graph without dropping rela
   assert.ok(
     nodeElements.every(
       (element) =>
-        Number.isFinite(element.position.x) && Number.isFinite(element.position.y)
+        Number.isFinite(element.position.x) &&
+        Number.isFinite(element.position.y)
     )
   )
   assert.deepEqual(
@@ -174,7 +217,9 @@ test("every Cytoscape relationship resolves to a visible node", () => {
   const edges = elements
     .map((element) => element.data)
     .filter(
-      (data): data is Extract<
+      (
+        data
+      ): data is Extract<
         (typeof elements)[number]["data"],
         { source: string }
       > => "source" in data

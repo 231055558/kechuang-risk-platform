@@ -10,6 +10,8 @@ import {
   calculateMvpRiskScore,
   calculateObjectiveWeights,
   calculateRiskPercentile,
+  buildIndustryRiskConclusion,
+  generateIndustryRiskRecommendations,
   scoreIndustryRiskDataset,
   type IndustryRiskDataset,
 } from "../src/domain/industry-risk-v1/index.ts"
@@ -90,7 +92,20 @@ test("pilot scoring produces missing-aware R01-R22 usable baselines", () => {
     assert.equal(assessment.totalIndicatorCount, 22)
     assert.equal(assessment.isOfficialTotalScore, false)
     assert.equal(assessment.dimensionScores.length, 5)
+    assert.equal(assessment.narrativeIndex.score, null)
+    assert.equal(assessment.narrativeIndex.status, "unavailable")
     assert.ok(assessment.totalRiskScore !== null)
+    assert.ok(
+      assessment.metrics
+        .filter((metric) => metric.kind === "narrative")
+        .every(
+          (metric) =>
+            metric.status === "not-score-ready" &&
+            metric.riskPercentile === null &&
+            metric.riskScore === null &&
+            !metric.formulaTrace.includes("r_rel=")
+        )
+    )
     assert.ok(
       assessment.metrics
         .filter((metric) => metric.status === "scored")
@@ -114,4 +129,26 @@ test("pilot scoring produces missing-aware R01-R22 usable baselines", () => {
       )
     )
   }
+})
+
+test("system recommendations turn the highest weighted risks into direct actions", () => {
+  const assessment = scoreIndustryRiskDataset(dataset)[0]
+  const recommendations = generateIndustryRiskRecommendations(assessment)
+  const scoredWeightedRisks = assessment.metrics
+    .filter((metric) => metric.kind === "weighted" && metric.riskScore !== null)
+    .sort((left, right) => (right.riskScore ?? 0) - (left.riskScore ?? 0))
+
+  assert.equal(recommendations.length, 3)
+  assert.deepEqual(
+    recommendations.map((item) => item.indicatorId),
+    scoredWeightedRisks.slice(0, 3).map((item) => item.indicatorId)
+  )
+  assert.ok(recommendations.every((item) => item.action.length > 20))
+  assert.ok(recommendations.every((item) => item.trigger.includes("风险分")))
+  assert.doesNotMatch(
+    recommendations.map((item) => item.action).join("\n"),
+    /人工复核|待复核/
+  )
+  assert.match(buildIndustryRiskConclusion(assessment), /综合风险指数为/)
+  assert.match(buildIndustryRiskConclusion(assessment), /当前主要风险来自/)
 })

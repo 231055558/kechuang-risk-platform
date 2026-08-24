@@ -162,7 +162,7 @@ function resolveTechnologyAssessment(
     if (isCurrentReviewedOverride(override, result, companyId)) {
       return {
         score: override.score,
-        summary: `技术自动评分模型 ${result.modelVersion} 覆盖权重 ${result.coveredWeight}%；当前分值采用 ${override.reviewedBy.trim()} 对运行 ${result.runId} 的人工复核覆盖。复核理由：${override.reason.trim()}`,
+        summary: `技术自动评分模型 ${result.modelVersion} 覆盖权重 ${result.coveredWeight}%；当前分值采用 ${override.reviewedBy.trim()} 对运行 ${result.runId} 的确认调整。调整理由：${override.reason.trim()}`,
         evidenceIds,
         indicatorIds,
         evidenceIndicatorPairCount,
@@ -196,12 +196,12 @@ function getScoreBasisLabel(
   )
 
   if (hasAutomaticScore && hasManualScore) {
-    return "自动评分、指标观测与人工复核"
+    return "自动评分与指标计算"
   }
   if (hasAutomaticScore) {
-    return "技术自动评分与人工复核"
+    return "技术自动评分与指标计算"
   }
-  return "指标观测与人工复核"
+  return "R05–R22 客观指标自动计算"
 }
 
 function parseChineseNumber(value: string) {
@@ -508,8 +508,8 @@ export function buildRiskAssessment(
       assessable,
       scoreBasis: assessable ? ("indicator-observation" as const) : null,
       summary: assessable
-        ? `已接入 ${scoredObservations.length} 项经人工复核的企业观测，并完成指标与评分证据配对。`
-        : "当前公开快照缺少经复核的企业指标观测值，暂不量化。",
+        ? `已接入 ${scoredObservations.length} 项有效企业观测，并完成指标与评分证据配对。`
+        : "当前公开快照缺少可计算的企业指标观测值。",
       evidenceIds,
       indicatorIds,
       evidenceIndicatorPairCount,
@@ -559,8 +559,8 @@ export function buildRiskAssessment(
       score !== null
         ? String(score)
         : assessableDimensions.length === 0
-          ? "待建立评分观测"
-          : "证据不足，待复核",
+          ? "暂无可用指标"
+          : "部分指标待补充",
     dimensions,
     assessableDimensionCount: assessableDimensions.length,
     effectiveEvidenceCoverage: calculateScoringEvidenceCoverage(
@@ -585,6 +585,6 @@ export function buildRiskAssessment(
     scoreBasisLabel: getScoreBasisLabel(dimensions),
     reviewedAt: latestReviewedAt ?? detail.snapshotAt,
     disclaimer:
-      "技术维度可采用版本化自动评分模型，并仅接收具备精确定位的有效证据；有效的当前运行人工复核覆盖优先于自动结果。其他维度只有具备单位、期间、复核记录和证据定位的企业指标观测，经注册规则重新计算后才汇总辅助分值；同一指标只使用最新复核期。本结果不替代人工尽调、监管认定或投资决策。",
+      "技术维度采用版本化自动评分模型；其他维度由具备单位、期间和来源定位的企业指标观测按注册规则自动计算，同一指标使用最新有效期间。本结果用于风险识别与行动排序。",
   }
 }

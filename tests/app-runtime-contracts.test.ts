@@ -134,7 +134,7 @@ test("restored and interactive comparison companies cannot equal the primary", (
   )
 })
 
-test("scoring creation requests survive lazy navigation and are consumed once", () => {
+test("customer metrics replace the manual scoring workspace while technology tools stay isolated", () => {
   const appSource = readProjectFile("src/App.tsx")
   const intelligenceSource = readProjectFile(
     "src/components/dashboard/intelligence-tab.tsx"
@@ -152,10 +152,9 @@ test("scoring creation requests survive lazy navigation and are consumed once", 
     appSource,
     /const handleCreateObservationRequestHandled = useCallback\(\(\) => \{[\s\S]*setScoringCreateToken\(0\)/
   )
-  assert.match(
-    intelligenceSource,
-    /<ScoringWorkspace[\s\S]*createToken=\{createToken\}/
-  )
+  assert.doesNotMatch(intelligenceSource, /<ScoringWorkspace/)
+  assert.match(intelligenceSource, /<IndustryRiskReviewPanel/)
+  assert.match(intelligenceSource, /showGraph=\{false\}/)
   assert.match(
     technologyWorkspaceSource,
     /createToken <= lastCreateTokenRef\.current[\s\S]*lastCreateTokenRef\.current = createToken[\s\S]*openIndicatorEditor\([\s\S]*onCreateRequestHandled\(\)/
@@ -290,10 +289,10 @@ test("overview renders the runtime assessment through an accessible radar", () =
     radarSource,
     /className="risk-radar-values" aria-label="六类风险评分明细"/
   )
-  assert.match(radarSource, /不代表零分或低风险/)
+  assert.match(radarSource, /不按零分计算，也不影响其他有效维度/)
 })
 
-test("assessment views distinguish automatic technology scores from reviewed observations", () => {
+test("assessment views distinguish technology scoring from rule-calculated indicators", () => {
   const overviewSource = readProjectFile(
     "src/components/dashboard/overview-tab.tsx"
   )
@@ -306,7 +305,7 @@ test("assessment views distinguish automatic technology scores from reviewed obs
 
   assert.match(radarSource, /dimension\.scoreBasis === "technology-auto-score"/)
   assert.match(radarSource, /技术自动评分/)
-  assert.match(radarSource, /人工复核观测/)
+  assert.match(radarSource, /指标规则计算/)
 
   assert.match(
     overviewSource,
@@ -322,7 +321,7 @@ test("assessment views distinguish automatic technology scores from reviewed obs
   )
   assert.match(compareSource, /同一方法版本与维度口径/)
   assert.match(compareSource, /技术自动评分/)
-  assert.match(compareSource, /人工复核观测/)
+  assert.match(compareSource, /指标规则计算/)
 })
 
 test("all report formats expose the assessment score basis", () => {

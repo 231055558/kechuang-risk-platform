@@ -21,7 +21,7 @@ import {
   SectionHeader,
   VerificationBadge,
 } from "@/components/dashboard/shared"
-import { ScoringWorkspace } from "@/components/dashboard/scoring-workspace"
+import { IndustryRiskReviewPanel } from "@/components/dashboard/industry-risk-review-panel"
 import { TechnologyBaselinePanel } from "@/components/dashboard/technology-baseline-panel"
 import { TechnologyScoringPanel } from "@/components/dashboard/technology-scoring-panel"
 import { LiquidGlassSurface } from "@/components/liquid"
@@ -121,14 +121,8 @@ export function IntelligenceTab({
   intelligence,
   section,
   onSectionChange,
-  assessment,
-  observations,
-  evidenceBindings,
-  defaultReviewer,
-  storageWarning,
   technologyCompanyState,
   technologyStorageWarning,
-  createToken,
   onCreateRequestHandled,
   onSaveTechnologyDraft,
   onScoreTechnology,
@@ -136,10 +130,6 @@ export function IntelligenceTab({
   onSaveTechnologyBaselineDraft,
   onQuantifyTechnologyBaseline,
   onClearTechnologyBaseline,
-  onSaveObservation,
-  onDeleteObservation,
-  onSetDefaultReviewer,
-  onResetScoring,
 }: IntelligenceTabProps) {
   const governance = summarizeEvidenceGovernance(detail.evidence)
   const researchHighlights = researchHighlightsByCompany.get(detail.id) ?? []
@@ -154,7 +144,7 @@ export function IntelligenceTab({
       >
         <TabsList aria-label="企业研究子页面">
           <TabsTrigger value="profile">企业档案</TabsTrigger>
-          <TabsTrigger value="metrics">指标观测</TabsTrigger>
+          <TabsTrigger value="metrics">风险指标</TabsTrigger>
           <TabsTrigger value="lifecycle">生命周期</TabsTrigger>
           <TabsTrigger value="evidence">证据档案</TabsTrigger>
         </TabsList>
@@ -260,7 +250,7 @@ export function IntelligenceTab({
                 <SectionHeader
                   title="研究底稿索引"
                   tone="violet"
-                  description="集中查看近期披露、论文与知识产权资料的来源定位和口径边界，便于回到原始材料复核。"
+                  description="集中查看近期披露、论文与知识产权资料的来源定位和口径边界，可直接返回原始材料核对。"
                 />
                 {researchHighlights.length > 0 ? (
                   <div className="research-highlight-list">
@@ -394,7 +384,7 @@ export function IntelligenceTab({
                   <section className="research-record-group">
                     <header>
                       <h3>专利与权利边界观察</h3>
-                      <p>不展示未经授权或无法复核的专利数量</p>
+                      <p>不展示未经授权或无法确认来源的专利数量</p>
                     </header>
                     {intelligence.patentWatch.length > 0 ? (
                       <div className="compact-list">
@@ -426,7 +416,7 @@ export function IntelligenceTab({
                     ) : (
                       <EmptyState
                         title="暂无专利与权利边界观察"
-                        description="授权数据尚未接入，当前也没有可由公开来源复核的观察记录。"
+                        description="授权数据尚未接入，当前也没有能够由公开来源确认的观察记录。"
                       />
                     )}
                   </section>
@@ -438,22 +428,7 @@ export function IntelligenceTab({
 
         <TabsContent value="metrics">
           <div className="tab-content-stack">
-            <Reveal>
-              <ScoringWorkspace
-                detail={detail}
-                assessment={assessment}
-                observations={observations}
-                evidenceBindings={evidenceBindings}
-                defaultReviewer={defaultReviewer}
-                storageWarning={storageWarning}
-                createToken={createToken}
-                onCreateRequestHandled={onCreateRequestHandled}
-                onSaveObservation={onSaveObservation}
-                onDeleteObservation={onDeleteObservation}
-                onSetDefaultReviewer={onSetDefaultReviewer}
-                onReset={onResetScoring}
-              />
-            </Reveal>
+            <IndustryRiskReviewPanel companyId={detail.id} showGraph={false} />
 
             <Reveal>
               <section className="page-section">

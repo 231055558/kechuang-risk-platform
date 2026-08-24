@@ -280,7 +280,7 @@ function formatReferenceIds(referenceIds: string[]) {
 
 function formatDimensionScoreBasis(dimension: RiskAssessmentDimension) {
   if (dimension.score === null) {
-    return "待建立评分依据"
+    return "数据待补充"
   }
 
   if (dimension.scoreBasis === "technology-auto-score") {
@@ -288,7 +288,7 @@ function formatDimensionScoreBasis(dimension: RiskAssessmentDimension) {
   }
 
   if (dimension.scoreBasis === "indicator-observation") {
-    return "人工复核观测"
+    return "指标规则计算"
   }
 
   return "辅助研判分值"
@@ -305,7 +305,7 @@ function getAssessmentUseBoundary(assessment: RiskAssessment) {
     return assessment.disclaimer
   }
 
-  return "技术风险自动评分仅使用已注册版本化规则、规定输入与合格证据；人工复核观测须具备单位、期间、复核记录和证据定位。缺失数据不补零，结果不替代人工尽调、监管认定或投资决策。"
+  return "技术风险和企业指标均按已注册版本化规则自动计算；观测须具备单位、期间和来源定位。缺失数据不补零，结果用于风险识别和行动排序。"
 }
 
 function getNonInvestmentDisclaimer(
@@ -397,7 +397,7 @@ export function createEventsCsvContent(
         ]
   const dimensionRows = assessment.dimensions.map((dimension) => [
     dimension.label,
-    dimension.score ?? "待建立评分观测",
+    dimension.score ?? "数据待补充",
     formatDimensionScoreBasis(dimension),
     dimension.summary,
     formatReferenceIds(referenceIdsForDimension(references, dimension.label)),
@@ -448,7 +448,7 @@ export function createEventsCsvContent(
     ["方法版本", assessment.methodVersion],
     ["研判数据截至", manifest.snapshotAt],
     ["公开情报更新至", publicIntelligenceSnapshotAt ?? "未提供"],
-    ["评估复核日期", assessment.reviewedAt || manifest.snapshotAt],
+    ["评估数据日期", assessment.reviewedAt || manifest.snapshotAt],
     ["风险辅助研判指数", assessment.scoreLabel],
     ["评分基础", assessment.scoreBasisLabel],
     ["可评估维度", `${assessment.assessableDimensionCount}/6`],
@@ -620,7 +620,7 @@ export function createRiskSummaryPrintHtml(
         </div>
         <h2>六类风险研判</h2>
         <table><thead><tr><th>维度</th><th>辅助研判分值</th><th>分值来源</th><th>评分证据</th><th>判断摘要</th><th>证据引用</th></tr></thead><tbody>
-          ${assessment.dimensions.map((item) => `<tr><td>${escapeHtml(item.label)}</td><td>${item.score ?? "待建立评分观测"}</td><td>${escapeHtml(formatDimensionScoreBasis(item))}</td><td>${item.evidenceIds.length} 条</td><td>${escapeHtml(item.summary)}</td><td class="source-ref">[${escapeHtml(formatReferenceIds(referenceIdsForDimension(references, item.label)))}]</td></tr>`).join("")}
+          ${assessment.dimensions.map((item) => `<tr><td>${escapeHtml(item.label)}</td><td>${item.score ?? "数据待补充"}</td><td>${escapeHtml(formatDimensionScoreBasis(item))}</td><td>${item.evidenceIds.length} 条</td><td>${escapeHtml(item.summary)}</td><td class="source-ref">[${escapeHtml(formatReferenceIds(referenceIdsForDimension(references, item.label)))}]</td></tr>`).join("")}
         </tbody></table>
         <h2>近期风险事件</h2>
         <table><thead><tr><th>日期</th><th>事件</th><th>状态</th><th>建议动作</th><th>证据引用</th></tr></thead><tbody>
@@ -892,14 +892,14 @@ export function createPngAssessmentMethodText(assessment: RiskAssessment) {
 
 function createPngDimensionScoreText(dimension: RiskAssessmentDimension) {
   if (dimension.score === null) {
-    return "待建立评分依据"
+    return "数据待补充"
   }
 
   return `${dimension.score} · ${
     dimension.scoreBasis === "technology-auto-score"
       ? "技术自动"
       : dimension.scoreBasis === "indicator-observation"
-        ? "人工复核"
+        ? "规则化指标"
         : "辅助研判"
   }`
 }

@@ -18,6 +18,7 @@
     "import:enterprise-evidence": "node --experimental-strip-types scripts/import-enterprise-evidence-catalog.ts",
     "import:industry-risk": "node --experimental-strip-types scripts/import-industry-risk-sqlite.ts",
     "import:industry-risk-unified": "node --experimental-strip-types scripts/import-unified-industry-risk.ts",
+    "import:narrative-news-runtime": "node --experimental-strip-types scripts/import-narrative-news-runtime.ts",
     "import:kcr-workbook": "node --experimental-strip-types scripts/import-kcr-workbook.ts",
     "sanitize:master-sqlite": "python3 scripts/sanitize-master-sqlite.py",
     "score:kcr": "node --experimental-strip-types scripts/score-kcr-assessment.ts",

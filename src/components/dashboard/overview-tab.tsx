@@ -56,7 +56,7 @@ type OverviewTabProps = {
 
 function getDimensionScoreLabel(dimension: RiskAssessmentDimension) {
   if (!dimension.assessable || dimension.score === null) {
-    return "待建立评分依据"
+    return "数据待补充"
   }
 
   if (dimension.scoreBasis === "technology-auto-score") {
@@ -64,7 +64,7 @@ function getDimensionScoreLabel(dimension: RiskAssessmentDimension) {
   }
 
   if (dimension.scoreBasis === "indicator-observation") {
-    return "人工复核辅助分值"
+    return "指标规则计算分值"
   }
 
   return "辅助研判分值"
@@ -158,7 +158,7 @@ export function OverviewTab({
                   }
                   aria-label={
                     highestDimension
-                      ? `${highestDimension.label}是当前公开证据下的优先复核方向`
+                      ? `${highestDimension.label}是当前风险行动的优先方向`
                       : undefined
                   }
                 >
@@ -174,11 +174,11 @@ export function OverviewTab({
                         className="assessment-title-context"
                         aria-hidden="true"
                       >
-                        当前公开证据指向的优先复核方向
+                        当前系统识别的优先风险方向
                       </span>
                     </>
                   ) : (
-                    "已有研究资料，评分依据待建立"
+                    "已有研究资料，指标数据待补充"
                   )}
                 </h2>
               </div>
@@ -200,7 +200,7 @@ export function OverviewTab({
             <p>
               {latestHighEvent?.description ??
                 highestDimension?.summary ??
-                "已收录公开证据与风险事件；补齐技术自动评分输入及证据，或建立人工复核观测后再进行量化。"}
+                "系统将根据已收录公开数据和风险事件自动计算风险结果，并随新增数据持续更新。"}
             </p>
             <div className="assessment-meta">
               <span>方法版本 {assessment.methodVersion}</span>
@@ -216,7 +216,7 @@ export function OverviewTab({
               note={
                 assessment.score === null
                   ? assessment.assessableDimensionCount === 0
-                    ? "技术自动评分或人工复核观测待建立"
+                    ? "该维度有效指标数据待补充"
                     : `仅 ${assessment.assessableDimensionCount}/6 个维度具备评分依据`
                   : "R05–R22可用指标经两级CRITIC加权形成，行业仅用于分位基准"
               }
@@ -224,7 +224,7 @@ export function OverviewTab({
             <AssessmentKpi
               label="可评估维度"
               value={`${assessment.assessableDimensionCount}/6`}
-              note="自动评分或人工观测均须完成证据闭环"
+              note="系统按当前有效指标自动计算"
             />
             <AssessmentKpi
               label="加权指标覆盖率"
@@ -276,11 +276,10 @@ export function OverviewTab({
               <div className="dimension-empty-copy">
                 <strong>六类风险尚未建立评分依据</strong>
                 <p>
-                  已有公开材料和研究记录，但尚未形成技术自动评分输入与有效证据闭环，也未完成可计分的人工复核观测，不以
-                  0 分代替缺失。
+                  当前维度尚未取得可计算的有效指标数据，因此不以 0 分代替缺失。
                 </p>
               </div>
-              <ul aria-label="待建立评分依据的风险维度">
+              <ul aria-label="数据待补充的风险维度">
                 {sortedDimensions.map((dimension) => (
                   <li key={dimension.id} data-dimension={dimension.id}>
                     {dimension.label}
@@ -316,7 +315,7 @@ export function OverviewTab({
                               variant="outline"
                               className="status-badge status-neutral"
                             >
-                              待建立评分
+                              数据待补充
                             </Badge>
                           )}
                         </div>
@@ -343,12 +342,12 @@ export function OverviewTab({
                         aria-valuenow={dimension.score ?? undefined}
                         aria-valuetext={
                           dimension.score === null
-                            ? "待建立评分观测"
+                            ? "数据待补充"
                             : `${dimension.score} 分`
                         }
                         aria-label={`${dimension.label}：${
                           dimension.score === null
-                            ? "待建立评分观测"
+                            ? "数据待补充"
                             : `${dimension.score} 分`
                         }`}
                       >
@@ -381,8 +380,8 @@ export function OverviewTab({
             tone="teal"
             description={
               scoringEvidenceIds.length > 0
-                ? "以下有效证据已进入技术自动评分或人工复核观测的评分闭环，可计入评分证据覆盖率。"
-                : "以下为可核验公开材料，但尚未进入自动评分或人工观测的证据闭环，因此不计入评分证据覆盖率。"
+                ? "以下有效来源已进入自动评分和指标计算，可计入评分数据覆盖率。"
+                : "以下为公开材料背景信息，尚未形成可计算指标，因此不计入当前风险指数。"
             }
             action={
               <Button

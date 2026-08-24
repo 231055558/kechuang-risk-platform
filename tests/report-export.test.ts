@@ -66,13 +66,13 @@ function createRiskAssessment(
     methodVersion: "test-method-v1",
     label: "风险辅助研判指数",
     score: null,
-    scoreLabel: "证据不足，待复核",
+    scoreLabel: "部分指标待补充",
     dimensions: [],
     assessableDimensionCount: 0,
     effectiveEvidenceCoverage: 0,
     indicatorAvailability: 0,
     reviewStatus: "insufficient-evidence",
-    scoreBasisLabel: "指标观测与人工复核",
+    scoreBasisLabel: "R05–R22 客观指标自动计算",
     reviewedAt: "2026-07-17",
     disclaimer: "不构成证券投资建议。",
     ...overrides,
@@ -387,7 +387,7 @@ test("missing dimension scores use the same explicit observation label as the UI
     traceManifest
   )
 
-  assert.match(csv, /"技术风险","待建立评分观测"/)
+  assert.match(csv, /"技术风险","数据待补充"/)
 })
 
 test("automatic technology scoring is identified across CSV, print, and PNG exports", () => {
@@ -395,9 +395,8 @@ test("automatic technology scoring is identified across CSV, print, and PNG expo
     score: 68,
     scoreLabel: "68",
     assessableDimensionCount: 1,
-    scoreBasisLabel: "技术自动评分与人工复核",
-    disclaimer:
-      "只有人工复核观测才会进入评分。当前版本不声称分值由模型自动生成。",
+    scoreBasisLabel: "技术自动评分与指标计算",
+    disclaimer: "系统按有效指标和来源数据自动计算风险结果。",
     dimensions: [
       {
         id: "technology",
@@ -426,7 +425,7 @@ test("automatic technology scoring is identified across CSV, print, and PNG expo
     traceManifest
   )
 
-  assert.match(csv, /"评分基础","技术自动评分与人工复核"/)
+  assert.match(csv, /"评分基础","技术自动评分与指标计算"/)
   assert.match(csv, /"维度","辅助研判分值","分值来源","判断摘要","证据引用"/)
   assert.match(csv, /"技术风险","68","技术自动评分"/)
   assert.match(
@@ -436,7 +435,7 @@ test("automatic technology scoring is identified across CSV, print, and PNG expo
   assert.doesNotMatch(csv, /人工复核辅助分值/)
   assert.doesNotMatch(csv, /不声称分值由模型自动生成/)
 
-  assert.match(html, /评分基础：<\/strong>技术自动评分与人工复核/)
+  assert.match(html, /评分基础：<\/strong>技术自动评分与指标计算/)
   assert.match(html, /<th>辅助研判分值<\/th><th>分值来源<\/th>/)
   assert.match(html, /技术风险[\s\S]*技术自动评分/)
   assert.doesNotMatch(html, /人工复核辅助分值/)
@@ -444,7 +443,7 @@ test("automatic technology scoring is identified across CSV, print, and PNG expo
 
   assert.equal(
     createPngAssessmentMethodText(automaticAssessment),
-    "方法版本 test-method-v1 · 评分基础 技术自动评分与人工复核"
+    "方法版本 test-method-v1 · 评分基础 技术自动评分与指标计算"
   )
 })
 

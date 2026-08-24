@@ -646,7 +646,9 @@ export function TechnologyBaselinePanel({
   }
 
   const handleClear = () => {
-    if (!window.confirm(`确认清除 ${detail.name} 的技术原始量化草稿和结果吗？`)) {
+    if (
+      !window.confirm(`确认清除 ${detail.name} 的技术原始量化草稿和结果吗？`)
+    ) {
       return
     }
 
@@ -724,9 +726,7 @@ export function TechnologyBaselinePanel({
               专项校准
             </div>
             <strong>{calibratedCount}/8</strong>
-            <p>
-              7 项阈值映射 + 1 项公式观测
-            </p>
+            <p>7 项阈值映射 + 1 项公式观测</p>
           </article>
           <article>
             <div>
@@ -735,7 +735,8 @@ export function TechnologyBaselinePanel({
             </div>
             <strong>{lifecycleLabel}</strong>
             <p>
-              正式量化权重 {quantifiedWeight}/{totalLifecycleWeight}；专项校准不写入雷达图
+              正式量化权重 {quantifiedWeight}/{totalLifecycleWeight}
+              ；专项校准不写入雷达图
             </p>
           </article>
         </div>
@@ -825,7 +826,8 @@ export function TechnologyBaselinePanel({
                 <div className="technology-baseline-row-heading">
                   <div>
                     <span>
-                      {definition.sourceCategory} · {definition.id.toUpperCase()}
+                      {definition.sourceCategory} ·{" "}
+                      {definition.id.toUpperCase()}
                     </span>
                     <h3>{definition.label}</h3>
                   </div>
@@ -847,7 +849,9 @@ export function TechnologyBaselinePanel({
                     </Badge>
                   </div>
                 </div>
-                <p className="technology-baseline-formula">{definition.formula}</p>
+                <p className="technology-baseline-formula">
+                  {definition.formula}
+                </p>
 
                 <div className="technology-baseline-inputs">
                   {definition.fields.map((field) => (
@@ -911,7 +915,9 @@ export function TechnologyBaselinePanel({
                   </label>
                   {selectedEvidence ? (
                     <div className="technology-baseline-evidence-note">
-                      <SupportBadge strength={selectedEvidence.supportStrength} />
+                      <SupportBadge
+                        strength={selectedEvidence.supportStrength}
+                      />
                       <span>{selectedEvidence.sourceName}</span>
                     </div>
                   ) : (
@@ -967,7 +973,8 @@ export function TechnologyBaselinePanel({
             <div>
               <span id="technology-baseline-calibration">技术专表专项校准</span>
               <p>
-                7 项采用技术专表既有阈值自动映射为低、中、高风险及 25/60/85 标准分；无形资产占净资产比只保留公式观测。相同原始字段会与正式量化同步，但每项仍需保留自己的证据定位。
+                7 项采用技术专表既有阈值自动映射为低、中、高风险及 25/60/85
+                标准分；无形资产占净资产比只保留公式观测。相同原始字段会与正式量化同步，但每项仍需保留自己的证据定位。
               </p>
             </div>
             <strong>8 项</strong>
@@ -985,7 +992,8 @@ export function TechnologyBaselinePanel({
                 <div className="technology-baseline-row-heading">
                   <div>
                     <span>
-                      {definition.sourceCategory} · {definition.id.toUpperCase()}
+                      {definition.sourceCategory} ·{" "}
+                      {definition.id.toUpperCase()}
                     </span>
                     <h3>{definition.label}</h3>
                   </div>
@@ -1010,13 +1018,18 @@ export function TechnologyBaselinePanel({
                         {getRiskBandLabel(result?.riskBand ?? null)}
                       </Badge>
                     ) : (
-                      <Badge variant="outline" className="status-badge status-info">
+                      <Badge
+                        variant="outline"
+                        className="status-badge status-info"
+                      >
                         公式观测
                       </Badge>
                     )}
                   </div>
                 </div>
-                <p className="technology-baseline-formula">{definition.formula}</p>
+                <p className="technology-baseline-formula">
+                  {definition.formula}
+                </p>
                 {definition.threshold ? (
                   <p className="technology-baseline-calibration-note">
                     {definition.threshold}
@@ -1089,7 +1102,9 @@ export function TechnologyBaselinePanel({
                   </label>
                   {selectedEvidence ? (
                     <div className="technology-baseline-evidence-note">
-                      <SupportBadge strength={selectedEvidence.supportStrength} />
+                      <SupportBadge
+                        strength={selectedEvidence.supportStrength}
+                      />
                       <span>{selectedEvidence.sourceName}</span>
                     </div>
                   ) : (
@@ -1138,7 +1153,10 @@ export function TechnologyBaselinePanel({
                         >
                           {getRiskBandLabel(result.riskBand)}
                         </Badge>
-                        <Badge variant="outline" className="status-badge status-info">
+                        <Badge
+                          variant="outline"
+                          className="status-badge status-info"
+                        >
                           标准分 {result.standardizedRiskScore}
                         </Badge>
                       </div>
@@ -1168,7 +1186,7 @@ export function TechnologyBaselinePanel({
           )}
           <span role={message ? "status" : undefined}>
             {message ||
-              "运行后保存公式轨迹、证据绑定和专项阈值结果；只有已复核的正式技术评分会进入雷达图。"}
+              "运行后保存公式轨迹、来源绑定和专项阈值结果；完成规则计算的正式技术评分会自动进入雷达图。"}
           </span>
         </div>
         <div>
@@ -1189,7 +1207,7 @@ export function TechnologyBaselinePanel({
 
       <p className="technology-baseline-disclaimer">
         {latestResult?.disclaimer ||
-          "当前版本仅将技术专表中已给出的单项阈值用于专项校准。专项校准不自动构成综合风险结论；正式技术评分与雷达图仍需按 KTR 方法完成证据审查与人工复核。"}
+          "当前版本将技术专表中的单项阈值用于专项校准，并由 KTR 方法按有效输入与来源数据自动更新技术风险结果。"}
       </p>
     </section>
   )

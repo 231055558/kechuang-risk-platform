@@ -355,7 +355,7 @@ test("empty indicator observations keep all six assessment scores null", () => {
     )
     assert.equal(
       assessment.scoreLabel,
-      "待建立评分观测",
+      "暂无可用指标",
       `${detail.id} must expose the pending-observation label`
     )
   })

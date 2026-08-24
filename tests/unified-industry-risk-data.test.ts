@@ -25,6 +25,8 @@ test("the unified runtime contains only the R01-R22 contract across 94 companies
   assert.equal(dataset.coverage.length, 94 * 22)
   assert.equal(dataset.deepSearchEvents?.length, 391)
   assert.equal(dataset.supplementaryObservations?.length, 687)
+  assert.equal(dataset.narrativeNewsMetrics?.length, 37)
+  assert.equal(dataset.narrativeNewsEvidence?.length, 1850)
   for (const indicatorId of ["R01", "R02", "R04"]) {
     assert.equal(
       dataset.coverage.filter(
@@ -48,6 +50,27 @@ test("the unified runtime contains only the R01-R22 contract across 94 companies
     ).length,
     37
   )
+})
+
+test("Eastmoney narrative observations keep aggregates and traceable news samples", () => {
+  const metric = dataset.narrativeNewsMetrics?.find(
+    (item) => item.companyId === "star-688256"
+  )
+  const news =
+    dataset.narrativeNewsEvidence?.filter(
+      (item) => item.companyId === "star-688256"
+    ) ?? []
+
+  assert.ok(metric)
+  assert.equal(metric.retrievedCount, 250)
+  assert.equal(metric.mediaCount, 37)
+  assert.equal(metric.positiveCount, 132)
+  assert.equal(metric.negativeCount, 28)
+  assert.equal(metric.conceptCount, 151)
+  assert.equal(metric.truncated, true)
+  assert.equal(news.length, 50)
+  assert.ok(news.every((item) => item.title.length > 0))
+  assert.ok(news.every((item) => /^https?:\/\//.test(item.url)))
 })
 
 test("specific peer groups win duplicate stock codes and remain comparable", () => {

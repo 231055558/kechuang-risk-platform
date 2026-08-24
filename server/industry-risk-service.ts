@@ -154,6 +154,13 @@ export function getIndustryRiskAssessment(
   const supplementaryObservations = (
     dataset.supplementaryObservations ?? []
   ).filter((item) => item.companyId === companyId)
+  const narrativeNews = (dataset.narrativeNewsEvidence ?? []).filter(
+    (item) => item.companyId === companyId
+  )
+  const narrativeNewsMetric =
+    (dataset.narrativeNewsMetrics ?? []).find(
+      (item) => item.companyId === companyId
+    ) ?? null
   const sourceIds = new Set<string>()
   for (const observation of observations) {
     sourceIds.add(observation.sourceId)
@@ -162,6 +169,8 @@ export function getIndustryRiskAssessment(
   for (const item of supplementaryObservations) {
     if (item.sourceId) sourceIds.add(item.sourceId)
   }
+  for (const item of narrativeNews) sourceIds.add(item.sourceId)
+  if (narrativeNewsMetric) sourceIds.add(narrativeNewsMetric.sourceId)
   return {
     assessment,
     company,
@@ -170,6 +179,8 @@ export function getIndustryRiskAssessment(
     observations,
     coverage,
     events: getCompanyEvents(companyId),
+    narrativeNews,
+    narrativeNewsMetric,
     supplementaryObservations,
     reportAvailability:
       dataset.reportAvailability?.find(

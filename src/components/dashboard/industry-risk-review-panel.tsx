@@ -14,6 +14,7 @@ import {
   GaugeIcon,
   InfoIcon,
   Layers3Icon,
+  LightbulbIcon,
   NewspaperIcon,
   RefreshCwIcon,
   ShieldCheckIcon,
@@ -28,6 +29,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type {
   IndustryRiskAssessmentApiResponse,
   IndustryRiskCompanyDirectoryResponse,
+} from "@/domain/industry-risk-v1/index.ts"
+import {
+  buildIndustryRiskConclusion,
+  generateIndustryRiskRecommendations,
 } from "@/domain/industry-risk-v1/index.ts"
 import {
   fetchIndustryRiskAssessment,
@@ -81,11 +86,13 @@ function riskLevel(score: number | null) {
 export function IndustryRiskReviewPanel({
   companyId,
   onNavigate,
+  showGraph = true,
 }: {
   companyId: string
   onNavigate?: (
     view: "reports" | "realtime" | "events" | "intelligence"
   ) => void
+  showGraph?: boolean
 }) {
   const [directoryAttempt, setDirectoryAttempt] = useState(0)
   const [assessmentAttempt, setAssessmentAttempt] = useState(0)
@@ -232,7 +239,7 @@ export function IndustryRiskReviewPanel({
                 <ShieldCheckIcon data-icon="inline-start" />
                 公开来源可追溯
               </Badge>
-              <Badge variant="outline">全指标可用即纳入</Badge>
+              <Badge variant="outline">客观指标可用即纳入</Badge>
             </div>
           </header>
 
@@ -295,10 +302,12 @@ export function IndustryRiskReviewPanel({
           </details>
         </GlassPanel>
       </Reveal>
-      <IndustryRiskKnowledgeGraph
-        key={companyId}
-        selectedCompanyId={companyId}
-      />
+      {showGraph ? (
+        <IndustryRiskKnowledgeGraph
+          key={companyId}
+          selectedCompanyId={companyId}
+        />
+      ) : null}
     </>
   )
 }
@@ -325,18 +334,23 @@ function IndustryRiskAssessmentContent({
     .filter((metric) => metric.riskScore !== null)
     .sort((left, right) => (right.riskScore ?? 0) - (left.riskScore ?? 0))
   const missingMetrics = assessment.metrics.filter(
-    (metric) => metric.riskScore === null
+    (metric) => metric.kind === "weighted" && metric.riskScore === null
   )
   const priorityMetrics = scoredMetrics.slice(0, 5)
   const latestEvents = [...response.events]
     .sort((left, right) => (right.date ?? "").localeCompare(left.date ?? ""))
     .slice(0, 4)
   const coveragePercent = Math.round(assessment.weightedDataCoverage * 100)
+  const conclusion = buildIndustryRiskConclusion(assessment)
+  const recommendations = generateIndustryRiskRecommendations(assessment)
 
   return (
     <Tabs defaultValue="overview" className="industry-risk-detail-tabs">
       <TabsList aria-label="企业风险信息">
         <TabsTrigger value="overview">风险概览</TabsTrigger>
+        <TabsTrigger value="narrative">
+          叙事观察 {response.narrativeNewsMetric?.retrievedCount ?? 0}
+        </TabsTrigger>
         <TabsTrigger value="breakdown">风险拆解</TabsTrigger>
         <TabsTrigger value="events">
           近期事件 {response.events.length}
@@ -345,6 +359,21 @@ function IndustryRiskAssessmentContent({
       </TabsList>
 
       <TabsContent value="overview">
+        <section className="customer-risk-conclusion">
+          <div className="customer-risk-conclusion-icon">
+            <LightbulbIcon aria-hidden="true" />
+          </div>
+          <div>
+            <span className="eyebrow">系统自动结论</span>
+            <h3>{conclusion}</h3>
+            <p>
+              综合风险指数与主要驱动因素由 R05–R22 客观指标自动计算；R01–R04
+              在下方独立展示。
+            </p>
+          </div>
+          <Badge variant="outline">已生成结论</Badge>
+        </section>
+
         <section className="customer-risk-hero">
           <article
             className="customer-risk-score-card"
@@ -399,6 +428,39 @@ function IndustryRiskAssessmentContent({
               </strong>
               <p>可返回原始来源核验</p>
             </article>
+          </div>
+        </section>
+
+        <NarrativeObservationPanel response={response} maximumNews={3} />
+
+        <section className="customer-risk-section customer-risk-actions">
+          <header>
+            <div>
+              <span className="eyebrow">系统建议</span>
+              <h3>建议优先执行这三项动作</h3>
+            </div>
+            <Badge variant="outline">由高影响指标自动触发</Badge>
+          </header>
+          <div className="automatic-action-grid">
+            {recommendations.map((recommendation, index) => (
+              <article
+                key={recommendation.indicatorId}
+                data-priority={recommendation.priority}
+              >
+                <div className="automatic-action-index">
+                  {String(index + 1).padStart(2, "0")}
+                </div>
+                <div className="automatic-action-main">
+                  <div>
+                    <Badge variant="outline">{recommendation.priority}</Badge>
+                    <span>{recommendation.trigger}</span>
+                  </div>
+                  <h4>{recommendation.title}</h4>
+                  <p>{recommendation.action}</p>
+                </div>
+                <ArrowRightIcon aria-hidden="true" />
+              </article>
+            ))}
           </div>
         </section>
 
@@ -535,6 +597,10 @@ function IndustryRiskAssessmentContent({
         ) : null}
       </TabsContent>
 
+      <TabsContent value="narrative">
+        <NarrativeObservationPanel response={response} maximumNews={12} />
+      </TabsContent>
+
       <TabsContent value="breakdown">
         <div className="customer-risk-tab-intro">
           <div>
@@ -664,7 +730,7 @@ function IndustryRiskAssessmentContent({
             <strong>评分方法与数据状态</strong>
             <p>
               R05–R22 的可用指标进入同业 CRITIC 风险基准；R01–R04
-              形成独立叙事风险参考。单项缺失不补零，其余指标仍可参与计算。
+              当前只展示东方财富新闻与报告文本代理观测，不计算风险分位、NRI或进入总分。单项缺失不补零，其余客观指标仍可参与计算。
             </p>
           </div>
           <div>
@@ -783,5 +849,176 @@ function IndustryRiskAssessmentContent({
         </p>
       </TabsContent>
     </Tabs>
+  )
+}
+
+function narrativeToneLabel({
+  positive,
+  negative,
+}: IndustryRiskAssessmentApiResponse["narrativeNews"][number]) {
+  if (positive && negative) return "正负词均命中"
+  if (negative) return "负向词命中"
+  if (positive) return "正向词命中"
+  return "未命中情绪词"
+}
+
+function narrativeTone({
+  positive,
+  negative,
+}: IndustryRiskAssessmentApiResponse["narrativeNews"][number]) {
+  if (positive && negative) return "mixed"
+  if (negative) return "negative"
+  if (positive) return "positive"
+  return "neutral"
+}
+
+function NarrativeObservationPanel({
+  response,
+  maximumNews,
+}: {
+  response: IndustryRiskAssessmentApiResponse
+  maximumNews: number
+}) {
+  const metric = response.narrativeNewsMetric
+  const news = response.narrativeNews.slice(0, maximumNews)
+
+  if (!metric) {
+    return (
+      <section className="narrative-observation narrative-observation-empty">
+        <NewspaperIcon aria-hidden="true" />
+        <div>
+          <span className="eyebrow">主观叙事观察</span>
+          <h3>当前企业尚无同口径财经新闻样本</h3>
+          <p>本区域保持缺失，不用其他企业数据代替，也不生成叙事风险分。</p>
+        </div>
+        <Badge variant="outline">不计入总分</Badge>
+      </section>
+    )
+  }
+
+  const signals = [
+    {
+      label: "正向词典命中",
+      count: metric.positiveCount,
+      percent: metric.positiveSharePercent,
+      tone: "positive",
+    },
+    {
+      label: "负向词典命中",
+      count: metric.negativeCount,
+      percent: metric.negativeSharePercent,
+      tone: "negative",
+    },
+    {
+      label: "概念关键词命中",
+      count: metric.conceptCount,
+      percent: metric.conceptSharePercent,
+      tone: "concept",
+    },
+  ]
+
+  return (
+    <section
+      className="narrative-observation"
+      aria-labelledby="narrative-title"
+    >
+      <header className="narrative-observation-header">
+        <div>
+          <span className="eyebrow">主观叙事观察 · 东方财富财经新闻</span>
+          <h3 id="narrative-title">新闻叙事和客观风险分开呈现</h3>
+          <p>
+            这里展示规则词典命中与原始新闻样本，帮助识别值得继续阅读的叙事；不把搜索量或词语命中直接解释为风险。
+          </p>
+        </div>
+        <div>
+          <Badge variant="outline">R01–R04 观察区</Badge>
+          <Badge variant="outline">不计算 NRI · 不进入总分</Badge>
+        </div>
+      </header>
+
+      <div className="narrative-observation-grid">
+        <div className="narrative-signal-card">
+          <div className="narrative-sample-summary">
+            <article>
+              <span>已抓取样本</span>
+              <strong>{metric.retrievedCount}</strong>
+              <small>
+                {metric.truncated ? "已达到抓取上限" : "当前窗口内样本"}
+              </small>
+            </article>
+            <article>
+              <span>覆盖媒体</span>
+              <strong>{metric.mediaCount}</strong>
+              <small>聚合结果中的媒体名称</small>
+            </article>
+          </div>
+          <div className="narrative-signal-bars" aria-label="叙事词典命中率">
+            {signals.map((signal) => (
+              <article key={signal.label} data-tone={signal.tone}>
+                <div>
+                  <span>{signal.label}</span>
+                  <strong>{signal.percent.toFixed(1)}%</strong>
+                </div>
+                <div className="narrative-signal-track" aria-hidden="true">
+                  <span
+                    style={{ width: `${Math.min(signal.percent, 100)}%` }}
+                  />
+                </div>
+                <small>{signal.count} 条新闻命中；类别可能重叠</small>
+              </article>
+            ))}
+          </div>
+          <p className="narrative-method-boundary">
+            当前标签由固定关键词词典生成，新闻搜索存在截断、转载和行情噪声；正式情绪模型和叙事风险公式确认前，本区域只做观察与来源下钻。
+          </p>
+        </div>
+
+        <div className="narrative-news-card">
+          <header>
+            <div>
+              <NewspaperIcon aria-hidden="true" />
+              <div>
+                <span>最新叙事样本</span>
+                <strong>可返回原始新闻逐条阅读</strong>
+              </div>
+            </div>
+            <small>
+              {metric.oldestDate ?? "起始日待补充"} —{" "}
+              {metric.newestDate ?? metric.cutoffDate}
+            </small>
+          </header>
+          {news.length ? (
+            <div className="narrative-news-list">
+              {news.map((item) => (
+                <a
+                  key={item.id}
+                  href={item.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  data-tone={narrativeTone(item)}
+                >
+                  <div>
+                    <span>{item.mediaName || "媒体待识别"}</span>
+                    <time>{item.publishedAt ?? "日期待补充"}</time>
+                    <Badge variant="outline">{narrativeToneLabel(item)}</Badge>
+                    {item.concept ? (
+                      <Badge variant="outline">概念词命中</Badge>
+                    ) : null}
+                  </div>
+                  <strong>{item.title}</strong>
+                  {item.summary ? <p>{item.summary}</p> : null}
+                  <ExternalLinkIcon aria-hidden="true" />
+                </a>
+              ))}
+            </div>
+          ) : (
+            <div className="industry-risk-empty">
+              <FileSearchIcon aria-hidden="true" />
+              <p>已有新闻汇总，但本地运行快照尚无可展示的文章样本。</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
   )
 }

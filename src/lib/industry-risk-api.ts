@@ -154,6 +154,46 @@ function isNarrativeIndex(value: unknown) {
   )
 }
 
+function isNarrativeNews(value: unknown) {
+  return (
+    isRecord(value) &&
+    typeof value.id === "string" &&
+    typeof value.companyId === "string" &&
+    (value.publishedAt === null || typeof value.publishedAt === "string") &&
+    typeof value.title === "string" &&
+    typeof value.summary === "string" &&
+    typeof value.mediaName === "string" &&
+    isSafeSourceUrl(value.url) &&
+    typeof value.positive === "boolean" &&
+    typeof value.negative === "boolean" &&
+    typeof value.concept === "boolean" &&
+    Array.isArray(value.conceptKeywords) &&
+    value.conceptKeywords.every((keyword) => typeof keyword === "string") &&
+    typeof value.sourceId === "string"
+  )
+}
+
+function isNarrativeNewsMetric(value: unknown) {
+  return (
+    isRecord(value) &&
+    typeof value.companyId === "string" &&
+    typeof value.cutoffDate === "string" &&
+    Number.isInteger(value.retrievedCount) &&
+    Number.isInteger(value.mediaCount) &&
+    Number.isInteger(value.positiveCount) &&
+    Number.isInteger(value.negativeCount) &&
+    Number.isInteger(value.conceptCount) &&
+    isFiniteNumber(value.positiveSharePercent) &&
+    isFiniteNumber(value.negativeSharePercent) &&
+    isFiniteNumber(value.toneBalancePercent) &&
+    isFiniteNumber(value.conceptSharePercent) &&
+    Number.isInteger(value.pagesFetched) &&
+    typeof value.truncated === "boolean" &&
+    typeof value.sourceId === "string" &&
+    typeof value.limitations === "string"
+  )
+}
+
 function isDimensionScore(value: unknown) {
   return (
     isRecord(value) &&
@@ -263,6 +303,10 @@ function isAssessmentResponse(
         typeof event.title === "string" &&
         isSafeSourceUrl(event.url)
     ) &&
+    Array.isArray(value.narrativeNews) &&
+    value.narrativeNews.every(isNarrativeNews) &&
+    (value.narrativeNewsMetric === null ||
+      isNarrativeNewsMetric(value.narrativeNewsMetric)) &&
     Array.isArray(value.supplementaryObservations) &&
     (value.reportAvailability === null ||
       (isRecord(value.reportAvailability) &&

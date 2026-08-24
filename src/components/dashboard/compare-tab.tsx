@@ -34,7 +34,7 @@ type CompareTabProps = {
 
 function formatDimensionScoreBasis(dimension: RiskAssessmentDimension | null) {
   if (!dimension || dimension.score === null) {
-    return "待建立评分依据"
+    return "数据待补充"
   }
 
   if (dimension.scoreBasis === "technology-auto-score") {
@@ -42,7 +42,7 @@ function formatDimensionScoreBasis(dimension: RiskAssessmentDimension | null) {
   }
 
   if (dimension.scoreBasis === "indicator-observation") {
-    return "人工复核观测"
+    return "指标规则计算"
   }
 
   return "辅助研判分值"
@@ -171,7 +171,7 @@ export function CompareTab({
           <SectionHeader
             title="六维风险对照图"
             tone="blue"
-            description={`横条只编码双方在同一方法版本与维度口径下形成的辅助研判分值，可来自技术自动评分或人工复核观测；空白不是低风险。${leftCompany.name}采用${leftAssessment.scoreBasisLabel}，${rightCompany.name}采用${rightAssessment.scoreBasisLabel}。`}
+            description={`横条展示双方在同一方法版本与维度口径下自动形成的风险分值；缺失项不按低风险处理。${leftCompany.name}采用${leftAssessment.scoreBasisLabel}，${rightCompany.name}采用${rightAssessment.scoreBasisLabel}。`}
             action={
               <div className="compare-chart-actions">
                 <span className="compare-coverage tabular-number">
@@ -222,10 +222,10 @@ export function CompareTab({
                 {dimensionRows.map(({ left, right }) => (
                   <li key={left.id}>
                     {left.label}：{leftCompany.name}
-                    {left.score === null ? "待建立评分观测" : `${left.score}分`}
-                    ；{rightCompany.name}
+                    {left.score === null ? "数据待补充" : `${left.score}分`}；
+                    {rightCompany.name}
                     {right?.score === null || right?.score === undefined
-                      ? "待建立评分观测"
+                      ? "数据待补充"
                       : `${right.score}分`}
                   </li>
                 ))}
@@ -235,7 +235,7 @@ export function CompareTab({
             <div className="compare-chart-empty">
               <EmptyState
                 title="暂无共同口径的可视化分值"
-                description="双方六类风险均未形成共同口径下的自动评分或人工复核观测。图表暂不绘制虚假分值，可在下方可比条件检查中核对缺失的证据闭环。"
+                description="双方六类风险尚未形成共同口径下的可比指标。图表不将缺失项绘制为低风险，可在下方查看数据覆盖差异。"
               />
             </div>
           )}
@@ -248,7 +248,7 @@ export function CompareTab({
             <SectionHeader
               title="可审计差异表"
               tone="teal"
-              description="差值仅用于定位复核重点，不代表投资优劣，也不对缺失数据进行插值或排名。"
+              description="差值用于定位双方风险差异和建议动作优先级，不对缺失数据进行插值。"
             />
             <div
               className="disclosure-table-wrap"
@@ -300,7 +300,7 @@ export function CompareTab({
                 <span>建立共同口径</span>
                 <strong>至少补齐一个相同维度的评分依据与有效证据</strong>
                 <p>
-                  双方须使用同一指标定义、期间与归一化规则，并完成自动评分输入或人工观测的证据闭环后，才展示差值。
+                  双方使用同一指标定义、期间与归一化规则自动形成差值；缺失指标不参与比较。
                 </p>
               </article>
             </div>
@@ -317,7 +317,7 @@ export function CompareTab({
               当前比较使用同一方法版本 {leftAssessment.methodVersion}
               ，评分基础分别为 {leftAssessment.scoreBasisLabel} 与{" "}
               {rightAssessment.scoreBasisLabel}
-              ；综合指数仅在至少四个维度可评估时展示。尚无可评估维度时标记“待建立评分观测”，部分维度可评估但不足四个时标记“证据不足，待复核”。
+              ；综合指数由当前具备有效数据的维度自动形成，缺失项不会按零分参与计算。
             </p>
           </div>
         </section>
@@ -388,7 +388,7 @@ function CompanyAssessmentSummary({
           <strong className="tabular-number">
             {assessment.assessableDimensionCount}/6
           </strong>
-          <span>维度可评估，自动评分或人工复核观测尚待建立</span>
+          <span>该维度数据待补充，暂不参与双方差值计算</span>
         </div>
       ) : (
         <>
@@ -434,7 +434,7 @@ function ChartBar({
   return (
     <div
       className="compare-bar-track"
-      aria-label={`${companyName}：${score === null ? "待建立评分依据" : `${score}分`}`}
+      aria-label={`${companyName}：${score === null ? "数据待补充" : `${score}分`}`}
     >
       {score === null ? (
         <span className="compare-bar-missing">暂无可比分值</span>

@@ -15,6 +15,7 @@ import {
   InfoIcon,
   Maximize2Icon,
   Minimize2Icon,
+  NewspaperIcon,
   RefreshCwIcon,
   XIcon,
   ZoomInIcon,
@@ -33,6 +34,8 @@ import { fetchIndustryRiskKnowledgeGraph } from "@/lib/industry-risk-api"
 import {
   buildIndustryRiskCytoscapeElements,
   selectIndustryRiskGraph,
+  selectIndustryRiskGraphView,
+  type IndustryRiskGraphView,
 } from "@/lib/industry-risk-graph-view"
 
 cytoscape.use(fcose)
@@ -201,8 +204,7 @@ const graphStyles: StylesheetJson = [
     },
   },
   {
-    selector:
-      'node[kind = "source"].is-active, node[kind = "event"].is-active',
+    selector: 'node[kind = "source"].is-active, node[kind = "event"].is-active',
     style: {
       label: "data(label)",
     },
@@ -263,13 +265,13 @@ function layoutOptions(
       return 2_800
     },
     idealEdgeLength: (edge) => {
-      const kind = edge.data("kind") as "hierarchy" | "provenance" | "event-link"
+      const kind = edge.data("kind") as
+        "hierarchy" | "provenance" | "event-link"
       if (kind === "hierarchy") return 148
       if (kind === "provenance") return 92
       return 82
     },
-    edgeElasticity: (edge) =>
-      edge.data("kind") === "hierarchy" ? 0.28 : 0.52,
+    edgeElasticity: (edge) => (edge.data("kind") === "hierarchy" ? 0.28 : 0.52),
     nestingFactor: 1,
     numIter: 1_600,
     tile: true,
@@ -280,9 +282,7 @@ function layoutOptions(
     gravityCompound: 0.8,
     gravityRange: 3.2,
     initialEnergyOnIncremental: 0.5,
-    fixedNodeConstraint: [
-      { nodeId: companyNodeId, position: { x: 0, y: 0 } },
-    ],
+    fixedNodeConstraint: [{ nodeId: companyNodeId, position: { x: 0, y: 0 } }],
   }
 }
 
@@ -401,29 +401,50 @@ function IndustryRiskKnowledgeGraphContent({
   const cytoscapeRef = useRef<Core | null>(null)
   const [engineError, setEngineError] = useState<string | null>(null)
   const [isImmersive, setIsImmersive] = useState(false)
+  const [graphView, setGraphView] = useState<IndustryRiskGraphView>("all")
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null)
+  const visibleGraph = useMemo(
+    () => selectIndustryRiskGraphView(graph, graphView),
+    [graph, graphView]
+  )
   const elements = useMemo(
     () =>
-      buildIndustryRiskCytoscapeElements(graph) as unknown as ElementDefinition[],
-    [graph]
+      buildIndustryRiskCytoscapeElements(
+        visibleGraph
+      ) as unknown as ElementDefinition[],
+    [visibleGraph]
   )
-  const activeNode = graph.nodes.find((node) => node.id === activeNodeId)
-  const hoveredNode = graph.nodes.find((node) => node.id === hoveredNodeId)
-  const companyNode = graph.nodes.find((node) => node.kind === "company")
+  const activeNode = visibleGraph.nodes.find((node) => node.id === activeNodeId)
+  const hoveredNode = visibleGraph.nodes.find(
+    (node) => node.id === hoveredNodeId
+  )
+  const companyNode = visibleGraph.nodes.find((node) => node.kind === "company")
   const companyNodeId = companyNode?.id ?? ""
-  const topRiskIndicators = graph.nodes
-    .filter(
-      (node) => node.kind === "indicator" && node.score !== null
-    )
+  const topRiskIndicators = visibleGraph.nodes
+    .filter((node) => node.kind === "indicator" && node.score !== null)
     .sort((left, right) => (right.score ?? 0) - (left.score ?? 0))
     .slice(0, 5)
+  const narrativeIndicators = visibleGraph.nodes.filter(
+    (node) =>
+      node.kind === "indicator" &&
+      ["R01", "R02", "R03", "R04"].includes(node.entityId)
+  )
   const activeEdges = activeNode
-    ? graph.edges.filter(
+    ? visibleGraph.edges.filter(
         (edge) => edge.source === activeNode.id || edge.target === activeNode.id
       )
     : []
   const countKind = (kind: IndustryRiskGraphNodeKind) =>
-    graph.nodes.filter((node) => node.kind === kind).length
+    visibleGraph.nodes.filter((node) => node.kind === kind).length
+
+  useEffect(() => {
+    if (
+      activeNodeId &&
+      !visibleGraph.nodes.some((node) => node.id === activeNodeId)
+    ) {
+      onActiveNodeChange(null)
+    }
+  }, [activeNodeId, onActiveNodeChange, visibleGraph.nodes])
 
   useEffect(() => {
     const container = canvasRef.current
@@ -579,7 +600,7 @@ function IndustryRiskKnowledgeGraphContent({
           ref={canvasRef}
           className="industry-graph-cytoscape"
           role="application"
-          aria-label={`${companyName}企业风险关系图：${graph.nodes.length} 个节点、${graph.edges.length} 条关系`}
+          aria-label={`${companyName}企业风险关系图：${visibleGraph.nodes.length} 个节点、${visibleGraph.edges.length} 条关系`}
         />
         {engineError ? (
           <div className="industry-graph-engine-error" role="alert">
@@ -645,14 +666,22 @@ function IndustryRiskKnowledgeGraphContent({
         className="industry-graph-glass"
         padding="0"
       >
-        <section className="industry-graph" aria-labelledby="industry-graph-title">
+        <section
+          className="industry-graph"
+          aria-labelledby="industry-graph-title"
+        >
           <header className="industry-graph-header">
             <div>
-              <span className="eyebrow">单企业语义径向图 · Cytoscape + fCoSE</span>
+              <span className="eyebrow">
+                单企业语义径向图 · Cytoscape + fCoSE
+              </span>
               <h2 id="industry-graph-title">{companyName}企业风险知识图谱</h2>
               <p>
-                企业位于中心，风险维度构成内环，R01–R22 指标和证据向外展开；
-                节点面积与颜色共同表达风险强度，单击可追溯来源和事件。
+                {graphView === "narrative"
+                  ? "叙事观察区单独呈现 R01–R04、财经新闻来源和代理观测；紫色只表示叙事类别，不代表风险高低。"
+                  : graphView === "objective"
+                    ? "客观风险区呈现 R05–R22、风险事件和来源；节点面积与热力颜色共同表达同业风险强度。"
+                    : "完整图谱保留主观叙事与客观风险两类关系；可切换分区降低交叉线干扰，单击节点追溯来源和事件。"}
               </p>
             </div>
             <div className="industry-graph-toolbar" aria-label="图谱视图控制">
@@ -683,24 +712,67 @@ function IndustryRiskKnowledgeGraphContent({
             </div>
           </header>
 
+          <div className="industry-graph-view-switch" aria-label="知识图谱分区">
+            {(
+              [
+                ["all", "完整图谱", "主客观关系全览"],
+                ["objective", "客观风险", "R05–R22 · 计分"],
+                ["narrative", "叙事观察", "R01–R04 · 不计分"],
+              ] as const
+            ).map(([value, label, description]) => (
+              <button
+                key={value}
+                type="button"
+                data-active={graphView === value}
+                aria-pressed={graphView === value}
+                onClick={() => setGraphView(value)}
+              >
+                <strong>{label}</strong>
+                <span>{description}</span>
+              </button>
+            ))}
+          </div>
+
           <div className="industry-graph-summary">
             <Badge variant="outline">{countKind("category")} 个风险维度</Badge>
             <Badge variant="outline">{countKind("indicator")} 项统一指标</Badge>
             <Badge variant="outline">{countKind("source")} 个数据来源</Badge>
             <Badge variant="outline">{countKind("event")} 个风险事件</Badge>
-            <Badge variant="outline">{graph.edges.length} 条可追溯关系</Badge>
+            <Badge variant="outline">
+              {visibleGraph.edges.length} 条可追溯关系
+            </Badge>
             <Badge variant="outline">语义径向 · 动态避让</Badge>
           </div>
 
-          <div className="industry-graph-hotspots" aria-label="当前风险热点">
+          <div
+            className="industry-graph-hotspots"
+            aria-label={
+              graphView === "narrative" ? "叙事观察指标" : "当前风险热点"
+            }
+          >
             <div className="industry-graph-hotspots-heading">
-              <FlameIcon aria-hidden="true" />
-              <span>风险热点</span>
-              <strong>{companyNode?.score?.toFixed(1) ?? "—"}</strong>
-              <small>企业 CRITIC 基准</small>
+              {graphView === "narrative" ? (
+                <NewspaperIcon aria-hidden="true" />
+              ) : (
+                <FlameIcon aria-hidden="true" />
+              )}
+              <span>{graphView === "narrative" ? "叙事观察" : "风险热点"}</span>
+              <strong>
+                {graphView === "narrative"
+                  ? narrativeIndicators.length
+                  : (companyNode?.score?.toFixed(1) ?? "—")}
+              </strong>
+              <small>
+                {graphView === "narrative"
+                  ? "项非评分指标"
+                  : "企业 CRITIC 基准"}
+              </small>
             </div>
             <ol>
-              {topRiskIndicators.map((node) => (
+              {(graphView === "narrative"
+                ? narrativeIndicators
+                : topRiskIndicators
+              ).map((node) => (
                 <li key={node.id}>
                   <button
                     type="button"
@@ -708,29 +780,45 @@ function IndustryRiskKnowledgeGraphContent({
                   >
                     <span>{node.entityId}</span>
                     <b>{node.label}</b>
-                    <strong>{node.score?.toFixed(0)}</strong>
+                    <strong>
+                      {graphView === "narrative"
+                        ? "观察"
+                        : node.score?.toFixed(0)}
+                    </strong>
                   </button>
                 </li>
               ))}
             </ol>
           </div>
 
-          {isImmersive ? createPortal(graphContent, document.body) : graphContent}
+          {isImmersive
+            ? createPortal(graphContent, document.body)
+            : graphContent}
 
           <footer className="industry-graph-legend">
             {Object.entries(nodeKindLabels).map(([kind, label]) => (
-              <span key={kind} data-kind={kind}>{label}</span>
+              <span key={kind} data-kind={kind}>
+                {label}
+              </span>
             ))}
-            <div
-              className="industry-graph-heat-legend"
-              aria-label="蓝色表示较低风险分位，黄色表示中等风险分位，红色表示较高风险分位；节点面积随风险基准分增大"
-            >
-              <span>较低</span>
-              <i aria-hidden="true" />
-              <span>较高</span>
-              <b>颜色 + 面积 = 风险基准强度</b>
-              <small>灰色虚线 = 暂无可比数值</small>
-            </div>
+            {graphView === "narrative" ? (
+              <div className="industry-graph-narrative-legend">
+                <i aria-hidden="true" />
+                <b>紫色 = 叙事观察项</b>
+                <small>不表示风险高低，不进入综合风险指数</small>
+              </div>
+            ) : (
+              <div
+                className="industry-graph-heat-legend"
+                aria-label="蓝色表示较低风险分位，黄色表示中等风险分位，红色表示较高风险分位；节点面积随风险基准分增大"
+              >
+                <span>较低</span>
+                <i aria-hidden="true" />
+                <span>较高</span>
+                <b>颜色 + 面积 = 客观风险基准强度</b>
+                <small>灰色虚线 = 暂无可比数值</small>
+              </div>
+            )}
             <p>
               <AlertTriangleIcon aria-hidden="true" />
               连线表示指标归属、来源或事件证据，不宣称因果关系。

@@ -5,13 +5,13 @@ import {
   ClipboardCheckIcon,
   GitBranchIcon,
   LandmarkIcon,
-  LightbulbIcon,
   ListChecksIcon,
   ShieldCheckIcon,
   TargetIcon,
   UserRoundCheckIcon,
 } from "lucide-react"
 
+import { AutomaticRiskAdvicePanel } from "@/components/dashboard/automatic-risk-advice-panel"
 import {
   EmptyState,
   EvidenceList,
@@ -141,7 +141,9 @@ export function EventsTab({
 
       {section === "investment" ? <InvestmentPanel detail={detail} /> : null}
 
-      {section === "advice" ? <InvestmentAdvicePanel /> : null}
+      {section === "advice" ? (
+        <AutomaticRiskAdvicePanel companyId={detail.id} />
+      ) : null}
     </div>
   )
 }
@@ -646,7 +648,7 @@ function TransmissionPanel({
         <Reveal>
           <section className="page-section">
             <SectionHeader
-              title={`节点复核：${selectedNode.label}`}
+              title={`节点详情：${selectedNode.label}`}
               tone="cyan"
               description="节点解释、关联事件和治理动作共用同一组证据，便于检查推导链是否成立。"
               action={
@@ -868,7 +870,7 @@ function InvestmentPanel({ detail }: { detail: CompanyDetail }) {
       <ConstraintSection
         icon={TargetIcon}
         title="尽调前置条件"
-        description="材料、访谈和审计记录满足前置条件后，再进入下一轮人工评审。"
+        description="系统按材料覆盖、风险指标和事件变化持续更新行动优先级。"
         items={[
           ...investment.preInvestmentChecks,
           ...investment.dueDiligenceFocus,
@@ -876,20 +878,20 @@ function InvestmentPanel({ detail }: { detail: CompanyDetail }) {
       />
       <ConstraintSection
         icon={LandmarkIcon}
-        title="评审与治理阈值"
-        description="通过证据门槛、阶段里程碑和质量阈值表达不确定性，不给出估值或交易结论。"
+        title="决策与治理阈值"
+        description="通过数据覆盖、阶段里程碑和质量阈值形成明确的风险行动边界。"
         items={investment.valuationConstraints}
       />
       <ConstraintSection
         icon={UserRoundCheckIcon}
         title="持续监测"
-        description="把企业披露、事件状态与治理进度纳入周期性复核。"
+        description="企业披露、事件状态与治理进度变化会触发风险建议更新。"
         items={investment.postInvestmentMonitoring}
       />
       <ConstraintSection
         icon={CircleAlertIcon}
-        title="升级复核触发"
-        description="触发后应升级核验、补充材料或重新进行人工研判。"
+        title="风险升级触发"
+        description="触发后系统提高处置等级，并更新建议动作与跟踪频率。"
         items={investment.stopLossTriggers}
         danger
       />
@@ -904,32 +906,6 @@ function InvestmentPanel({ detail }: { detail: CompanyDetail }) {
             </p>
           </div>
         </section>
-      </Reveal>
-    </div>
-  )
-}
-
-function InvestmentAdvicePanel() {
-  return (
-    <div className="investment-advice-screen">
-      <Reveal className="investment-advice-reveal">
-        <GlassPanel
-          className="investment-advice-panel"
-          surfaceClassName="investment-advice-glass"
-          variant="floating"
-          aria-labelledby="investment-advice-title"
-        >
-          <div className="investment-advice-icon" aria-hidden="true">
-            <LightbulbIcon />
-          </div>
-          <div>
-            <span className="eyebrow">投资建议</span>
-            <h2 id="investment-advice-title">投资建议正在完善</h2>
-            <p>
-              当前不会在证据与约束不完整时生成结论。完成公开证据复核并确认投资约束后，系统将在这里形成面向当前企业的建议。
-            </p>
-          </div>
-        </GlassPanel>
       </Reveal>
     </div>
   )

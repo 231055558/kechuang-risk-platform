@@ -145,9 +145,7 @@ export interface RiskAssessment {
   indicatorAvailability: number
   reviewStatus: AssessmentReviewStatus
   scoreBasisLabel:
-    | "指标观测与人工复核"
-    | "技术自动评分与人工复核"
-    | "自动评分、指标观测与人工复核"
+    "R05–R22 客观指标自动计算" | "技术自动评分与指标计算" | "自动评分与指标计算"
   reviewedAt: string
   disclaimer: string
 }

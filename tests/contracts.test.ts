@@ -365,8 +365,8 @@ test("event workflows have no duplicated top-level tabs", () => {
   assert.match(eventsSource, /section === "governance"/)
   assert.match(eventsSource, /section === "investment"/)
   assert.match(eventsSource, /section === "advice"/)
-  assert.match(eventsSource, /function InvestmentAdvicePanel\(\)/)
-  assert.match(eventsSource, /投资建议正在完善/)
+  assert.match(eventsSource, /<AutomaticRiskAdvicePanel/)
+  assert.match(eventsSource, /companyId=\{detail\.id\}/)
 })
 
 test("promoted signals and open drawers remain scoped to the current company", () => {
@@ -519,20 +519,17 @@ test("governance entry uses the restrained glass action treatment", () => {
   assert.match(pageStyles, /backdrop-filter: blur\(14px\) saturate\(1\.08\)/)
 })
 
-test("assessment conclusion separates the risk focus from the review action", () => {
+test("assessment conclusion leads directly to automatic actions", () => {
   const overviewSource = readProjectFile(
-    "src/components/dashboard/overview-tab.tsx"
+    "src/components/dashboard/industry-risk-review-panel.tsx"
   )
   const pageStyles = readProjectFile("src/styles/pages.css")
 
-  assert.match(overviewSource, /className="assessment-title-risk"/)
-  assert.match(overviewSource, /className="assessment-title-context"/)
-  assert.match(overviewSource, /当前公开证据指向的优先复核方向/)
-  assert.match(pageStyles, /\.assessment-title-priority \{/)
-  assert.match(
-    pageStyles,
-    /\.assessment-title-risk \{[\s\S]*backdrop-filter: blur\(14px\)/
-  )
+  assert.match(overviewSource, /系统自动结论/)
+  assert.match(overviewSource, /建议优先执行这三项动作/)
+  assert.match(overviewSource, /generateIndustryRiskRecommendations/)
+  assert.match(pageStyles, /\.customer-risk-conclusion \{/)
+  assert.match(pageStyles, /\.automatic-action-grid \{/)
 })
 
 test("large reading surfaces preserve translucent liquid-glass depth", () => {
@@ -594,12 +591,13 @@ test("the realtime intelligence dataset states its research and collection bound
   assert.match(realtime.note, /不代表.*监管机构认定的风险事实/)
 })
 
-test("structured research method copy states the snapshot and implementation boundaries", () => {
+test("structured research method states the automatic calculation and action boundaries", () => {
   const appSource = readProjectFile("src/App.tsx")
 
   assert.match(appSource, /结构化辅助研判流程/)
-  assert.match(appSource, /公开信息快照与规则\/专家辅助整理/)
-  assert.match(appSource, /未接入持久化模型调用、模型输入输出审计或实时抓取/)
+  assert.match(appSource, /自动计算与排序/)
+  assert.match(appSource, /建议生成与持续更新/)
+  assert.match(appSource, /系统建议聚焦风险应对/)
   assert.doesNotMatch(appSource, /AI 工作流/)
   assert.doesNotMatch(appSource, /AI 辅助方法/)
   assert.doesNotMatch(appSource, /模型负责归纳和提示/)
@@ -795,7 +793,7 @@ test("reading-heavy workflows use full-width flow and removed pages stay removed
   })
 })
 
-test("customer workflows expose governed quantification without scoring uncalibrated indicators", () => {
+test("customer workflows expose automatic risk calculations without the manual scoring workspace", () => {
   const intelligenceSource = readProjectFile(
     "src/components/dashboard/intelligence-tab.tsx"
   )
@@ -809,7 +807,8 @@ test("customer workflows expose governed quantification without scoring uncalibr
     "src/components/dashboard/events-tab.tsx"
   )
 
-  assert.match(intelligenceSource, /<ScoringWorkspace/)
+  assert.doesNotMatch(intelligenceSource, /<ScoringWorkspace/)
+  assert.match(intelligenceSource, /<IndustryRiskReviewPanel/)
   assert.match(workspaceSource, /六类风险量化工作台/)
   assert.match(workspaceSource, /riskQuantificationCatalogByDimension/)
   assert.match(workspaceSource, /技术专项自动评分/)

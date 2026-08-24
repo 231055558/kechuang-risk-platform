@@ -18,11 +18,7 @@ export const INDUSTRY_RISK_FULL_METHOD_VERSION =
 export type IndustryRiskDirection = "higher-is-riskier" | "lower-is-riskier"
 export type IndustryRiskWeightMethod = "entropy" | "critic"
 export type IndustryRiskWeightedDimensionId =
-  | "technology"
-  | "compliance"
-  | "finance"
-  | "external"
-  | "personnel"
+  "technology" | "compliance" | "finance" | "external" | "personnel"
 
 interface IndustryRiskMetricCandidate {
   metricName: string
@@ -170,7 +166,10 @@ export const INDUSTRY_RISK_BENCHMARK_METRICS: readonly IndustryRiskMetricDefinit
       "technology",
       [
         ["tyc_paid_patent_page_adverse_status_count", "patent-adverse-sample"],
-        ["cnipa_verified_adverse_patent_legal_event_count", "cnipa-adverse-events"],
+        [
+          "cnipa_verified_adverse_patent_legal_event_count",
+          "cnipa-adverse-events",
+        ],
         ["technology_ip_quality_event_count", "technology-ip-events"],
         ["manufacturing_quality_inspection_event_count", "quality-events"],
       ]
@@ -246,10 +245,7 @@ export const INDUSTRY_RISK_BENCHMARK_METRICS: readonly IndustryRiskMetricDefinit
       "finance",
       [
         ["intangible_assets_ratio_change_pp", "intangible-ratio-change"],
-        [
-          "intangible_assets_to_total_assets_pct",
-          "intangible-assets-ratio",
-        ],
+        ["intangible_assets_to_total_assets_pct", "intangible-assets-ratio"],
         ["intangible_assets_ratio_pct", "intangible-assets-ratio"],
       ]
     ),
@@ -262,14 +258,8 @@ export const INDUSTRY_RISK_BENCHMARK_METRICS: readonly IndustryRiskMetricDefinit
       "weighted",
       "finance",
       [
-        [
-          "debt_financing_cost_average_debt_proxy_pct",
-          "average-debt-cost",
-        ],
-        [
-          "debt_financing_cost_ending_debt_proxy_pct",
-          "ending-debt-cost",
-        ],
+        ["debt_financing_cost_average_debt_proxy_pct", "average-debt-cost"],
+        ["debt_financing_cost_ending_debt_proxy_pct", "ending-debt-cost"],
         ["interest_expense_yuan", "interest-expense"],
       ]
     ),
@@ -341,10 +331,7 @@ export const INDUSTRY_RISK_BENCHMARK_METRICS: readonly IndustryRiskMetricDefinit
       "weighted",
       "personnel",
       [
-        [
-          "tyc_core_entity_enterprise_risk_total_asof",
-          "enterprise-risk-total",
-        ],
+        ["tyc_core_entity_enterprise_risk_total_asof", "enterprise-risk-total"],
         ["tyc_paid_enterprise_risk_total_asof", "enterprise-risk-total"],
       ]
     ),
@@ -538,7 +525,7 @@ export function calculateRiskPercentile(
   const first = sorted.findIndex((item) => item === target)
   if (first === -1) return null
   const last = sorted.findLastIndex((item) => item === target)
-  return round(((first + last) / 2) / (sorted.length - 1))
+  return round((first + last) / 2 / (sorted.length - 1))
 }
 
 export function calculateMvpRiskScore(
@@ -635,7 +622,10 @@ function correlation(left: readonly number[], right: readonly number[]) {
   return denominator === 0 ? 0 : numerator / denominator
 }
 
-function normalizeWeights(values: readonly number[], active?: readonly boolean[]) {
+function normalizeWeights(
+  values: readonly number[],
+  active?: readonly boolean[]
+) {
   const activeIndexes = values.flatMap((_, index) =>
     active && !active[index] ? [] : [index]
   )
@@ -646,9 +636,7 @@ function normalizeWeights(values: readonly number[], active?: readonly boolean[]
   )
   if (total <= 0) {
     const equal = 1 / activeIndexes.length
-    return values.map((_, index) =>
-      activeIndexes.includes(index) ? equal : 0
-    )
+    return values.map((_, index) => (activeIndexes.includes(index) ? equal : 0))
   }
   return values.map((value, index) =>
     activeIndexes.includes(index) ? Math.max(0, value) / total : 0
@@ -683,7 +671,8 @@ export function calculateObjectiveWeightsWithMissing(
     matrix.map((row) => row[column])
   )
   const active = columns.map(
-    (column) => column.filter((value): value is number => value !== null).length >= 2
+    (column) =>
+      column.filter((value): value is number => value !== null).length >= 2
   )
   if (method === "entropy") {
     const information = columns.map((column, index) => {
@@ -733,7 +722,12 @@ export function calculateObjectiveWeightsWithMissing(
 }
 
 function observationDate(observation: IndustryRiskObservation) {
-  return observation.asOfDate ?? observation.periodEnd ?? observation.periodStart ?? ""
+  return (
+    observation.asOfDate ??
+    observation.periodEnd ??
+    observation.periodStart ??
+    ""
+  )
 }
 
 function latestObservationForMetric(
@@ -785,7 +779,9 @@ function resolveMetricValue(
       unit: definition.unit,
       sourceId: observations[0].sourceId,
       sourceIds: [
-        ...new Set(observations.flatMap((item) => item.sourceIds ?? [item.sourceId])),
+        ...new Set(
+          observations.flatMap((item) => item.sourceIds ?? [item.sourceId])
+        ),
       ],
     }
   }
@@ -827,9 +823,11 @@ function scoreMetric(
         )
         .map((item) => item.value)
     : []
-  const percentile = resolved
-    ? calculateRiskPercentile(resolved.value, sample, definition.direction)
-    : null
+  const isScoreReady = definition.kind === "weighted"
+  const percentile =
+    resolved && isScoreReady
+      ? calculateRiskPercentile(resolved.value, sample, definition.direction)
+      : null
   const riskScore =
     percentile === null
       ? null
@@ -850,16 +848,25 @@ function scoreMetric(
     sampleSize: sample.length,
     sourceId: resolved?.sourceId ?? null,
     sourceIds: resolved?.sourceIds ?? [],
-    status: riskScore === null ? "missing" : "scored",
+    status:
+      definition.kind === "narrative"
+        ? "not-score-ready"
+        : riskScore === null
+          ? "missing"
+          : "scored",
     direction: definition.direction,
     kind: definition.kind,
     dimensionId: definition.dimensionId,
     formulaTrace:
-      riskScore === null
+      definition.kind === "narrative"
         ? resolved
-          ? `已取得原值，但同口径同业样本仅 ${sample.length} 家，无法形成风险分位。`
-          : "当前企业缺少可用数值；不补零，其他指标仍参与基准计算。"
-        : `r_rel=${round(percentile ?? 0)}；r=100×(${round(alpha)}×${round(industryRisk)}+${round(beta)}×${round(percentile ?? 0)})=${riskScore}`,
+          ? "已取得叙事观察代理值；依据当前会议结论，该值只用于可视化观察，不计算风险分位或 NRI。"
+          : "当前没有叙事观察数据；不补零，也不生成叙事风险分。"
+        : riskScore === null
+          ? resolved
+            ? `已取得原值，但同口径同业样本仅 ${sample.length} 家，无法形成风险分位。`
+            : "当前企业缺少可用数值；不补零，其他指标仍参与基准计算。"
+          : `r_rel=${round(percentile ?? 0)}；r=100×(${round(alpha)}×${round(industryRisk)}+${round(beta)}×${round(percentile ?? 0)})=${riskScore}`,
     limitation: definition.limitation,
   }
 }
@@ -881,34 +888,33 @@ function weightedAverage(
   }
   return round(
     100 *
-      (weighted.reduce(
-        (sum, item) => sum + item.score * item.weight,
-        0
-      ) /
+      (weighted.reduce((sum, item) => sum + item.score * item.weight, 0) /
         weightTotal),
     2
   )
 }
 
 function narrativeIndex(metrics: readonly IndustryRiskMetricScore[]) {
-  const values = metrics
+  const observedCount = metrics
     .filter((item) => item.kind === "narrative")
-    .flatMap((item) => (item.riskScore === null ? [] : [item.riskScore]))
+    .filter((item) => item.rawValue !== null).length
   return {
-    score: values.length ? round(mean(values), 2) : null,
-    availableIndicatorCount: values.length,
+    score: null,
+    availableIndicatorCount: observedCount,
     totalIndicatorCount: 4 as const,
-    status: values.length
-      ? ("usable-reference" as const)
-      : ("unavailable" as const),
-    note: values.length
-      ? "R01–R04按现有指标分等权求均值形成NRI，仅作叙事校验，不进入总风险分。"
-      : "R01–R04暂无足够同业数值，NRI保持缺失。",
+    status: "unavailable" as const,
+    note:
+      observedCount > 0
+        ? `R01–R04已有 ${observedCount}/4 项代理观测；当前算法尚未通过会议确认，仅展示原始观察，不生成NRI或进入总风险分。`
+        : "R01–R04暂无叙事观察数据，不生成NRI。",
   }
 }
 
 function buildMethodResults(
-  assessments: readonly { companyId: string; metrics: IndustryRiskMetricScore[] }[],
+  assessments: readonly {
+    companyId: string
+    metrics: IndustryRiskMetricScore[]
+  }[],
   method: IndustryRiskWeightMethod
 ) {
   const weightedDefinitions = INDUSTRY_RISK_BENCHMARK_METRICS.filter(
@@ -928,9 +934,8 @@ function buildMethodResults(
   )
   const dimensionScoresByCompany = assessments.map((assessment) =>
     INDUSTRY_RISK_WEIGHTED_DIMENSIONS.map((dimension) => {
-      const metrics = dimension.indicatorIds.map(
-        (indicatorId) =>
-          assessment.metrics.find((item) => item.indicatorId === indicatorId)!
+      const metrics = dimension.indicatorIds.map((indicatorId) =>
+        assessment.metrics.find((item) => item.indicatorId === indicatorId)!
       )
       const weights = dimension.indicatorIds.map((indicatorId) => {
         const index = weightedDefinitions.findIndex(
@@ -949,9 +954,7 @@ function buildMethodResults(
   )
   const totalScores = dimensionScoresByCompany.map((scores) => {
     const scored = scores.flatMap((score, index) =>
-      score === null
-        ? []
-        : [{ score, weight: dimensionWeights[index] ?? 0 }]
+      score === null ? [] : [{ score, weight: dimensionWeights[index] ?? 0 }]
     )
     if (!scored.length) return null
     const weighted = scored.filter((item) => item.weight > 0)
@@ -959,10 +962,8 @@ function buildMethodResults(
     return totalWeight <= 0
       ? round(mean(scored.map((item) => item.score)), 2)
       : round(
-          weighted.reduce(
-            (sum, item) => sum + item.score * item.weight,
-            0
-          ) / totalWeight,
+          weighted.reduce((sum, item) => sum + item.score * item.weight, 0) /
+            totalWeight,
           2
         )
   })
@@ -1049,9 +1050,8 @@ export function scoreIndustryRiskDataset(
   })
   const resultByCompany = new Map<string, IndustryRiskCompanyAssessment>()
   for (const [benchmarkGroupId, companyIds] of companiesByBenchmark) {
-    const groupAssessments = companyIds.map(
-      (companyId) =>
-        baseAssessments.find((item) => item.companyId === companyId)!
+    const groupAssessments = companyIds.map((companyId) =>
+      baseAssessments.find((item) => item.companyId === companyId)!
     )
     const methodResults = Object.fromEntries(
       (["critic", "entropy"] as const).map((method) => [
@@ -1067,8 +1067,9 @@ export function scoreIndustryRiskDataset(
             critic.dimensionScoresByCompany[companyIndex][dimensionIndex]
           const availableIndicatorIds = dimension.indicatorIds.filter(
             (indicatorId) =>
-              assessment.metrics.find((item) => item.indicatorId === indicatorId)
-                ?.riskScore !== null
+              assessment.metrics.find(
+                (item) => item.indicatorId === indicatorId
+              )?.riskScore !== null
           )
           return {
             id: dimension.id,

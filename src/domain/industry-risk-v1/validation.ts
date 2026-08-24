@@ -146,6 +146,25 @@ export function collectIndustryRiskDatasetIssues(dataset: IndustryRiskDataset) {
       issues.push(`深搜事件 ${event.id} 引用了未知企业。`)
     }
   }
+  for (const news of dataset.narrativeNewsEvidence ?? []) {
+    if (!companyIds.has(news.companyId)) {
+      issues.push(`叙事新闻 ${news.id} 引用了未知企业。`)
+    }
+    if (!sourceIds.has(news.sourceId)) {
+      issues.push(`叙事新闻 ${news.id} 引用了未知来源。`)
+    }
+    if (!/^https?:\/\//.test(news.url)) {
+      issues.push(`叙事新闻 ${news.id} 缺少安全公开链接。`)
+    }
+  }
+  for (const metric of dataset.narrativeNewsMetrics ?? []) {
+    if (!companyIds.has(metric.companyId)) {
+      issues.push(`叙事新闻汇总 ${metric.companyId} 引用了未知企业。`)
+    }
+    if (!sourceIds.has(metric.sourceId)) {
+      issues.push(`叙事新闻汇总 ${metric.companyId} 引用了未知来源。`)
+    }
+  }
 
   const serialized = JSON.stringify(dataset)
   for (const pattern of localPathPatterns) {
