@@ -10,14 +10,51 @@ test("customer overview leads with decisions instead of raw database fields", ()
   const panel = readProjectFile(
     "src/components/dashboard/industry-risk-review-panel.tsx"
   )
+  const profileDesk = readProjectFile(
+    "src/components/dashboard/industry-risk-profile-desk.tsx"
+  )
+  const customerOverview = `${panel}\n${profileDesk}`
 
-  assert.match(panel, /defaultValue="overview"/)
-  assert.match(panel, /综合风险指数/)
-  assert.match(panel, /当前最值得关注的风险/)
-  assert.match(panel, /五大风险领域/)
-  assert.match(panel, /待补充且不参与计算|暂不参与计算/)
-  assert.doesNotMatch(panel, /observation\.textValue/)
-  assert.doesNotMatch(panel, /coverage\?\.status \?\? "NA"/)
+  assert.match(customerOverview, /defaultValue="overview"/)
+  assert.match(customerOverview, /综合风险指数/)
+  assert.match(customerOverview, /当前最值得关注的风险/)
+  assert.match(customerOverview, /五大风险领域/)
+  assert.match(customerOverview, /待补充且不参与计算|暂不参与计算/)
+  assert.doesNotMatch(customerOverview, /observation\.textValue/)
+  assert.doesNotMatch(customerOverview, /coverage\?\.status \?\? "NA"/)
+})
+
+test("default industry overview renders an animated five-domain radar without internal attribution", () => {
+  const panel = readProjectFile(
+    "src/components/dashboard/industry-risk-review-panel.tsx"
+  )
+  const radar = readProjectFile(
+    "src/components/dashboard/industry-risk-radar.tsx"
+  )
+  const profileDesk = readProjectFile(
+    "src/components/dashboard/industry-risk-profile-desk.tsx"
+  )
+
+  assert.match(panel, /<IndustryRiskProfileDesk/)
+  assert.match(
+    profileDesk,
+    /<IndustryRiskRadar[\s\S]*dimensions=\{assessment\.dimensionScores\}/
+  )
+  assert.match(profileDesk, /data-count-to=/)
+  assert.match(profileDesk, /data-growth-bar/)
+  assert.match(profileDesk, /useGSAP\(/)
+  assert.match(profileDesk, /usePrefersReducedMotion\(\)/)
+  assert.doesNotMatch(
+    `${panel}\n${profileDesk}`,
+    /毛同学|深搜增强版|四个行业数据库|本地运行快照/
+  )
+
+  assert.match(radar, /五域风险雷达/)
+  assert.match(radar, /role="img"/)
+  assert.match(radar, /<title id=\{titleId\}>/)
+  assert.match(radar, /<desc id=\{descriptionId\}>/)
+  assert.match(radar, /data-radar-area/)
+  assert.match(radar, /prefersReducedMotion/)
 })
 
 test("risk report page uses database reports, events, sources, and exports", () => {

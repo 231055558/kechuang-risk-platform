@@ -356,12 +356,34 @@ test("zero-event CSV keeps independent metadata, method, snapshot, and disclaime
   )
 
   assert.match(csv, /"导出元数据"/)
+  assert.match(csv, /"数据更新至","2026-07-14"/)
   assert.match(csv, /"方法版本","KCR-2026\.07-v2"/)
   assert.match(csv, /"研判数据截至","2026-07-14"/)
+  assert.doesNotMatch(csv, /数据清单版本|2026\.07-governed-assessment-v5/)
   assert.match(csv, /"非投资建议声明","本平台输出用于企业风险研究与辅助研判/)
   assert.match(csv, /"当前快照暂无风险事件记录。"/)
   assert.match(csv, /"证据来源附录"/)
   assert.ok(csv.indexOf('"导出元数据"') < csv.indexOf('"风险事件"'))
+})
+
+test("customer exports expose the snapshot date without the internal manifest version", () => {
+  const csv = createEventsCsvContent(
+    traceDetail,
+    traceAssessment,
+    [],
+    traceManifest
+  )
+  const html = createRiskSummaryPrintHtml(
+    traceDetail,
+    traceAssessment,
+    [],
+    traceManifest
+  )
+
+  assert.match(csv, /"数据更新至","2026-07-14"/)
+  assert.doesNotMatch(csv, /数据清单版本|2026\.07-governed-assessment-v5/)
+  assert.match(html, /研判数据截至 2026-07-14/)
+  assert.doesNotMatch(html, /数据清单版本|2026\.07-governed-assessment-v5/)
 })
 
 test("missing dimension scores use the same explicit observation label as the UI", () => {
