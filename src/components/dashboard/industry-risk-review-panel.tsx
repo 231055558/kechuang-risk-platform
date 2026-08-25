@@ -16,6 +16,7 @@ import {
   Layers3Icon,
   LightbulbIcon,
   NewspaperIcon,
+  NetworkIcon,
   RefreshCwIcon,
   ShieldCheckIcon,
 } from "lucide-react"
@@ -240,6 +241,14 @@ export function IndustryRiskReviewPanel({
                 公开来源可追溯
               </Badge>
               <Badge variant="outline">客观指标可用即纳入</Badge>
+              {showGraph ? (
+                <Button variant="outline" size="sm" asChild>
+                  <a href="#industry-graph-title">
+                    <NetworkIcon data-icon="inline-start" />
+                    查看关系图谱
+                  </a>
+                </Button>
+              ) : null}
             </div>
           </header>
 

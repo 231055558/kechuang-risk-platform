@@ -1,7 +1,6 @@
 import { DatabaseZapIcon, ShieldCheckIcon } from "lucide-react"
 import { useRef, useState } from "react"
 
-import { LiquidGlassSurface } from "@/components/liquid"
 import {
   Select,
   SelectContent,
@@ -51,62 +50,55 @@ export function SidebarNav({
   signals,
 }: SidebarNavProps) {
   return (
-    <LiquidGlassSurface variant="sidebar" className="sidebar-glass" padding="0">
-      <aside className="sidebar-shell" aria-label="主导航">
+    <div className="risk-os-sidebar-surface">
+      <aside className="sidebar-shell risk-os-sidebar" aria-label="主导航">
         <div className="sidebar-brand">
           <div className="sidebar-brand-mark">
             <ShieldCheckIcon className="size-5" />
           </div>
           <div>
             <div className="text-base font-semibold tracking-tight text-foreground">
-              科创风控
+              科创风险研判台
             </div>
-            <div className="text-xs text-muted-foreground">AI 风险识别平台</div>
+            <div className="text-xs text-muted-foreground">机构研究工作站</div>
           </div>
         </div>
 
-        <LiquidGlassSurface
-          variant="selector"
-          refractive={false}
-          className="sidebar-company-glass"
-          padding="0"
-        >
-          <div className="sidebar-company-card">
-            <Select value={companyId} onValueChange={onCompanyChange}>
-              <SelectTrigger
-                className="sidebar-company-trigger"
-                aria-label="选择当前研究企业"
-              >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent position="popper" className="liquid-menu">
-                <SelectGroup>
-                  {companySummaries.map((company) => (
-                    <SelectItem key={company.id} value={company.id}>
-                      {company.name}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            <div className="mt-2 flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <div className="truncate text-xs text-muted-foreground">
-                  {detail.sector}
-                </div>
-              </div>
-              <div className="sidebar-risk-score">
-                <span>
-                  {assessmentSummaryOverride?.label ?? assessment.label}
-                </span>
-                <strong>
-                  {assessmentSummaryOverride?.scoreLabel ??
-                    assessment.scoreLabel}
-                </strong>
+        <div className="sidebar-company-card risk-os-company-switcher">
+          <span className="risk-os-company-label">当前研究对象</span>
+          <Select value={companyId} onValueChange={onCompanyChange}>
+            <SelectTrigger
+              className="sidebar-company-trigger"
+              aria-label="选择当前研究企业"
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent position="popper" className="liquid-menu">
+              <SelectGroup>
+                {companySummaries.map((company) => (
+                  <SelectItem key={company.id} value={company.id}>
+                    {company.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <div className="mt-2 flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <div className="truncate text-xs text-muted-foreground">
+                {detail.sector}
               </div>
             </div>
+            <div className="sidebar-risk-score">
+              <span>
+                {assessmentSummaryOverride?.label ?? assessment.label}
+              </span>
+              <strong>
+                {assessmentSummaryOverride?.scoreLabel ?? assessment.scoreLabel}
+              </strong>
+            </div>
           </div>
-        </LiquidGlassSurface>
+        </div>
 
         <SidebarWorkflowNavigation
           activeNavigationItem={activeNavigationItem}
@@ -125,7 +117,7 @@ export function SidebarNav({
           )}
         </div>
       </aside>
-    </LiquidGlassSurface>
+    </div>
   )
 }
 

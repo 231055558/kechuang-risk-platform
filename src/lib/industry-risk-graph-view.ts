@@ -210,18 +210,18 @@ export function riskHeatColor(score: number | null) {
   const bounded = Math.max(0, Math.min(100, score))
   const rgb =
     bounded <= 50
-      ? interpolate([34, 211, 238], [250, 204, 21], bounded / 50)
-      : interpolate([250, 204, 21], [239, 68, 68], (bounded - 50) / 50)
+      ? interpolate([69, 117, 180], [226, 184, 75], bounded / 50)
+      : interpolate([226, 184, 75], [189, 52, 71], (bounded - 50) / 50)
   return `#${rgb
     .map((channel) => channel.toString(16).padStart(2, "0"))
     .join("")}`
 }
 
 function eventColor(tone: IndustryRiskGraphNode["tone"]) {
-  if (tone === "critical") return "#ef4444"
-  if (tone === "high") return "#f97316"
-  if (tone === "medium") return "#facc15"
-  return "#2dd4bf"
+  if (tone === "critical") return "#bd3447"
+  if (tone === "high") return "#c56f20"
+  if (tone === "medium") return "#d7aa3d"
+  return "#277b6f"
 }
 
 function eventSize(tone: IndustryRiskGraphNode["tone"]) {
@@ -282,18 +282,18 @@ function nodeVisual(
         ? "待补"
         : node.score.toFixed(0)
     const size = isNarrative
-      ? 62
+      ? 64
       : node.score === null
-        ? 46
-        : 48 + node.score * 0.44
+        ? 44
+        : 44 + Math.sqrt(node.score / 100) * 64
     return {
-      label: `${node.entityId} ${compactLabel(node.label, 7)}\n${scoreLabel}`,
+      label: `${node.entityId} · ${compactLabel(node.label, 14)}\n${scoreLabel}`,
       scoreLabel,
       color: isNarrative ? "#8b5cf6" : riskHeatColor(node.score),
       size,
       width: size,
       height: size,
-      fontSize: node.score === null ? 9 : 10.5,
+      fontSize: node.score === null ? 9 : 10,
     }
   }
   if (node.kind === "source") {

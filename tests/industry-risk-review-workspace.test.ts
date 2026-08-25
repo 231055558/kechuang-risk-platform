@@ -33,7 +33,7 @@ test("industry workspace leads with customer conclusions and preserves auditable
   assert.match(panelSource, /公式、来源与限制/)
   assert.doesNotMatch(panelSource, /observation\.textValue/)
   assert.doesNotMatch(panelSource, /coverage\?\.status \?\? "NA"/)
-  assert.match(graphSource, /单企业语义径向图/)
+  assert.match(graphSource, /单企业风险关系 · 来源可追溯/)
   assert.match(graphSource, /沉浸查看/)
   assert.match(graphSource, /createPortal\(graphContent, document\.body\)/)
   assert.doesNotMatch(graphSource, /完整网络|useState<"full"/)

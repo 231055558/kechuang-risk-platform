@@ -87,16 +87,16 @@ export const navItems: NavItem[] = [
   {
     id: "investment-constraints",
     label: "投资约束",
-    group: "投资约束与建议",
+    group: "约束与应对",
     description: "将风险结论转化为投资前提、限制条件与持续监测要求",
     icon: LandmarkIcon,
     target: { view: "events", operationsSection: "investment" },
   },
   {
     id: "investment-advice",
-    label: "投资建议",
-    group: "投资约束与建议",
-    description: "依据企业风险指数和高影响指标自动生成建议动作",
+    label: "风险应对",
+    group: "约束与应对",
+    description: "依据企业风险指数和高影响指标生成可追溯的应对动作",
     icon: LightbulbIcon,
     target: { view: "events", operationsSection: "advice" },
   },
@@ -106,7 +106,7 @@ export const navGroups: NavGroup[] = [
   "研判工作台",
   "事件处理",
   "企业研究",
-  "投资约束与建议",
+  "约束与应对",
 ]
 
 export function resolveActiveNavigationItem(
