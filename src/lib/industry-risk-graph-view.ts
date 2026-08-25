@@ -39,7 +39,7 @@ export type IndustryRiskCytoscapeElement =
     }
   | { data: IndustryRiskCytoscapeEdgeData }
 
-export type IndustryRiskGraphView = "all" | "objective" | "narrative"
+export type IndustryRiskGraphView = "focus" | "all" | "objective" | "narrative"
 
 const narrativeIndicatorIds = new Set(["R01", "R02", "R03", "R04"])
 
@@ -50,6 +50,77 @@ export function selectIndustryRiskGraphView(
   if (view === "all") return graph
 
   const nodeById = new Map(graph.nodes.map((node) => [node.id, node]))
+  if (view === "focus") {
+    const priorityIndicatorNodeIds = new Set(
+      graph.nodes
+        .filter(
+          (node) =>
+            node.kind === "indicator" &&
+            !narrativeIndicatorIds.has(node.entityId) &&
+            node.score !== null
+        )
+        .sort((left, right) => (right.score ?? 0) - (left.score ?? 0))
+        .slice(0, 5)
+        .map((node) => node.id)
+    )
+    const includedNodeIds = new Set(
+      graph.nodes.flatMap((node) =>
+        node.kind === "company" || priorityIndicatorNodeIds.has(node.id)
+          ? [node.id]
+          : []
+      )
+    )
+
+    for (const edge of graph.edges) {
+      const source = nodeById.get(edge.source)
+      const target = nodeById.get(edge.target)
+      if (!source || !target) continue
+      if (priorityIndicatorNodeIds.has(source.id))
+        includedNodeIds.add(target.id)
+      if (priorityIndicatorNodeIds.has(target.id))
+        includedNodeIds.add(source.id)
+    }
+
+    for (const edge of graph.edges) {
+      const source = nodeById.get(edge.source)
+      const target = nodeById.get(edge.target)
+      if (!source || !target) continue
+      const connectsCompanyAndIncludedCategory =
+        (source.kind === "company" &&
+          target.kind === "category" &&
+          includedNodeIds.has(target.id)) ||
+        (target.kind === "company" &&
+          source.kind === "category" &&
+          includedNodeIds.has(source.id))
+      if (connectsCompanyAndIncludedCategory) {
+        includedNodeIds.add(source.id)
+        includedNodeIds.add(target.id)
+      }
+    }
+
+    const nodes = graph.nodes.filter((node) => includedNodeIds.has(node.id))
+    const edges = graph.edges.filter(
+      (edge) =>
+        includedNodeIds.has(edge.source) && includedNodeIds.has(edge.target)
+    )
+    const count = (kind: IndustryRiskGraphNode["kind"]) =>
+      nodes.filter((node) => node.kind === kind).length
+    return {
+      ...graph,
+      nodes,
+      edges,
+      counts: {
+        nodes: nodes.length,
+        edges: edges.length,
+        companies: count("company"),
+        categories: count("category"),
+        indicators: count("indicator"),
+        sources: count("source"),
+        events: count("event"),
+      },
+    }
+  }
+
   const narrativeIndicatorNodeIds = new Set(
     graph.nodes
       .filter(
@@ -240,7 +311,8 @@ function compactLabel(value: string, maximum: number) {
 
 function nodeVisual(
   node: IndustryRiskGraphNode,
-  degree: number
+  degree: number,
+  priorityRatio: number | null
 ): Pick<
   IndustryRiskCytoscapeNodeData,
   "label" | "scoreLabel" | "color" | "size" | "width" | "height" | "fontSize"
@@ -282,14 +354,16 @@ function nodeVisual(
         ? "待补"
         : node.score.toFixed(0)
     const size = isNarrative
-      ? 64
-      : node.score === null
+      ? 62
+      : priorityRatio === null
         ? 44
-        : 44 + Math.sqrt(node.score / 100) * 64
+        : 50 + Math.sqrt(priorityRatio) * 58
     return {
       label: `${node.entityId} · ${compactLabel(node.label, 14)}\n${scoreLabel}`,
       scoreLabel,
-      color: isNarrative ? "#8b5cf6" : riskHeatColor(node.score),
+      color: isNarrative
+        ? "#8b5cf6"
+        : riskHeatColor(priorityRatio === null ? null : priorityRatio * 100),
       size,
       width: size,
       height: size,
@@ -298,13 +372,14 @@ function nodeVisual(
   }
   if (node.kind === "source") {
     const institution = node.caption.split("·")[0]?.trim()
+    const emphasis = Math.min(degree, 8) * 2
     return {
       label: compactLabel(institution || node.label, 12),
       scoreLabel: "",
       color: "#38bdf8",
-      size: 22 + Math.min(degree, 8) * 2.2,
-      width: 22 + Math.min(degree, 8) * 2.2,
-      height: 22 + Math.min(degree, 8) * 2.2,
+      size: 36 + emphasis,
+      width: 96 + emphasis,
+      height: 34,
       fontSize: 9,
     }
   }
@@ -314,22 +389,14 @@ function nodeVisual(
     scoreLabel: "",
     color: eventColor(node.tone),
     size,
-    width: size,
-    height: size,
+    width: 104 + Math.max(0, size - 23),
+    height: 36,
     fontSize: 9,
   }
 }
 
-function polarPosition(radius: number, angle: number) {
-  return {
-    x: Math.cos(angle) * radius,
-    y: Math.sin(angle) * radius,
-  }
-}
-
-function semanticRadialPositions(graph: IndustryRiskKnowledgeGraph) {
+function semanticLayeredPositions(graph: IndustryRiskKnowledgeGraph) {
   const positions = new Map<string, { x: number; y: number }>()
-  const angles = new Map<string, number>()
   const categories = graph.nodes.filter((node) => node.kind === "category")
   const categoryByIndicator = new Map(
     graph.edges.flatMap((edge) =>
@@ -344,15 +411,13 @@ function semanticRadialPositions(graph: IndustryRiskKnowledgeGraph) {
   for (const node of graph.nodes) {
     if (node.kind === "company") {
       positions.set(node.id, { x: 0, y: 0 })
-      angles.set(node.id, 0)
     }
   }
 
   categories.forEach((category, categoryIndex) => {
-    const angle =
-      -Math.PI / 2 + (categoryIndex * Math.PI * 2) / categories.length
-    positions.set(category.id, polarPosition(205, angle))
-    angles.set(category.id, angle)
+    const laneCenter =
+      (categoryIndex - Math.max(categories.length - 1, 0) / 2) * 205
+    positions.set(category.id, { x: -265, y: laneCenter })
 
     const indicators = graph.nodes
       .filter(
@@ -362,14 +427,13 @@ function semanticRadialPositions(graph: IndustryRiskKnowledgeGraph) {
       )
       .sort((left, right) => left.entityId.localeCompare(right.entityId))
     indicators.forEach((indicator, indicatorIndex) => {
-      const offset =
-        indicators.length === 1
-          ? 0
-          : (indicatorIndex / (indicators.length - 1) - 0.5) * 0.58
-      const indicatorAngle = angle + offset
-      const radius = 370 + (indicatorIndex % 2) * 34
-      positions.set(indicator.id, polarPosition(radius, indicatorAngle))
-      angles.set(indicator.id, indicatorAngle)
+      const rows = Math.ceil(indicators.length / 2)
+      const row = Math.floor(indicatorIndex / 2)
+      const column = indicatorIndex % 2
+      positions.set(indicator.id, {
+        x: -555 - column * 145,
+        y: laneCenter + (row - Math.max(rows - 1, 0) / 2) * 88,
+      })
     })
   })
 
@@ -388,18 +452,18 @@ function semanticRadialPositions(graph: IndustryRiskKnowledgeGraph) {
         ? connectedIndicator.target
         : connectedIndicator.source
       : null
-    const anchorAngle = anchorId === null ? null : angles.get(anchorId)
     const anchorKey = anchorId ?? "unanchored"
     const anchorIndex = peripheralIndexByAnchor.get(anchorKey) ?? 0
     peripheralIndexByAnchor.set(anchorKey, anchorIndex + 1)
-    const fallbackAngle =
-      -Math.PI / 2 + (index * Math.PI * 2) / Math.max(peripheralNodes.length, 1)
     const direction = anchorIndex % 2 === 0 ? 1 : -1
-    const fan = Math.ceil(anchorIndex / 2) * 0.105 * direction
-    const angle = (anchorAngle ?? fallbackAngle) + fan
-    const radius = node.kind === "source" ? 535 : 510 + (anchorIndex % 3) * 34
-    positions.set(node.id, polarPosition(radius, angle))
-    angles.set(node.id, angle)
+    const fan = Math.ceil(anchorIndex / 2) * 42 * direction
+    const anchorPosition = anchorId ? positions.get(anchorId) : null
+    positions.set(node.id, {
+      x: node.kind === "source" ? -1_030 : -870,
+      y:
+        (anchorPosition?.y ??
+          (index - Math.max(peripheralNodes.length - 1, 0) / 2) * 38) + fan,
+    })
   })
 
   return positions
@@ -414,7 +478,24 @@ function edgeColor(kind: IndustryRiskGraphEdgeKind) {
 export function buildIndustryRiskCytoscapeElements(
   graph: IndustryRiskKnowledgeGraph
 ): IndustryRiskCytoscapeElement[] {
-  const positions = semanticRadialPositions(graph)
+  const positions = semanticLayeredPositions(graph)
+  const scoredIndicators = graph.nodes.filter(
+    (node) =>
+      node.kind === "indicator" &&
+      !narrativeIndicatorIds.has(node.entityId) &&
+      node.score !== null
+  )
+  const scoredValues = scoredIndicators.map((node) => node.score as number)
+  const minimumScore = scoredValues.length ? Math.min(...scoredValues) : null
+  const maximumScore = scoredValues.length ? Math.max(...scoredValues) : null
+  const priorityRatioByNode = new Map(
+    scoredIndicators.map((node) => {
+      const spread = (maximumScore ?? 0) - (minimumScore ?? 0)
+      const ratio =
+        spread === 0 ? 0.65 : ((node.score ?? 0) - (minimumScore ?? 0)) / spread
+      return [node.id, ratio] as const
+    })
+  )
   const degreeByNode = new Map(
     graph.nodes.map((node) => [
       node.id,
@@ -424,7 +505,11 @@ export function buildIndustryRiskCytoscapeElements(
     ])
   )
   const nodes = graph.nodes.map((node): IndustryRiskCytoscapeElement => {
-    const visual = nodeVisual(node, degreeByNode.get(node.id) ?? 0)
+    const visual = nodeVisual(
+      node,
+      degreeByNode.get(node.id) ?? 0,
+      priorityRatioByNode.get(node.id) ?? null
+    )
     return {
       data: {
         id: node.id,

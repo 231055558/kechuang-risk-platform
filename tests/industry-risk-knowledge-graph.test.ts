@@ -112,6 +112,31 @@ test("graph view separates narrative observations from objective risk scores", (
   assert.equal(narrativeR01.color, "#8b5cf6")
 })
 
+test("default focus lens keeps the five highest risks and their direct evidence", () => {
+  const companyGraph = selectIndustryRiskGraph(graph, "star-688256")
+  const focused = selectIndustryRiskGraphView(companyGraph, "focus")
+
+  assert.deepEqual(
+    focused.nodes
+      .filter((node) => node.kind === "indicator")
+      .map((node) => node.entityId)
+      .sort(),
+    ["R07", "R12", "R15", "R19", "R21"]
+  )
+  assert.equal(
+    focused.nodes.filter((node) => node.kind === "company").length,
+    1
+  )
+  assert.equal(
+    focused.nodes.filter((node) => node.kind === "category").length,
+    5
+  )
+  assert.equal(focused.nodes.filter((node) => node.kind === "source").length, 8)
+  assert.equal(focused.nodes.filter((node) => node.kind === "event").length, 13)
+  assert.equal(focused.nodes.length, 32)
+  assert.equal(focused.edges.length, 35)
+})
+
 function nodeData(
   companyGraph: ReturnType<typeof selectIndustryRiskGraph>,
   id: string
@@ -124,7 +149,7 @@ function nodeData(
     )
 }
 
-test("Cytoscape view uses a complete semantic radial graph without dropping relations", () => {
+test("Cytoscape view uses a complete evidence-to-exposure layout without dropping relations", () => {
   const focus = selectIndustryRiskGraph(graph, "star-688256")
   const elements = buildIndustryRiskCytoscapeElements(focus)
   const nodeElements = elements.filter(
@@ -154,6 +179,33 @@ test("Cytoscape view uses a complete semantic radial graph without dropping rela
     nodeElements.find((element) => element.data.kind === "company")?.position,
     { x: 0, y: 0 }
   )
+  const r19 = nodeElements.find(
+    (element) => element.data.id === "indicator:R19"
+  )
+  const r19CategoryEdge = focus.edges.find(
+    (edge) => edge.kind === "hierarchy" && edge.target === "indicator:R19"
+  )
+  const r19Category = nodeElements.find(
+    (element) => element.data.id === r19CategoryEdge?.source
+  )
+  const r19EvidenceEdge = focus.edges.find(
+    (edge) =>
+      edge.kind !== "hierarchy" &&
+      (edge.source === "indicator:R19" || edge.target === "indicator:R19")
+  )
+  const r19Evidence = nodeElements.find(
+    (element) =>
+      element.data.id ===
+      (r19EvidenceEdge?.source === "indicator:R19"
+        ? r19EvidenceEdge.target
+        : r19EvidenceEdge?.source)
+  )
+  assert.ok(r19)
+  assert.ok(r19Category)
+  assert.ok(r19Evidence)
+  assert.ok(r19Evidence.position.x < r19.position.x)
+  assert.ok(r19.position.x < r19Category.position.x)
+  assert.ok(r19Category.position.x < 0)
   assert.ok(
     focus.edges
       .filter(
