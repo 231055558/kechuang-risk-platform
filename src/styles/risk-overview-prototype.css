@@ -1,0 +1,1144 @@
+/* PROTOTYPE — structural comparison only. Remove after a direction wins. */
+.risk-os-shell
+  .industry-risk-workspace-glass:has(
+    > .industry-risk-workspace[data-prototype]
+  ) {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.risk-os-shell .industry-risk-workspace[data-prototype] {
+  background: transparent;
+}
+
+.risk-os-shell .industry-risk-workspace[data-prototype] > .industry-risk-header,
+.risk-os-shell
+  .industry-risk-workspace[data-prototype]
+  > .industry-risk-scope-strip,
+.risk-os-shell
+  .industry-risk-workspace[data-prototype]
+  > .industry-risk-peer-reference,
+.risk-os-shell
+  .industry-risk-workspace[data-prototype]
+  .industry-risk-detail-tabs
+  > [data-slot="tabs-list"] {
+  display: none;
+}
+
+.risk-os-shell .industry-risk-workspace[data-prototype] .industry-risk-body {
+  padding: 0;
+}
+
+.risk-os-shell
+  .industry-risk-workspace[data-prototype]
+  [data-slot="tabs-content"] {
+  margin-top: 0;
+}
+
+.risk-prototype {
+  --prototype-line: color-mix(in oklch, var(--border) 82%, transparent);
+  --prototype-strong-line: color-mix(
+    in oklch,
+    var(--text-strong) 26%,
+    transparent
+  );
+  --prototype-paper: color-mix(in oklch, var(--background) 92%, white);
+  --prototype-ink: var(--text-strong);
+  --prototype-soft: var(--text-soft);
+  position: relative;
+  color: var(--prototype-ink);
+}
+
+.risk-prototype *,
+.risk-prototype *::before,
+.risk-prototype *::after {
+  box-sizing: border-box;
+}
+
+.risk-prototype-kicker {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 0 0 14px;
+  border-bottom: 1px solid var(--prototype-strong-line);
+}
+
+.risk-prototype-kicker span,
+.risk-prototype-score > span:first-child,
+.risk-memo-rail > div:first-child > span,
+.risk-terminal-inspector > span,
+.risk-dossier-index > div > span,
+.risk-dossier-judgement > div > span,
+.risk-dossier-evidence > header > span {
+  color: var(--prototype-soft);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.risk-prototype-kicker p {
+  margin: 0;
+  color: var(--prototype-soft);
+  font-size: 12px;
+}
+
+.risk-prototype-score > div:first-of-type {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.risk-prototype-score > div:first-of-type > strong {
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(52px, 6vw, 88px);
+  font-weight: 650;
+  letter-spacing: -0.07em;
+  line-height: 0.9;
+}
+
+.risk-prototype-rank-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 26px;
+  color: var(--prototype-soft);
+  font-size: 10px;
+}
+
+.risk-prototype-rank-axis {
+  position: relative;
+  height: 1px;
+  margin-top: 8px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklch, var(--success) 65%, transparent),
+    color-mix(in oklch, var(--warning) 65%, transparent),
+    color-mix(in oklch, var(--danger) 70%, transparent)
+  );
+}
+
+.risk-prototype-rank-axis::before,
+.risk-prototype-rank-axis::after {
+  position: absolute;
+  top: -3px;
+  width: 1px;
+  height: 7px;
+  background: var(--prototype-strong-line);
+  content: "";
+}
+
+.risk-prototype-rank-axis::before {
+  left: 25%;
+}
+
+.risk-prototype-rank-axis::after {
+  right: 25%;
+}
+
+.risk-prototype-rank-axis i {
+  position: absolute;
+  top: 50%;
+  width: 11px;
+  height: 11px;
+  border: 3px solid var(--prototype-paper);
+  border-radius: 50%;
+  background: var(--prototype-ink);
+  box-shadow: 0 0 0 1px var(--prototype-strong-line);
+  transform: translate(-50%, -50%);
+}
+
+.risk-prototype-score > p {
+  margin: 12px 0 0;
+  color: var(--prototype-soft);
+  font-size: 12px;
+}
+
+.risk-prototype-score > p b {
+  margin-left: 4px;
+  color: var(--prototype-ink);
+  font-size: 16px;
+}
+
+.risk-prototype-driver {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    opacity var(--motion-fast) var(--ease-fluid),
+    background var(--motion-fast) var(--ease-fluid);
+}
+
+.risk-prototype-driver[data-muted="true"] {
+  opacity: 0.46;
+}
+
+.risk-prototype-driver:hover,
+.risk-prototype-driver[data-active="true"] {
+  opacity: 1;
+}
+
+.risk-prototype-driver > span {
+  color: var(--prototype-soft);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.risk-prototype-driver > div > div {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.risk-prototype-driver b {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.risk-prototype-driver strong {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.risk-prototype-driver em {
+  font-size: 15px;
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.risk-prototype-driver > div > i,
+.risk-terminal-table-wrap td:nth-child(2) i,
+.risk-terminal-dimensions i {
+  display: block;
+  overflow: hidden;
+  height: 2px;
+  margin-top: 9px;
+  background: color-mix(in oklch, var(--border) 68%, transparent);
+}
+
+.risk-prototype-driver > div > i span,
+.risk-terminal-table-wrap td:nth-child(2) i span,
+.risk-terminal-dimensions i span {
+  display: block;
+  height: 100%;
+  background: var(--prototype-ink);
+}
+
+.risk-prototype-driver[data-tone="critical"] > div > i span,
+.risk-prototype-driver[data-tone="high"] > div > i span {
+  background: var(--danger);
+}
+
+.risk-prototype-linked-decision {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--prototype-strong-line);
+  border-bottom: 1px solid var(--prototype-strong-line);
+}
+
+.risk-prototype-linked-decision > section {
+  min-width: 0;
+  padding: 20px 22px 22px 0;
+}
+
+.risk-prototype-linked-decision > section + section {
+  padding-right: 0;
+  padding-left: 22px;
+  border-left: 1px solid var(--prototype-line);
+}
+
+.risk-prototype-linked-decision span {
+  color: var(--prototype-soft);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.risk-prototype-linked-decision h4 {
+  margin: 10px 0 7px;
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.risk-prototype-linked-decision p {
+  margin: 0;
+  color: var(--text-body);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.risk-prototype-linked-decision a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  color: var(--brand-strong);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.risk-prototype-linked-decision a svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* A — editorial memo */
+.risk-prototype--memo {
+  padding: 8px 0 28px;
+}
+
+.risk-memo-layout {
+  display: grid;
+  grid-template-columns: minmax(270px, 0.76fr) minmax(0, 1.75fr);
+  min-height: 760px;
+  margin-top: 18px;
+  border-top: 1px solid var(--prototype-strong-line);
+  border-bottom: 1px solid var(--prototype-strong-line);
+}
+
+.risk-memo-rail {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+  padding: 34px 34px 30px 0;
+  border-right: 1px solid var(--prototype-strong-line);
+}
+
+.risk-memo-rail > div:first-child h3 {
+  margin: 9px 0 4px;
+  font-size: clamp(28px, 3vw, 46px);
+  letter-spacing: -0.05em;
+}
+
+.risk-memo-rail > div:first-child p {
+  margin: 0;
+  color: var(--prototype-soft);
+  font-size: 12px;
+}
+
+.risk-memo-rail dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: auto 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--prototype-line);
+}
+
+.risk-memo-rail dl div + div {
+  padding-left: 14px;
+  border-left: 1px solid var(--prototype-line);
+}
+
+.risk-memo-rail dt {
+  color: var(--prototype-soft);
+  font-size: 10px;
+}
+
+.risk-memo-rail dd {
+  margin: 7px 0 0;
+  font-size: 16px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.risk-memo-document {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  min-width: 0;
+  padding: 38px 0 30px 44px;
+}
+
+.risk-memo-heading {
+  max-width: 860px;
+}
+
+.risk-memo-heading > span {
+  color: var(--prototype-soft);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.risk-memo-heading h3 {
+  max-width: 940px;
+  margin: 18px 0 14px;
+  font-size: clamp(27px, 3.1vw, 48px);
+  font-weight: 620;
+  letter-spacing: -0.045em;
+  line-height: 1.17;
+}
+
+.risk-memo-heading p {
+  max-width: 760px;
+  margin: 0;
+  color: var(--text-body);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.risk-memo-drivers {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--prototype-strong-line);
+}
+
+.risk-memo-drivers > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--prototype-line);
+}
+
+.risk-memo-drivers > header span {
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.risk-memo-drivers > header small {
+  color: var(--prototype-soft);
+  font-size: 10px;
+}
+
+.risk-memo-drivers .risk-prototype-driver {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 14px;
+  padding: 16px 10px 15px 0;
+  border-bottom: 1px solid var(--prototype-line);
+}
+
+.risk-memo-drivers .risk-prototype-driver[data-active="true"] {
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklch, var(--brand) 8%, transparent),
+    transparent 70%
+  );
+}
+
+.risk-memo-document > footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: auto;
+}
+
+.risk-memo-document > footer > span {
+  color: var(--prototype-soft);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+/* B — dense analyst terminal */
+.risk-prototype--terminal {
+  padding: 8px 0 28px;
+}
+
+.risk-terminal-dimensions {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin-top: 18px;
+  border-top: 1px solid var(--prototype-strong-line);
+  border-bottom: 1px solid var(--prototype-strong-line);
+}
+
+.risk-terminal-dimensions > div {
+  min-width: 0;
+  padding: 15px 18px 16px;
+}
+
+.risk-terminal-dimensions > div + div {
+  border-left: 1px solid var(--prototype-line);
+}
+
+.risk-terminal-dimensions span {
+  display: block;
+  overflow: hidden;
+  color: var(--prototype-soft);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.risk-terminal-dimensions strong {
+  display: block;
+  margin-top: 7px;
+  font-size: 23px;
+  font-variant-numeric: tabular-nums;
+}
+
+.risk-terminal-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 330px;
+  min-height: 720px;
+  border-bottom: 1px solid var(--prototype-strong-line);
+}
+
+.risk-terminal-table-wrap {
+  min-width: 0;
+  overflow: auto;
+  border-right: 1px solid var(--prototype-strong-line);
+}
+
+.risk-terminal-table-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.risk-terminal-table-wrap th {
+  position: sticky;
+  z-index: 1;
+  top: 0;
+  padding: 13px 12px;
+  border-bottom: 1px solid var(--prototype-strong-line);
+  background: var(--prototype-paper);
+  color: var(--prototype-soft);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.risk-terminal-table-wrap th:first-child {
+  width: 36%;
+}
+
+.risk-terminal-table-wrap th:nth-child(2) {
+  width: 15%;
+}
+
+.risk-terminal-table-wrap th:nth-child(3) {
+  width: 15%;
+}
+
+.risk-terminal-table-wrap th:nth-child(4) {
+  width: 18%;
+}
+
+.risk-terminal-table-wrap tr {
+  transition:
+    background var(--motion-fast) var(--ease-fluid),
+    opacity var(--motion-fast) var(--ease-fluid);
+}
+
+.risk-terminal-table-wrap tbody tr:hover,
+.risk-terminal-table-wrap tbody tr[data-active="true"] {
+  background: color-mix(in oklch, var(--brand) 7%, transparent);
+}
+
+.risk-terminal-table-wrap tbody tr[data-muted="true"] {
+  opacity: 0.62;
+}
+
+.risk-terminal-table-wrap td {
+  padding: 12px;
+  border-bottom: 1px solid var(--prototype-line);
+  color: var(--text-body);
+  font-size: 11px;
+  vertical-align: middle;
+}
+
+.risk-terminal-table-wrap td:first-child button {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.risk-terminal-table-wrap td:first-child b {
+  color: var(--prototype-ink);
+  font-size: 11px;
+}
+
+.risk-terminal-table-wrap td:first-child span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.risk-terminal-table-wrap td:nth-child(2) strong {
+  color: var(--prototype-ink);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.risk-terminal-inspector {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  padding: 24px 24px 30px;
+}
+
+.risk-terminal-inspector-score {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.risk-terminal-inspector-score b {
+  font-size: 16px;
+}
+
+.risk-terminal-inspector-score strong {
+  font-size: 48px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+
+.risk-terminal-inspector h3 {
+  margin: 12px 0 20px;
+  font-size: 20px;
+  line-height: 1.3;
+}
+
+.risk-terminal-inspector > dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0 0 18px;
+  border-top: 1px solid var(--prototype-line);
+  border-bottom: 1px solid var(--prototype-line);
+}
+
+.risk-terminal-inspector > dl div {
+  padding: 13px 0;
+}
+
+.risk-terminal-inspector > dl div + div {
+  padding-left: 14px;
+  border-left: 1px solid var(--prototype-line);
+}
+
+.risk-terminal-inspector dt {
+  color: var(--prototype-soft);
+  font-size: 10px;
+}
+
+.risk-terminal-inspector dd {
+  margin: 5px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.risk-terminal-inspector > p {
+  margin: 0 0 22px;
+  color: var(--text-body);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.risk-terminal-inspector .risk-prototype-linked-decision {
+  grid-template-columns: 1fr;
+}
+
+.risk-terminal-inspector .risk-prototype-linked-decision > section + section {
+  padding-left: 0;
+  border-top: 1px solid var(--prototype-line);
+  border-left: 0;
+}
+
+/* C — evidence dossier */
+.risk-prototype--dossier {
+  padding: 8px 0 28px;
+}
+
+.risk-dossier-layout {
+  display: grid;
+  grid-template-columns: 255px minmax(380px, 1fr) 340px;
+  min-height: 780px;
+  margin-top: 18px;
+  border-top: 1px solid var(--prototype-strong-line);
+  border-bottom: 1px solid var(--prototype-strong-line);
+}
+
+.risk-dossier-index {
+  padding: 26px 22px 28px 0;
+  border-right: 1px solid var(--prototype-strong-line);
+}
+
+.risk-dossier-index > div h3 {
+  margin: 9px 0 5px;
+  font-size: 30px;
+  letter-spacing: -0.045em;
+}
+
+.risk-dossier-index > div p {
+  margin: 0;
+  color: var(--prototype-soft);
+  font-size: 12px;
+}
+
+.risk-dossier-index ol {
+  display: grid;
+  gap: 0;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.risk-dossier-index li {
+  border-top: 1px solid var(--prototype-line);
+}
+
+.risk-dossier-index .risk-prototype-driver {
+  display: grid;
+  grid-template-columns: 25px minmax(0, 1fr);
+  gap: 8px;
+  padding: 14px 6px 14px 0;
+}
+
+.risk-dossier-index .risk-prototype-driver[data-active="true"] {
+  box-shadow: inset 2px 0 0 var(--prototype-ink);
+}
+
+.risk-dossier-evidence {
+  min-width: 0;
+  padding: 25px 30px 34px;
+}
+
+.risk-dossier-evidence > header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 17px;
+  border-bottom: 1px solid var(--prototype-strong-line);
+}
+
+.risk-dossier-evidence > header strong {
+  font-size: 13px;
+}
+
+.risk-dossier-timeline {
+  position: relative;
+  padding: 6px 0 20px;
+}
+
+.risk-dossier-timeline::before {
+  position: absolute;
+  top: 26px;
+  bottom: 38px;
+  left: 90px;
+  width: 1px;
+  background: var(--prototype-line);
+  content: "";
+}
+
+.risk-dossier-timeline article {
+  display: grid;
+  grid-template-columns: 76px 28px minmax(0, 1fr);
+  align-items: start;
+  padding: 16px 0;
+  transition: opacity var(--motion-fast) var(--ease-fluid);
+}
+
+.risk-dossier-timeline article[data-muted="true"] {
+  opacity: 0.36;
+}
+
+.risk-dossier-timeline article[data-active="true"] {
+  opacity: 1;
+}
+
+.risk-dossier-timeline article > time {
+  color: var(--prototype-soft);
+  font-size: 10px;
+  line-height: 18px;
+}
+
+.risk-dossier-timeline article > i {
+  position: relative;
+  z-index: 1;
+  width: 9px;
+  height: 9px;
+  margin: 4px auto 0;
+  border: 2px solid var(--prototype-paper);
+  border-radius: 50%;
+  background: var(--prototype-soft);
+  box-shadow: 0 0 0 1px var(--prototype-line);
+}
+
+.risk-dossier-timeline article[data-active="true"] > i {
+  width: 13px;
+  height: 13px;
+  margin-top: 2px;
+  background: var(--danger);
+}
+
+.risk-dossier-timeline article > div {
+  min-width: 0;
+}
+
+.risk-dossier-timeline article span {
+  color: var(--prototype-soft);
+  font-size: 10px;
+}
+
+.risk-dossier-timeline article h4 {
+  margin: 7px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.risk-dossier-timeline article a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+  color: var(--brand-strong);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.risk-dossier-timeline article a svg {
+  width: 12px;
+  height: 12px;
+}
+
+.risk-dossier-news {
+  padding-top: 18px;
+  border-top: 1px solid var(--prototype-strong-line);
+}
+
+.risk-dossier-news > header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 9px;
+}
+
+.risk-dossier-news > header span {
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.risk-dossier-news > header small {
+  color: var(--prototype-soft);
+  font-size: 10px;
+}
+
+.risk-dossier-news > a {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr) auto;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--prototype-line);
+  color: inherit;
+  text-decoration: none;
+}
+
+.risk-dossier-news > a span,
+.risk-dossier-news > a time {
+  color: var(--prototype-soft);
+  font-size: 9px;
+}
+
+.risk-dossier-news > a strong {
+  overflow: hidden;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.risk-dossier-judgement {
+  padding: 26px 0 30px 26px;
+  border-left: 1px solid var(--prototype-strong-line);
+}
+
+.risk-dossier-judgement > div:first-child h3 {
+  margin: 12px 0 26px;
+  font-size: 21px;
+  font-weight: 620;
+  letter-spacing: -0.025em;
+  line-height: 1.45;
+}
+
+.risk-dossier-judgement .risk-prototype-score {
+  padding: 20px 0 24px;
+  border-top: 1px solid var(--prototype-line);
+}
+
+.risk-dossier-judgement .risk-prototype-score > div:first-of-type > strong {
+  font-size: 58px;
+}
+
+.risk-dossier-judgement .risk-prototype-linked-decision {
+  grid-template-columns: 1fr;
+  margin-bottom: 20px;
+}
+
+.risk-dossier-judgement .risk-prototype-linked-decision > section + section {
+  padding-left: 0;
+  border-top: 1px solid var(--prototype-line);
+  border-left: 0;
+}
+
+.risk-dossier-judgement > button {
+  width: 100%;
+  margin-top: 8px;
+}
+
+/* Prototype-only switcher */
+.risk-prototype-switcher {
+  position: fixed;
+  z-index: 110;
+  right: 50%;
+  bottom: 22px;
+  display: grid;
+  grid-template-columns: 38px minmax(154px, auto) 38px;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklch, var(--foreground) 28%, transparent);
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--foreground) 94%, transparent);
+  box-shadow: 0 16px 42px color-mix(in oklch, black 24%, transparent);
+  color: var(--background);
+  transform: translateX(50%);
+}
+
+.risk-prototype-switcher button {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  place-items: center;
+}
+
+.risk-prototype-switcher button:hover {
+  background: color-mix(in oklch, white 10%, transparent);
+}
+
+.risk-prototype-switcher button svg {
+  width: 14px;
+  height: 14px;
+}
+
+.risk-prototype-switcher > div {
+  display: grid;
+  justify-items: center;
+  padding: 7px 14px;
+  border-right: 1px solid color-mix(in oklch, white 12%, transparent);
+  border-left: 1px solid color-mix(in oklch, white 12%, transparent);
+}
+
+.risk-prototype-switcher span {
+  opacity: 0.62;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.risk-prototype-switcher strong {
+  margin-top: 1px;
+  font-size: 11px;
+}
+
+@media (max-width: 1279px) {
+  .risk-memo-layout {
+    grid-template-columns: 260px minmax(0, 1fr);
+  }
+
+  .risk-terminal-layout {
+    grid-template-columns: minmax(0, 1fr) 290px;
+  }
+
+  .risk-dossier-layout {
+    grid-template-columns: 220px minmax(350px, 1fr) 290px;
+  }
+}
+
+@media (max-width: 1023px) {
+  .risk-prototype-kicker {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .risk-memo-layout,
+  .risk-terminal-layout,
+  .risk-dossier-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .risk-memo-rail,
+  .risk-terminal-table-wrap,
+  .risk-dossier-index,
+  .risk-dossier-judgement {
+    border-right: 0;
+    border-left: 0;
+  }
+
+  .risk-memo-rail {
+    display: grid;
+    grid-template-columns: 0.7fr 1.3fr;
+    gap: 24px;
+    padding-right: 0;
+    border-bottom: 1px solid var(--prototype-strong-line);
+  }
+
+  .risk-memo-rail dl {
+    grid-column: 1 / -1;
+  }
+
+  .risk-memo-document {
+    padding-left: 0;
+  }
+
+  .risk-terminal-inspector,
+  .risk-dossier-judgement {
+    position: static;
+    border-top: 1px solid var(--prototype-strong-line);
+  }
+
+  .risk-dossier-index {
+    border-bottom: 1px solid var(--prototype-strong-line);
+  }
+
+  .risk-dossier-index ol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .risk-dossier-index li:nth-child(even) {
+    padding-left: 15px;
+    border-left: 1px solid var(--prototype-line);
+  }
+}
+
+@media (max-width: 720px) {
+  .risk-prototype-kicker p {
+    display: none;
+  }
+
+  .risk-memo-rail {
+    display: block;
+    padding: 24px 0;
+  }
+
+  .risk-memo-rail > .risk-prototype-score {
+    margin-top: 28px;
+  }
+
+  .risk-memo-rail dl {
+    margin-top: 30px;
+  }
+
+  .risk-memo-heading h3 {
+    font-size: 27px;
+  }
+
+  .risk-prototype-linked-decision {
+    grid-template-columns: 1fr;
+  }
+
+  .risk-prototype-linked-decision > section + section {
+    padding-left: 0;
+    border-top: 1px solid var(--prototype-line);
+    border-left: 0;
+  }
+
+  .risk-terminal-dimensions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .risk-terminal-dimensions > div + div {
+    border-left: 0;
+  }
+
+  .risk-terminal-dimensions > div:nth-child(even) {
+    border-left: 1px solid var(--prototype-line);
+  }
+
+  .risk-terminal-dimensions > div:nth-child(n + 3) {
+    border-top: 1px solid var(--prototype-line);
+  }
+
+  .risk-terminal-table-wrap th:nth-child(4),
+  .risk-terminal-table-wrap th:nth-child(5),
+  .risk-terminal-table-wrap td:nth-child(4),
+  .risk-terminal-table-wrap td:nth-child(5) {
+    display: none;
+  }
+
+  .risk-terminal-table-wrap th:first-child {
+    width: 60%;
+  }
+
+  .risk-terminal-table-wrap th:nth-child(2),
+  .risk-terminal-table-wrap th:nth-child(3) {
+    width: 20%;
+  }
+
+  .risk-dossier-index ol {
+    grid-template-columns: 1fr;
+  }
+
+  .risk-dossier-index li:nth-child(even) {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .risk-dossier-evidence {
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .risk-dossier-timeline article {
+    grid-template-columns: 68px 24px minmax(0, 1fr);
+  }
+
+  .risk-dossier-timeline::before {
+    left: 79px;
+  }
+
+  .risk-dossier-news > a {
+    grid-template-columns: 62px minmax(0, 1fr);
+  }
+
+  .risk-dossier-news > a time {
+    display: none;
+  }
+
+  .risk-prototype-switcher {
+    bottom: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .risk-prototype *,
+  .risk-prototype *::before,
+  .risk-prototype *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
