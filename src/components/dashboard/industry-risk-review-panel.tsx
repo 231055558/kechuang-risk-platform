@@ -1,18 +1,20 @@
-import { useGSAP } from "@gsap/react"
-import gsap from "gsap"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import {
   ArrowDownIcon,
   ArrowRightIcon,
   ArrowUpIcon,
   BarChart3Icon,
   CalendarDaysIcon,
+  CheckCircle2Icon,
+  ClipboardListIcon,
   DatabaseZapIcon,
   ExternalLinkIcon,
   FileTextIcon,
   FileSearchIcon,
   GaugeIcon,
   InfoIcon,
+  Layers3Icon,
+  LightbulbIcon,
   NewspaperIcon,
   NetworkIcon,
   RefreshCwIcon,
@@ -21,11 +23,7 @@ import {
 
 import { IndustryRiskKnowledgeGraph } from "@/components/dashboard/industry-risk-knowledge-graph"
 import { GlassPanel } from "@/components/dashboard/shared"
-import {
-  PRODUCTIVE_MOTION,
-  Reveal,
-  usePrefersReducedMotion,
-} from "@/components/motion/workflow-transition"
+import { Reveal } from "@/components/motion/workflow-transition"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -219,8 +217,10 @@ export function IndustryRiskReviewPanel({
   return (
     <>
       <Reveal>
-        <section
+        <GlassPanel
           className="industry-risk-workspace"
+          surfaceClassName="industry-risk-workspace-glass"
+          variant="floating"
           aria-labelledby="industry-risk-title"
         >
           <header className="industry-risk-header">
@@ -231,6 +231,9 @@ export function IndustryRiskReviewPanel({
               <h2 id="industry-risk-title">
                 {selectedSummary?.companyName ?? "当前企业"}风险总览
               </h2>
+              <p>
+                从风险结论出发，集中呈现同业位置、重点风险、最新事件和正式报告；缺失项目不补零，也不影响其余有效指标。
+              </p>
             </div>
             <div className="industry-risk-formula-summary">
               <Badge variant="outline">
@@ -306,7 +309,7 @@ export function IndustryRiskReviewPanel({
               ))}
             </ol>
           </details>
-        </section>
+        </GlassPanel>
       </Reveal>
       {showGraph ? (
         <IndustryRiskKnowledgeGraph
@@ -349,63 +352,6 @@ function IndustryRiskAssessmentContent({
   const coveragePercent = Math.round(assessment.weightedDataCoverage * 100)
   const conclusion = buildIndustryRiskConclusion(assessment)
   const recommendations = generateIndustryRiskRecommendations(assessment)
-  const briefingRef = useRef<HTMLElement>(null)
-  const prefersReducedMotion = usePrefersReducedMotion()
-  const defaultDriverId = priorityMetrics[0]?.indicatorId ?? null
-  const [driverSelection, setDriverSelection] = useState<{
-    companyId: string
-    indicatorId: string | null
-  }>({ companyId: response.company.id, indicatorId: defaultDriverId })
-  const activeDriverId =
-    driverSelection.companyId === response.company.id
-      ? driverSelection.indicatorId
-      : defaultDriverId
-  const benchmarkPosition =
-    assessment.benchmarkSampleSize > 1 && selectedRank > 0
-      ? Math.round(
-          ((assessment.benchmarkSampleSize - selectedRank) /
-            (assessment.benchmarkSampleSize - 1)) *
-            100
-        )
-      : null
-
-  useGSAP(
-    () => {
-      const briefing = briefingRef.current
-      if (!briefing) return
-      const stages = gsap.utils.toArray<HTMLElement>(
-        "[data-motion-stage]",
-        briefing
-      )
-
-      if (prefersReducedMotion) {
-        gsap.set(stages, { clearProps: "opacity,transform,visibility" })
-        return
-      }
-
-      gsap.timeline({ defaults: { overwrite: "auto" } }).fromTo(
-        stages,
-        { autoAlpha: 0, y: 14 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: PRODUCTIVE_MOTION.scene,
-          ease: PRODUCTIVE_MOTION.easeEnter,
-          stagger: 0.065,
-          clearProps: "opacity,transform,visibility",
-        }
-      )
-    },
-    {
-      scope: briefingRef,
-      dependencies: [
-        assessment.totalRiskScore,
-        prefersReducedMotion,
-        response.company.id,
-      ],
-      revertOnUpdate: true,
-    }
-  )
 
   return (
     <Tabs defaultValue="overview" className="industry-risk-detail-tabs">
@@ -422,198 +368,148 @@ function IndustryRiskAssessmentContent({
       </TabsList>
 
       <TabsContent value="overview">
-        <section
-          ref={briefingRef}
-          className="risk-briefing-canvas"
-          data-tone={scoreTone(assessment.totalRiskScore)}
-          aria-label={`${response.company.shortName}风险简报`}
-        >
-          <div className="risk-briefing-primary" data-motion-stage>
-            <div className="risk-briefing-status">
-              <span>
-                <i aria-hidden="true" />
-                系统自动结论
-              </span>
+        <section className="customer-risk-conclusion">
+          <div className="customer-risk-conclusion-icon">
+            <LightbulbIcon aria-hidden="true" />
+          </div>
+          <div>
+            <span className="eyebrow">系统自动结论</span>
+            <h3>{conclusion}</h3>
+            <p>
+              综合风险指数与主要驱动因素由 R05–R22 客观指标自动计算；R01–R04
+              在下方独立展示。
+            </p>
+          </div>
+          <Badge variant="outline">已生成结论</Badge>
+        </section>
+
+        <section className="customer-risk-hero">
+          <article
+            className="customer-risk-score-card"
+            data-tone={scoreTone(assessment.totalRiskScore)}
+          >
+            <div>
+              <span>综合风险指数</span>
               <Badge variant="outline">
                 {riskLevel(assessment.totalRiskScore)}
               </Badge>
             </div>
-
-            <div className="risk-briefing-score-lockup">
-              <strong>{assessment.totalRiskScore ?? "—"}</strong>
-              <span>综合风险指数</span>
+            <strong>{assessment.totalRiskScore ?? "待评估"}</strong>
+            <p>基于当前可用指标进行同业比较，数值越高表示相对风险越突出。</p>
+            <div className="customer-risk-score-track" aria-hidden="true">
+              <span style={{ width: `${assessment.totalRiskScore ?? 0}%` }} />
             </div>
-
-            <div className="risk-briefing-rank-axis">
-              <div>
-                <span>同业低风险端</span>
-                <span>同业高风险端</span>
-              </div>
-              <div className="risk-briefing-rank-track" aria-hidden="true">
-                {benchmarkPosition !== null ? (
-                  <i style={{ left: `${benchmarkPosition}%` }} />
-                ) : null}
-              </div>
-              <p>
-                风险排名 <b>{selectedRank || "—"}</b> /{" "}
-                {assessment.benchmarkSampleSize}
-                <span>{assessment.benchmarkGroupLabel}</span>
-              </p>
-            </div>
-
-            <h3>{conclusion}</h3>
-            <p className="risk-briefing-method">
-              R05–R22 客观指标按当前可用数据自动计算，缺失项不补零；R01–R04
-              仅作叙事观察，不进入总分。
-            </p>
-          </div>
-
-          <div className="risk-briefing-drivers" data-motion-stage>
-            <header>
-              <div>
-                <span>Risk drivers</span>
-                <h3>当前最值得关注的风险</h3>
-              </div>
-              <small>风险分 / 100</small>
-            </header>
-            <ol>
-              {priorityMetrics.map((metric, index) => (
-                <li key={metric.indicatorId}>
-                  <button
-                    type="button"
-                    data-tone={scoreTone(metric.riskScore)}
-                    data-active={activeDriverId === metric.indicatorId}
-                    aria-pressed={activeDriverId === metric.indicatorId}
-                    onClick={() =>
-                      setDriverSelection({
-                        companyId: response.company.id,
-                        indicatorId: metric.indicatorId,
-                      })
-                    }
-                  >
-                    <span>{String(index + 1).padStart(2, "0")}</span>
-                    <div>
-                      <div>
-                        <b>{metric.indicatorId}</b>
-                        <strong>{metric.label}</strong>
-                        <em>{metric.riskScore ?? "—"}</em>
-                      </div>
-                      <i aria-hidden="true">
-                        <span style={{ width: `${metric.riskScore ?? 0}%` }} />
-                      </i>
-                    </div>
-                  </button>
-                </li>
-              ))}
-            </ol>
-          </div>
-
-          <dl className="risk-briefing-vitals" data-motion-stage>
-            <div>
-              <dt>有效指标</dt>
-              <dd>
+          </article>
+          <div className="customer-risk-kpi-grid">
+            <article>
+              <BarChart3Icon aria-hidden="true" />
+              <span>同业位置</span>
+              <strong>
+                {selectedRank || "—"}
+                <small> / {assessment.benchmarkSampleSize}</small>
+              </strong>
+              <p>{assessment.benchmarkGroupLabel}</p>
+            </article>
+            <article>
+              <CheckCircle2Icon aria-hidden="true" />
+              <span>有效指标</span>
+              <strong>
                 {assessment.weightedScoredIndicatorCount}
-                <small>/18</small>
-              </dd>
-            </div>
-            <div>
-              <dt>数据覆盖</dt>
-              <dd>
+                <small> / 18</small>
+              </strong>
+              <p>有数据的指标均已纳入</p>
+            </article>
+            <article>
+              <Layers3Icon aria-hidden="true" />
+              <span>数据覆盖</span>
+              <strong>
                 {coveragePercent}
                 <small>%</small>
-              </dd>
-            </div>
-            <div>
-              <dt>风险事件</dt>
-              <dd>
+              </strong>
+              <p>缺失项不补零</p>
+            </article>
+            <article>
+              <ClipboardListIcon aria-hidden="true" />
+              <span>风险事件</span>
+              <strong>
                 {response.events.length}
-                <small>条</small>
-              </dd>
-            </div>
-            <div>
-              <dt>叙事样本</dt>
-              <dd>
-                {response.narrativeNewsMetric?.retrievedCount ?? 0}
-                <small>条</small>
-              </dd>
-            </div>
-          </dl>
+                <small> 条</small>
+              </strong>
+              <p>可返回原始来源核验</p>
+            </article>
+          </div>
         </section>
 
-        <div className="risk-briefing-followup">
-          <section className="customer-risk-section customer-risk-actions">
-            <header>
-              <div>
-                <span className="eyebrow">风险驱动 → 应对动作</span>
-                <h3>建议优先执行这三项动作</h3>
-              </div>
-              <Badge variant="outline">由高影响指标自动触发</Badge>
-            </header>
-            <div className="automatic-action-grid">
-              {recommendations.map((recommendation, index) => (
+        <NarrativeObservationPanel response={response} maximumNews={3} />
+
+        <section className="customer-risk-section customer-risk-actions">
+          <header>
+            <div>
+              <span className="eyebrow">系统建议</span>
+              <h3>建议优先执行这三项动作</h3>
+            </div>
+            <Badge variant="outline">由高影响指标自动触发</Badge>
+          </header>
+          <div className="automatic-action-grid">
+            {recommendations.map((recommendation, index) => (
+              <article
+                key={recommendation.indicatorId}
+                data-priority={recommendation.priority}
+              >
+                <div className="automatic-action-index">
+                  {String(index + 1).padStart(2, "0")}
+                </div>
+                <div className="automatic-action-main">
+                  <div>
+                    <Badge variant="outline">{recommendation.priority}</Badge>
+                    <span>{recommendation.trigger}</span>
+                  </div>
+                  <h4>{recommendation.title}</h4>
+                  <p>{recommendation.action}</p>
+                </div>
+                <ArrowRightIcon aria-hidden="true" />
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="customer-risk-section">
+          <header>
+            <div>
+              <span className="eyebrow">优先级</span>
+              <h3>当前最值得关注的风险</h3>
+            </div>
+            <Badge variant="outline">按单项风险影响排序</Badge>
+          </header>
+          {priorityMetrics.length ? (
+            <div className="customer-risk-priority-grid">
+              {priorityMetrics.map((metric, index) => (
                 <article
-                  key={recommendation.indicatorId}
-                  data-priority={recommendation.priority}
-                  data-active={activeDriverId === recommendation.indicatorId}
+                  key={metric.indicatorId}
+                  data-tone={scoreTone(metric.riskScore)}
                 >
-                  <div className="automatic-action-index">
-                    {String(index + 1).padStart(2, "0")}
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <div>
+                    <Badge variant="outline">{metric.indicatorId}</Badge>
+                    <h4>{metric.label}</h4>
+                    <p>
+                      同业风险分位{" "}
+                      {metric.riskPercentile === null
+                        ? "待补充"
+                        : percentFormatter.format(metric.riskPercentile)}
+                    </p>
                   </div>
-                  <div className="automatic-action-main">
-                    <div>
-                      <Badge variant="outline">{recommendation.priority}</Badge>
-                      <span>{recommendation.trigger}</span>
-                    </div>
-                    <h4>{recommendation.title}</h4>
-                    <p>{recommendation.action}</p>
-                  </div>
-                  <ArrowRightIcon aria-hidden="true" />
+                  <strong>{metric.riskScore}</strong>
                 </article>
               ))}
             </div>
-          </section>
-
-          {latestEvents.length ? (
-            <section className="customer-risk-section risk-briefing-evidence">
-              <header>
-                <div>
-                  <span className="eyebrow">Evidence pulse</span>
-                  <h3>最新证据</h3>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => onNavigate?.("realtime")}
-                >
-                  全部资讯
-                </Button>
-              </header>
-              <div className="customer-risk-event-preview">
-                {latestEvents.slice(0, 3).map((event) => (
-                  <article key={event.id}>
-                    <CalendarDaysIcon aria-hidden="true" />
-                    <div>
-                      <span>
-                        {event.date ?? "日期待补充"} · {event.eventType}
-                      </span>
-                      <strong>{event.title}</strong>
-                    </div>
-                    {event.url ? (
-                      <a
-                        href={event.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        aria-label={`查看${event.title}原始来源`}
-                      >
-                        <ExternalLinkIcon aria-hidden="true" />
-                      </a>
-                    ) : null}
-                  </article>
-                ))}
-              </div>
-            </section>
-          ) : null}
-        </div>
+          ) : (
+            <div className="industry-risk-empty">
+              <FileSearchIcon aria-hidden="true" />
+              <p>当前暂无可计算指标，数据补充后会自动生成重点排序。</p>
+            </div>
+          )}
+        </section>
 
         <section className="customer-risk-section">
           <header>
@@ -668,7 +564,46 @@ function IndustryRiskAssessmentContent({
           </Button>
         </section>
 
-        <NarrativeObservationPanel response={response} maximumNews={3} />
+        {latestEvents.length ? (
+          <section className="customer-risk-section">
+            <header>
+              <div>
+                <span className="eyebrow">最新动态</span>
+                <h3>近期风险事件</h3>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onNavigate?.("realtime")}
+              >
+                浏览全部资讯
+              </Button>
+            </header>
+            <div className="customer-risk-event-preview">
+              {latestEvents.map((event) => (
+                <article key={event.id}>
+                  <CalendarDaysIcon aria-hidden="true" />
+                  <div>
+                    <span>
+                      {event.date ?? "日期待补充"} · {event.eventType}
+                    </span>
+                    <strong>{event.title}</strong>
+                  </div>
+                  {event.url ? (
+                    <a
+                      href={event.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`查看${event.title}原始来源`}
+                    >
+                      <ExternalLinkIcon aria-hidden="true" />
+                    </a>
+                  ) : null}
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
       </TabsContent>
 
       <TabsContent value="narrative">
