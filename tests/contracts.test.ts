@@ -523,12 +523,18 @@ test("assessment conclusion leads directly to automatic actions", () => {
   const overviewSource = readProjectFile(
     "src/components/dashboard/industry-risk-review-panel.tsx"
   )
+  const profileDeskSource = readProjectFile(
+    "src/components/dashboard/industry-risk-profile-desk.tsx"
+  )
   const pageStyles = readProjectFile("src/styles/pages.css")
+  const profileStyles = readProjectFile(
+    "src/styles/industry-risk-profile-desk.css"
+  )
 
-  assert.match(overviewSource, /系统自动结论/)
+  assert.match(profileDeskSource, /系统自动结论/)
   assert.match(overviewSource, /建议优先执行这三项动作/)
   assert.match(overviewSource, /generateIndustryRiskRecommendations/)
-  assert.match(pageStyles, /\.customer-risk-conclusion \{/)
+  assert.match(profileStyles, /\.risk-profile-desk__conclusion \{/)
   assert.match(pageStyles, /\.automatic-action-grid \{/)
 })
 

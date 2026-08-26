@@ -5,16 +5,12 @@ import {
   ArrowUpIcon,
   BarChart3Icon,
   CalendarDaysIcon,
-  CheckCircle2Icon,
-  ClipboardListIcon,
   DatabaseZapIcon,
   ExternalLinkIcon,
   FileTextIcon,
   FileSearchIcon,
   GaugeIcon,
   InfoIcon,
-  Layers3Icon,
-  LightbulbIcon,
   NewspaperIcon,
   NetworkIcon,
   RefreshCwIcon,
@@ -22,6 +18,7 @@ import {
 } from "lucide-react"
 
 import { IndustryRiskKnowledgeGraph } from "@/components/dashboard/industry-risk-knowledge-graph"
+import { IndustryRiskProfileDesk } from "@/components/dashboard/industry-risk-profile-desk"
 import { GlassPanel } from "@/components/dashboard/shared"
 import { Reveal } from "@/components/motion/workflow-transition"
 import { Badge } from "@/components/ui/badge"
@@ -31,10 +28,7 @@ import type {
   IndustryRiskAssessmentApiResponse,
   IndustryRiskCompanyDirectoryResponse,
 } from "@/domain/industry-risk-v1/index.ts"
-import {
-  buildIndustryRiskConclusion,
-  generateIndustryRiskRecommendations,
-} from "@/domain/industry-risk-v1/index.ts"
+import { generateIndustryRiskRecommendations } from "@/domain/industry-risk-v1/index.ts"
 import {
   fetchIndustryRiskAssessment,
   fetchIndustryRiskCompanies,
@@ -74,14 +68,6 @@ function scoreTone(score: number | null) {
   if (score >= 55) return "high"
   if (score >= 45) return "medium"
   return "low"
-}
-
-function riskLevel(score: number | null) {
-  if (score === null) return "待评估"
-  if (score >= 65) return "高风险"
-  if (score >= 55) return "较高风险"
-  if (score >= 45) return "中等风险"
-  return "较低风险"
 }
 
 export function IndustryRiskReviewPanel({
@@ -173,7 +159,7 @@ export function IndustryRiskReviewPanel({
           <DatabaseZapIcon aria-hidden="true" />
           <div>
             <strong>正在读取 R01–R22 统一数据</strong>
-            <p>加载四个行业数据库与最新事件、来源和覆盖矩阵。</p>
+            <p>加载行业样本、风险事件、公开来源和覆盖信息。</p>
           </div>
         </GlassPanel>
       </Reveal>
@@ -257,12 +243,12 @@ export function IndustryRiskReviewPanel({
             <span>{selectedSummary?.benchmarkSampleSize ?? 0} 家同业样本</span>
             <span>当前排名 {selectedRank || "—"}</span>
             <span>{selectedSummary?.eventCount ?? 0} 条风险事件</span>
-            <Badge variant="outline">毛同学数据库 · 深搜增强版</Badge>
           </div>
 
           <div className="industry-risk-body">
             <section className="industry-risk-assessment" aria-live="polite">
-              {assessment.status === "success" ? (
+              {assessment.status === "success" &&
+              assessment.value.company.id === companyId ? (
                 <IndustryRiskAssessmentContent
                   response={assessment.value}
                   selectedRank={selectedRank}
@@ -345,12 +331,9 @@ function IndustryRiskAssessmentContent({
   const missingMetrics = assessment.metrics.filter(
     (metric) => metric.kind === "weighted" && metric.riskScore === null
   )
-  const priorityMetrics = scoredMetrics.slice(0, 5)
   const latestEvents = [...response.events]
     .sort((left, right) => (right.date ?? "").localeCompare(left.date ?? ""))
     .slice(0, 4)
-  const coveragePercent = Math.round(assessment.weightedDataCoverage * 100)
-  const conclusion = buildIndustryRiskConclusion(assessment)
   const recommendations = generateIndustryRiskRecommendations(assessment)
 
   return (
@@ -368,79 +351,10 @@ function IndustryRiskAssessmentContent({
       </TabsList>
 
       <TabsContent value="overview">
-        <section className="customer-risk-conclusion">
-          <div className="customer-risk-conclusion-icon">
-            <LightbulbIcon aria-hidden="true" />
-          </div>
-          <div>
-            <span className="eyebrow">系统自动结论</span>
-            <h3>{conclusion}</h3>
-            <p>
-              综合风险指数与主要驱动因素由 R05–R22 客观指标自动计算；R01–R04
-              在下方独立展示。
-            </p>
-          </div>
-          <Badge variant="outline">已生成结论</Badge>
-        </section>
-
-        <section className="customer-risk-hero">
-          <article
-            className="customer-risk-score-card"
-            data-tone={scoreTone(assessment.totalRiskScore)}
-          >
-            <div>
-              <span>综合风险指数</span>
-              <Badge variant="outline">
-                {riskLevel(assessment.totalRiskScore)}
-              </Badge>
-            </div>
-            <strong>{assessment.totalRiskScore ?? "待评估"}</strong>
-            <p>基于当前可用指标进行同业比较，数值越高表示相对风险越突出。</p>
-            <div className="customer-risk-score-track" aria-hidden="true">
-              <span style={{ width: `${assessment.totalRiskScore ?? 0}%` }} />
-            </div>
-          </article>
-          <div className="customer-risk-kpi-grid">
-            <article>
-              <BarChart3Icon aria-hidden="true" />
-              <span>同业位置</span>
-              <strong>
-                {selectedRank || "—"}
-                <small> / {assessment.benchmarkSampleSize}</small>
-              </strong>
-              <p>{assessment.benchmarkGroupLabel}</p>
-            </article>
-            <article>
-              <CheckCircle2Icon aria-hidden="true" />
-              <span>有效指标</span>
-              <strong>
-                {assessment.weightedScoredIndicatorCount}
-                <small> / 18</small>
-              </strong>
-              <p>有数据的指标均已纳入</p>
-            </article>
-            <article>
-              <Layers3Icon aria-hidden="true" />
-              <span>数据覆盖</span>
-              <strong>
-                {coveragePercent}
-                <small>%</small>
-              </strong>
-              <p>缺失项不补零</p>
-            </article>
-            <article>
-              <ClipboardListIcon aria-hidden="true" />
-              <span>风险事件</span>
-              <strong>
-                {response.events.length}
-                <small> 条</small>
-              </strong>
-              <p>可返回原始来源核验</p>
-            </article>
-          </div>
-        </section>
-
-        <NarrativeObservationPanel response={response} maximumNews={3} />
+        <IndustryRiskProfileDesk
+          response={response}
+          selectedRank={selectedRank}
+        />
 
         <section className="customer-risk-section customer-risk-actions">
           <header>
@@ -468,76 +382,6 @@ function IndustryRiskAssessmentContent({
                   <p>{recommendation.action}</p>
                 </div>
                 <ArrowRightIcon aria-hidden="true" />
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="customer-risk-section">
-          <header>
-            <div>
-              <span className="eyebrow">优先级</span>
-              <h3>当前最值得关注的风险</h3>
-            </div>
-            <Badge variant="outline">按单项风险影响排序</Badge>
-          </header>
-          {priorityMetrics.length ? (
-            <div className="customer-risk-priority-grid">
-              {priorityMetrics.map((metric, index) => (
-                <article
-                  key={metric.indicatorId}
-                  data-tone={scoreTone(metric.riskScore)}
-                >
-                  <span>{String(index + 1).padStart(2, "0")}</span>
-                  <div>
-                    <Badge variant="outline">{metric.indicatorId}</Badge>
-                    <h4>{metric.label}</h4>
-                    <p>
-                      同业风险分位{" "}
-                      {metric.riskPercentile === null
-                        ? "待补充"
-                        : percentFormatter.format(metric.riskPercentile)}
-                    </p>
-                  </div>
-                  <strong>{metric.riskScore}</strong>
-                </article>
-              ))}
-            </div>
-          ) : (
-            <div className="industry-risk-empty">
-              <FileSearchIcon aria-hidden="true" />
-              <p>当前暂无可计算指标，数据补充后会自动生成重点排序。</p>
-            </div>
-          )}
-        </section>
-
-        <section className="customer-risk-section">
-          <header>
-            <div>
-              <span className="eyebrow">风险结构</span>
-              <h3>五大风险领域</h3>
-            </div>
-          </header>
-          <div className="customer-risk-dimension-grid">
-            {assessment.dimensionScores.map((dimension) => (
-              <article
-                key={dimension.id}
-                data-tone={scoreTone(dimension.score)}
-              >
-                <div>
-                  <span>{dimension.label}</span>
-                  <strong>{dimension.score ?? "待评估"}</strong>
-                </div>
-                <div
-                  className="customer-risk-dimension-track"
-                  aria-hidden="true"
-                >
-                  <span style={{ width: `${dimension.score ?? 0}%` }} />
-                </div>
-                <small>
-                  {dimension.availableIndicatorCount}/
-                  {dimension.totalIndicatorCount} 项已有有效数据
-                </small>
               </article>
             ))}
           </div>
@@ -604,6 +448,8 @@ function IndustryRiskAssessmentContent({
             </div>
           </section>
         ) : null}
+
+        <NarrativeObservationPanel response={response} maximumNews={3} />
       </TabsContent>
 
       <TabsContent value="narrative">
@@ -1023,7 +869,7 @@ function NarrativeObservationPanel({
           ) : (
             <div className="industry-risk-empty">
               <FileSearchIcon aria-hidden="true" />
-              <p>已有新闻汇总，但本地运行快照尚无可展示的文章样本。</p>
+              <p>已有新闻汇总，但当前暂无可展示的文章样本。</p>
             </div>
           )}
         </div>

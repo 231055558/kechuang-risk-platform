@@ -443,7 +443,7 @@ export function createEventsCsvContent(
     ["字段", "值"],
     ["企业ID", detail.id],
     ["企业名称", detail.name],
-    ["数据清单版本", manifest.version || "未提供"],
+    ["数据更新至", manifest.snapshotAt],
     ["指标口径版本", manifest.indicatorVersion || assessment.methodVersion],
     ["方法版本", assessment.methodVersion],
     ["研判数据截至", manifest.snapshotAt],
@@ -611,7 +611,7 @@ export function createRiskSummaryPrintHtml(
       </head>
       <body>
         <h1>${escapeHtml(detail.name)} 科创企业风险摘要</h1>
-        <div class="meta">${escapeHtml(detail.sector)} · ${escapeHtml(detail.stage)} · 研判数据截至 ${escapeHtml(manifest.snapshotAt)} · 公开情报更新至 ${escapeHtml(publicIntelligenceSnapshotAt ? formatSourceDateTime(publicIntelligenceSnapshotAt) : "未提供")} · 方法版本 ${escapeHtml(assessment.methodVersion)} · 评分基础 ${escapeHtml(assessment.scoreBasisLabel)} · 数据清单版本 ${escapeHtml(manifest.version || "未提供")}</div>
+        <div class="meta">${escapeHtml(detail.sector)} · ${escapeHtml(detail.stage)} · 研判数据截至 ${escapeHtml(manifest.snapshotAt)} · 公开情报更新至 ${escapeHtml(publicIntelligenceSnapshotAt ? formatSourceDateTime(publicIntelligenceSnapshotAt) : "未提供")} · 方法版本 ${escapeHtml(assessment.methodVersion)} · 评分基础 ${escapeHtml(assessment.scoreBasisLabel)}</div>
         <div class="metrics">
           <div class="metric"><span>${escapeHtml(assessment.label)}</span><strong>${escapeHtml(assessment.scoreLabel)}</strong></div>
           <div class="metric"><span>可评估维度</span><strong>${assessment.assessableDimensionCount}/6</strong></div>

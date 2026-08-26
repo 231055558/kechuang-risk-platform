@@ -17,6 +17,10 @@ test("all company overviews use the customer-facing industry workspace by defaul
   const panel = readProjectFile(
     "src/components/dashboard/industry-risk-review-panel.tsx"
   )
+  const profileDesk = readProjectFile(
+    "src/components/dashboard/industry-risk-profile-desk.tsx"
+  )
+  const customerOverview = `${panel}\n${profileDesk}`
 
   assert.match(overview, /if \(detail\.id\)/)
   assert.match(overview, /<IndustryRiskReviewPanel/)
@@ -24,7 +28,7 @@ test("all company overviews use the customer-facing industry workspace by defaul
   assert.doesNotMatch(overview, /KcrV3AssessmentPanel/)
   assert.match(panel, /企业风险画像/)
   assert.match(panel, /风险总览/)
-  assert.match(panel, /当前最值得关注的风险/)
+  assert.match(customerOverview, /当前最值得关注的风险/)
   assert.match(panel, /单项缺失不补零/)
   assert.match(panel, /数据与方法/)
 })

@@ -1033,7 +1033,7 @@ realtimeSignals.sort((left, right) =>
 
 export const realtimeData: RealTimeDataSet = {
   snapshotAt: `${snapshotAt}T23:59:59+08:00`,
-  note: "由现有 R01–R22 数据库中的深搜事件、问询、诉讼和限制清单命中统一生成。",
+  note: "由当前 R01–R22 行业样本中的公开事件、监管问询、诉讼与限制清单信息统一生成。",
   dailyBrief: {
     date: snapshotAt,
     capturedAt: `${snapshotAt}T23:59:59+08:00`,
@@ -1069,7 +1069,7 @@ export const manifest: ManifestRecord = {
   totalEvents: realtimeSignals.length,
   sourceStats: [
     { type: "结构化来源", count: dataset.sources.length },
-    { type: "深搜事件", count: dataset.deepSearchEvents?.length ?? 0 },
+    { type: "结构化公开事件", count: dataset.deepSearchEvents?.length ?? 0 },
     { type: "补充事实", count: dataset.supplementaryObservations?.length ?? 0 },
   ],
   officialSourceCount: dataset.sources.filter((source) =>
@@ -1082,7 +1082,7 @@ export const manifest: ManifestRecord = {
   ).length,
   indicatorVersion: "R01–R22",
   disclaimer: "用于辅助研判，不构成投资建议或监管认定。",
-  note: dataset.metadata.scopeNote,
+  note: "数据按企业与行业样本统一归集；缺失值保持未提供，不以零替代。",
 }
 
 export const commonPlaybook: CommonPlaybookItem[] = dimensionDefinitions.map(
