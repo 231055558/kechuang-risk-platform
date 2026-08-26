@@ -133,13 +133,13 @@ test("navigation exposes four business groups and ten direct workflows", () => {
       {
         id: "investment-constraints",
         label: "投资约束",
-        group: "投资约束与建议",
+        group: "约束与应对",
         target: { view: "events", operationsSection: "investment" },
       },
       {
         id: "investment-advice",
-        label: "投资建议",
-        group: "投资约束与建议",
+        label: "风险应对",
+        group: "约束与应对",
         target: { view: "events", operationsSection: "advice" },
       },
     ]
@@ -148,7 +148,7 @@ test("navigation exposes four business groups and ten direct workflows", () => {
     "研判工作台",
     "事件处理",
     "企业研究",
-    "投资约束与建议",
+    "约束与应对",
   ])
   assert.ok(navItems.every((item) => item.description.trim().length > 0))
 
@@ -523,12 +523,18 @@ test("assessment conclusion leads directly to automatic actions", () => {
   const overviewSource = readProjectFile(
     "src/components/dashboard/industry-risk-review-panel.tsx"
   )
+  const profileDeskSource = readProjectFile(
+    "src/components/dashboard/industry-risk-profile-desk.tsx"
+  )
   const pageStyles = readProjectFile("src/styles/pages.css")
+  const profileStyles = readProjectFile(
+    "src/styles/industry-risk-profile-desk.css"
+  )
 
-  assert.match(overviewSource, /系统自动结论/)
+  assert.match(profileDeskSource, /系统自动结论/)
   assert.match(overviewSource, /建议优先执行这三项动作/)
   assert.match(overviewSource, /generateIndustryRiskRecommendations/)
-  assert.match(pageStyles, /\.customer-risk-conclusion \{/)
+  assert.match(profileStyles, /\.risk-profile-desk__conclusion \{/)
   assert.match(pageStyles, /\.automatic-action-grid \{/)
 })
 
@@ -712,7 +718,7 @@ test("method and comparison controls live in their relevant content regions", ()
   assert.doesNotMatch(compareSource, /compare-switcher-glass/)
 })
 
-test("liquid glass defines the shell and major workflow surfaces", () => {
+test("the institutional research desk defines the shell and major workflow surfaces", () => {
   const overviewSource = readProjectFile(
     "src/components/dashboard/overview-tab.tsx"
   )
@@ -738,32 +744,27 @@ test("liquid glass defines the shell and major workflow surfaces", () => {
       pattern: /surfaceClassName="filter-toolbar-glass"/,
     },
   ]
-  const liquidSurfaceSource = readProjectFile(
-    "src/components/liquid/liquid-glass-surface.tsx"
-  )
-  const shellStyles = readProjectFile("src/styles/shell.css")
-  const pageStyles = readProjectFile("src/styles/pages.css")
+  const riskOsStyles = readProjectFile("src/styles/risk-os.css")
+  const indexStyles = readProjectFile("src/index.css")
 
   assert.match(overviewSource, /<GlassPanel/)
   assert.match(overviewSource, /surfaceClassName="assessment-hero-glass"/)
   assert.match(overviewSource, /assessment-kpi-grid/)
   assert.match(overviewSource, /assessment-kpi-item/)
-  assert.match(sharedSource, /<LiquidGlassSurface/)
-  assert.match(topBarSource, /LiquidGlassSurface/)
+  assert.match(sharedSource, /risk-os-panel-frame/)
+  assert.doesNotMatch(sharedSource, /<LiquidGlassSurface/)
+  assert.match(topBarSource, /risk-os-command-surface/)
+  assert.doesNotMatch(topBarSource, /LiquidGlassSurface/)
   workflowSurfaces.forEach(({ path, pattern }) => {
     assert.match(readProjectFile(path), pattern)
   })
-  assert.match(liquidSurfaceSource, /data-refraction="off"/)
-  assert.match(liquidSurfaceSource, /data-refraction="on"/)
-  assert.match(shellStyles, /\.liquid-glass-effect-host/)
-  assert.match(shellStyles, /\.liquid-glass-content/)
+  assert.match(indexStyles, /@import "\.\/styles\/risk-os\.css";/)
+  assert.match(riskOsStyles, /\.risk-os-sidebar-surface/)
+  assert.match(riskOsStyles, /\.risk-os-command-surface/)
+  assert.match(riskOsStyles, /\.risk-os-shell \.industry-graph-content/)
   assert.match(
-    pageStyles,
-    /\.liquid-glass-native\.assessment-hero-glass[\s\S]*backdrop-filter: none/
-  )
-  assert.match(
-    pageStyles,
-    /\.liquid-glass-native\.research-hero-glass[\s\S]*backdrop-filter: none/
+    riskOsStyles,
+    /\.risk-os-shell \.liquid-glass-surface\s*\{[\s\S]*?background:\s*transparent !important/
   )
 })
 

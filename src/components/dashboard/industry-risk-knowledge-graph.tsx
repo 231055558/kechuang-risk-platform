@@ -5,6 +5,8 @@ import cytoscape, {
   type StylesheetJson,
 } from "cytoscape"
 import fcose from "cytoscape-fcose"
+import { useGSAP } from "@gsap/react"
+import gsap from "gsap"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import {
@@ -23,7 +25,11 @@ import {
 } from "lucide-react"
 
 import { LiquidGlassSurface } from "@/components/liquid"
-import { Reveal } from "@/components/motion/workflow-transition"
+import {
+  PRODUCTIVE_MOTION,
+  Reveal,
+  usePrefersReducedMotion,
+} from "@/components/motion/workflow-transition"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type {
@@ -53,7 +59,7 @@ const nodeKindLabels: Record<IndustryRiskGraphNodeKind, string> = {
   event: "风险事件",
 }
 
-const graphStyles: StylesheetJson = [
+const graphStyles = (transitionDuration: number): StylesheetJson => [
   {
     selector: "node",
     style: {
@@ -61,10 +67,10 @@ const graphStyles: StylesheetJson = [
       height: "data(height)",
       shape: "ellipse",
       "background-color": "data(color)",
-      "background-opacity": 0.9,
-      "border-color": "#f8fafc",
-      "border-opacity": 0.58,
-      "border-width": 2,
+      "background-opacity": 0.96,
+      "border-color": "#ffffff",
+      "border-opacity": 0.9,
+      "border-width": 2.5,
       label: "data(label)",
       color: "#f8fafc",
       "font-family": "Geist Variable, ui-sans-serif, system-ui, sans-serif",
@@ -74,13 +80,13 @@ const graphStyles: StylesheetJson = [
       "text-halign": "center",
       "text-valign": "center",
       "text-wrap": "wrap",
-      "text-max-width": "78px",
+      "text-max-width": "108px",
       "text-outline-color": "#0f172a",
-      "text-outline-opacity": 0.76,
-      "text-outline-width": 2.2,
+      "text-outline-opacity": 0.72,
+      "text-outline-width": 1.8,
       "overlay-opacity": 0,
       "transition-property": "opacity, border-width, border-color",
-      "transition-duration": 180,
+      "transition-duration": transitionDuration,
       "transition-timing-function": "ease-out",
     },
   },
@@ -93,8 +99,8 @@ const graphStyles: StylesheetJson = [
       "text-max-width": "112px",
       "text-outline-width": 3.2,
       "underlay-color": "data(color)",
-      "underlay-opacity": 0.3,
-      "underlay-padding": 12,
+      "underlay-opacity": 0.14,
+      "underlay-padding": 10,
       "z-index": 20,
     },
   },
@@ -103,7 +109,7 @@ const graphStyles: StylesheetJson = [
     style: {
       shape: "round-rectangle",
       "background-color": "data(color)",
-      "background-opacity": 0.9,
+      "background-opacity": 0.96,
       "border-color": "#f8fafc",
       "border-opacity": 0.72,
       "border-style": "solid",
@@ -114,7 +120,7 @@ const graphStyles: StylesheetJson = [
       "text-halign": "center",
       "text-valign": "center",
       "text-max-width": "116px",
-      "text-outline-width": 2.6,
+      "text-outline-width": 2,
       "z-index": 14,
     },
   },
@@ -142,9 +148,9 @@ const graphStyles: StylesheetJson = [
     selector: 'node[kind = "source"]',
     style: {
       shape: "diamond",
-      "background-opacity": 0.8,
-      "border-color": "#bae6fd",
-      label: "",
+      "background-opacity": 0.94,
+      "border-color": "#ffffff",
+      label: "data(label)",
       "font-size": 9,
       "text-max-width": "68px",
       "text-valign": "bottom",
@@ -155,9 +161,9 @@ const graphStyles: StylesheetJson = [
     selector: 'node[kind = "event"]',
     style: {
       shape: "round-hexagon",
-      "background-opacity": 0.88,
-      "border-color": "#fecdd3",
-      label: "",
+      "background-opacity": 0.94,
+      "border-color": "#ffffff",
+      label: "data(label)",
       "font-size": 9,
       "text-max-width": "68px",
       "text-valign": "bottom",
@@ -175,7 +181,7 @@ const graphStyles: StylesheetJson = [
       opacity: 0.28,
       "overlay-opacity": 0,
       "transition-property": "opacity, width, line-color",
-      "transition-duration": 180,
+      "transition-duration": transitionDuration,
       "transition-timing-function": "ease-out",
     },
   },
@@ -184,7 +190,7 @@ const graphStyles: StylesheetJson = [
     style: {
       opacity: 0.56,
       width: 2.2,
-      "line-color": "#818cf8",
+      "line-color": "#64748b",
     },
   },
   {
@@ -212,7 +218,7 @@ const graphStyles: StylesheetJson = [
   {
     selector: ".is-dimmed",
     style: {
-      opacity: 0.07,
+      opacity: 0.1,
     },
   },
   {
@@ -230,11 +236,11 @@ const graphStyles: StylesheetJson = [
       width: 3.4,
       opacity: 0.96,
       label: "data(label)",
-      color: "#f8fafc",
+      color: "#1f2937",
       "font-size": 9,
       "font-weight": 700,
-      "text-background-color": "#0f172a",
-      "text-background-opacity": 0.88,
+      "text-background-color": "#ffffff",
+      "text-background-opacity": 0.94,
       "text-background-padding": "3px",
       "text-rotation": "autorotate",
       "text-margin-y": -7,
@@ -244,14 +250,15 @@ const graphStyles: StylesheetJson = [
 
 function layoutOptions(
   animate: boolean,
-  companyNodeId: string
+  companyNodeId: string,
+  animationDuration: number
 ): cytoscapeFcose.FcoseLayoutOptions {
   return {
     name: "fcose",
     quality: "default",
     randomize: false,
     animate,
-    animationDuration: animate ? 720 : 0,
+    animationDuration: animate ? animationDuration : 0,
     animationEasing: "ease-out",
     fit: true,
     padding: 44,
@@ -398,11 +405,17 @@ function IndustryRiskKnowledgeGraphContent({
   onActiveNodeChange: (nodeId: string | null) => void
 }) {
   const canvasRef = useRef<HTMLDivElement>(null)
+  const inspectorRef = useRef<HTMLElement>(null)
   const cytoscapeRef = useRef<Core | null>(null)
   const [engineError, setEngineError] = useState<string | null>(null)
   const [isImmersive, setIsImmersive] = useState(false)
   const [graphView, setGraphView] = useState<IndustryRiskGraphView>("all")
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null)
+  const prefersReducedMotion = usePrefersReducedMotion()
+  const motionDuration = useCallback(
+    (seconds: number) => (prefersReducedMotion ? 0 : seconds * 1000),
+    [prefersReducedMotion]
+  )
   const visibleGraph = useMemo(
     () => selectIndustryRiskGraphView(graph, graphView),
     [graph, graphView]
@@ -437,6 +450,36 @@ function IndustryRiskKnowledgeGraphContent({
   const countKind = (kind: IndustryRiskGraphNodeKind) =>
     visibleGraph.nodes.filter((node) => node.kind === kind).length
 
+  useGSAP(
+    () => {
+      const inspector = inspectorRef.current
+      if (!inspector) return
+
+      if (prefersReducedMotion) {
+        gsap.set(inspector, { clearProps: "opacity,transform" })
+        return
+      }
+
+      gsap.fromTo(
+        inspector,
+        { autoAlpha: 0, x: 12 },
+        {
+          autoAlpha: 1,
+          x: 0,
+          duration: PRODUCTIVE_MOTION.state,
+          ease: PRODUCTIVE_MOTION.easeEnter,
+          clearProps: "opacity,transform,visibility",
+          overwrite: "auto",
+        }
+      )
+    },
+    {
+      scope: inspectorRef,
+      dependencies: [activeNodeId, prefersReducedMotion],
+      revertOnUpdate: true,
+    }
+  )
+
   useEffect(() => {
     if (
       activeNodeId &&
@@ -459,7 +502,7 @@ function IndustryRiskKnowledgeGraphContent({
       cy = cytoscape({
         container,
         elements,
-        style: graphStyles,
+        style: graphStyles(motionDuration(PRODUCTIVE_MOTION.fast)),
         layout: { name: "preset", fit: true, padding: 44, animate: false },
         minZoom: 0.28,
         maxZoom: 3.4,
@@ -481,7 +524,10 @@ function IndustryRiskKnowledgeGraphContent({
           .closedNeighborhood()
           .union(node.parents())
           .union(node.children())
-        cy?.animate({ fit: { eles: focus, padding: 80 }, duration: 380 })
+        cy?.animate({
+          fit: { eles: focus, padding: 80 },
+          duration: motionDuration(PRODUCTIVE_MOTION.state),
+        })
       })
       cy.on("mouseover", "node", (event) => {
         const node = event.target as NodeSingular
@@ -508,7 +554,7 @@ function IndustryRiskKnowledgeGraphContent({
       cy?.destroy()
       cytoscapeRef.current = null
     }
-  }, [elements, isImmersive, onActiveNodeChange])
+  }, [elements, isImmersive, motionDuration, onActiveNodeChange])
 
   useEffect(() => {
     const cy = cytoscapeRef.current
@@ -562,22 +608,40 @@ function IndustryRiskKnowledgeGraphContent({
   const fitGraph = useCallback(() => {
     const cy = cytoscapeRef.current
     if (!cy) return
-    cy.animate({ fit: { eles: cy.elements(), padding: 44 }, duration: 320 })
-  }, [])
+    cy.animate({
+      fit: { eles: cy.elements(), padding: 44 },
+      duration: motionDuration(PRODUCTIVE_MOTION.state),
+    })
+  }, [motionDuration])
 
-  const zoomBy = useCallback((factor: number) => {
-    const cy = cytoscapeRef.current
-    if (!cy) return
-    cy.animate({ zoom: cy.zoom() * factor, duration: 220 })
-  }, [])
+  const zoomBy = useCallback(
+    (factor: number) => {
+      const cy = cytoscapeRef.current
+      if (!cy) return
+      cy.animate({
+        zoom: cy.zoom() * factor,
+        duration: motionDuration(PRODUCTIVE_MOTION.fast),
+      })
+    },
+    [motionDuration]
+  )
 
   const rerunLayout = () => {
     const cy = cytoscapeRef.current
     if (!cy || !companyNodeId) return
     onActiveNodeChange(null)
-    const layout = cy.layout(layoutOptions(true, companyNodeId))
+    const layout = cy.layout(
+      layoutOptions(
+        !prefersReducedMotion,
+        companyNodeId,
+        motionDuration(PRODUCTIVE_MOTION.graph)
+      )
+    )
     layout.one("layoutstop", () => {
-      cy.animate({ fit: { eles: cy.elements(), padding: 44 }, duration: 280 })
+      cy.animate({
+        fit: { eles: cy.elements(), padding: 44 },
+        duration: motionDuration(PRODUCTIVE_MOTION.state),
+      })
     })
     layout.run()
   }
@@ -625,7 +689,11 @@ function IndustryRiskKnowledgeGraphContent({
       </div>
 
       {activeNode ? (
-        <aside className="industry-graph-inspector" aria-live="polite">
+        <aside
+          ref={inspectorRef}
+          className="industry-graph-inspector"
+          aria-live="polite"
+        >
           <button
             type="button"
             className="industry-graph-inspector-close"
@@ -672,9 +740,7 @@ function IndustryRiskKnowledgeGraphContent({
         >
           <header className="industry-graph-header">
             <div>
-              <span className="eyebrow">
-                单企业语义径向图 · Cytoscape + fCoSE
-              </span>
+              <span className="eyebrow">单企业风险关系 · 来源可追溯</span>
               <h2 id="industry-graph-title">{companyName}企业风险知识图谱</h2>
               <p>
                 {graphView === "narrative"
@@ -699,7 +765,7 @@ function IndustryRiskKnowledgeGraphContent({
               </Button>
               <Button variant="outline" size="sm" onClick={rerunLayout}>
                 <RefreshCwIcon data-icon="inline-start" />
-                力导优化
+                优化布局
               </Button>
               <Button
                 variant="outline"

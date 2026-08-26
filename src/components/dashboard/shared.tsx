@@ -8,10 +8,7 @@ import {
   LoaderCircleIcon,
 } from "lucide-react"
 
-import {
-  LiquidGlassSurface,
-  type LiquidGlassVariant,
-} from "@/components/liquid"
+import type { LiquidGlassVariant } from "@/components/liquid"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -73,15 +70,14 @@ export function GlassPanel({
   variant?: LiquidGlassVariant
 }) {
   return (
-    <LiquidGlassSurface
-      variant={variant}
-      className={cn("glass-panel-surface", surfaceClassName)}
-      padding="0"
+    <div
+      className={cn("risk-os-panel-frame", surfaceClassName)}
+      data-surface={variant}
     >
       <section className={className} {...props}>
         {children}
       </section>
-    </LiquidGlassSurface>
+    </div>
   )
 }
 

@@ -11,149 +11,82 @@ function readProjectFile(path: string) {
   return readFileSync(join(projectRoot, path), "utf8")
 }
 
-test("the Apple material layer is loaded last and uses the system font stack", () => {
+test("the institutional research desk is the final presentation layer", () => {
   const indexStyles = readProjectFile("src/index.css")
-  const themeStyles = readProjectFile("src/styles/theme.css")
+  const riskOsStyles = readProjectFile("src/styles/risk-os.css")
 
   assert.doesNotMatch(indexStyles, /@fontsource-variable\/geist/)
   assert.match(
     indexStyles,
-    /@import "\.\/styles\/pages\.css";\s*@import "\.\/styles\/apple-design\.css";/
+    /@import "\.\/styles\/apple-design\.css";\s*@import "\.\/styles\/risk-os\.css";/
   )
-  assert.match(themeStyles, /--font-sans:\s*[\s\S]*?-apple-system/)
-  assert.match(themeStyles, /BlinkMacSystemFont/)
-  assert.match(themeStyles, /"SF Pro Text"/)
-  assert.match(themeStyles, /"PingFang SC"/)
-  assert.match(themeStyles, /--ease-spring:\s*linear\(/)
+  assert.match(riskOsStyles, /--risk-os-sidebar:\s*#17191d/)
+  assert.match(riskOsStyles, /--risk-os-blue:\s*#3157d5/)
+  assert.match(riskOsStyles, /--risk-os-danger:\s*#bd3447/)
+  assert.match(riskOsStyles, /"PingFang SC"/)
+  assert.match(riskOsStyles, /font-variant-numeric:\s*tabular-nums/)
 })
 
-test("Apple accessibility preferences disable refraction and strengthen materials", () => {
-  const themeStyles = readProjectFile("src/styles/theme.css")
-  const appleStyles = readProjectFile("src/styles/apple-design.css")
-  const liquidSource = readProjectFile(
-    "src/components/liquid/liquid-glass-surface.tsx"
-  )
+test("the research desk preserves reduced motion and forced-colors fallbacks", () => {
+  const riskOsStyles = readProjectFile("src/styles/risk-os.css")
 
-  assert.match(themeStyles, /@media \(prefers-reduced-transparency: reduce\)/)
-  assert.match(themeStyles, /@media \(prefers-contrast: more\)/)
   assert.match(
-    liquidSource,
-    /prefers-reduced-transparency: reduce[\s\S]*prefers-contrast: more[\s\S]*forced-colors: active/
+    riskOsStyles,
+    /@media \(prefers-reduced-motion: reduce\)[\s\S]*animation-duration:\s*0\.01ms !important/
   )
   assert.match(
-    appleStyles,
-    /@media \(prefers-reduced-transparency: reduce\)[\s\S]*?\.liquid-glass-effect-host[\s\S]*?display:\s*none !important/
+    riskOsStyles,
+    /@media \(forced-colors: active\)[\s\S]*outline:\s*2px solid Highlight/
   )
-  assert.match(appleStyles, /@media \(prefers-contrast: more\)/)
-  assert.match(appleStyles, /@media \(forced-colors: active\)/)
 })
 
-test("glass is layered across shell, reading planes, and overlays instead of rows", () => {
+test("the shell uses flat institutional surfaces instead of liquid glass", () => {
   const sidebarSource = readProjectFile(
     "src/components/layout/sidebar-nav.tsx"
   )
-  const appleStyles = readProjectFile("src/styles/apple-design.css")
+  const topBarSource = readProjectFile(
+    "src/components/layout/top-command-bar.tsx"
+  )
+  const sharedSource = readProjectFile("src/components/dashboard/shared.tsx")
+  const riskOsStyles = readProjectFile("src/styles/risk-os.css")
 
+  assert.match(sidebarSource, /risk-os-sidebar-surface/)
+  assert.match(sidebarSource, /机构研究工作站/)
+  assert.doesNotMatch(sidebarSource, /LiquidGlassSurface/)
+  assert.match(topBarSource, /risk-os-command-surface/)
+  assert.doesNotMatch(topBarSource, /LiquidGlassSurface/)
+  assert.match(sharedSource, /risk-os-panel-frame/)
+  assert.doesNotMatch(sharedSource, /<LiquidGlassSurface/)
   assert.match(
-    sidebarSource,
-    /variant="selector"[\s\S]*?refractive=\{false\}/
-  )
-  assert.match(
-    appleStyles,
-    /\.sidebar-company-glass\s*\{[\s\S]*?backdrop-filter:\s*none/
-  )
-  assert.match(
-    appleStyles,
-    /\.page-section,[\s\S]*?\.research-highlight-glass\s*\{[\s\S]*?backdrop-filter:\s*none/
-  )
-  assert.match(
-    appleStyles,
-    /\.page-section \[data-slot="card"\]:not\(\.research-highlight-glass\)\s*\{[\s\S]*?backdrop-filter:\s*none/
-  )
-  assert.match(
-    appleStyles,
-    /\[data-slot="dialog-content"\],[\s\S]*?\[data-slot="sheet-content"\]\s*\{[\s\S]*?backdrop-filter:\s*blur\(32px\)/
-  )
-  assert.match(
-    appleStyles,
-    /\[data-slot="dialog-overlay"\],[\s\S]*?\[data-slot="sheet-overlay"\]\s*\{[\s\S]*?backdrop-filter:\s*none/
+    riskOsStyles,
+    /\.risk-os-shell \.liquid-glass-surface\s*\{[\s\S]*?backdrop-filter:\s*none !important/
   )
 })
 
-test("page section tones and dark materials can override the base glass layer", () => {
-  const businessStyles = readProjectFile("src/styles/business.css")
-  const appleStyles = readProjectFile("src/styles/apple-design.css")
+test("risk colors, narrative colors, and interaction colors have separate roles", () => {
+  const riskOsStyles = readProjectFile("src/styles/risk-os.css")
 
-  assert.doesNotMatch(
-    businessStyles,
-    /\.page-section:not\(\.glass-panel-surface \.page-section\)/
-  )
-  assert.doesNotMatch(
-    appleStyles,
-    /\.page-section:not\(\.glass-panel-surface \.page-section\)/
-  )
+  assert.match(riskOsStyles, /--risk-os-blue:\s*#3157d5/)
+  assert.match(riskOsStyles, /--risk-os-danger:\s*#bd3447/)
+  assert.match(riskOsStyles, /--risk-os-warning:\s*#9a5b00/)
+  assert.match(riskOsStyles, /--risk-os-success:\s*#18725a/)
+  assert.match(riskOsStyles, /--risk-os-narrative:\s*#7257c7/)
   assert.match(
-    businessStyles,
-    /\.page-section:not\(:where\(\.glass-panel-surface \.page-section\)\)/
-  )
-  assert.match(
-    appleStyles,
-    /\.page-section:not\(:where\(\.glass-panel-surface \.page-section\)\)/
-  )
-  assert.match(
-    appleStyles,
-    /\.dark \.page-section\s*\{[\s\S]*?oklch\(0\.72 0\.035 228 \/ 0\.055\)/
+    riskOsStyles,
+    /\[data-tone="negative"\][\s\S]*?var\(--risk-os-danger\)/
   )
 })
 
-test("controls provide immediate press feedback with interruptible spring release", () => {
-  const buttonSource = readProjectFile("src/components/ui/button.tsx")
-  const appleStyles = readProjectFile("src/styles/apple-design.css")
+test("productive motion uses scoped GSAP and a single reduced-motion store", () => {
+  const motionSource = readProjectFile(
+    "src/components/motion/workflow-transition.tsx"
+  )
 
-  assert.match(
-    buttonSource,
-    /transition-\[color,background-color,border-color,box-shadow,transform,opacity\]/
-  )
-  assert.doesNotMatch(buttonSource, /hover:\[&_svg/)
-  assert.match(
-    appleStyles,
-    /\[data-slot="button"\]:not\(:disabled\):active,[\s\S]*?transform:\s*scale\(0\.97\)/
-  )
-  assert.match(
-    appleStyles,
-    /\.top-icon-button:active\s*\{[\s\S]*?transform:\s*scale\(0\.92\)/
-  )
-  assert.match(
-    appleStyles,
-    /transition:[\s\S]*?transform var\(--motion-instant\) var\(--ease-spring\)/
-  )
-})
-
-test("popover, dialog, and sheet motion use symmetric paths", () => {
-  const appleStyles = readProjectFile("src/styles/apple-design.css")
-
-  assert.match(
-    appleStyles,
-    /@keyframes glass-popover-in[\s\S]*?translate3d\(0, -5px, 0\)[\s\S]*?translate3d\(0, 0, 0\)/
-  )
-  assert.match(
-    appleStyles,
-    /@keyframes glass-popover-out[\s\S]*?translate3d\(0, 0, 0\)[\s\S]*?translate3d\(0, -5px, 0\)/
-  )
-  assert.match(
-    appleStyles,
-    /@keyframes glass-dialog-in[\s\S]*?scale:\s*0\.985[\s\S]*?scale:\s*1/
-  )
-  assert.match(
-    appleStyles,
-    /@keyframes glass-dialog-out[\s\S]*?scale:\s*1[\s\S]*?scale:\s*0\.985/
-  )
-  assert.match(
-    appleStyles,
-    /@keyframes glass-sheet-in[\s\S]*?translate:\s*var\(--glass-sheet-shift-x\) var\(--glass-sheet-shift-y\)[\s\S]*?translate:\s*0 0/
-  )
-  assert.match(
-    appleStyles,
-    /@keyframes glass-sheet-out[\s\S]*?translate:\s*0 0[\s\S]*?translate:\s*var\(--glass-sheet-shift-x\) var\(--glass-sheet-shift-y\)/
-  )
+  assert.match(motionSource, /gsap\.registerPlugin\(useGSAP\)/)
+  assert.match(motionSource, /scope:\s*sceneRef/)
+  assert.match(motionSource, /revertOnUpdate:\s*true/)
+  assert.match(motionSource, /usePrefersReducedMotion\(\)/)
+  assert.match(motionSource, /scene:\s*0\.38/)
+  assert.match(motionSource, /graph:\s*0\.52/)
+  assert.doesNotMatch(motionSource, /bounce|elastic/i)
 })

@@ -193,16 +193,16 @@ test("risk data controls Cytoscape node area and continuous heat color", () => {
   assert.notEqual(highRiskIndicator.color, lowRiskIndicator.color)
   assert.equal(missingIndicator.scored, false)
   assert.equal(missingIndicator.color, "#64748b")
-  assert.equal(missingIndicator.size, 46)
+  assert.equal(missingIndicator.size, 44)
   assert.equal(highRiskIndicator.width, highRiskIndicator.size)
   assert.equal(highRiskIndicator.height, highRiskIndicator.size)
   assert.notEqual(highRiskIndicator.size, peerR19.size)
   assert.notEqual(highRiskIndicator.color, peerR19.color)
 
   assert.equal(riskHeatColor(null), "#64748b")
-  assert.equal(riskHeatColor(0), "#22d3ee")
-  assert.equal(riskHeatColor(50), "#facc15")
-  assert.equal(riskHeatColor(100), "#ef4444")
+  assert.equal(riskHeatColor(0), "#4575b4")
+  assert.equal(riskHeatColor(50), "#e2b84b")
+  assert.equal(riskHeatColor(100), "#bd3447")
 })
 
 test("every Cytoscape relationship resolves to a visible node", () => {

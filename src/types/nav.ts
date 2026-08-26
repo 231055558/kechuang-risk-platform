@@ -2,7 +2,7 @@ import type { LucideIcon } from "lucide-react"
 
 import type { OperationsSection, ResearchSection, TabValue } from "@/types/risk"
 
-export type NavGroup = "研判工作台" | "事件处理" | "企业研究" | "投资约束与建议"
+export type NavGroup = "研判工作台" | "事件处理" | "企业研究" | "约束与应对"
 
 export type NavigationItemId =
   | "risk-assessment"

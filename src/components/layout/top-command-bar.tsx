@@ -1,4 +1,5 @@
 import {
+  ActivityIcon,
   DownloadIcon,
   type LucideIcon,
   MenuIcon,
@@ -8,7 +9,6 @@ import {
 } from "lucide-react"
 import { useEffect, useRef, useState, type RefObject } from "react"
 
-import { LiquidGlassSurface } from "@/components/liquid"
 import { Button } from "@/components/ui/button"
 import {
   Tooltip,
@@ -21,6 +21,9 @@ type TopCommandBarProps = {
   group: string
   title: string
   description: string
+  companyName: string
+  companySector: string
+  snapshotAt: string
   theme: string
   onToggleTheme: () => void
   onOpenExports: () => void
@@ -34,6 +37,9 @@ export function TopCommandBar({
   group,
   title,
   description,
+  companyName,
+  companySector,
+  snapshotAt,
   theme,
   onToggleTheme,
   onOpenExports,
@@ -50,7 +56,7 @@ export function TopCommandBar({
     let frame = 0
     const root = document.documentElement
     const surface = commandRef.current?.closest(
-      ".top-command-glass"
+      ".risk-os-command-surface"
     ) as HTMLElement | null
 
     const updateCompactState = () => {
@@ -124,15 +130,13 @@ export function TopCommandBar({
   }, [])
 
   return (
-    <LiquidGlassSurface
-      variant="toolbar"
+    <div
       className={cn(
-        "top-command-glass",
-        isCompact && "top-command-glass-compact"
+        "risk-os-command-surface",
+        isCompact && "risk-os-command-surface-compact"
       )}
-      padding="0"
     >
-      <header className="top-command" ref={commandRef}>
+      <header className="top-command risk-os-command" ref={commandRef}>
         <div className="top-command-copy">
           <Button
             variant="ghost"
@@ -152,6 +156,16 @@ export function TopCommandBar({
             </h1>
             <div className="top-command-description">{description}</div>
           </div>
+        </div>
+
+        <div className="risk-os-command-context" aria-label="当前研究上下文">
+          <span>
+            <ActivityIcon aria-hidden="true" />
+            数据在线
+          </span>
+          <strong>{companyName}</strong>
+          <span>{companySector}</span>
+          <time>{snapshotAt}</time>
         </div>
 
         <div className="top-command-actions">
@@ -178,7 +192,7 @@ export function TopCommandBar({
           </div>
         ) : null}
       </header>
-    </LiquidGlassSurface>
+    </div>
   )
 }
 

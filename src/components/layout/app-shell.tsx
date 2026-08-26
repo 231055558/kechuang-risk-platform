@@ -247,7 +247,7 @@ export function AppShell({
   }
 
   return (
-    <div className="app-shell">
+    <div className="app-shell risk-os-shell" data-theme={theme}>
       <a className="skip-link" href="#main-content">
         跳至主要内容
       </a>
@@ -307,7 +307,7 @@ export function AppShell({
       <main
         id="main-content"
         ref={mainContentRef}
-        className="app-main"
+        className="app-main risk-os-main"
         data-view={activeView}
         tabIndex={-1}
         aria-labelledby="app-page-title"
@@ -320,6 +320,9 @@ export function AppShell({
               ? assessmentSummaryOverride.overviewDescription
               : activeNav.description
           }
+          companyName={detail.name}
+          companySector={detail.sector}
+          snapshotAt={detail.snapshotAt}
           theme={theme}
           onToggleTheme={onToggleTheme}
           onOpenExports={onOpenExports}
@@ -328,7 +331,7 @@ export function AppShell({
           mobileNavButtonRef={mobileNavButtonRef}
           feedback={feedback}
         />
-        <div className="app-content">{children}</div>
+        <div className="app-content risk-os-content">{children}</div>
       </main>
     </div>
   )

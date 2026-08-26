@@ -1491,7 +1491,7 @@ function MethodSheet({
           </div>
         </Tabs>
         <div className="sheet-action-bar">
-          <span>数据清单版本 {manifest.version}</span>
+          <span>数据更新至 {manifest.snapshotAt}</span>
           <Button variant="outline" onClick={onReset}>
             <RotateCcwIcon data-icon="inline-start" />
             恢复初始状态

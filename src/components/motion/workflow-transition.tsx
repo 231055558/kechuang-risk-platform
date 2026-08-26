@@ -6,8 +6,24 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from "react"
+import { useGSAP } from "@gsap/react"
+import gsap from "gsap"
 
 import type { TabValue } from "@/types/risk"
+
+gsap.registerPlugin(useGSAP)
+
+export const PRODUCTIVE_MOTION = {
+  micro: 0.1,
+  fast: 0.16,
+  state: 0.24,
+  scene: 0.38,
+  data: 0.44,
+  graph: 0.52,
+  easeEnter: "power3.out",
+  easeStandard: "power2.inOut",
+  easeData: "power2.out",
+} as const
 
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)"
 const reducedMotionListeners = new Set<() => void>()
@@ -133,8 +149,41 @@ export function WorkflowTransition({
   view: TabValue
   children: ReactNode
 }) {
+  const sceneRef = useRef<HTMLDivElement>(null)
+  const prefersReducedMotion = usePrefersReducedMotion()
+
+  useGSAP(
+    () => {
+      const scene = sceneRef.current
+      if (!scene) return
+
+      if (prefersReducedMotion) {
+        gsap.set(scene, { clearProps: "opacity,transform" })
+        return
+      }
+
+      gsap.fromTo(
+        scene,
+        { autoAlpha: 0, y: 10 },
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: PRODUCTIVE_MOTION.scene,
+          ease: PRODUCTIVE_MOTION.easeEnter,
+          clearProps: "opacity,transform,visibility",
+          overwrite: "auto",
+        }
+      )
+    },
+    {
+      scope: sceneRef,
+      dependencies: [view, prefersReducedMotion],
+      revertOnUpdate: true,
+    }
+  )
+
   return (
-    <div className="workflow-transition" data-view={view}>
+    <div ref={sceneRef} className="workflow-transition" data-view={view}>
       {children}
     </div>
   )
