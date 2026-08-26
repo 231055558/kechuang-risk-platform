@@ -89,42 +89,32 @@ test("wide comparison and disclosure tables expose keyboard scroll regions", () 
   )
 })
 
-test("feed search controls expose native search semantics", () => {
-  const eventsSource = readProjectFile(
-    "src/components/dashboard/events-tab.tsx"
-  )
+test("risk-news search exposes native search semantics", () => {
   const realtimeSource = readProjectFile(
     "src/components/dashboard/realtime-tab.tsx"
   )
 
-  for (const [source, name] of [
-    [eventsSource, "event-search"],
-    [realtimeSource, "realtime-intelligence-search"],
-  ] as const) {
-    assert.match(source, /type="search"/)
-    assert.match(source, new RegExp(`name="${name}"`))
-    assert.match(source, /autoComplete="off"/)
-  }
+  assert.match(realtimeSource, /type="search"/)
+  assert.match(realtimeSource, /name="risk-news-search"/)
+  assert.match(realtimeSource, /autoComplete="off"/)
+  assert.match(realtimeSource, /aria-label="搜索风险资讯"/)
 })
 
-test("overview collapses six repeated missing-score rows into one auditable state", () => {
+test("investor analysis preserves missing values as an auditable state", () => {
   const overviewSource = readProjectFile(
-    "src/components/dashboard/overview-tab.tsx"
+    "src/components/dashboard/industry-risk-review-panel.tsx"
   )
-  const pageStyles = readProjectFile("src/styles/pages.css")
+  const indicatorSource = readProjectFile(
+    "src/components/dashboard/indicator-analysis-tab.tsx"
+  )
+  const indicatorStyles = readProjectFile("src/styles/indicator-analysis.css")
 
-  assert.match(overviewSource, /const allDimensionsUnassessable =/)
+  assert.match(overviewSource, /缺失不补零/)
+  assert.match(indicatorSource, /data-missing=\{metric\.riskPercentile === null\}/)
+  assert.match(indicatorSource, /metric\.rawValue === null[\s\S]*?"缺失"/)
   assert.match(
-    overviewSource,
-    /const effectiveRiskLens = allDimensionsUnassessable \? "all" : riskLens/
-  )
-  assert.match(overviewSource, /value=\{effectiveRiskLens\}/)
-  assert.match(overviewSource, /disabled=\{allDimensionsUnassessable\}/)
-  assert.match(overviewSource, /className="dimension-empty-summary"/)
-  assert.match(overviewSource, /不以\s*0 分代替缺失/)
-  assert.match(
-    pageStyles,
-    /\.dimension-empty-summary\s*\{[\s\S]*?border-radius:\s*16px;/
+    indicatorStyles,
+    /\[data-missing="true"\][\s\S]*?repeating-linear-gradient/
   )
 })
 

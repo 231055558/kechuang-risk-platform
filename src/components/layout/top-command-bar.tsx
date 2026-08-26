@@ -27,6 +27,7 @@ type TopCommandBarProps = {
   theme: string
   onToggleTheme: () => void
   onOpenExports: () => void
+  showExports: boolean
   onResetDemo: () => void
   onOpenMobileNav: () => void
   mobileNavButtonRef: RefObject<HTMLButtonElement | null>
@@ -43,6 +44,7 @@ export function TopCommandBar({
   theme,
   onToggleTheme,
   onOpenExports,
+  showExports,
   onResetDemo,
   onOpenMobileNav,
   mobileNavButtonRef,
@@ -174,12 +176,14 @@ export function TopCommandBar({
             label={theme === "dark" ? "切换到浅色模式" : "切换到暗色模式"}
             onClick={onToggleTheme}
           />
-          <TopIconAction
-            icon={DownloadIcon}
-            label="导出风险材料"
-            onClick={onOpenExports}
-            className="top-export-action"
-          />
+          {showExports ? (
+            <TopIconAction
+              icon={DownloadIcon}
+              label="导出企业报告"
+              onClick={onOpenExports}
+              className="top-export-action"
+            />
+          ) : null}
           <TopIconAction
             icon={RefreshCwIcon}
             label="恢复初始状态"

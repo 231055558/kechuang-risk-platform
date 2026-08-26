@@ -415,6 +415,7 @@ export interface IndustryRiskMetricScore {
   dimensionId: IndustryRiskWeightedDimensionId | null
   formulaTrace: string
   limitation: string
+  missingReason: string | null
 }
 
 export interface IndustryRiskCandidateAggregate {
@@ -868,6 +869,14 @@ function scoreMetric(
             : "当前企业缺少可用数值；不补零，其他指标仍参与基准计算。"
           : `r_rel=${round(percentile ?? 0)}；r=100×(${round(alpha)}×${round(industryRisk)}+${round(beta)}×${round(percentile ?? 0)})=${riskScore}`,
     limitation: definition.limitation,
+    missingReason:
+      definition.kind === "narrative"
+        ? "新闻与旧叙事代理不进入财报叙事评分。"
+        : riskScore === null
+          ? resolved
+            ? `同口径同业样本仅 ${sample.length} 家，暂不能形成风险分位。`
+            : "当前企业缺少可用数值。"
+          : null,
   }
 }
 

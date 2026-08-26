@@ -1042,6 +1042,7 @@ function App() {
       onNavigate={handleNavigationTarget}
       onPreloadView={preloadView}
       onOpenExports={handleOpenExports}
+      showExports={activeView === "reports"}
       onResetDemo={handleResetDemo}
       onToggleTheme={() => setTheme(theme === "dark" ? "light" : "dark")}
       feedback={feedback}
@@ -1064,7 +1065,7 @@ function App() {
                   onNavigate={(view) => {
                     void handleNavigationTarget(
                       view === "intelligence"
-                        ? { view, researchSection: "evidence" }
+                        ? { view, researchSection: "metrics" }
                         : { view, operationsSection: "events" }
                     )
                   }}
@@ -1155,7 +1156,7 @@ function App() {
         </ViewLoadErrorBoundary>
 
         <footer className="app-footer">
-          基于公开信息与统一风险规则自动计算。系统建议用于风险识别、尽调和治理优先级排序。
+          基于公开信息与统一风险规则自动计算，用于投资风险识别、同业比较与证据核验。
         </footer>
       </div>
 
@@ -1184,7 +1185,7 @@ function App() {
               导出 {detail.name} 风险材料
             </DialogTitle>
             <DialogDescription>
-              导出文件包含方法版本、评分证据覆盖率、研判截止日期、公开情报更新时间和非投资建议声明。
+              导出文件包含方法版本、评分证据覆盖率、研判截止日期、公开情报更新时间和研究边界声明。
             </DialogDescription>
           </DialogHeader>
           <div className="export-action-list">
@@ -1198,7 +1199,7 @@ function App() {
               />
               <ExportAction
                 title="风险事件 CSV"
-                description="导出处置状态、证据口径、方法版本和建议动作。"
+                description="导出风险事件、证据口径、方法版本和来源定位。"
                 disabled={exportInProgress !== null}
                 pending={exportInProgress === "csv"}
                 onClick={() => runExport("csv")}

@@ -2,18 +2,16 @@ import type { LucideIcon } from "lucide-react"
 
 import type { OperationsSection, ResearchSection, TabValue } from "@/types/risk"
 
-export type NavGroup = "研判工作台" | "事件处理" | "企业研究" | "约束与应对"
+export type NavGroup = "风险研判" | "信息与比较" | "输出与策略"
 
 export type NavigationItemId =
   | "risk-assessment"
+  | "indicator-analysis"
   | "realtime-intelligence"
   | "risk-reports"
-  | "event-register"
   | "risk-transmission"
-  | "enterprise-governance"
-  | "company-detail"
   | "comparison"
-  | "investment-constraints"
+  | "investment-research"
   | "investment-advice"
 
 export interface NavigationTarget {

@@ -1,14 +1,12 @@
 import {
   ArrowLeftRightIcon,
-  Building2Icon,
+  ChartNoAxesCombinedIcon,
   FileTextIcon,
   GitBranchIcon,
   LandmarkIcon,
   LayoutDashboardIcon,
   LightbulbIcon,
-  ListChecksIcon,
   RadioTowerIcon,
-  ShieldCheckIcon,
 } from "lucide-react"
 
 import type {
@@ -23,91 +21,70 @@ export const navItems: NavItem[] = [
   {
     id: "risk-assessment",
     label: "风险总览",
-    group: "研判工作台",
-    description: "面向客户展示企业风险结论、重点风险、同业位置与最新事件",
+    group: "风险研判",
+    description: "集中查看企业风险结论、同业位置、风险结构与近期事件",
     icon: LayoutDashboardIcon,
     target: { view: "overview" },
   },
   {
-    id: "realtime-intelligence",
-    label: "风险资讯",
-    group: "研判工作台",
-    description: "浏览数据库已收录的公告、报告、诉讼、监管与研究资讯",
-    icon: RadioTowerIcon,
-    target: { view: "realtime" },
-  },
-  {
-    id: "risk-reports",
-    label: "风险报告",
-    group: "研判工作台",
-    description: "查看面向客户的报告摘要、最新正式报告与可下载材料",
-    icon: FileTextIcon,
-    target: { view: "reports" },
-  },
-  {
-    id: "event-register",
-    label: "事件清单",
-    group: "事件处理",
-    description: "识别、核验并跟踪当前企业的风险事件与处置状态",
-    icon: ListChecksIcon,
-    target: { view: "events", operationsSection: "events" },
+    id: "indicator-analysis",
+    label: "指标分析",
+    group: "风险研判",
+    description: "查看 R05–R22 同业热力、原值、公式、证据与覆盖状态",
+    icon: ChartNoAxesCombinedIcon,
+    target: { view: "intelligence", researchSection: "metrics" },
   },
   {
     id: "risk-transmission",
     label: "风险传导",
-    group: "事件处理",
-    description: "查看风险源、传导环节、业务影响与响应动作之间的关联",
+    group: "风险研判",
+    description: "承载风险演化知识图谱及其筛选、检索与来源下钻",
     icon: GitBranchIcon,
     target: { view: "events", operationsSection: "transmission" },
   },
   {
-    id: "enterprise-governance",
-    label: "企业处置",
-    group: "事件处理",
-    description: "围绕责任角色、优先级和可核验材料推进企业处置闭环",
-    icon: ShieldCheckIcon,
-    target: { view: "events", operationsSection: "governance" },
-  },
-  {
-    id: "company-detail",
-    label: "企业详情",
-    group: "企业研究",
-    description: "企业档案、指标观测、生命周期与证据档案",
-    icon: Building2Icon,
-    target: { view: "intelligence", researchSection: "profile" },
+    id: "realtime-intelligence",
+    label: "风险资讯",
+    group: "信息与比较",
+    description: "浏览公开新闻、公告、诉讼和监管信息及其投资者影响",
+    icon: RadioTowerIcon,
+    target: { view: "realtime" },
   },
   {
     id: "comparison",
-    label: "对比分析",
-    group: "企业研究",
-    description: "基于共同口径和证据的六维差异比较",
+    label: "企业对比",
+    group: "信息与比较",
+    description: "基于共同指标口径比较企业风险结构和同业位置",
     icon: ArrowLeftRightIcon,
     target: { view: "compare" },
   },
   {
-    id: "investment-constraints",
-    label: "投资约束",
-    group: "约束与应对",
-    description: "将风险结论转化为投资前提、限制条件与持续监测要求",
+    id: "risk-reports",
+    label: "企业报告",
+    group: "输出与策略",
+    description: "查看、打印和导出当前企业的完整风险报告与来源材料",
+    icon: FileTextIcon,
+    target: { view: "reports" },
+  },
+  {
+    id: "investment-research",
+    label: "投资研判",
+    group: "输出与策略",
+    description: "以风险证据、触发条件和数据充分度支持投资决策",
     icon: LandmarkIcon,
     target: { view: "events", operationsSection: "investment" },
   },
   {
     id: "investment-advice",
     label: "风险应对",
-    group: "约束与应对",
-    description: "依据企业风险指数和高影响指标生成可追溯的应对动作",
+    group: "输出与策略",
+    description: "形成投资前核验、持有期监测和重新评估条件",
     icon: LightbulbIcon,
     target: { view: "events", operationsSection: "advice" },
   },
 ]
 
-export const navGroups: NavGroup[] = [
-  "研判工作台",
-  "事件处理",
-  "企业研究",
-  "约束与应对",
-]
+export const navGroups: NavGroup[] = ["风险研判", "信息与比较", "输出与策略"]
 
 export function resolveActiveNavigationItem(
   activeView: TabValue,
@@ -115,27 +92,19 @@ export function resolveActiveNavigationItem(
   operationsSection: OperationsSection
 ): NavigationItemId {
   if (activeView === "events") {
-    if (operationsSection === "transmission") {
-      return "risk-transmission"
-    }
-
-    if (operationsSection === "governance") {
-      return "enterprise-governance"
-    }
-
     if (operationsSection === "investment") {
-      return "investment-constraints"
+      return "investment-research"
     }
 
     if (operationsSection === "advice") {
       return "investment-advice"
     }
 
-    return "event-register"
+    return "risk-transmission"
   }
 
   if (activeView === "intelligence") {
-    return "company-detail"
+    return "indicator-analysis"
   }
 
   if (activeView === "compare") {

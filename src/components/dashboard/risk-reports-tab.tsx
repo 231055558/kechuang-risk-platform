@@ -6,7 +6,7 @@ import {
   ExternalLinkIcon,
   FileCheck2Icon,
   FileTextIcon,
-  ListChecksIcon,
+  ChartNoAxesCombinedIcon,
   NewspaperIcon,
   RefreshCwIcon,
   ShieldAlertIcon,
@@ -17,10 +17,7 @@ import { Reveal } from "@/components/motion/workflow-transition"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { IndustryRiskAssessmentApiResponse } from "@/domain/industry-risk-v1/index.ts"
-import {
-  buildIndustryRiskConclusion,
-  generateIndustryRiskRecommendations,
-} from "@/domain/industry-risk-v1/index.ts"
+import { buildIndustryRiskConclusion } from "@/domain/industry-risk-v1/index.ts"
 import { fetchIndustryRiskAssessment } from "@/lib/industry-risk-api"
 import type { NavigationTarget } from "@/types/nav"
 import type { CompanyDetail } from "@/types/risk"
@@ -147,7 +144,6 @@ function RiskReportContent({
   )
   const topMetrics = scoredMetrics.slice(0, 5)
   const conclusion = buildIndustryRiskConclusion(assessment)
-  const recommendations = generateIndustryRiskRecommendations(assessment)
   const recentEvents = [...response.events]
     .sort((left, right) => (right.date ?? "").localeCompare(left.date ?? ""))
     .slice(0, 4)
@@ -174,12 +170,12 @@ function RiskReportContent({
               企业风险报告 · 数据截至{" "}
               {formatDate(response.provenance.sourceDate)}
             </span>
-            <h2>{response.company.shortName}风险报告中心</h2>
+            <h2>{response.company.shortName}企业风险报告</h2>
             <p>{conclusion}</p>
             <div className="risk-report-hero-actions">
               <Button onClick={onOpenExports}>
                 <DownloadIcon data-icon="inline-start" />
-                导出客户版报告
+                导出企业报告
               </Button>
               <Button
                 variant="outline"
@@ -218,19 +214,19 @@ function RiskReportContent({
             </Button>
           </article>
           <article>
-            <ListChecksIcon aria-hidden="true" />
+            <ChartNoAxesCombinedIcon aria-hidden="true" />
             <div>
-              <span>风险台账</span>
-              <h3>事件清单与处置</h3>
-              <p>查看已识别事件、原始来源、核验状态与建议动作。</p>
+              <span>指标底稿</span>
+              <h3>指标分析与来源</h3>
+              <p>查看 R05–R22 原值、同业分位、公式、样本量与证据限制。</p>
             </div>
             <Button
               variant="outline"
               onClick={() =>
-                onNavigate({ view: "events", operationsSection: "events" })
+                onNavigate({ view: "intelligence", researchSection: "metrics" })
               }
             >
-              查看事件 <ArrowRightIcon data-icon="inline-end" />
+              查看指标 <ArrowRightIcon data-icon="inline-end" />
             </Button>
           </article>
           <article>
@@ -248,42 +244,6 @@ function RiskReportContent({
             </Button>
           </article>
         </section>
-      </Reveal>
-
-      <Reveal>
-        <GlassPanel
-          className="risk-report-section risk-report-advice"
-          variant="floating"
-        >
-          <header>
-            <div>
-              <span className="eyebrow">系统建议</span>
-              <h3>本期建议优先执行的动作</h3>
-            </div>
-            <Badge variant="outline">由高影响指标自动触发</Badge>
-          </header>
-          <div className="automatic-action-grid">
-            {recommendations.map((recommendation, index) => (
-              <article
-                key={recommendation.indicatorId}
-                data-priority={recommendation.priority}
-              >
-                <div className="automatic-action-index">
-                  {String(index + 1).padStart(2, "0")}
-                </div>
-                <div className="automatic-action-main">
-                  <div>
-                    <Badge variant="outline">{recommendation.priority}</Badge>
-                    <span>{recommendation.trigger}</span>
-                  </div>
-                  <h4>{recommendation.title}</h4>
-                  <p>{recommendation.action}</p>
-                </div>
-                <ArrowRightIcon aria-hidden="true" />
-              </article>
-            ))}
-          </div>
-        </GlassPanel>
       </Reveal>
 
       <div className="risk-report-content-grid">
@@ -433,7 +393,7 @@ function RiskReportContent({
             ))}
           </div>
           <p className="risk-report-disclaimer">
-            本页基于数据库已收录公开材料和统一风险规则自动生成；系统建议用于风险应对和行动排序，不输出买卖或收益预测。缺失项目不会显示为
+            本页基于已收录公开材料和统一风险规则自动生成，用于投资风险研究与来源核验；不输出未经确认的买卖或收益预测。缺失项目不会显示为
             0，也不会影响其他已具备数据的指标计算。
           </p>
         </GlassPanel>

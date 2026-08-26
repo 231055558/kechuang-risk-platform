@@ -1,7 +1,12 @@
 .risk-profile-desk {
   --risk-profile-accent: #cf7b12;
   --risk-profile-accent-soft: #fff4dd;
-  margin-top: 16px;
+  --risk-profile-accent-soft: color-mix(
+    in srgb,
+    var(--risk-profile-accent) 11%,
+    var(--risk-os-surface, #ffffff)
+  );
+  margin-top: 0;
   overflow: hidden;
   border: 1px solid var(--risk-os-border, #d7dce7);
   border-radius: 12px;
@@ -56,14 +61,14 @@
   color: var(--risk-os-ink, #151923);
   font-size: clamp(17px, 1.45vw, 22px);
   font-weight: 720;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   line-height: 1.45;
 }
 
 .risk-profile-desk__conclusion p {
   margin: 6px 0 0;
   color: var(--risk-os-muted, #697386);
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.55;
 }
 
@@ -81,7 +86,7 @@
   grid-template-columns:
     minmax(260px, 0.78fr) minmax(390px, 1.24fr)
     minmax(340px, 1.05fr);
-  min-height: 530px;
+  min-height: 500px;
 }
 
 .risk-profile-desk__matrix > * {
@@ -116,15 +121,15 @@
 .risk-profile-desk__section-heading h3 {
   margin: 3px 0 0;
   color: var(--risk-os-ink, #151923);
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 720;
-  letter-spacing: -0.015em;
+  letter-spacing: 0;
 }
 
 .risk-profile-desk__section-heading > span {
   padding-top: 4px;
   color: var(--risk-os-faint, #8a93a3);
-  font-size: 9px;
+  font-size: 11px;
   white-space: nowrap;
 }
 
@@ -135,7 +140,7 @@
   font-size: clamp(68px, 6.4vw, 96px);
   font-weight: 680;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.075em;
+  letter-spacing: 0;
   line-height: 0.82;
 }
 
@@ -143,7 +148,7 @@
   max-width: 30ch;
   margin: 22px 0 15px;
   color: var(--risk-os-muted, #697386);
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.65;
 }
 
@@ -175,12 +180,12 @@
   justify-content: space-between;
   gap: 10px;
   color: var(--risk-os-muted, #697386);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .risk-profile-desk__rank strong {
   color: var(--risk-os-ink, #151923);
-  font-size: 12px;
+  font-size: 14px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -208,7 +213,7 @@
   justify-content: space-between;
   margin-top: 8px;
   color: var(--risk-os-faint, #8a93a3);
-  font-size: 8px;
+  font-size: 10px;
 }
 
 .risk-profile-desk__facts {
@@ -230,7 +235,7 @@
 
 .risk-profile-desk__facts dt {
   color: var(--risk-os-faint, #8a93a3);
-  font-size: 8px;
+  font-size: 11px;
 }
 
 .risk-profile-desk__facts dd {
@@ -243,7 +248,7 @@
 
 .risk-profile-desk__facts small {
   color: var(--risk-os-muted, #697386);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
 }
 
@@ -305,7 +310,9 @@
 }
 
 .industry-risk-radar-points circle[data-active="true"] {
-  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--risk-profile-accent) 45%, transparent));
+  filter: drop-shadow(
+    0 0 5px color-mix(in srgb, var(--risk-profile-accent) 45%, transparent)
+  );
 }
 
 .industry-risk-radar-points circle[data-muted="true"],
@@ -320,7 +327,7 @@
 .industry-risk-radar-labels text {
   fill: var(--risk-os-muted, #697386);
   font-family: inherit;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 590;
   transition: opacity 160ms ease;
 }
@@ -331,7 +338,7 @@
 }
 
 .industry-risk-radar-labels tspan:last-child {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 720;
   font-variant-numeric: tabular-nums;
 }
@@ -366,7 +373,7 @@
 .industry-risk-radar > ul button > span {
   overflow: hidden;
   color: var(--risk-os-muted, #697386);
-  font-size: 8px;
+  font-size: 11px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -389,7 +396,7 @@
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: var(--risk-profile-accent);
+  background: var(--radar-axis-heat, var(--risk-profile-accent));
 }
 
 .industry-risk-radar > ul li[data-active="true"] strong,
@@ -423,7 +430,7 @@
 }
 
 .risk-profile-desk__drivers li[data-active="true"] {
-  background: var(--risk-profile-accent-soft);
+  background: color-mix(in srgb, var(--risk-driver-heat) 10%, transparent);
 }
 
 .risk-profile-desk__drivers button {
@@ -444,7 +451,7 @@
 .risk-profile-desk__driver-rank {
   padding-top: 3px;
   color: var(--risk-os-faint, #8a93a3);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
 }
 
@@ -457,7 +464,7 @@
 .risk-profile-desk__driver-copy > span {
   overflow: hidden;
   color: var(--risk-os-ink, #151923);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 650;
   line-height: 1.35;
   text-overflow: ellipsis;
@@ -466,8 +473,8 @@
 
 .risk-profile-desk__driver-copy b {
   margin-right: 7px;
-  color: var(--risk-profile-accent);
-  font-size: 9px;
+  color: var(--risk-driver-heat, var(--risk-profile-accent));
+  font-size: 10px;
   letter-spacing: 0.04em;
 }
 
@@ -484,20 +491,20 @@
   border-radius: inherit;
   background: linear-gradient(
     90deg,
-    color-mix(in srgb, var(--risk-profile-accent) 52%, #ffffff),
-    var(--risk-profile-accent)
+    color-mix(in srgb, var(--risk-driver-heat) 52%, #ffffff),
+    var(--risk-driver-heat)
   );
 }
 
 .risk-profile-desk__driver-copy small {
   color: var(--risk-os-faint, #8a93a3);
-  font-size: 8px;
+  font-size: 10px;
 }
 
 .risk-profile-desk__drivers button > strong {
   padding-top: 1px;
-  color: var(--risk-profile-accent);
-  font-size: 17px;
+  color: var(--risk-driver-heat, var(--risk-profile-accent));
+  font-size: 19px;
   font-weight: 720;
   font-variant-numeric: tabular-nums;
 }
@@ -529,7 +536,7 @@
   }
 
   .risk-profile-desk__drivers ol {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .risk-profile-desk__drivers li {

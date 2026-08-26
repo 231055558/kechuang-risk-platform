@@ -1,55 +1,34 @@
-import { useDeferredValue, useMemo, useRef, useState } from "react"
+import { useGSAP } from "@gsap/react"
+import gsap from "gsap"
+import { useEffect, useMemo, useRef, useState } from "react"
 import {
   ArrowRightIcon,
+  BinocularsIcon,
   CircleAlertIcon,
-  ClipboardCheckIcon,
+  Clock3Icon,
+  FileSignatureIcon,
+  DatabaseZapIcon,
   GitBranchIcon,
   LandmarkIcon,
-  ListChecksIcon,
+  NetworkIcon,
+  SearchCheckIcon,
   ShieldCheckIcon,
-  TargetIcon,
-  UserRoundCheckIcon,
 } from "lucide-react"
 
-import { AutomaticRiskAdvicePanel } from "@/components/dashboard/automatic-risk-advice-panel"
-import {
-  EmptyState,
-  EvidenceList,
-  GlassPanel,
-  SectionHeader,
-  SeverityBadge,
-  StatusBadge,
-} from "@/components/dashboard/shared"
-import { Reveal } from "@/components/motion/workflow-transition"
+import { usePrefersReducedMotion } from "@/components/motion/workflow-transition"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet"
-import { getAdmittedIndicators, getObservationIndicators } from "@/lib/data-r01"
-import { cn } from "@/lib/utils"
+import type { IndustryRiskAssessmentApiResponse } from "@/domain/industry-risk-v1/index.ts"
+import { fetchIndustryRiskAssessment } from "@/lib/industry-risk-api"
+import { riskHeatColor } from "@/lib/risk-heat"
 import type {
   CommonPlaybookItem,
   CompanyDetail,
-  EventSeverity,
   EventStatus,
-  GovernanceItem,
   OperationsSection,
   RiskEvent,
 } from "@/types/risk"
+import "@/styles/investor-operations.css"
 
 type EventsTabProps = {
   detail: CompanyDetail
@@ -62,980 +41,463 @@ type EventsTabProps = {
   playbook: CommonPlaybookItem[]
 }
 
-const layerLabels = {
-  source: "风险源",
-  mediator: "传导环节",
-  impact: "业务影响",
-  response: "响应动作",
-} as const
+type AssessmentState =
+  | { status: "loading" }
+  | { status: "success"; value: IndustryRiskAssessmentApiResponse }
+  | { status: "error"; message: string }
 
-const governanceImpactLabels = {
-  low: "低治理影响",
-  medium: "中治理影响",
-  high: "高治理影响",
-} as const
-
-const dateOnlyPattern = /^\d{4}-\d{2}-\d{2}$/
-const eventDateFormatter = new Intl.DateTimeFormat("zh-CN", {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-  weekday: "short",
-})
-const eventDateTimeFormatter = new Intl.DateTimeFormat("zh-CN", {
-  month: "2-digit",
-  day: "2-digit",
-  hour: "2-digit",
-  minute: "2-digit",
-  hour12: false,
-})
-
-export function EventsTab({
-  detail,
-  events,
-  section,
-  focusEventId,
-  onSectionChange,
-  onFocusEventHandled,
-  onStatusChange,
-  playbook,
-}: EventsTabProps) {
-  const [transmissionEventId, setTransmissionEventId] = useState<string | null>(
-    null
-  )
-
-  return (
-    <div className="page-stack">
-      {section === "events" ? (
-        <EventRegister
-          key={`${detail.id}:${focusEventId ?? "none"}`}
-          detail={detail}
-          events={events}
-          focusEventId={focusEventId}
-          onFocusEventHandled={onFocusEventHandled}
-          onStatusChange={onStatusChange}
-          onOpenTransmission={(eventId) => {
-            setTransmissionEventId(eventId)
-            onSectionChange("transmission")
-          }}
-        />
-      ) : null}
-
-      {section === "transmission" ? (
-        <TransmissionPanel
-          key={`${detail.id}:${transmissionEventId ?? "default"}`}
-          detail={detail}
-          events={events}
-          focusEventId={transmissionEventId}
-          onOpenGovernance={() => onSectionChange("governance")}
-        />
-      ) : null}
-
-      {section === "governance" ? (
-        <GovernancePanel
-          detail={detail}
-          playbook={playbook}
-          onOpenInvestment={() => onSectionChange("investment")}
-        />
-      ) : null}
-
-      {section === "investment" ? <InvestmentPanel detail={detail} /> : null}
-
-      {section === "advice" ? (
-        <AutomaticRiskAdvicePanel companyId={detail.id} />
-      ) : null}
-    </div>
-  )
-}
-
-function EventRegister({
-  detail,
-  events,
-  focusEventId,
-  onFocusEventHandled,
-  onStatusChange,
-  onOpenTransmission,
-}: {
-  detail: CompanyDetail
-  events: RiskEvent[]
-  focusEventId: string | null
-  onFocusEventHandled: () => void
-  onStatusChange: (eventId: string, status: EventStatus) => void
-  onOpenTransmission: (eventId: string) => void
-}) {
-  const [severity, setSeverity] = useState<"all" | EventSeverity>("all")
-  const [status, setStatus] = useState<"all" | EventStatus>("all")
-  const [query, setQuery] = useState("")
-  const [selectedEventId, setSelectedEventId] = useState<string | null>(() =>
-    focusEventId && events.some((event) => event.id === focusEventId)
-      ? focusEventId
-      : null
-  )
-  const deferredQuery = useDeferredValue(query)
-  const eventTriggerRef = useRef<HTMLButtonElement | null>(null)
-  const focusMainAfterCloseRef = useRef(false)
-
-  const filteredEvents = useMemo(() => {
-    const normalizedQuery = deferredQuery.trim().toLocaleLowerCase("zh-CN")
-
-    return [...events]
-      .filter((event) => severity === "all" || event.severity === severity)
-      .filter((event) => status === "all" || event.status === status)
-      .filter((event) => {
-        if (!normalizedQuery) {
-          return true
-        }
-
-        return [
-          event.riskType,
-          event.description,
-          event.aiSummary,
-          event.sourceType,
-        ]
-          .join(" ")
-          .toLocaleLowerCase("zh-CN")
-          .includes(normalizedQuery)
-      })
-      .sort((left, right) =>
-        right.identifiedAt.localeCompare(left.identifiedAt)
-      )
-  }, [deferredQuery, events, severity, status])
-
-  const selectedEvent =
-    events.find((event) => event.id === selectedEventId) ?? null
-  const selectedEventAdmittedIndicators = getAdmittedIndicators(
-    selectedEvent?.indicatorIds
-  )
-  const selectedEventObservationIndicators = getObservationIndicators(
-    selectedEvent?.indicatorIds
-  )
-
-  return (
-    <div className="tab-content-stack">
-      <Reveal className="feed-controls-stack">
-        <GlassPanel
-          className="feed-toolbar"
-          surfaceClassName="filter-toolbar-glass"
-          variant="floating"
-          aria-label="风险事件筛选"
-        >
-          <div className="feed-search">
-            <ListChecksIcon aria-hidden="true" />
-            <Input
-              type="search"
-              name="event-search"
-              autoComplete="off"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="搜索事件、来源或风险类型…"
-              aria-label="搜索风险事件"
-            />
-          </div>
-          <div className="feed-filters">
-            <Select
-              value={severity}
-              onValueChange={(value) =>
-                setSeverity(value as "all" | EventSeverity)
-              }
-            >
-              <SelectTrigger aria-label="事件严重度">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="event-select-menu">
-                <SelectGroup>
-                  <SelectItem value="all">全部等级</SelectItem>
-                  <SelectItem value="high">高危</SelectItem>
-                  <SelectItem value="medium">中危</SelectItem>
-                  <SelectItem value="watch">观察</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            <Select
-              value={status}
-              onValueChange={(value) => setStatus(value as "all" | EventStatus)}
-            >
-              <SelectTrigger aria-label="事件处置状态">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="event-select-menu">
-                <SelectGroup>
-                  <SelectItem value="all">全部状态</SelectItem>
-                  <SelectItem value="pending">待处理</SelectItem>
-                  <SelectItem value="in-progress">处理中</SelectItem>
-                  <SelectItem value="done">已完成</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-        </GlassPanel>
-
-        <div className="feed-summary">
-          <div className="feed-summary-primary">
-            <span>事件清单</span>
-            <strong className="tabular-number">
-              {filteredEvents.length} 条
-            </strong>
-          </div>
-        </div>
-      </Reveal>
-
-      {filteredEvents.length > 0 ? (
-        <Reveal>
-          <section className="event-register" aria-label="风险事件列表">
-            {filteredEvents.map((event) => (
-              <article
-                key={event.id}
-                className="event-register-row"
-                data-severity={event.severity}
-              >
-                <button
-                  type="button"
-                  className="event-register-main"
-                  onClick={(clickEvent) => {
-                    eventTriggerRef.current = clickEvent.currentTarget
-                    setSelectedEventId(event.id)
-                  }}
-                >
-                  <time
-                    dateTime={event.identifiedAt}
-                    className="tabular-number"
-                  >
-                    {formatEventDate(event.identifiedAt)}
-                  </time>
-                  <div className="event-register-copy">
-                    <div className="event-register-meta">
-                      <SeverityBadge severity={event.severity} />
-                      <Badge variant="outline">{event.riskType}</Badge>
-                      <span>{event.sourceType}</span>
-                    </div>
-                    <h2>{event.description}</h2>
-                    <p>
-                      {event.stage} · 建议责任角色：
-                      {resolveOwner(event.riskType)}
-                    </p>
-                  </div>
-                  <ArrowRightIcon aria-hidden="true" />
-                </button>
-                <div className="event-register-status">
-                  <Select
-                    value={event.status}
-                    onValueChange={(value) =>
-                      onStatusChange(event.id, value as EventStatus)
-                    }
-                  >
-                    <SelectTrigger
-                      aria-label={`更新“${event.riskType}”事件状态`}
-                    >
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="event-select-menu">
-                      <SelectGroup>
-                        <SelectItem value="pending">待处理</SelectItem>
-                        <SelectItem value="in-progress">处理中</SelectItem>
-                        <SelectItem value="done">已完成</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </article>
-            ))}
-          </section>
-        </Reveal>
-      ) : (
-        <Reveal>
-          <EmptyState
-            title="没有匹配的风险事件"
-            description="调整严重度、处置状态或搜索词后再试。"
-          />
-        </Reveal>
-      )}
-
-      <Sheet
-        open={Boolean(selectedEvent)}
-        onOpenChange={(open) => {
-          if (!open) {
-            setSelectedEventId(null)
-            if (focusEventId) {
-              onFocusEventHandled()
-            }
-          }
-        }}
-      >
-        <SheetContent
-          size="event"
-          className="method-sheet method-sheet--event"
-          onCloseAutoFocus={(event) => {
-            event.preventDefault()
-            if (focusMainAfterCloseRef.current) {
-              focusMainAfterCloseRef.current = false
-              document
-                .getElementById("main-content")
-                ?.focus({ preventScroll: true })
-              return
-            }
-
-            const trigger = eventTriggerRef.current
-            if (trigger?.isConnected) {
-              trigger.focus({ preventScroll: true })
-              return
-            }
-
-            document
-              .getElementById("main-content")
-              ?.focus({ preventScroll: true })
-          }}
-        >
-          {selectedEvent ? (
-            <>
-              <SheetHeader>
-                <div className="signal-drawer-badges">
-                  <SeverityBadge severity={selectedEvent.severity} />
-                  <StatusBadge status={selectedEvent.status} />
-                  <Badge variant="outline">
-                    {
-                      governanceImpactLabels[
-                        selectedEvent.investmentImpact ?? "medium"
-                      ]
-                    }
-                  </Badge>
-                </div>
-                <SheetTitle>{selectedEvent.riskType}</SheetTitle>
-                <SheetDescription className="tabular-number">
-                  {formatEventDate(selectedEvent.identifiedAt)} ·{" "}
-                  {selectedEvent.sourceType}
-                </SheetDescription>
-              </SheetHeader>
-              <div className="sheet-scroll-content">
-                <EventFlowStep
-                  index="01"
-                  title="事实"
-                  content={selectedEvent.description}
-                />
-                <EventFlowStep
-                  index="02"
-                  title="研究辅助归纳"
-                  content={selectedEvent.aiSummary}
-                />
-                <EventFlowStep
-                  index="03"
-                  title="处置动作"
-                  content={selectedEvent.recommendedAction}
-                />
-                <EventFlowStep
-                  index="04"
-                  title="责任与状态"
-                  content={`${resolveOwner(selectedEvent.riskType)} · 当前${statusText(selectedEvent.status)}`}
-                />
-                <EventFlowStep
-                  index="05"
-                  title="治理与尽调影响"
-                  content={`该事件当前为${
-                    governanceImpactLabels[
-                      selectedEvent.investmentImpact ?? "medium"
-                    ]
-                  }，应与材料核验、治理阈值和持续监测条件联动。`}
-                />
-
-                <section className="drawer-section">
-                  <h3>口径准入指标命中</h3>
-                  {selectedEventAdmittedIndicators.length > 0 ? (
-                    <div className="compact-list">
-                      {selectedEventAdmittedIndicators.map((indicator) => (
-                        <article key={indicator.id}>
-                          <strong>{indicator.tertiaryRisk}</strong>
-                          <p>
-                            {indicator.primaryRisk} / {indicator.secondaryRisk}{" "}
-                            · 口径准入
-                          </p>
-                        </article>
-                      ))}
-                    </div>
-                  ) : (
-                    <EmptyState
-                      title="暂无口径准入指标命中"
-                      description="当前旧指标引用尚无可靠映射，事件保留为待核验研究线索，不进入评分。"
-                    />
-                  )}
-                </section>
-
-                {selectedEventObservationIndicators.length > 0 ? (
-                  <section className="drawer-section">
-                    <h3>观察指标关联</h3>
-                    <div className="compact-list">
-                      {selectedEventObservationIndicators.map((indicator) => (
-                        <article key={indicator.id}>
-                          <strong>{indicator.tertiaryRisk}</strong>
-                          <p>
-                            {indicator.primaryRisk} / {indicator.secondaryRisk}{" "}
-                            · 观察项，不计分
-                          </p>
-                        </article>
-                      ))}
-                    </div>
-                  </section>
-                ) : null}
-
-                <section className="drawer-section">
-                  <h3>证据链</h3>
-                  {selectedEvent.sourceUrl ? (
-                    <div className="compact-list">
-                      <article>
-                        <strong>事件原始来源</strong>
-                        <p>
-                          <a
-                            href={selectedEvent.sourceUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            {selectedEvent.sourceName ??
-                              selectedEvent.sourceType}
-                          </a>
-                          {selectedEvent.sourcePublishedAt ? (
-                            <>
-                              {" · "}
-                              <time
-                                dateTime={selectedEvent.sourcePublishedAt}
-                                className="tabular-number"
-                              >
-                                {formatEventDateTime(
-                                  selectedEvent.sourcePublishedAt
-                                )}
-                              </time>
-                            </>
-                          ) : null}
-                        </p>
-                      </article>
-                    </div>
-                  ) : null}
-                  {selectedEvent.evidenceIds.length > 0 ? (
-                    <EvidenceList
-                      detail={detail}
-                      evidenceIds={selectedEvent.evidenceIds}
-                    />
-                  ) : selectedEvent.sourceUrl ? null : (
-                    <EmptyState
-                      title="暂无证据"
-                      description="当前事件尚未关联可展示的证据记录。"
-                    />
-                  )}
-                </section>
-              </div>
-              <div className="sheet-action-bar">
-                <Select
-                  value={selectedEvent.status}
-                  onValueChange={(value) =>
-                    onStatusChange(selectedEvent.id, value as EventStatus)
-                  }
-                >
-                  <SelectTrigger aria-label="更新当前事件状态">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="event-select-menu">
-                    <SelectGroup>
-                      <SelectItem value="pending">待处理</SelectItem>
-                      <SelectItem value="in-progress">处理中</SelectItem>
-                      <SelectItem value="done">已完成</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <Button
-                  onClick={() => {
-                    focusMainAfterCloseRef.current = true
-                    setSelectedEventId(null)
-                    if (focusEventId) {
-                      onFocusEventHandled()
-                    }
-                    onOpenTransmission(selectedEvent.id)
-                  }}
-                >
-                  查看风险传导
-                  <ArrowRightIcon data-icon="inline-end" />
-                </Button>
-              </div>
-            </>
-          ) : null}
-        </SheetContent>
-      </Sheet>
-    </div>
-  )
-}
-
-function TransmissionPanel({
-  detail,
-  events,
-  focusEventId,
-  onOpenGovernance,
-}: {
-  detail: CompanyDetail
-  events: RiskEvent[]
-  focusEventId: string | null
-  onOpenGovernance: () => void
-}) {
-  const [selectedNodeId, setSelectedNodeId] = useState(() =>
-    resolveTransmissionNodeId(detail, events, focusEventId)
-  )
-
-  const selectedNode =
-    detail.transmissionGraph.nodes.find((node) => node.id === selectedNodeId) ??
-    detail.transmissionGraph.nodes[0]
-  const layers = ["source", "mediator", "impact", "response"] as const
-  const relatedEvents = selectedNode
-    ? events.filter((event) =>
-        event.evidenceIds.some((evidenceId) =>
-          selectedNode.evidenceIds.includes(evidenceId)
-        )
-      )
-    : []
-  const relatedActions = selectedNode
-    ? detail.governance.filter((item) =>
-        item.evidenceIds.some((evidenceId) =>
-          selectedNode.evidenceIds.includes(evidenceId)
-        )
-      )
-    : []
-
-  return (
-    <div className="tab-content-stack">
-      <Reveal>
-        <section className="page-section">
-          <SectionHeader
-            title="风险传导路径"
-            tone="violet"
-            description={detail.transmissionGraph.keyInsight}
-          />
-          <div className="transmission-flow">
-            {layers.map((layer, layerIndex) => {
-              const nodes = detail.transmissionGraph.nodes.filter(
-                (node) => node.layer === layer
-              )
-              return (
-                <section key={layer} className="transmission-layer">
-                  <div className="transmission-layer-heading">
-                    <span>{String(layerIndex + 1).padStart(2, "0")}</span>
-                    <div>
-                      <strong>{layerLabels[layer]}</strong>
-                      <p>{nodes.length} 个已记录节点</p>
-                    </div>
-                  </div>
-                  <div className="transmission-node-list">
-                    {nodes.map((node) => (
-                      <button
-                        key={node.id}
-                        type="button"
-                        className={cn(
-                          "transmission-node-row",
-                          node.id === selectedNode?.id &&
-                            "transmission-node-row-active"
-                        )}
-                        onClick={() => setSelectedNodeId(node.id)}
-                      >
-                        <div>
-                          <strong>{node.label}</strong>
-                          <p>{node.description}</p>
-                        </div>
-                        <ArrowRightIcon aria-hidden="true" />
-                      </button>
-                    ))}
-                  </div>
-                </section>
-              )
-            })}
-          </div>
-        </section>
-      </Reveal>
-
-      {selectedNode ? (
-        <Reveal>
-          <section className="page-section">
-            <SectionHeader
-              title={`节点详情：${selectedNode.label}`}
-              tone="cyan"
-              description="节点解释、关联事件和治理动作共用同一组证据，便于检查推导链是否成立。"
-              action={
-                <Button variant="outline" onClick={onOpenGovernance}>
-                  查看企业处置
-                  <ArrowRightIcon data-icon="inline-end" />
-                </Button>
-              }
-            />
-            <div className="node-audit-grid">
-              <NodeAudit
-                icon={GitBranchIcon}
-                label="传导层级"
-                value={layerLabels[selectedNode.layer]}
-              />
-              <NodeAudit
-                icon={ListChecksIcon}
-                label="关联事件"
-                value={`${relatedEvents.length} 条`}
-              />
-              <NodeAudit
-                icon={ClipboardCheckIcon}
-                label="关联动作"
-                value={`${relatedActions.length} 项`}
-              />
-              <NodeAudit
-                icon={ShieldCheckIcon}
-                label="证据记录"
-                value={`${selectedNode.evidenceIds.length} 条`}
-              />
-            </div>
-            <EvidenceList
-              detail={detail}
-              evidenceIds={selectedNode.evidenceIds}
-            />
-          </section>
-        </Reveal>
-      ) : null}
-    </div>
-  )
-}
-
-function resolveTransmissionNodeId(
-  detail: CompanyDetail,
-  events: RiskEvent[],
-  focusEventId: string | null
-) {
-  const fallbackId = detail.transmissionGraph.nodes[0]?.id ?? ""
-  const focusedEvent = focusEventId
-    ? events.find((event) => event.id === focusEventId)
-    : null
-
-  if (!focusedEvent || focusedEvent.evidenceIds.length === 0) {
-    return fallbackId
-  }
-
-  const evidenceIds = new Set(focusedEvent.evidenceIds)
-  const rankedNodes = detail.transmissionGraph.nodes
-    .map((node) => ({
-      id: node.id,
-      overlap: node.evidenceIds.filter((id) => evidenceIds.has(id)).length,
-    }))
-    .sort((left, right) => right.overlap - left.overlap)
-
-  return rankedNodes[0]?.overlap ? rankedNodes[0].id : fallbackId
-}
-
-function GovernancePanel({
-  detail,
-  playbook,
-  onOpenInvestment,
-}: {
-  detail: CompanyDetail
-  playbook: CommonPlaybookItem[]
-  onOpenInvestment: () => void
-}) {
-  return (
-    <div className="tab-content-stack">
-      <Reveal>
-        <section className="page-section">
-          <SectionHeader
-            title="企业处置"
-            tone="teal"
-            description="按问题、责任角色、优先级、执行动作和证据要求推进处置闭环。"
-            action={
-              <Button variant="outline" onClick={onOpenInvestment}>
-                查看投资约束
-                <ArrowRightIcon data-icon="inline-end" />
-              </Button>
-            }
-          />
-          <div className="governance-action-list">
-            {detail.governance.map((item) => (
-              <GovernanceAction key={item.id} item={item} detail={detail} />
-            ))}
-          </div>
-        </section>
-      </Reveal>
-
-      <Reveal>
-        <section className="page-section">
-          <SectionHeader
-            title="通用治理 Playbook"
-            tone="blue"
-            description="通用动作仅作为操作模板；落到具体企业时仍需绑定责任人、期限和可核验材料。"
-          />
-          <div className="playbook-list">
-            {playbook.map((item) => (
-              <article key={item.title} className="playbook-row">
-                <div className="playbook-row-title">
-                  <Badge variant="outline">{item.priority}</Badge>
-                  <div>
-                    <span>{item.riskType}</span>
-                    <h3>{item.title}</h3>
-                  </div>
-                </div>
-                <p>{item.action}</p>
-                <div className="playbook-data">
-                  <strong>所需数据：</strong>
-                  {item.dataSupport}
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-      </Reveal>
-    </div>
-  )
-}
-
-function GovernanceAction({
-  item,
-  detail,
-}: {
-  item: GovernanceItem
-  detail: CompanyDetail
-}) {
-  return (
-    <article className="governance-action-row">
-      <div className="governance-action-heading">
-        <div>
-          <span>
-            {item.riskType} · {item.stage}
-          </span>
-          <h3>{item.title}</h3>
-        </div>
-        <Badge
-          variant="outline"
-          className={cn(
-            "status-badge",
-            item.priority === "P0"
-              ? "status-danger"
-              : item.priority === "P1"
-                ? "status-warning"
-                : "status-neutral"
-          )}
-        >
-          {item.priority}
-        </Badge>
-      </div>
-      <div className="governance-action-grid">
-        <div>
-          <strong>问题事实</strong>
-          <p>{item.problem}</p>
-        </div>
-        <div>
-          <strong>建议动作</strong>
-          <p>{item.action}</p>
-        </div>
-        <div>
-          <strong>责任角色</strong>
-          <p>{resolveOwner(item.riskType)}</p>
-        </div>
-        <div>
-          <strong>验收材料</strong>
-          <p>{item.dataSupport}</p>
-        </div>
-      </div>
-      <EvidenceList detail={detail} evidenceIds={item.evidenceIds} limit={2} />
-    </article>
-  )
-}
-
-function InvestmentPanel({ detail }: { detail: CompanyDetail }) {
-  const investment = detail.investmentView
-
-  if (!investment) {
+export function EventsTab({ detail, events, section }: EventsTabProps) {
+  if (section === "investment") {
     return (
-      <EmptyState
-        title="暂无尽调约束记录"
-        description="当前企业尚未形成可回溯到公开证据的尽调条件、治理阈值与监测约束。"
-      />
+      <InvestorDecisionPanel detail={detail} events={events} mode="research" />
     )
   }
+  if (section === "advice") {
+    return (
+      <InvestorDecisionPanel detail={detail} events={events} mode="response" />
+    )
+  }
+  return <GraphIntegrationPanel detail={detail} />
+}
 
+function GraphIntegrationPanel({ detail }: { detail: CompanyDetail }) {
   return (
-    <div className="tab-content-stack">
-      <Reveal>
-        <GlassPanel
-          className="investment-stance"
-          surfaceClassName="investment-hero-glass"
-          variant="floating"
-        >
-          <div>
-            <span className="eyebrow">尽调边界</span>
-            <h2>{investment.stance}</h2>
-            <p>{investment.summary}</p>
+    <div
+      className="graph-integration page-stack"
+      data-graph-contract="KCR-TEMPORAL-GRAPH-PENDING-v1"
+    >
+      <header className="graph-integration__header">
+        <div>
+          <span className="eyebrow">Risk propagation</span>
+          <h2>{detail.name}风险传导</h2>
+          <p>
+            本页只承载团队后续提供的风险演化知识图谱。当前指标、事件和来源关系不会被前端自动解释为因果或传播路径。
+          </p>
+        </div>
+        <Badge variant="outline">图谱接口待接入</Badge>
+      </header>
+
+      <section
+        className="graph-integration__stage"
+        aria-label="风险传导图谱接入区域"
+      >
+        <div className="graph-integration__toolbar" aria-label="图谱控制预留">
+          <Button variant="outline" size="sm" disabled>
+            时间范围
+          </Button>
+          <Button variant="outline" size="sm" disabled>
+            实体层
+          </Button>
+          <Button variant="outline" size="sm" disabled>
+            风险层
+          </Button>
+          <Button variant="outline" size="sm" disabled>
+            全屏
+          </Button>
+        </div>
+        <div className="graph-integration__empty">
+          <div aria-hidden="true">
+            <NetworkIcon />
+            <span />
+            <GitBranchIcon />
           </div>
-          <div className="investment-appetite">
-            <LandmarkIcon aria-hidden="true" />
+          <h3>动态图谱组件将在此接入</h3>
+          <p>
+            接口需提供实体、关系方向、有效期、边权、置信度、来源和抽取版本；缺少这些字段时不生成关系边。
+          </p>
+          <dl>
             <div>
-              <span>适用边界</span>
-              <strong>{investment.riskAppetite}</strong>
+              <dt>当前页面</dt>
+              <dd>布局、加载态、工具栏与全屏容器已预留</dd>
             </div>
-          </div>
-        </GlassPanel>
-      </Reveal>
-
-      <ConstraintSection
-        icon={TargetIcon}
-        title="尽调前置条件"
-        description="系统按材料覆盖、风险指标和事件变化持续更新行动优先级。"
-        items={[
-          ...investment.preInvestmentChecks,
-          ...investment.dueDiligenceFocus,
-        ]}
-      />
-      <ConstraintSection
-        icon={LandmarkIcon}
-        title="决策与治理阈值"
-        description="通过数据覆盖、阶段里程碑和质量阈值形成明确的风险行动边界。"
-        items={investment.valuationConstraints}
-      />
-      <ConstraintSection
-        icon={UserRoundCheckIcon}
-        title="持续监测"
-        description="企业披露、事件状态与治理进度变化会触发风险建议更新。"
-        items={investment.postInvestmentMonitoring}
-      />
-      <ConstraintSection
-        icon={CircleAlertIcon}
-        title="风险升级触发"
-        description="触发后系统提高处置等级，并更新建议动作与跟踪频率。"
-        items={investment.stopLossTriggers}
-        danger
-      />
-
-      <Reveal>
-        <section className="method-boundary-note">
-          <ShieldCheckIcon aria-hidden="true" />
-          <div>
-            <strong>使用边界</strong>
-            <p>
-              本页基于公开信息快照形成尽调与治理约束，不构成证券投资建议、收益承诺或监管认定。
-            </p>
-          </div>
-        </section>
-      </Reveal>
+            <div>
+              <dt>待同学提供</dt>
+              <dd>图谱组件、时序数据和关系语义</dd>
+            </div>
+            <div>
+              <dt>接入边界</dt>
+              <dd>不复用旧证据星型图，不伪造风险传导</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
     </div>
   )
 }
 
-function ConstraintSection({
+function InvestorDecisionPanel({
+  detail,
+  events,
+  mode,
+}: {
+  detail: CompanyDetail
+  events: RiskEvent[]
+  mode: "research" | "response"
+}) {
+  const [state, setState] = useState<AssessmentState>({ status: "loading" })
+
+  useEffect(() => {
+    const controller = new AbortController()
+    void fetchIndustryRiskAssessment(detail.id, { signal: controller.signal })
+      .then((value) => setState({ status: "success", value }))
+      .catch((error: unknown) => {
+        if (controller.signal.aborted) return
+        setState({
+          status: "error",
+          message:
+            error instanceof Error
+              ? error.message
+              : "投资研判数据暂时无法加载。",
+        })
+      })
+    return () => controller.abort()
+  }, [detail.id])
+
+  if (
+    state.status === "loading" ||
+    (state.status === "success" && state.value.company.id !== detail.id)
+  ) {
+    return <DecisionState text="正在读取风险分、证据覆盖和触发条件…" />
+  }
+  if (state.status === "error") {
+    return <DecisionState text={state.message} />
+  }
+
+  return mode === "research" ? (
+    <InvestmentResearchContent
+      detail={detail}
+      events={events}
+      response={state.value}
+    />
+  ) : (
+    <RiskResponseContent detail={detail} response={state.value} />
+  )
+}
+
+function InvestmentResearchContent({
+  detail,
+  events,
+  response,
+}: {
+  detail: CompanyDetail
+  events: RiskEvent[]
+  response: IndustryRiskAssessmentApiResponse
+}) {
+  const investment = detail.investmentView
+  const rootRef = useRef<HTMLDivElement>(null)
+  const prefersReducedMotion = usePrefersReducedMotion()
+  const topMetrics = useMemo(
+    () =>
+      response.assessment.metrics
+        .filter(
+          (metric) => metric.kind === "weighted" && metric.riskScore !== null
+        )
+        .sort((left, right) => (right.riskScore ?? 0) - (left.riskScore ?? 0))
+        .slice(0, 5),
+    [response.assessment.metrics]
+  )
+  const motionKey = `${response.company.id}:${response.assessment.methodVersion}:investment`
+
+  useGSAP(
+    () => {
+      const root = rootRef.current
+      if (!root) return
+      const bars = root.querySelectorAll<HTMLElement>("[data-investor-bar]")
+      if (prefersReducedMotion) {
+        gsap.set(bars, { clearProps: "transform" })
+        return
+      }
+      gsap.fromTo(
+        bars,
+        { scaleX: 0, transformOrigin: "left center" },
+        {
+          scaleX: 1,
+          duration: 0.72,
+          stagger: 0.075,
+          ease: "power3.out",
+          clearProps: "transform",
+        }
+      )
+    },
+    {
+      scope: rootRef,
+      dependencies: [motionKey, prefersReducedMotion],
+      revertOnUpdate: true,
+    }
+  )
+
+  return (
+    <div
+      ref={rootRef}
+      className="investor-decision page-stack"
+      data-motion-key={motionKey}
+    >
+      <header className="investor-decision__header">
+        <div>
+          <span className="eyebrow">Investment risk review</span>
+          <h2>{response.company.shortName}投资研判</h2>
+          <p>
+            依据风险位置、证据充分度和触发条件组织研究判断；不输出未经金融组确认的买入、卖出或收益预测。
+          </p>
+        </div>
+        <Badge variant="outline">风险研究辅助</Badge>
+      </header>
+
+      <section className="investor-decision__dashboard">
+        <article className="investor-decision__score">
+          <span>综合风险指数</span>
+          <strong>{response.assessment.totalRiskScore ?? "—"}</strong>
+          <p>
+            {investment?.summary ??
+              "当前风险结论需结合原始来源和正式披露核对。"}
+          </p>
+          <div>
+            <span
+              style={{ width: `${response.assessment.totalRiskScore ?? 0}%` }}
+              data-investor-bar
+            />
+          </div>
+        </article>
+
+        <article className="investor-decision__coverage">
+          <div
+            style={
+              {
+                "--coverage": `${Math.round(response.assessment.weightedDataCoverage * 100)}%`,
+              } as React.CSSProperties
+            }
+          >
+            <strong>
+              {Math.round(response.assessment.weightedDataCoverage * 100)}%
+            </strong>
+            <span>指标覆盖</span>
+          </div>
+          <dl>
+            <div>
+              <dt>已评分</dt>
+              <dd>{response.assessment.weightedScoredIndicatorCount}/18</dd>
+            </div>
+            <div>
+              <dt>近期事件</dt>
+              <dd>{events.length}</dd>
+            </div>
+            <div>
+              <dt>同业样本</dt>
+              <dd>{response.assessment.benchmarkSampleSize}</dd>
+            </div>
+          </dl>
+        </article>
+
+        <article className="investor-decision__drivers">
+          <header>
+            <span>主要风险驱动</span>
+            <small>同业分位着色</small>
+          </header>
+          <ol>
+            {topMetrics.map((metric) => (
+              <li
+                key={metric.indicatorId}
+                style={
+                  {
+                    "--driver-color": riskHeatColor(metric.riskPercentile),
+                  } as React.CSSProperties
+                }
+              >
+                <div>
+                  <span>{metric.indicatorId}</span>
+                  <strong>{metric.label}</strong>
+                  <b>{metric.riskScore}</b>
+                </div>
+                <i>
+                  <span
+                    data-investor-bar
+                    style={{ width: `${metric.riskScore ?? 0}%` }}
+                  />
+                </i>
+              </li>
+            ))}
+          </ol>
+        </article>
+      </section>
+
+      <section className="investor-decision__constraints">
+        <DecisionList
+          icon={SearchCheckIcon}
+          title="投资前核验"
+          items={[
+            ...(investment?.preInvestmentChecks ?? []),
+            ...(investment?.dueDiligenceFocus ?? []),
+          ]}
+        />
+        <DecisionList
+          icon={LandmarkIcon}
+          title="估值与决策约束"
+          items={investment?.valuationConstraints ?? []}
+        />
+        <DecisionList
+          icon={BinocularsIcon}
+          title="持有期监测"
+          items={investment?.postInvestmentMonitoring ?? []}
+        />
+        <DecisionList
+          icon={CircleAlertIcon}
+          title="重新评估触发"
+          items={investment?.stopLossTriggers ?? []}
+          danger
+        />
+      </section>
+
+      <BoundaryNote />
+    </div>
+  )
+}
+
+function RiskResponseContent({
+  detail,
+  response,
+}: {
+  detail: CompanyDetail
+  response: IndustryRiskAssessmentApiResponse
+}) {
+  const investment = detail.investmentView
+  const stages = [
+    {
+      id: "01",
+      icon: SearchCheckIcon,
+      title: "投资前核验",
+      description:
+        "在决策前补齐关键事实和原始材料，避免以缺失值形成虚假确定性。",
+      items: [
+        ...(investment?.preInvestmentChecks ?? []),
+        ...(investment?.dueDiligenceFocus ?? []),
+      ],
+    },
+    {
+      id: "02",
+      icon: FileSignatureIcon,
+      title: "合同与交易保护",
+      description: "把关键风险转化为交割前提、信息权利、陈述保证或分阶段安排。",
+      items: investment?.valuationConstraints ?? [],
+    },
+    {
+      id: "03",
+      icon: Clock3Icon,
+      title: "持有期监测",
+      description: "围绕高风险指标、正式披露和事件变化设置连续观察点。",
+      items: investment?.postInvestmentMonitoring ?? [],
+    },
+    {
+      id: "04",
+      icon: CircleAlertIcon,
+      title: "重新评估与退出条件",
+      description: "触发条件出现时重新核验风险承受边界，并评估降低敞口或退出。",
+      items: investment?.stopLossTriggers ?? [],
+    },
+  ]
+
+  return (
+    <div className="risk-response page-stack">
+      <header className="investor-decision__header">
+        <div>
+          <span className="eyebrow">Investor risk response</span>
+          <h2>{response.company.shortName}风险应对</h2>
+          <p>
+            以投资者可执行的核验、保护、监测和重新评估为主线；不包含企业内部责任部门、截止日期或工单状态。
+          </p>
+        </div>
+        <Badge variant="outline">全生命周期风险控制</Badge>
+      </header>
+
+      <section className="risk-response__timeline">
+        {stages.map((stage) => {
+          const Icon = stage.icon
+          return (
+            <article key={stage.id}>
+              <header>
+                <span>{stage.id}</span>
+                <Icon aria-hidden="true" />
+                <div>
+                  <h3>{stage.title}</h3>
+                  <p>{stage.description}</p>
+                </div>
+              </header>
+              {stage.items.length ? (
+                <ol>
+                  {stage.items.map((item) => (
+                    <li key={item}>
+                      <ArrowRightIcon aria-hidden="true" />
+                      {item}
+                    </li>
+                  ))}
+                </ol>
+              ) : (
+                <p className="risk-response__empty">
+                  当前没有已确认的阶段性条件。
+                </p>
+              )}
+            </article>
+          )
+        })}
+      </section>
+
+      <BoundaryNote />
+    </div>
+  )
+}
+
+function DecisionList({
   icon: Icon,
   title,
-  description,
   items,
   danger = false,
 }: {
-  icon: typeof TargetIcon
+  icon: typeof SearchCheckIcon
   title: string
-  description: string
   items: string[]
   danger?: boolean
 }) {
   return (
-    <Reveal>
-      <section className="page-section">
-        <SectionHeader
-          title={title}
-          description={description}
-          tone={danger ? "rose" : "amber"}
-        />
-        <div className="constraint-list">
-          {items.map((item, index) => (
-            <article
-              key={item}
-              className={cn(
-                "constraint-row",
-                danger && "constraint-row-danger"
-              )}
-            >
+    <article data-danger={danger}>
+      <header>
+        <Icon aria-hidden="true" />
+        <h3>{title}</h3>
+        <Badge variant="outline">{items.length}</Badge>
+      </header>
+      {items.length ? (
+        <ol>
+          {items.slice(0, 6).map((item, index) => (
+            <li key={item}>
               <span>{String(index + 1).padStart(2, "0")}</span>
-              <Icon aria-hidden="true" />
               <p>{item}</p>
-            </article>
+            </li>
           ))}
-        </div>
-      </section>
-    </Reveal>
+        </ol>
+      ) : (
+        <p>当前暂无已确认条件。</p>
+      )}
+    </article>
   )
 }
 
-function EventFlowStep({
-  index,
-  title,
-  content,
-}: {
-  index: string
-  title: string
-  content: string
-}) {
+function BoundaryNote() {
   return (
-    <section className="event-flow-step">
-      <span>{index}</span>
+    <section className="investor-decision__boundary">
+      <ShieldCheckIcon aria-hidden="true" />
       <div>
-        <h3>{title}</h3>
-        <p>{content}</p>
+        <strong>使用边界</strong>
+        <p>
+          本页基于公开信息和当前评分方法形成风险研究辅助，不构成证券投资建议、收益承诺或监管认定。
+        </p>
       </div>
     </section>
   )
 }
 
-function NodeAudit({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: typeof GitBranchIcon
-  label: string
-  value: string
-}) {
+function DecisionState({ text }: { text: string }) {
   return (
-    <div className="node-audit-item">
-      <Icon aria-hidden="true" />
-      <div>
-        <span>{label}</span>
-        <strong>{value}</strong>
-      </div>
+    <div className="industry-risk-state" role="status">
+      <DatabaseZapIcon aria-hidden="true" />
+      <p>{text}</p>
     </div>
   )
-}
-
-function resolveOwner(riskType: string) {
-  if (/技术|算法|产品|安全/.test(riskType)) {
-    return "CTO / 产品安全负责人"
-  }
-  if (/合规|监管|数据|伦理|诉讼/.test(riskType)) {
-    return "法务合规负责人"
-  }
-  if (/财务|融资|估值|经营/.test(riskType)) {
-    return "CFO / 投融资负责人"
-  }
-  if (/供应链|地缘|外部/.test(riskType)) {
-    return "供应链与战略负责人"
-  }
-  if (/人员|人才|股权/.test(riskType)) {
-    return "人力与董事会办公室"
-  }
-  return "风险管理负责人"
-}
-
-function statusText(status: EventStatus) {
-  return status === "done"
-    ? "已完成"
-    : status === "in-progress"
-      ? "处理中"
-      : "待处理"
-}
-
-function formatEventDate(value: string) {
-  const normalizedValue = dateOnlyPattern.test(value)
-    ? `${value}T00:00:00`
-    : value
-  const date = new Date(normalizedValue)
-
-  return Number.isNaN(date.getTime()) ? value : eventDateFormatter.format(date)
-}
-
-function formatEventDateTime(value: string) {
-  if (dateOnlyPattern.test(value)) {
-    return formatEventDate(value)
-  }
-
-  const date = new Date(value)
-
-  return Number.isNaN(date.getTime())
-    ? value
-    : eventDateTimeFormatter.format(date)
 }

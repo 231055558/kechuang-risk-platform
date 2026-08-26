@@ -109,6 +109,7 @@ type AppShellProps = {
   onNavigate: (target: NavigationTarget) => Promise<boolean>
   onPreloadView: (view: TabValue) => void
   onOpenExports: () => void
+  showExports: boolean
   onResetDemo: () => void
   onToggleTheme: () => void
   feedback: string
@@ -137,6 +138,7 @@ export function AppShell({
   onNavigate,
   onPreloadView,
   onOpenExports,
+  showExports,
   onResetDemo,
   onToggleTheme,
   feedback,
@@ -326,6 +328,7 @@ export function AppShell({
           theme={theme}
           onToggleTheme={onToggleTheme}
           onOpenExports={onOpenExports}
+          showExports={showExports}
           onResetDemo={handleReset}
           onOpenMobileNav={() => setMobileNavOpen(true)}
           mobileNavButtonRef={mobileNavButtonRef}

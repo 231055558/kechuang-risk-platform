@@ -11,9 +11,11 @@ function readProjectFile(path: string) {
   return readFileSync(join(projectRoot, path), "utf8")
 }
 
-test("mobile dashboard controls expose at least 44px touch targets", () => {
+test("mobile investor workflows collapse dense surfaces without task selectors", () => {
   const businessStyles = readProjectFile("src/styles/business.css")
-  const pageStyles = readProjectFile("src/styles/pages.css")
+  const newsStyles = readProjectFile("src/styles/risk-news.css")
+  const indicatorStyles = readProjectFile("src/styles/indicator-analysis.css")
+  const operationsStyles = readProjectFile("src/styles/investor-operations.css")
   const eventsSource = readProjectFile(
     "src/components/dashboard/events-tab.tsx"
   )
@@ -22,29 +24,21 @@ test("mobile dashboard controls expose at least 44px touch targets", () => {
     businessStyles,
     /@media \(max-width: 767px\) \{[\s\S]*?\.section-tabs \[data-slot="tabs-trigger"\][\s\S]*?min-width:\s*44px;[\s\S]*?min-height:\s*44px;/
   )
-  assert.match(
-    pageStyles,
-    /\.compare-card-selector,[\s\S]*?\.event-register-status \[data-slot="select-trigger"\],[\s\S]*?min-width:\s*44px;[\s\S]*?min-height:\s*44px;/
-  )
-  assert.match(
-    pageStyles,
-    /\.assessment-method-action\[data-slot="button"\]\[data-variant="outline"\]\s*\{[\s\S]*?min-height:\s*44px;/
-  )
-  assert.match(
-    pageStyles,
-    /\.compare-company-menu \[data-slot="select-item"\],[\s\S]*?\.event-select-menu \[data-slot="select-item"\][\s\S]*?min-height:\s*44px;/
-  )
-  assert.equal(eventsSource.match(/className="event-select-menu"/g)?.length, 4)
+  ;[newsStyles, indicatorStyles, operationsStyles].forEach((source) => {
+    assert.match(source, /@media \(max-width: 720px\)/)
+  })
+  assert.doesNotMatch(eventsSource, /event-select-menu|event-register-status/)
 })
 
-test("comparison metrics and event counts use tabular numerals", () => {
+test("comparison and investor metric values use tabular numerals", () => {
   const businessStyles = readProjectFile("src/styles/business.css")
   const compareSource = readProjectFile(
     "src/components/dashboard/compare-tab.tsx"
   )
-  const eventsSource = readProjectFile(
-    "src/components/dashboard/events-tab.tsx"
+  const indicatorSource = readProjectFile(
+    "src/components/dashboard/indicator-analysis-tab.tsx"
   )
+  const indicatorStyles = readProjectFile("src/styles/indicator-analysis.css")
 
   assert.match(
     businessStyles,
@@ -55,25 +49,22 @@ test("comparison metrics and event counts use tabular numerals", () => {
     "comparison scores, percentages, coverage and evidence counts should use tabular numerals"
   )
   assert.ok(
-    (eventsSource.match(/\btabular-number\b/g) ?? []).length >= 4,
-    "event counts and rendered dates should use tabular numerals"
+    /font-variant-numeric:\s*tabular-nums/.test(indicatorStyles) &&
+      /riskPercentile/.test(indicatorSource),
+    "indicator scores and percentiles should use tabular numerals"
   )
 })
 
-test("event dates render with the same zh-CN conventions as risk dynamics", () => {
-  const eventsSource = readProjectFile(
-    "src/components/dashboard/events-tab.tsx"
+test("risk-news dates use the shared zh-CN formatters and semantic time elements", () => {
+  const realtimeSource = readProjectFile(
+    "src/components/dashboard/realtime-tab.tsx"
   )
 
-  assert.match(eventsSource, /new Intl\.DateTimeFormat\("zh-CN"/)
-  assert.match(eventsSource, /formatEventDate\(event\.identifiedAt\)/)
-  assert.match(eventsSource, /formatEventDate\(selectedEvent\.identifiedAt\)/)
+  assert.match(realtimeSource, /from "@\/lib\/date-format"/)
   assert.match(
-    eventsSource,
-    /formatEventDateTime\(\s*selectedEvent\.sourcePublishedAt\s*\)/
+    realtimeSource,
+    /formatSourceDateTime\(selectedSignal\.publishedAt\)/
   )
-  assert.match(eventsSource, /dateTime=\{selectedEvent\.sourcePublishedAt\}/)
-  assert.doesNotMatch(eventsSource, />\s*\{event\.identifiedAt\}\s*<\/time>/)
-  assert.doesNotMatch(eventsSource, /\{selectedEvent\.identifiedAt\}\s*·/)
-  assert.doesNotMatch(eventsSource, /\$\{selectedEvent\.sourcePublishedAt\}/)
+  assert.match(realtimeSource, /formatSourceListTime\(signal\.publishedAt\)/)
+  assert.match(realtimeSource, /dateTime=\{signal\.publishedAt\}/)
 })
