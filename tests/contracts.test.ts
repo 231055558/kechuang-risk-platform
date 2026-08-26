@@ -67,8 +67,8 @@ test("glass styles keep the standard backdrop declaration last", () => {
   })
 })
 
-test("navigation exposes four business groups and ten direct workflows", () => {
-  assert.equal(navItems.length, 10)
+test("navigation exposes the eight approved investor workflows", () => {
+  assert.equal(navItems.length, 8)
   assert.equal(new Set(navItems.map((item) => item.id)).size, navItems.length)
   assert.equal(
     new Set(navItems.map((item) => item.label)).size,
@@ -85,71 +85,54 @@ test("navigation exposes four business groups and ten direct workflows", () => {
       {
         id: "risk-assessment",
         label: "风险总览",
-        group: "研判工作台",
+        group: "风险研判",
         target: { view: "overview" },
       },
       {
-        id: "realtime-intelligence",
-        label: "风险资讯",
-        group: "研判工作台",
-        target: { view: "realtime" },
-      },
-      {
-        id: "risk-reports",
-        label: "风险报告",
-        group: "研判工作台",
-        target: { view: "reports" },
-      },
-      {
-        id: "event-register",
-        label: "事件清单",
-        group: "事件处理",
-        target: { view: "events", operationsSection: "events" },
+        id: "indicator-analysis",
+        label: "指标分析",
+        group: "风险研判",
+        target: { view: "intelligence", researchSection: "metrics" },
       },
       {
         id: "risk-transmission",
         label: "风险传导",
-        group: "事件处理",
+        group: "风险研判",
         target: { view: "events", operationsSection: "transmission" },
       },
       {
-        id: "enterprise-governance",
-        label: "企业处置",
-        group: "事件处理",
-        target: { view: "events", operationsSection: "governance" },
-      },
-      {
-        id: "company-detail",
-        label: "企业详情",
-        group: "企业研究",
-        target: { view: "intelligence", researchSection: "profile" },
+        id: "realtime-intelligence",
+        label: "风险资讯",
+        group: "信息与比较",
+        target: { view: "realtime" },
       },
       {
         id: "comparison",
-        label: "对比分析",
-        group: "企业研究",
+        label: "企业对比",
+        group: "信息与比较",
         target: { view: "compare" },
       },
       {
-        id: "investment-constraints",
-        label: "投资约束",
-        group: "约束与应对",
+        id: "risk-reports",
+        label: "企业报告",
+        group: "输出与策略",
+        target: { view: "reports" },
+      },
+      {
+        id: "investment-research",
+        label: "投资研判",
+        group: "输出与策略",
         target: { view: "events", operationsSection: "investment" },
       },
       {
         id: "investment-advice",
         label: "风险应对",
-        group: "约束与应对",
+        group: "输出与策略",
         target: { view: "events", operationsSection: "advice" },
       },
     ]
   )
-  assert.deepEqual(navGroups, [
-    "研判工作台",
-    "事件处理",
-    "企业研究",
-    "约束与应对",
-  ])
+  assert.deepEqual(navGroups, ["风险研判", "信息与比较", "输出与策略"])
   assert.ok(navItems.every((item) => item.description.trim().length > 0))
 
   assert.equal(
@@ -158,11 +141,11 @@ test("navigation exposes four business groups and ten direct workflows", () => {
   )
   assert.equal(
     resolveActiveNavigationItem("events", "profile", "governance"),
-    "enterprise-governance"
+    "risk-transmission"
   )
   assert.equal(
     resolveActiveNavigationItem("events", "profile", "investment"),
-    "investment-constraints"
+    "investment-research"
   )
   assert.equal(
     resolveActiveNavigationItem("events", "profile", "advice"),
@@ -170,7 +153,7 @@ test("navigation exposes four business groups and ten direct workflows", () => {
   )
   assert.equal(
     resolveActiveNavigationItem("intelligence", "metrics", "events"),
-    "company-detail"
+    "indicator-analysis"
   )
   assert.equal(
     resolveActiveNavigationItem("reports", "profile", "events"),
@@ -179,9 +162,9 @@ test("navigation exposes four business groups and ten direct workflows", () => {
   assert.equal(
     getNavigationItemIdForTarget({
       view: "events",
-      operationsSection: "events",
+      operationsSection: "transmission",
     }),
-    "event-register"
+    "risk-transmission"
   )
 })
 
@@ -352,7 +335,7 @@ test("structured navigation switches views and subtabs in place", () => {
   )
 })
 
-test("event workflows have no duplicated top-level tabs", () => {
+test("investor strategy and graph integration have no enterprise task workflows", () => {
   const eventsSource = readProjectFile(
     "src/components/dashboard/events-tab.tsx"
   )
@@ -360,35 +343,30 @@ test("event workflows have no duplicated top-level tabs", () => {
   assert.doesNotMatch(eventsSource, /TabsTrigger/)
   assert.doesNotMatch(eventsSource, /TabsList/)
   assert.doesNotMatch(eventsSource, /TabsContent/)
-  assert.match(eventsSource, /section === "events"/)
-  assert.match(eventsSource, /section === "transmission"/)
-  assert.match(eventsSource, /section === "governance"/)
   assert.match(eventsSource, /section === "investment"/)
   assert.match(eventsSource, /section === "advice"/)
-  assert.match(eventsSource, /<AutomaticRiskAdvicePanel/)
-  assert.match(eventsSource, /companyId=\{detail\.id\}/)
+  assert.match(eventsSource, /<GraphIntegrationPanel detail=\{detail\}/)
+  assert.match(eventsSource, /KCR-TEMPORAL-GRAPH-PENDING-v1/)
+  assert.doesNotMatch(
+    eventsSource,
+    /EventRegister|Governance|AutomaticRiskAdvice/
+  )
+  assert.doesNotMatch(eventsSource, />负责人<|>待处理<|>截止日期<|>处置任务</)
 })
 
-test("promoted signals and open drawers remain scoped to the current company", () => {
-  const appSource = readProjectFile("src/App.tsx")
+test("risk-news drawers remain scoped and cannot promote management tasks", () => {
   const realtimeSource = readProjectFile(
     "src/components/dashboard/realtime-tab.tsx"
   )
 
-  assert.match(appSource, /createPromotedSignalKey/)
-  assert.match(appSource, /getPromotedSignalIdsForCompany/)
-  assert.match(
-    appSource,
-    /id: `snapshot-event-\$\{detail\.id\}-\$\{signal\.id\}`/
-  )
-  assert.match(
-    appSource,
-    /setPromotedSignalIds\(\(current\) => \[[\s\S]*createPromotedSignalKey\(detail\.id, signal\.id\)/
-  )
-  assert.match(appSource, /setFocusedRealtimeSignalId\(null\)/)
   assert.match(
     realtimeSource,
-    /useEffect\(\(\) => \{[\s\S]*previousCompanyIdRef\.current === detail\.id[\s\S]*setSelectedSignalId\(null\)[\s\S]*focusedSignal[\s\S]*onFocusSignalHandled\(\)[\s\S]*\}, \[data\.signals, detail\.id, focusSignalId, onFocusSignalHandled\]\)/
+    /previousCompanyIdRef\.current === detail\.id[\s\S]*setSelectedSignalId\(null\)[\s\S]*onFocusSignalHandled\(\)/
+  )
+  assert.doesNotMatch(realtimeSource, /onPromote\(/)
+  assert.doesNotMatch(
+    realtimeSource,
+    /recommendedAction|researchQuestions|转为事件|待处理/
   )
 })
 
@@ -397,14 +375,6 @@ test("workflow sections reveal once on viewport entry with a reduced-motion fall
     "src/components/motion/workflow-transition.tsx"
   )
   const shellStyles = readProjectFile("src/styles/shell.css")
-  const dashboardSources = [
-    "overview-tab.tsx",
-    "realtime-tab.tsx",
-    "intelligence-tab.tsx",
-    "compare-tab.tsx",
-    "events-tab.tsx",
-  ].map((file) => readProjectFile(`src/components/dashboard/${file}`))
-
   assert.match(workflowSource, /className="workflow-transition"/)
   assert.match(workflowSource, /export function Reveal/)
   assert.match(workflowSource, /IntersectionObserver/)
@@ -428,7 +398,6 @@ test("workflow sections reveal once on viewport entry with a reduced-motion fall
     shellStyles,
     /\.motion-reveal\[data-reveal-state="pending"\]\s*\{[\s\S]*?filter:\s*blur/
   )
-  dashboardSources.forEach((source) => assert.match(source, /<Reveal/))
 })
 
 test("controlled mobile navigation restores focus to its trigger", () => {
@@ -503,39 +472,35 @@ test("sticky native command bar keeps a dense blurred glass backdrop", () => {
   assert.match(compactRule, /backdrop-filter: blur\(24px\)/)
 })
 
-test("governance entry uses the restrained glass action treatment", () => {
+test("legacy governance entry is absent from the investor overview", () => {
   const overviewSource = readProjectFile(
     "src/components/dashboard/overview-tab.tsx"
   )
-  const pageStyles = readProjectFile("src/styles/pages.css")
 
-  assert.match(overviewSource, /variant="outline"/)
-  assert.match(overviewSource, /className="governance-entry-action"/)
-  assert.match(
-    pageStyles,
-    /\.governance-entry-action\[data-slot="button"\]\[data-variant="outline"\] \{/
-  )
-  assert.match(pageStyles, /color: var\(--brand-strong\) !important/)
-  assert.match(pageStyles, /backdrop-filter: blur\(14px\) saturate\(1\.08\)/)
+  assert.match(overviewSource, /<IndustryRiskReviewPanel/)
+  assert.doesNotMatch(overviewSource, /governance-entry-action|事件清单|责任状态/)
 })
 
-test("assessment conclusion leads directly to automatic actions", () => {
+test("assessment overview leads with top risks and excludes management actions", () => {
   const overviewSource = readProjectFile(
     "src/components/dashboard/industry-risk-review-panel.tsx"
   )
   const profileDeskSource = readProjectFile(
     "src/components/dashboard/industry-risk-profile-desk.tsx"
   )
-  const pageStyles = readProjectFile("src/styles/pages.css")
   const profileStyles = readProjectFile(
     "src/styles/industry-risk-profile-desk.css"
   )
 
-  assert.match(profileDeskSource, /系统自动结论/)
-  assert.match(overviewSource, /建议优先执行这三项动作/)
-  assert.match(overviewSource, /generateIndustryRiskRecommendations/)
+  assert.match(profileDeskSource, /综合风险指数/)
+  assert.match(profileDeskSource, /Top 3 风险驱动/)
+  assert.match(profileDeskSource, /slice\(0, 3\)/)
+  assert.match(overviewSource, /近期事件/)
+  assert.doesNotMatch(
+    overviewSource,
+    /generateIndustryRiskRecommendations|建议优先执行|处置任务/
+  )
   assert.match(profileStyles, /\.risk-profile-desk__conclusion \{/)
-  assert.match(pageStyles, /\.automatic-action-grid \{/)
 })
 
 test("large reading surfaces preserve translucent liquid-glass depth", () => {
@@ -613,15 +578,15 @@ test("structured research method states the automatic calculation and action bou
   )
 })
 
-test("the six pages use the approved enterprise terminology", () => {
+test("the eight investor workflows use the approved terminology", () => {
   const overviewSource = readProjectFile(
-    "src/components/dashboard/overview-tab.tsx"
+    "src/components/dashboard/industry-risk-review-panel.tsx"
   )
   const realtimeSource = readProjectFile(
     "src/components/dashboard/realtime-tab.tsx"
   )
   const intelligenceSource = readProjectFile(
-    "src/components/dashboard/intelligence-tab.tsx"
+    "src/components/dashboard/indicator-analysis-tab.tsx"
   )
   const compareSource = readProjectFile(
     "src/components/dashboard/compare-tab.tsx"
@@ -633,16 +598,18 @@ test("the six pages use the approved enterprise terminology", () => {
     "src/components/dashboard/risk-reports-tab.tsx"
   )
 
-  assert.match(overviewSource, /当前辅助结论/)
+  assert.match(overviewSource, /风险总览/)
+  assert.match(overviewSource, /近期事件/)
   assert.match(realtimeSource, /风险资讯/)
-  assert.match(intelligenceSource, /企业研究档案/)
-  assert.match(intelligenceSource, /研究底稿索引/)
-  assert.match(intelligenceSource, /公开证据档案/)
-  assert.match(intelligenceSource, /技术专项量化与自动评分/)
-  assert.match(intelligenceSource, /KTR-2026\.07-v1 专项评分区/)
+  assert.match(intelligenceSource, /指标分析/)
+  assert.match(intelligenceSource, /同业风险分位矩阵/)
+  assert.match(intelligenceSource, /点击行查看公式与来源/)
+  assert.match(intelligenceSource, /方法含义/)
   assert.match(compareSource, /六维风险对照图/)
-  assert.match(eventsSource, /事件清单/)
-  assert.match(reportsSource, /风险报告中心/)
+  assert.match(eventsSource, /风险传导/)
+  assert.match(eventsSource, /投资研判/)
+  assert.match(eventsSource, /风险应对/)
+  assert.match(reportsSource, /企业风险报告/)
   assert.match(reportsSource, /数据库已收录的报告与正式来源/)
 })
 
@@ -689,8 +656,8 @@ test("workflow content starts with meaningful controls instead of empty page hea
 })
 
 test("method and comparison controls live in their relevant content regions", () => {
-  const overviewSource = readProjectFile(
-    "src/components/dashboard/overview-tab.tsx"
+  const indicatorSource = readProjectFile(
+    "src/components/dashboard/indicator-analysis-tab.tsx"
   )
   const compareSource = readProjectFile(
     "src/components/dashboard/compare-tab.tsx"
@@ -699,11 +666,9 @@ test("method and comparison controls live in their relevant content regions", ()
     "src/components/layout/top-command-bar.tsx"
   )
 
-  assert.match(overviewSource, /className="assessment-method-action"/)
-  assert.match(
-    overviewSource,
-    /assessment-conclusion-top[\s\S]*onClick=\{onOpenMethod\}/
-  )
+  assert.match(indicatorSource, /点击行查看公式与来源/)
+  assert.match(indicatorSource, /<MethodBlock title="本次计算"/)
+  assert.match(indicatorSource, /<MethodBlock[\s\S]*?title="方法含义"/)
   assert.doesNotMatch(topBarSource, /打开方法与模型/)
   assert.match(compareSource, /nameControl=/)
   assert.match(compareSource, /className="compare-card-selector"/)
@@ -718,9 +683,9 @@ test("method and comparison controls live in their relevant content regions", ()
   assert.doesNotMatch(compareSource, /compare-switcher-glass/)
 })
 
-test("the institutional research desk defines the shell and major workflow surfaces", () => {
+test("the investor workstation defines the shell and major workflow surfaces", () => {
   const overviewSource = readProjectFile(
-    "src/components/dashboard/overview-tab.tsx"
+    "src/components/dashboard/industry-risk-review-panel.tsx"
   )
   const topBarSource = readProjectFile(
     "src/components/layout/top-command-bar.tsx"
@@ -729,11 +694,11 @@ test("the institutional research desk defines the shell and major workflow surfa
   const workflowSurfaces = [
     {
       path: "src/components/dashboard/realtime-tab.tsx",
-      pattern: /surfaceClassName="filter-toolbar-glass"/,
+      pattern: /className="risk-news__grid"/,
     },
     {
-      path: "src/components/dashboard/intelligence-tab.tsx",
-      pattern: /surfaceClassName="research-hero-glass"/,
+      path: "src/components/dashboard/indicator-analysis-tab.tsx",
+      pattern: /className="indicator-analysis__peer-matrix"/,
     },
     {
       path: "src/components/dashboard/compare-tab.tsx",
@@ -741,16 +706,15 @@ test("the institutional research desk defines the shell and major workflow surfa
     },
     {
       path: "src/components/dashboard/events-tab.tsx",
-      pattern: /surfaceClassName="filter-toolbar-glass"/,
+      pattern: /className="graph-integration__stage"/,
     },
   ]
   const riskOsStyles = readProjectFile("src/styles/risk-os.css")
   const indexStyles = readProjectFile("src/index.css")
 
-  assert.match(overviewSource, /<GlassPanel/)
-  assert.match(overviewSource, /surfaceClassName="assessment-hero-glass"/)
-  assert.match(overviewSource, /assessment-kpi-grid/)
-  assert.match(overviewSource, /assessment-kpi-item/)
+  assert.match(overviewSource, /<IndustryRiskProfileDesk/)
+  assert.match(overviewSource, /investor-overview__lower-grid/)
+  assert.match(overviewSource, /近期事件/)
   assert.match(sharedSource, /risk-os-panel-frame/)
   assert.doesNotMatch(sharedSource, /<LiquidGlassSurface/)
   assert.match(topBarSource, /risk-os-command-surface/)
@@ -768,21 +732,24 @@ test("the institutional research desk defines the shell and major workflow surfa
   )
 })
 
-test("reading-heavy workflows use full-width flow and removed pages stay removed", () => {
+test("reading-heavy workflows use dense investor surfaces and removed pages stay removed", () => {
   const realtimeSource = readProjectFile(
     "src/components/dashboard/realtime-tab.tsx"
   )
   const intelligenceSource = readProjectFile(
-    "src/components/dashboard/intelligence-tab.tsx"
+    "src/components/dashboard/indicator-analysis-tab.tsx"
   )
   const eventsSource = readProjectFile(
     "src/components/dashboard/events-tab.tsx"
   )
 
-  assert.match(realtimeSource, /className="signal-feed"/)
-  assert.match(intelligenceSource, /className="research-record-group"/)
-  assert.match(eventsSource, /className="event-register"/)
-  assert.doesNotMatch(realtimeSource, /xl:grid-cols-\[minmax\(0,1fr\)_/)
+  assert.match(realtimeSource, /className="risk-news__grid"/)
+  assert.match(
+    intelligenceSource,
+    /className="indicator-analysis__peer-matrix"/
+  )
+  assert.match(eventsSource, /className="graph-integration__stage"/)
+  assert.doesNotMatch(eventsSource, /event-register|governance-workspace/)
 
   ;[
     "src/components/dashboard/ai-flow-tab.tsx",
@@ -794,7 +761,7 @@ test("reading-heavy workflows use full-width flow and removed pages stay removed
   })
 })
 
-test("customer workflows expose automatic risk calculations without the manual scoring workspace", () => {
+test("customer workflows expose auditable calculations without task management", () => {
   const intelligenceSource = readProjectFile(
     "src/components/dashboard/intelligence-tab.tsx"
   )
@@ -807,9 +774,12 @@ test("customer workflows expose automatic risk calculations without the manual s
   const eventsSource = readProjectFile(
     "src/components/dashboard/events-tab.tsx"
   )
+  const indicatorSource = readProjectFile(
+    "src/components/dashboard/indicator-analysis-tab.tsx"
+  )
 
   assert.doesNotMatch(intelligenceSource, /<ScoringWorkspace/)
-  assert.match(intelligenceSource, /<IndustryRiskReviewPanel/)
+  assert.match(intelligenceSource, /<IndicatorAnalysisTab/)
   assert.match(workspaceSource, /六类风险量化工作台/)
   assert.match(workspaceSource, /riskQuantificationCatalogByDimension/)
   assert.match(workspaceSource, /技术专项自动评分/)
@@ -818,8 +788,13 @@ test("customer workflows expose automatic risk calculations without the manual s
     workspaceSource,
     /尚缺行业基准、组合规则或授权数据校准，不会以不完整口径自动计分/
   )
-  assert.match(eventsSource, /getAdmittedIndicators/)
-  assert.match(eventsSource, /getObservationIndicators/)
+  assert.match(indicatorSource, /riskPercentile/)
+  assert.match(indicatorSource, /formulaTrace/)
+  assert.match(indicatorSource, /missingReason/)
+  assert.doesNotMatch(
+    eventsSource,
+    /getAdmittedIndicators|getObservationIndicators/
+  )
   assert.match(realtimeSource, /getCanonicalRiskDimensionLabels/)
 })
 

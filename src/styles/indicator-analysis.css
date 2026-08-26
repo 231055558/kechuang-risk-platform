@@ -1,0 +1,388 @@
+.indicator-analysis {
+  --analysis-border: color-mix(in srgb, var(--risk-os-ink) 12%, transparent);
+  min-width: 0;
+  color: var(--risk-os-ink);
+}
+
+.indicator-analysis > * {
+  width: 100%;
+  min-width: 0;
+}
+
+.indicator-analysis__header,
+.indicator-analysis__peer-matrix > header,
+.indicator-analysis__table-section > header,
+.indicator-analysis__overview article > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.indicator-analysis__header {
+  display: grid;
+  padding: 4px 2px 12px;
+}
+
+.indicator-analysis__header h2 {
+  margin: 5px 0 6px;
+  font-size: 36px;
+  letter-spacing: 0;
+}
+
+.indicator-analysis__header p,
+.indicator-analysis__peer-matrix header p {
+  max-width: 78ch;
+  margin: 0;
+  color: var(--risk-os-muted);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.indicator-analysis__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 8px;
+  color: var(--risk-os-muted);
+  font-size: 12px;
+}
+
+.indicator-analysis__overview {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.35fr);
+  border: 1px solid var(--analysis-border);
+  background: var(--risk-os-surface);
+}
+
+.indicator-analysis__overview > article {
+  min-width: 0;
+  padding: 22px;
+}
+
+.indicator-analysis__overview > article + article {
+  border-left: 1px solid var(--analysis-border);
+}
+
+.indicator-analysis__overview h3,
+.indicator-analysis__peer-matrix h3,
+.indicator-analysis__table-section h3 {
+  margin: 4px 0 0;
+  font-size: 18px;
+}
+
+.indicator-analysis__radar .industry-risk-radar {
+  min-height: 430px;
+}
+
+.indicator-analysis__heat-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  margin-top: 20px;
+  border-top: 1px solid var(--analysis-border);
+  border-left: 1px solid var(--analysis-border);
+}
+
+.indicator-analysis__heat-grid button {
+  display: grid;
+  min-height: 116px;
+  align-content: space-between;
+  gap: 5px;
+  padding: 13px;
+  border: 0;
+  border-right: 1px solid var(--analysis-border);
+  border-bottom: 1px solid var(--analysis-border);
+  background: linear-gradient(
+    155deg,
+    color-mix(in srgb, var(--risk-heat-color) 32%, var(--risk-os-surface)),
+    color-mix(in srgb, var(--risk-heat-color) 9%, var(--risk-os-surface))
+  );
+  color: var(--risk-os-ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.indicator-analysis__heat-grid button::before {
+  width: 34px;
+  height: 4px;
+  border-radius: 99px;
+  background: var(--risk-heat-color);
+  content: "";
+}
+
+.indicator-analysis__heat-grid button[data-missing="true"],
+.indicator-analysis [data-missing="true"].indicator-analysis__heat-pill,
+.indicator-analysis td[data-missing="true"] {
+  background-color: var(--risk-os-surface-muted);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent 0 6px,
+    color-mix(in srgb, var(--risk-os-muted) 12%, transparent) 6px 8px
+  );
+}
+
+.indicator-analysis__heat-grid span {
+  margin-top: 8px;
+  color: var(--risk-heat-color);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.indicator-analysis__heat-grid strong {
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+}
+
+.indicator-analysis__heat-grid small {
+  overflow: hidden;
+  color: var(--risk-os-muted);
+  font-size: 12px;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.risk-heat-legend {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--risk-os-muted);
+  font-size: 11px;
+}
+
+.risk-heat-legend i {
+  width: 116px;
+  height: 8px;
+  border-radius: 99px;
+  background: linear-gradient(
+    90deg,
+    #168b78,
+    #8daa31,
+    #d7b52e,
+    #db751f,
+    #c73535
+  );
+}
+
+.indicator-analysis__peer-matrix,
+.indicator-analysis__table-section {
+  padding: 22px;
+  border: 1px solid var(--analysis-border);
+  background: var(--risk-os-surface);
+}
+
+.indicator-analysis__matrix-scroll,
+.indicator-analysis__table-scroll {
+  margin-top: 18px;
+  overflow-x: auto;
+  outline: none;
+}
+
+.indicator-analysis table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.indicator-analysis th,
+.indicator-analysis td {
+  border: 1px solid var(--analysis-border);
+  text-align: center;
+}
+
+.indicator-analysis__peer-matrix th,
+.indicator-analysis__peer-matrix td {
+  min-width: 50px;
+  height: 42px;
+  padding: 6px;
+}
+
+.indicator-analysis__peer-matrix th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  min-width: 150px;
+  background: var(--risk-os-surface);
+  text-align: left;
+}
+
+.indicator-analysis__peer-matrix td:not([data-missing="true"]) {
+  background: color-mix(
+    in srgb,
+    var(--risk-heat-color) 74%,
+    var(--risk-os-surface)
+  );
+  color: color-mix(in srgb, var(--risk-heat-color) 12%, white);
+  font-weight: 760;
+}
+
+.indicator-analysis__peer-matrix tr[data-active="true"] th:first-child {
+  box-shadow: inset 4px 0 var(--risk-profile-accent, #c73535);
+}
+
+.indicator-analysis__peer-matrix th strong,
+.indicator-analysis__peer-matrix th small {
+  display: block;
+}
+
+.indicator-analysis__peer-matrix th small {
+  margin-top: 3px;
+  color: var(--risk-os-muted);
+}
+
+.indicator-analysis__table-section table {
+  min-width: 1040px;
+}
+
+.indicator-analysis__table-section th,
+.indicator-analysis__table-section td {
+  padding: 11px 12px;
+  text-align: left;
+}
+
+.indicator-analysis__table-section tbody tr {
+  cursor: pointer;
+}
+
+.indicator-analysis__table-section tbody tr:hover {
+  background: color-mix(
+    in srgb,
+    var(--risk-os-accent, #3b82f6) 6%,
+    transparent
+  );
+}
+
+.indicator-analysis__table-section th button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.indicator-analysis__table-section td svg {
+  display: block;
+  width: 112px;
+  height: 28px;
+}
+
+.indicator-analysis__table-section td svg circle {
+  fill: var(--risk-heat-color, var(--risk-os-accent));
+}
+
+.indicator-analysis__heat-pill {
+  display: inline-flex;
+  min-width: 58px;
+  justify-content: center;
+  padding: 5px 8px;
+  border: 1px solid color-mix(in srgb, var(--risk-heat-color) 45%, transparent);
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--risk-heat-color) 13%, transparent);
+  color: var(--risk-heat-color);
+  font-weight: 760;
+}
+
+.indicator-method-sheet__content {
+  display: grid;
+  gap: 14px;
+}
+
+.indicator-method-sheet__content > section {
+  padding: 18px;
+  border: 1px solid var(--analysis-border);
+  background: var(--risk-os-surface-muted);
+}
+
+.indicator-method-sheet__content h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+
+.indicator-method-sheet__content h3 svg {
+  width: 17px;
+}
+
+.indicator-method-sheet__content p {
+  color: var(--risk-os-muted);
+  line-height: 1.65;
+}
+
+.indicator-method-sheet__content dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--analysis-border);
+}
+
+.indicator-method-sheet__content dl div {
+  padding: 12px;
+  background: var(--risk-os-surface);
+}
+
+.indicator-method-sheet__content dt,
+.indicator-method-sheet__content small {
+  color: var(--risk-os-muted);
+  font-size: 11px;
+}
+
+.indicator-method-sheet__content dd {
+  margin: 5px 0 0;
+  font-weight: 700;
+}
+
+.indicator-method-sheet__content ol {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.indicator-method-sheet__content li {
+  display: grid;
+  gap: 4px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--analysis-border);
+}
+
+@media (max-width: 1100px) {
+  .indicator-analysis__overview {
+    grid-template-columns: 1fr;
+  }
+  .indicator-analysis__overview > article + article {
+    border-top: 1px solid var(--analysis-border);
+    border-left: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .indicator-analysis__header,
+  .indicator-analysis__peer-matrix > header,
+  .indicator-analysis__table-section > header,
+  .indicator-analysis__overview article > header {
+    flex-direction: column;
+  }
+  .indicator-analysis__meta {
+    justify-content: flex-start;
+  }
+  .indicator-analysis__header h2 {
+    font-size: 28px;
+  }
+  .indicator-analysis__heat-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .indicator-analysis__peer-matrix,
+  .indicator-analysis__table-section,
+  .indicator-analysis__overview > article {
+    padding: 16px;
+  }
+}

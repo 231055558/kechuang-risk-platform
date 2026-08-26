@@ -86,17 +86,13 @@ test("coarse pointers receive a 44px minimum Button target", () => {
   assert.match(buttonSource, /\[@media\(pointer:coarse\)\]:min-w-11/)
 })
 
-test("realtime intelligence defers filtering and reuses date formatters", () => {
+test("risk news defers filtering and reuses date formatters", () => {
   const realtimeSource = readProjectFile(
     "src/components/dashboard/realtime-tab.tsx"
   )
   const dateFormatSource = readProjectFile("src/lib/date-format.ts")
 
   assert.match(realtimeSource, /useDeferredValue/)
-  assert.match(
-    realtimeSource,
-    /const dateHeadingFormatter = new Intl\.DateTimeFormat\("zh-CN"/
-  )
   assert.match(realtimeSource, /from "@\/lib\/date-format"/)
   assert.doesNotMatch(realtimeSource, /const signalDateTimeFormatter/)
   assert.match(
@@ -109,7 +105,7 @@ test("realtime intelligence defers filtering and reuses date formatters", () => 
   )
   assert.match(
     realtimeSource,
-    /groupSignalsByDate\(filteredSignals\.slice\(0, visibleCount\)\)/
+    /const visibleSignals = filteredSignals\.slice\(0, visibleCount\)/
   )
   assert.doesNotMatch(
     realtimeSource,
@@ -125,20 +121,20 @@ test("realtime intelligence defers filtering and reuses date formatters", () => 
   )
 })
 
-test("realtime load-more controls stack within the mobile viewport", () => {
-  const appleDesignSource = readProjectFile("src/styles/apple-design.css")
-  const mobileStyles = appleDesignSource.match(
-    /@media \(max-width: 767px\) \{([\s\S]*?)\n\}/
+test("risk-news cards collapse to one column within the mobile viewport", () => {
+  const newsStyles = readProjectFile("src/styles/risk-news.css")
+  const mobileStyles = newsStyles.match(
+    /@media \(max-width: 720px\) \{([\s\S]*?)\n\}/
   )?.[1]
 
   assert.ok(mobileStyles)
   assert.match(
     mobileStyles,
-    /\.signal-load-more\s*\{[\s\S]*?flex-direction:\s*column;/
+    /\.risk-news__header\s*\{[\s\S]*?flex-direction:\s*column;/
   )
   assert.match(
     mobileStyles,
-    /\.signal-load-more \[data-slot="button"\]\s*\{[\s\S]*?width:\s*min\(100%,\s*240px\);/
+    /\.risk-news__card,[\s\S]*?grid-column:\s*1 \/ -1;/
   )
 })
 

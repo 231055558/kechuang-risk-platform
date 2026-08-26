@@ -16,6 +16,7 @@ import type {
   IndustryRiskCandidateAggregate,
   IndustryRiskCompanyAssessment,
 } from "./scoring-engine.ts"
+import type { IndustryRiskInvestorContract } from "./investor-contract.ts"
 
 export const INDUSTRY_RISK_COMPANIES_API_PATH =
   "api/v1/industry-risk/companies" as const
@@ -40,9 +41,16 @@ export interface IndustryRiskCompanySummary {
   coveredIndicatorCount: number
   eventCount: number
   candidateAggregates: IndustryRiskCandidateAggregate[]
+  indicatorHeat: Array<
+    Pick<
+      IndustryRiskCompanyAssessment["metrics"][number],
+      "indicatorId" | "riskPercentile" | "riskScore" | "sampleSize" | "status"
+    >
+  >
 }
 
 export interface IndustryRiskCompanyDirectoryResponse {
+  contractVersion: IndustryRiskInvestorContract["version"]
   schemaVersion: IndustryRiskDatasetMetadata["schemaVersion"]
   methodVersion: IndustryRiskCompanyAssessment["methodVersion"]
   dataVersion: string
@@ -56,6 +64,7 @@ export interface IndustryRiskCompanyDirectoryResponse {
 }
 
 export interface IndustryRiskAssessmentApiResponse {
+  contract: IndustryRiskInvestorContract
   assessment: IndustryRiskCompanyAssessment
   company: IndustryRiskCompany
   sources: IndustryRiskSource[]

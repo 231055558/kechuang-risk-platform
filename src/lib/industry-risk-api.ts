@@ -1,4 +1,5 @@
 import {
+  INDUSTRY_RISK_INVESTOR_CONTRACT_VERSION,
   INDUSTRY_RISK_COMPANIES_API_PATH,
   INDUSTRY_RISK_GRAPH_API_PATH,
   getIndustryRiskCompanyAssessmentApiPath,
@@ -77,7 +78,19 @@ function isCompanySummary(value: unknown) {
     Number.isInteger(value.eventCount) &&
     Array.isArray(value.candidateAggregates) &&
     value.candidateAggregates.length === 2 &&
-    value.candidateAggregates.every(isCandidateAggregate)
+    value.candidateAggregates.every(isCandidateAggregate) &&
+    Array.isArray(value.indicatorHeat) &&
+    value.indicatorHeat.length === 18 &&
+    value.indicatorHeat.every(
+      (metric) =>
+        isRecord(metric) &&
+        typeof metric.indicatorId === "string" &&
+        (metric.riskPercentile === null ||
+          isFiniteNumber(metric.riskPercentile)) &&
+        (metric.riskScore === null || isFiniteNumber(metric.riskScore)) &&
+        Number.isInteger(metric.sampleSize) &&
+        (metric.status === "scored" || metric.status === "missing")
+    )
   )
 }
 
@@ -99,6 +112,7 @@ function isDirectoryResponse(
 ): value is IndustryRiskCompanyDirectoryResponse {
   return (
     isRecord(value) &&
+    value.contractVersion === INDUSTRY_RISK_INVESTOR_CONTRACT_VERSION &&
     value.schemaVersion === "KCR-INDUSTRY-DATA-2026.08-v1" &&
     value.methodVersion === "IRAWC-CRITIC-2026.08-v2" &&
     typeof value.dataVersion === "string" &&
@@ -139,7 +153,8 @@ function isMetricScore(value: unknown) {
     (value.kind === "narrative" || value.kind === "weighted") &&
     (value.dimensionId === null || typeof value.dimensionId === "string") &&
     typeof value.formulaTrace === "string" &&
-    typeof value.limitation === "string"
+    typeof value.limitation === "string" &&
+    (value.missingReason === null || typeof value.missingReason === "string")
   )
 }
 
@@ -219,12 +234,24 @@ function isAssessmentResponse(
     !isRecord(value) ||
     !isRecord(value.assessment) ||
     !isRecord(value.company) ||
+    !isRecord(value.contract) ||
     !isRecord(value.provenance)
   ) {
     return false
   }
   const assessment = value.assessment
   return (
+    value.contract.version === INDUSTRY_RISK_INVESTOR_CONTRACT_VERSION &&
+    value.contract.audience === "investor" &&
+    value.contract.newsUsage === "information-only" &&
+    value.contract.financialNarrativeCorpus === "annual-report-only" &&
+    value.contract.financialNarrativeScoreStatus ===
+      "method-trial-unavailable" &&
+    value.contract.missingValue === "null-with-reason" &&
+    value.contract.heatEncoding === "peer-risk-percentile" &&
+    value.contract.recommendationScope ===
+      "risk-research-not-trade-instruction" &&
+    value.contract.graphContract === "external-temporal-graph-pending" &&
     assessment.methodVersion === "IRAWC-CRITIC-2026.08-v2" &&
     typeof assessment.companyId === "string" &&
     typeof assessment.companyName === "string" &&

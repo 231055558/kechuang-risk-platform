@@ -22,15 +22,14 @@ test("all company overviews use the customer-facing industry workspace by defaul
   )
   const customerOverview = `${panel}\n${profileDesk}`
 
-  assert.match(overview, /if \(detail\.id\)/)
   assert.match(overview, /<IndustryRiskReviewPanel/)
   assert.match(overview, /companyId=\{detail\.id\}/)
   assert.doesNotMatch(overview, /KcrV3AssessmentPanel/)
-  assert.match(panel, /企业风险画像/)
   assert.match(panel, /风险总览/)
-  assert.match(customerOverview, /当前最值得关注的风险/)
-  assert.match(panel, /单项缺失不补零/)
-  assert.match(panel, /数据与方法/)
+  assert.match(panel, /风险总览/)
+  assert.match(customerOverview, /Top 3 风险驱动/)
+  assert.match(panel, /缺失不补零/)
+  assert.match(panel, /进入指标分析/)
 })
 
 test("application shell no longer depends on the KCR V3 runtime result", () => {

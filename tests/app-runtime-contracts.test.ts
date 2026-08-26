@@ -153,8 +153,10 @@ test("customer metrics replace the manual scoring workspace while technology too
     /const handleCreateObservationRequestHandled = useCallback\(\(\) => \{[\s\S]*setScoringCreateToken\(0\)/
   )
   assert.doesNotMatch(intelligenceSource, /<ScoringWorkspace/)
-  assert.match(intelligenceSource, /<IndustryRiskReviewPanel/)
-  assert.match(intelligenceSource, /showGraph=\{false\}/)
+  assert.match(
+    intelligenceSource,
+    /<IndicatorAnalysisTab companyId=\{detail\.id\}/
+  )
   assert.match(
     technologyWorkspaceSource,
     /createToken <= lastCreateTokenRef\.current[\s\S]*lastCreateTokenRef\.current = createToken[\s\S]*openIndicatorEditor\([\s\S]*onCreateRequestHandled\(\)/
@@ -270,32 +272,26 @@ test("local storage failures remain visible in the scoring workspace", () => {
   )
 })
 
-test("overview renders the runtime assessment through an accessible radar", () => {
+test("overview renders the industry assessment through an accessible radar", () => {
   const overviewSource = readProjectFile(
-    "src/components/dashboard/overview-tab.tsx"
+    "src/components/dashboard/industry-risk-profile-desk.tsx"
   )
   const radarSource = readProjectFile(
-    "src/components/dashboard/risk-radar-chart.tsx"
+    "src/components/dashboard/industry-risk-radar.tsx"
   )
 
   assert.match(
     overviewSource,
-    /<RiskRadarChart dimensions=\{assessment\.dimensions\} \/>/
+    /<IndustryRiskRadar[\s\S]*dimensions=\{assessment\.dimensionScores\}/
   )
-  assert.match(radarSource, /aria-labelledby=/)
-  assert.match(radarSource, /<title id=\{accessibleTitleId\}>/)
-  assert.match(radarSource, /<desc id=\{accessibleDescriptionId\}>/)
-  assert.match(
-    radarSource,
-    /className="risk-radar-values" aria-label="六类风险评分明细"/
-  )
-  assert.match(radarSource, /不按零分计算，也不影响其他有效维度/)
+  assert.match(radarSource, /aria-labelledby=\{`\$\{titleId\} \$\{descriptionId\}`\}/)
+  assert.match(radarSource, /<title id=\{titleId\}>/)
+  assert.match(radarSource, /<desc id=\{descriptionId\}>/)
+  assert.match(radarSource, /五大风险领域评分/)
+  assert.match(radarSource, /缺失领域不按零分绘制/)
 })
 
 test("assessment views distinguish technology scoring from rule-calculated indicators", () => {
-  const overviewSource = readProjectFile(
-    "src/components/dashboard/overview-tab.tsx"
-  )
   const radarSource = readProjectFile(
     "src/components/dashboard/risk-radar-chart.tsx"
   )
@@ -306,14 +302,6 @@ test("assessment views distinguish technology scoring from rule-calculated indic
   assert.match(radarSource, /dimension\.scoreBasis === "technology-auto-score"/)
   assert.match(radarSource, /技术自动评分/)
   assert.match(radarSource, /指标规则计算/)
-
-  assert.match(
-    overviewSource,
-    /dimension\.scoreBasis === "technology-auto-score"/
-  )
-  assert.match(overviewSource, /技术自动辅助分值/)
-  assert.match(overviewSource, /建立评分依据/)
-  assert.doesNotMatch(overviewSource, /经人工复核的可评估维度等权汇总/)
 
   assert.match(
     compareSource,

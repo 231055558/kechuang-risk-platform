@@ -7,6 +7,11 @@ import { usePrefersReducedMotion } from "@/components/motion/workflow-transition
 import { Badge } from "@/components/ui/badge"
 import type { IndustryRiskAssessmentApiResponse } from "@/domain/industry-risk-v1/index.ts"
 import { buildIndustryRiskConclusion } from "@/domain/industry-risk-v1/index.ts"
+import {
+  riskHeatColor,
+  riskHeatLabel,
+  riskPercentileFromRank,
+} from "@/lib/risk-heat"
 import "@/styles/industry-risk-profile-desk.css"
 
 const percentFormatter = new Intl.NumberFormat("zh-CN", {
@@ -77,13 +82,17 @@ export function IndustryRiskProfileDesk({
       assessment.metrics
         .filter((metric) => metric.riskScore !== null)
         .sort((left, right) => (right.riskScore ?? 0) - (left.riskScore ?? 0))
-        .slice(0, 5),
+        .slice(0, 3),
     [assessment.metrics]
   )
   const benchmarkPosition =
     assessment.benchmarkSampleSize > 1 && selectedRank > 0
       ? ((selectedRank - 1) / (assessment.benchmarkSampleSize - 1)) * 100
       : 0
+  const totalRiskPercentile = riskPercentileFromRank(
+    selectedRank,
+    assessment.benchmarkSampleSize
+  )
   const motionKey = `${response.company.id}:${assessment.methodVersion}`
 
   useGSAP(
@@ -198,6 +207,12 @@ export function IndustryRiskProfileDesk({
       ref={rootRef}
       className="risk-profile-desk"
       data-tone={scoreTone(totalScore)}
+      data-risk-percentile={totalRiskPercentile ?? "missing"}
+      style={
+        {
+          "--risk-profile-accent": riskHeatColor(totalRiskPercentile),
+        } as React.CSSProperties
+      }
       data-motion-key={motionKey}
       data-motion-state="idle"
       aria-label={`${response.company.shortName}风险决策概览`}
@@ -211,7 +226,9 @@ export function IndustryRiskProfileDesk({
             叙事观察保持独立，不混入总分。
           </p>
         </div>
-        <Badge variant="outline">{riskLevel(totalScore)}</Badge>
+        <Badge variant="outline">
+          {riskLevel(totalScore)} · {riskHeatLabel(totalRiskPercentile)}
+        </Badge>
       </header>
 
       <div className="risk-profile-desk__matrix">
@@ -292,7 +309,7 @@ export function IndustryRiskProfileDesk({
           <div className="risk-profile-desk__section-heading">
             <div>
               <span className="eyebrow">Top drivers</span>
-              <h3>当前最值得关注的风险</h3>
+              <h3>Top 3 风险驱动</h3>
             </div>
             <span>按单项风险分排序</span>
           </div>
@@ -311,6 +328,13 @@ export function IndustryRiskProfileDesk({
                     data-risk-driver
                     data-active={isActive}
                     data-muted={isMuted}
+                    style={
+                      {
+                        "--risk-driver-heat": riskHeatColor(
+                          metric.riskPercentile
+                        ),
+                      } as React.CSSProperties
+                    }
                   >
                     <button
                       type="button"

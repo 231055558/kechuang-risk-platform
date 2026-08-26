@@ -10,6 +10,7 @@ import {
   type IndustryRiskEvent,
   type IndustryRiskNarrativeRuntime,
 } from "../src/domain/industry-risk-v1/index.ts"
+import { getIndustryRiskInvestorContract } from "../src/domain/industry-risk-v1/investor-contract.ts"
 
 const dataset = attachIndustryRiskNarrativeRuntime(
   unifiedData as IndustryRiskDataset,
@@ -100,6 +101,7 @@ export function listIndustryRiskCompanies(): IndustryRiskCompanyDirectoryRespons
   const peerGroups = dataset.metadata.peerGroups ?? []
   const peerGroupById = new Map(peerGroups.map((group) => [group.id, group]))
   return {
+    contractVersion: getIndustryRiskInvestorContract().version,
     schemaVersion: dataset.metadata.schemaVersion,
     methodVersion: assessments[0].methodVersion,
     dataVersion: dataset.metadata.dataVersion,
@@ -138,6 +140,15 @@ export function listIndustryRiskCompanies(): IndustryRiskCompanyDirectoryRespons
         ).length,
         eventCount: getCompanyEvents(company.id).length,
         candidateAggregates: assessment.candidateAggregates,
+        indicatorHeat: assessment.metrics
+          .filter((metric) => metric.kind === "weighted")
+          .map((metric) => ({
+            indicatorId: metric.indicatorId,
+            riskPercentile: metric.riskPercentile,
+            riskScore: metric.riskScore,
+            sampleSize: metric.sampleSize,
+            status: metric.status,
+          })),
       }
     }),
   }
@@ -178,6 +189,7 @@ export function getIndustryRiskAssessment(
   for (const item of narrativeNews) sourceIds.add(item.sourceId)
   if (narrativeNewsMetric) sourceIds.add(narrativeNewsMetric.sourceId)
   return {
+    contract: getIndustryRiskInvestorContract(),
     assessment,
     company,
     sources: dataset.sources.filter((source) => sourceIds.has(source.id)),

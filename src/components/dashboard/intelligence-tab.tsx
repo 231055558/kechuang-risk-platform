@@ -22,6 +22,7 @@ import {
   VerificationBadge,
 } from "@/components/dashboard/shared"
 import { IndustryRiskReviewPanel } from "@/components/dashboard/industry-risk-review-panel"
+import { IndicatorAnalysisTab } from "@/components/dashboard/indicator-analysis-tab"
 import { TechnologyBaselinePanel } from "@/components/dashboard/technology-baseline-panel"
 import { TechnologyScoringPanel } from "@/components/dashboard/technology-scoring-panel"
 import { LiquidGlassSurface } from "@/components/liquid"
@@ -131,6 +132,10 @@ export function IntelligenceTab({
   onQuantifyTechnologyBaseline,
   onClearTechnologyBaseline,
 }: IntelligenceTabProps) {
+  if (section === "metrics") {
+    return <IndicatorAnalysisTab companyId={detail.id} />
+  }
+
   const governance = summarizeEvidenceGovernance(detail.evidence)
   const researchHighlights = researchHighlightsByCompany.get(detail.id) ?? []
   const disclosureScrollHintId = `disclosure-table-scroll-hint-${detail.id}`
@@ -428,7 +433,7 @@ export function IntelligenceTab({
 
         <TabsContent value="metrics">
           <div className="tab-content-stack">
-            <IndustryRiskReviewPanel companyId={detail.id} showGraph={false} />
+            <IndustryRiskReviewPanel companyId={detail.id} />
 
             <Reveal>
               <section className="page-section">

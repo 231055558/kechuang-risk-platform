@@ -5,6 +5,7 @@ import { useId, useMemo, useRef } from "react"
 import { usePrefersReducedMotion } from "@/components/motion/workflow-transition"
 import type { IndustryRiskDimensionScore } from "@/domain/industry-risk-v1/index.ts"
 import { buildIndustryRiskRadarModel } from "@/lib/industry-risk-radar"
+import { riskHeatColor } from "@/lib/risk-heat"
 
 export function IndustryRiskRadar({
   dimensions,
@@ -23,6 +24,10 @@ export function IndustryRiskRadar({
   const model = useMemo(
     () => buildIndustryRiskRadarModel(dimensions),
     [dimensions]
+  )
+  const scoreByDimension = useMemo(
+    () => new Map(model.axes.map((axis) => [axis.id, axis.score])),
+    [model.axes]
   )
 
   useGSAP(
@@ -158,6 +163,11 @@ export function IndustryRiskRadar({
               cx={point.x}
               cy={point.y}
               r={activeDimensionId === point.id ? 6 : 4.5}
+              style={{
+                fill: riskHeatColor(
+                  (scoreByDimension.get(point.id) ?? 0) / 100
+                ),
+              }}
             />
           ))}
         </g>
@@ -192,7 +202,18 @@ export function IndustryRiskRadar({
 
       <ul aria-label="五大风险领域评分">
         {model.axes.map((axis) => (
-          <li key={axis.id} data-active={activeDimensionId === axis.id}>
+          <li
+            key={axis.id}
+            data-active={activeDimensionId === axis.id}
+            data-missing={axis.score === null}
+            style={
+              {
+                "--radar-axis-heat": riskHeatColor(
+                  axis.score === null ? null : axis.score / 100
+                ),
+              } as React.CSSProperties
+            }
+          >
             <button
               type="button"
               aria-pressed={activeDimensionId === axis.id}

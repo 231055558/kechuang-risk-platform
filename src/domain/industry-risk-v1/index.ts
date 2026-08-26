@@ -1,5 +1,6 @@
 export * from "./assessment-api.ts"
 export * from "./benchmark-classification.ts"
+export * from "./investor-contract.ts"
 export * from "./knowledge-graph.ts"
 export * from "./model.ts"
 export * from "./recommendations.ts"
