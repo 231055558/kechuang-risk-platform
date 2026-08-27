@@ -681,8 +681,10 @@ test("method and comparison controls live in their relevant content regions", ()
   )
 
   assert.match(indicatorSource, /点击行查看公式与来源/)
-  assert.match(indicatorSource, /<MethodBlock title="本次计算"/)
-  assert.match(indicatorSource, /<MethodBlock[\s\S]*?title="方法含义"/)
+  assert.match(indicatorSource, /title="方法含义与公式解析"/)
+  assert.match(indicatorSource, /<RiskScoreFormula/)
+  assert.match(indicatorSource, /indicator-method-sheet__parameters/)
+  assert.doesNotMatch(indicatorSource, /原始观测/)
   assert.doesNotMatch(topBarSource, /打开方法与模型/)
   assert.match(compareSource, /nameControl=/)
   assert.match(compareSource, /className="compare-card-selector"/)
@@ -807,7 +809,8 @@ test("customer workflows expose auditable calculations without task management",
     /尚缺行业基准、组合规则或授权数据校准，不会以不完整口径自动计分/
   )
   assert.match(indicatorSource, /riskPercentile/)
-  assert.match(indicatorSource, /formulaTrace/)
+  assert.match(indicatorSource, /RiskScoreFormula/)
+  assert.match(indicatorSource, /本次代入/)
   assert.match(indicatorSource, /missingReason/)
   assert.doesNotMatch(
     eventsSource,

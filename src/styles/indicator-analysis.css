@@ -199,6 +199,13 @@
   padding: 6px;
 }
 
+.indicator-analysis__peer-matrix abbr {
+  color: var(--risk-os-muted);
+  font-size: 10px;
+  text-decoration: none;
+  cursor: help;
+}
+
 .indicator-analysis__peer-matrix th:first-child {
   position: sticky;
   left: 0;
@@ -233,7 +240,29 @@
 }
 
 .indicator-analysis__table-section table {
-  min-width: 1040px;
+  min-width: 900px;
+  table-layout: fixed;
+}
+
+.indicator-analysis__col-metric {
+  width: 29%;
+}
+
+.indicator-analysis__col-value {
+  width: 14%;
+}
+
+.indicator-analysis__col-direction {
+  width: 21%;
+}
+
+.indicator-analysis__col-percentile {
+  width: 14%;
+}
+
+.indicator-analysis__col-score,
+.indicator-analysis__col-sample {
+  width: 11%;
 }
 
 .indicator-analysis__table-section th,
@@ -266,14 +295,44 @@
   cursor: pointer;
 }
 
-.indicator-analysis__table-section td svg {
-  display: block;
-  width: 112px;
-  height: 28px;
+.indicator-analysis__table-section th button > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.indicator-analysis__table-section td svg circle {
-  fill: var(--risk-heat-color, var(--risk-os-accent));
+.indicator-analysis__table-section td:nth-child(3) {
+  color: var(--risk-os-muted);
+  line-height: 1.45;
+}
+
+.indicator-analysis__table-section td:nth-child(3) svg {
+  display: inline;
+  width: 14px;
+  height: 14px;
+  margin-right: 5px;
+  vertical-align: -2px;
+}
+
+.indicator-analysis__raw-value {
+  display: inline-grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, auto) auto;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.indicator-analysis__raw-value strong,
+.indicator-analysis__numeric {
+  color: var(--risk-os-ink);
+  font-weight: 720;
+  font-variant-numeric: tabular-nums;
+}
+
+.indicator-analysis__raw-value small {
+  color: var(--risk-os-muted);
+  font-size: 10px;
+  font-weight: 560;
 }
 
 .indicator-analysis__heat-pill {
@@ -314,6 +373,57 @@
 .indicator-method-sheet__content p {
   color: var(--risk-os-muted);
   line-height: 1.65;
+}
+
+.indicator-method-sheet__formula {
+  display: grid;
+  gap: 12px;
+  margin: 12px 0 18px;
+}
+
+.indicator-method-sheet__equation {
+  display: flex;
+  align-items: baseline;
+  gap: 0.34em;
+  padding: 17px 12px;
+  overflow-x: auto;
+  border-left: 3px solid var(--risk-os-accent, #3b82f6);
+  background: var(--risk-os-surface);
+  color: var(--risk-os-ink);
+  font-size: clamp(18px, 2.4vw, 25px);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.indicator-method-sheet__equation var {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+}
+
+.indicator-method-sheet__equation sub {
+  font-size: 0.64em;
+}
+
+.indicator-method-sheet__substitution {
+  margin: 0;
+  padding: 9px 11px;
+  background: color-mix(
+    in srgb,
+    var(--risk-os-accent, #3b82f6) 6%,
+    transparent
+  );
+  font-variant-numeric: tabular-nums;
+}
+
+.indicator-method-sheet__content dl.indicator-method-sheet__parameters {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.indicator-method-sheet__parameters dd {
+  color: var(--risk-os-muted);
+  font-size: 11px;
+  font-weight: 550;
+  line-height: 1.5;
 }
 
 .indicator-method-sheet__content dl {
