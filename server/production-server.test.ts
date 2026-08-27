@@ -21,6 +21,16 @@ async function startTestServer(options?: {
     view: RiskGraphView,
     minWeight?: number
   ) => unknown | Promise<unknown>
+  listNarrativeRiskCompanies?: () => unknown | Promise<unknown>
+  getNarrativeRiskCompany?: (companyKey: string) => unknown | Promise<unknown>
+  listNarrativeRiskSources?: (
+    companyKey: string,
+    filters: Record<string, unknown>
+  ) => unknown | Promise<unknown>
+  getNarrativeRiskAuditSummary?: () => unknown | Promise<unknown>
+  getNarrativeAnnualTrends?: () => unknown | Promise<unknown>
+  getNarrativeAnnualMethodology?: () => unknown | Promise<unknown>
+  getNarrativeAnnualAudit?: () => unknown | Promise<unknown>
   maxBodyBytes?: number
 }) {
   const staticRoot = mkdtempSync(join(tmpdir(), "risk-platform-server-test-"))
@@ -57,6 +67,13 @@ async function startTestServer(options?: {
     getIndustryRiskGraph: options?.getIndustryRiskGraph,
     listRiskGraphCompanies: options?.listRiskGraphCompanies,
     getRiskGraph: options?.getRiskGraph,
+    listNarrativeRiskCompanies: options?.listNarrativeRiskCompanies,
+    getNarrativeRiskCompany: options?.getNarrativeRiskCompany,
+    listNarrativeRiskSources: options?.listNarrativeRiskSources,
+    getNarrativeRiskAuditSummary: options?.getNarrativeRiskAuditSummary,
+    getNarrativeAnnualTrends: options?.getNarrativeAnnualTrends,
+    getNarrativeAnnualMethodology: options?.getNarrativeAnnualMethodology,
+    getNarrativeAnnualAudit: options?.getNarrativeAnnualAudit,
     maxBodyBytes: options?.maxBodyBytes,
   })
 
@@ -383,6 +400,131 @@ test("risk graph API exposes coverage and validates the versioned view query", a
       `${testServer.baseUrl}/api/v1/risk-graphs/companies/star-688256/views/made-up`
     )
     assert.equal(invalidView.status, 404)
+  } finally {
+    await testServer.close()
+  }
+})
+
+test("narrative risk GET endpoints expose directory, detail, sources, and audit summary", async () => {
+  const received: Array<{
+    companyKey: string
+    filters?: Record<string, unknown>
+  }> = []
+  const envelope = {
+    schemaVersion: "KCR-NARRATIVE-RISK-2026.08-v1",
+    dataVersion: "narrative-test-v1",
+    asOfDate: "2026-08-26",
+    sourceMode: "postgres",
+  }
+  const testServer = await startTestServer({
+    listNarrativeRiskCompanies: () => ({
+      ...envelope,
+      scopes: [],
+      companies: [{ companyKey: "cambricon", shortName: "寒武纪" }],
+      counts: { uniqueCompanies: 7, scopeCompanyRecords: 8 },
+    }),
+    getNarrativeRiskCompany(companyKey) {
+      received.push({ companyKey })
+      return { ...envelope, company: { companyKey }, metrics: [] }
+    },
+    listNarrativeRiskSources(companyKey, filters) {
+      received.push({ companyKey, filters })
+      return { ...envelope, companyKey, filters, page: 2, items: [] }
+    },
+    getNarrativeRiskAuditSummary: () => ({
+      ...envelope,
+      counts: { linkedUniqueSources: 83, pendingReview: 3 },
+    }),
+  })
+
+  try {
+    const directory = await fetch(
+      `${testServer.baseUrl}/api/v1/narrative-risk/companies`
+    )
+    assert.equal(directory.status, 200)
+    assert.equal((await directory.json()).counts.scopeCompanyRecords, 8)
+
+    const detail = await fetch(
+      `${testServer.baseUrl}/api/v1/narrative-risk/companies/cambricon`
+    )
+    assert.equal(detail.status, 200)
+
+    const sources = await fetch(
+      `${testServer.baseUrl}/api/v1/narrative-risk/companies/cambricon/sources?scopeId=r01-r04-audit-20260826&channel=%E6%AD%A3%E5%BC%8F%E6%8A%A5%E5%91%8A&page=2&pageSize=12`
+    )
+    assert.equal(sources.status, 200)
+
+    const audit = await fetch(
+      `${testServer.baseUrl}/api/v1/narrative-risk/audit-summary`
+    )
+    assert.equal(audit.status, 200)
+    assert.equal((await audit.json()).counts.linkedUniqueSources, 83)
+    assert.deepEqual(received, [
+      { companyKey: "cambricon" },
+      {
+        companyKey: "cambricon",
+        filters: {
+          scopeId: "r01-r04-audit-20260826",
+          channel: "正式报告",
+          validationStatus: null,
+          page: 2,
+          pageSize: 12,
+        },
+      },
+    ])
+  } finally {
+    await testServer.close()
+  }
+})
+
+test("revised annual narrative endpoints expose trends, Chinese methodology, and audit", async () => {
+  const envelope = {
+    schemaVersion: "KCR-NARRATIVE-RISK-2026.08-v1",
+    dataVersion: "narrative-method-revised-2026-08-27-v2",
+    asOfDate: "2026-08-27",
+    sourceMode: "postgres",
+  }
+  const testServer = await startTestServer({
+    getNarrativeAnnualTrends: () => ({
+      ...envelope,
+      methodVersion: envelope.dataVersion,
+      companies: [{ companyKey: "cambricon", companyName: "寒武纪" }],
+      observations: [{ companyKey: "cambricon", year: 2025, value: 1 }],
+    }),
+    getNarrativeAnnualMethodology: () => ({
+      ...envelope,
+      methodVersion: { methodVersion: envelope.dataVersion },
+      methodology: [{ name: "信息总量充分性", formula: "有效词数除以一万" }],
+    }),
+    getNarrativeAnnualAudit: () => ({
+      ...envelope,
+      methodVersion: envelope.dataVersion,
+      documents: Array.from({ length: 21 }, (_, index) => ({
+        documentId: index,
+      })),
+      audit: { archivedReportCount: 21 },
+    }),
+  })
+
+  try {
+    const trends = await fetch(
+      `${testServer.baseUrl}/api/v1/narrative-risk/annual-trends`
+    )
+    const methodology = await fetch(
+      `${testServer.baseUrl}/api/v1/narrative-risk/annual-trends/methodology`
+    )
+    const audit = await fetch(
+      `${testServer.baseUrl}/api/v1/narrative-risk/annual-trends/audit`
+    )
+    assert.equal(trends.status, 200)
+    assert.equal(methodology.status, 200)
+    assert.equal(audit.status, 200)
+    assert.equal((await trends.json()).companies[0].companyName, "寒武纪")
+    assert.equal(
+      (await methodology.json()).methodology[0].name,
+      "信息总量充分性"
+    )
+    assert.equal((await audit.json()).documents.length, 21)
   } finally {
     await testServer.close()
   }

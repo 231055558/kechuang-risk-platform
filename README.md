@@ -128,6 +128,8 @@ npm run typecheck # TypeScript 类型检查
 npm run lint      # ESLint 检查
 npm run build     # 生成前端和本地 Node 服务构建
 npm run verify:localhost # 验证前端与两个本地评分接口
+npm run db:sync-narrative-runtime # 导入叙事来源清单并导出脱敏降级快照
+npm run db:verify-narrative-runtime # 校验 7 家/8 范围/83 来源等运行约束
 npm start         # 启动本地生产构建
 ```
 
@@ -165,6 +167,7 @@ tests/                数据、评分、交互和可访问性测试
 - 统一运行数据位于 `src/data/industry/r01-r22-unified.json`。
 - 原始输入快照位于 `data/raw/`，克隆仓库后即可获得，无需另行下载。
 - 项目包含用于重建派生数据的 SQLite 文件，但运行时不依赖外部数据库服务。
+- PostgreSQL 统一库、快照导入和权限配置见 `db/README.md`。叙事风险 API 优先读取 PostgreSQL，异常时降级到最近一次成功导入生成的脱敏 JSON 快照；原 94 家行业接口仍保持现有口径。
 - 旧 KCI/KCR JSON 和组件保留用于历史审计与迁移参考，不再由浏览器入口加载。
 
 从多个 R01–R22 SQLite 重建统一数据：

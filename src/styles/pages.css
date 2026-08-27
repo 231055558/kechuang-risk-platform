@@ -11375,6 +11375,297 @@
   font-size: 9px;
 }
 
+.customer-risk-radar-overview {
+  min-width: 0;
+  margin-bottom: 14px;
+  padding: 20px;
+  border: 1px solid color-mix(in oklch, var(--brand) 24%, var(--reading-border));
+  border-radius: 19px;
+  background:
+    radial-gradient(
+      circle at 11% 0%,
+      color-mix(in oklch, var(--accent-cyan) 14%, transparent),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 92% 100%,
+      color-mix(in oklch, var(--accent-violet) 9%, transparent),
+      transparent 34%
+    ),
+    color-mix(in oklch, var(--glass-reading-bg) 80%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, var(--glass-rim-inner) 82%, transparent),
+    0 13px 30px color-mix(in oklch, var(--brand) 6%, transparent);
+}
+
+.customer-risk-radar-overview > header {
+  display: flex;
+  min-width: 0;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.customer-risk-radar-overview > header > div {
+  min-width: 0;
+}
+
+.customer-risk-radar-overview > header .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.customer-risk-radar-overview > header .eyebrow svg {
+  width: 16px;
+  height: 16px;
+}
+
+.customer-risk-radar-overview h3 {
+  margin: 5px 0 0;
+  color: var(--text-strong);
+  font-size: 21px;
+  font-weight: 770;
+  letter-spacing: -0.018em;
+}
+
+.customer-risk-radar-overview > header p {
+  margin: 6px 0 0;
+  color: var(--text-soft);
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.customer-risk-radar-layout {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(410px, 1.22fr) minmax(290px, 0.78fr);
+  align-items: stretch;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.customer-risk-radar-figure {
+  display: grid;
+  min-width: 0;
+  align-content: center;
+  margin: 0;
+  padding: 8px 12px 11px;
+  border: 1px solid var(--reading-border);
+  border-radius: 17px;
+  background: color-mix(in oklch, var(--glass-reading-bg) 72%, transparent);
+}
+
+.customer-risk-radar-figure > svg {
+  display: block;
+  width: 100%;
+  min-height: 300px;
+}
+
+.customer-risk-radar-grid polygon {
+  fill: color-mix(in oklch, var(--brand-soft) 6%, transparent);
+  stroke: color-mix(in oklch, var(--brand) 20%, var(--reading-separator));
+  stroke-width: 1;
+}
+
+.customer-risk-radar-grid line {
+  stroke: color-mix(in oklch, var(--brand) 17%, var(--reading-separator));
+  stroke-width: 1;
+}
+
+.customer-risk-radar-area {
+  fill: color-mix(in oklch, var(--brand) 17%, transparent);
+  stroke: color-mix(in oklch, var(--brand) 80%, var(--text-strong));
+  stroke-width: 2.4;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 6px 9px color-mix(in oklch, var(--brand) 15%, transparent));
+}
+
+.customer-risk-radar-points circle {
+  fill: var(--brand);
+  stroke: color-mix(in oklch, white 90%, transparent);
+  stroke-width: 2.2;
+}
+
+.customer-risk-radar-points circle[data-tone="low"] {
+  fill: var(--success);
+}
+
+.customer-risk-radar-points circle[data-tone="high"] {
+  fill: var(--warning);
+}
+
+.customer-risk-radar-points circle[data-tone="critical"] {
+  fill: var(--danger);
+}
+
+.customer-risk-radar-points circle[data-tone="unknown"] {
+  fill: var(--text-soft);
+}
+
+.customer-risk-radar-labels text {
+  fill: var(--text-body);
+  font-size: 11px;
+  font-weight: 690;
+}
+
+.customer-risk-radar-labels .customer-risk-radar-label-score {
+  fill: var(--text-strong);
+  font-size: 12px;
+  font-weight: 790;
+  font-variant-numeric: tabular-nums;
+}
+
+.customer-risk-radar-figure figcaption {
+  color: var(--text-soft);
+  font-size: 8px;
+  text-align: center;
+}
+
+.customer-risk-radar-legend {
+  display: grid;
+  min-width: 0;
+  align-content: start;
+  gap: 10px;
+}
+
+.customer-risk-radar-insight {
+  --customer-risk-radar-accent: var(--brand);
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 4px 12px;
+  padding: 15px 16px;
+  border: 1px solid
+    color-mix(
+      in oklch,
+      var(--customer-risk-radar-accent) 30%,
+      var(--reading-border)
+    );
+  border-radius: 15px;
+  background:
+    linear-gradient(
+      115deg,
+      color-mix(
+        in oklch,
+        var(--customer-risk-radar-accent) 10%,
+        transparent
+      ),
+      transparent 72%
+    ),
+    color-mix(in oklch, var(--glass-reading-bg) 76%, transparent);
+}
+
+.customer-risk-radar-insight[data-tone="low"],
+.customer-risk-radar-legend li[data-tone="low"] {
+  --customer-risk-radar-accent: var(--success);
+}
+
+.customer-risk-radar-insight[data-tone="high"],
+.customer-risk-radar-legend li[data-tone="high"] {
+  --customer-risk-radar-accent: var(--warning);
+}
+
+.customer-risk-radar-insight[data-tone="critical"],
+.customer-risk-radar-legend li[data-tone="critical"] {
+  --customer-risk-radar-accent: var(--danger);
+}
+
+.customer-risk-radar-insight[data-tone="unknown"],
+.customer-risk-radar-legend li[data-tone="unknown"] {
+  --customer-risk-radar-accent: var(--text-soft);
+}
+
+.customer-risk-radar-insight > span {
+  grid-column: 1 / -1;
+  color: var(--text-soft);
+  font-size: 9px;
+}
+
+.customer-risk-radar-insight > strong {
+  overflow: hidden;
+  color: var(--text-strong);
+  font-size: 15px;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.customer-risk-radar-insight > b {
+  grid-row: 2 / 4;
+  grid-column: 2;
+  color: var(--customer-risk-radar-accent);
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+}
+
+.customer-risk-radar-insight > small {
+  color: var(--customer-risk-radar-accent);
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.customer-risk-radar-legend ol {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.customer-risk-radar-legend li {
+  --customer-risk-radar-accent: var(--brand);
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 9px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 11px;
+  border: 1px solid var(--reading-border);
+  border-radius: 12px;
+  background: color-mix(in oklch, var(--glass-control-bg) 46%, transparent);
+}
+
+.customer-risk-radar-legend li > i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--customer-risk-radar-accent);
+  box-shadow: 0 0 0 4px
+    color-mix(in oklch, var(--customer-risk-radar-accent) 10%, transparent);
+}
+
+.customer-risk-radar-legend li > div {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.customer-risk-radar-legend li span {
+  color: var(--text-strong);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.customer-risk-radar-legend li small {
+  overflow: hidden;
+  color: var(--text-soft);
+  font-size: 8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.customer-risk-radar-legend li > strong {
+  color: var(--customer-risk-radar-accent);
+  font-size: 18px;
+  font-weight: 780;
+  font-variant-numeric: tabular-nums;
+}
+
 .customer-risk-hero {
   display: grid;
   grid-template-columns: minmax(260px, 0.78fr) minmax(0, 1.22fr);
@@ -11384,7 +11675,6 @@
 .customer-risk-score-card,
 .customer-risk-kpi-grid > article,
 .customer-risk-priority-grid > article,
-.customer-risk-dimension-grid > article,
 .customer-risk-section,
 .customer-risk-report-banner,
 .customer-risk-method-note,
@@ -11471,16 +11761,14 @@
   line-height: 1.65;
 }
 
-.customer-risk-score-track,
-.customer-risk-dimension-track {
+.customer-risk-score-track {
   height: 6px;
   overflow: hidden;
   border-radius: 99px;
   background: color-mix(in oklch, var(--border) 58%, transparent);
 }
 
-.customer-risk-score-track > span,
-.customer-risk-dimension-track > span {
+.customer-risk-score-track > span {
   display: block;
   height: 100%;
   border-radius: inherit;
@@ -11609,39 +11897,6 @@
   font-size: 19px;
   font-weight: 780;
   font-variant-numeric: tabular-nums;
-}
-
-.customer-risk-dimension-grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 9px;
-  margin-top: 14px;
-}
-
-.customer-risk-dimension-grid > article {
-  display: grid;
-  gap: 10px;
-  padding: 14px;
-  border-radius: 13px;
-}
-
-.customer-risk-dimension-grid > article > div:first-child {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 9px;
-}
-
-.customer-risk-dimension-grid span,
-.customer-risk-dimension-grid small {
-  color: var(--text-soft);
-  font-size: 9px;
-}
-
-.customer-risk-dimension-grid strong {
-  color: var(--text-strong);
-  font-size: 19px;
-  font-weight: 760;
 }
 
 .customer-risk-report-banner {
@@ -12715,9 +12970,6 @@
   .customer-risk-priority-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  .customer-risk-dimension-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
   .risk-report-source-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -12725,12 +12977,15 @@
 
 @media (max-width: 820px) {
   .customer-risk-hero,
+  .customer-risk-radar-layout,
   .risk-report-hero,
   .risk-report-content-grid {
     grid-template-columns: 1fr;
   }
+  .customer-risk-radar-legend ol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .customer-risk-priority-grid,
-  .customer-risk-dimension-grid,
   .risk-report-product-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -12769,11 +13024,27 @@
   }
   .customer-risk-kpi-grid,
   .customer-risk-priority-grid,
-  .customer-risk-dimension-grid,
   .risk-report-product-grid,
   .risk-report-source-grid,
   .customer-risk-missing-list,
   .customer-risk-audit-metrics {
+    grid-template-columns: 1fr;
+  }
+  .customer-risk-radar-overview {
+    padding: 15px;
+    border-radius: 16px;
+  }
+  .customer-risk-radar-overview > header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .customer-risk-radar-figure {
+    padding-inline: 4px;
+  }
+  .customer-risk-radar-figure > svg {
+    min-height: 245px;
+  }
+  .customer-risk-radar-legend ol {
     grid-template-columns: 1fr;
   }
   .customer-risk-report-banner,

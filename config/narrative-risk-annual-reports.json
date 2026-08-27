@@ -1,0 +1,186 @@
+{
+  "methodVersion": "narrative-method-revised-2026-08-26-v1",
+  "asOfDate": "2026-08-26",
+  "reports": [
+    {
+      "companyKey": "cambricon",
+      "companyName": "寒武纪",
+      "stockCode": "688256",
+      "year": 2021,
+      "artCode": "AN202205251567853511",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2022-05-26/688256_20220526_3_uGToftWd.pdf"
+    },
+    {
+      "companyKey": "cambricon",
+      "companyName": "寒武纪",
+      "stockCode": "688256",
+      "year": 2022,
+      "artCode": "AN202304281586090858",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2023-04-29/688256_20230429_HKHJ.pdf"
+    },
+    {
+      "companyKey": "cambricon",
+      "companyName": "寒武纪",
+      "stockCode": "688256",
+      "year": 2023,
+      "artCode": "AN202404291631629996",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2024-04-30/688256_20240430_NRC5.pdf"
+    },
+    {
+      "companyKey": "cambricon",
+      "companyName": "寒武纪",
+      "stockCode": "688256",
+      "year": 2024,
+      "artCode": "AN202504181658532056",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2025-04-19/688256_20250419_11FJ.pdf"
+    },
+    {
+      "companyKey": "cambricon",
+      "companyName": "寒武纪",
+      "stockCode": "688256",
+      "year": 2025,
+      "artCode": "AN202603121820526132",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-03-13/688256_20260313_GWH3.pdf"
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "companyName": "恒瑞医药",
+      "stockCode": "600276",
+      "year": 2021,
+      "artCode": "AN202204221560905081",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2022-04-23/600276_20220423_5_seb5H8n0.pdf"
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "companyName": "恒瑞医药",
+      "stockCode": "600276",
+      "year": 2022,
+      "artCode": "AN202304211585685623",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2023-04-22/600276_20230422_H5YS.pdf"
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "companyName": "恒瑞医药",
+      "stockCode": "600276",
+      "year": 2023,
+      "artCode": "AN202404171630412062",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2024-04-18/600276_20240418_YRIP.pdf"
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "companyName": "恒瑞医药",
+      "stockCode": "600276",
+      "year": 2024,
+      "artCode": "AN202503301649145132",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2025-03-31/600276_20250331_BC5C.pdf"
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "companyName": "恒瑞医药",
+      "stockCode": "600276",
+      "year": 2025,
+      "artCode": "AN202603251820749693",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-03-26/600276_20260326_RAEC.pdf"
+    },
+    {
+      "companyKey": "huami-electronics",
+      "companyName": "华微电子",
+      "stockCode": "600360",
+      "year": 2021,
+      "artCode": "AN202204281562178710",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2022-04-29/600360_20220429_7_obssBQXH.pdf"
+    },
+    {
+      "companyKey": "huami-electronics",
+      "companyName": "华微电子",
+      "stockCode": "600360",
+      "year": 2022,
+      "artCode": "AN202306291591868252",
+      "officialUrl": "https://static.cninfo.com.cn/finalpage/2023-06-30/1217164546.PDF"
+    },
+    {
+      "companyKey": "huami-electronics",
+      "companyName": "华微电子",
+      "stockCode": "600360",
+      "year": 2023,
+      "artCode": "AN202404291631677233",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2024-04-30/600360_20240430_1BJB.pdf"
+    },
+    {
+      "companyKey": "huami-electronics",
+      "companyName": "华微电子",
+      "stockCode": "600360",
+      "year": 2024,
+      "artCode": "AN202504291664673985",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2025-04-30/600360_20250430_TWE7.pdf"
+    },
+    {
+      "companyKey": "huami-electronics",
+      "companyName": "华微电子",
+      "stockCode": "600360",
+      "year": 2025,
+      "artCode": "AN202604201821351643",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-04-21/600360_20260421_1EEL.pdf"
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "companyName": "百利天恒",
+      "stockCode": "688506",
+      "year": 2023,
+      "artCode": "AN202404261631429249",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2024-04-27/688506_20240427_LUES.pdf"
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "companyName": "百利天恒",
+      "stockCode": "688506",
+      "year": 2024,
+      "artCode": "AN202503281648738450",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2025-03-29/688506_20250329_F2B0.pdf"
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "companyName": "百利天恒",
+      "stockCode": "688506",
+      "year": 2025,
+      "artCode": "AN202604271821633795",
+      "officialUrl": "https://static.cninfo.com.cn/finalpage/2026-04-28/1225217117.PDF"
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "companyName": "左江科技",
+      "stockCode": "300799",
+      "year": 2021,
+      "artCode": "AN202204271561995870",
+      "officialUrl": "https://static.cninfo.com.cn/finalpage/2022-04-28/1213167893.PDF"
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "companyName": "左江科技",
+      "stockCode": "300799",
+      "year": 2022,
+      "artCode": "AN202304281586004832",
+      "officialUrl": "https://static.cninfo.com.cn/finalpage/2023-04-28/1216662763.PDF"
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "companyName": "左江科技",
+      "stockCode": "300799",
+      "year": 2023,
+      "artCode": "AN202404281631521815",
+      "officialUrl": "https://static.cninfo.com.cn/finalpage/2024-04-29/1219874104.PDF"
+    }
+  ],
+  "excludedCompanies": [
+    {
+      "companyKey": "enflame",
+      "companyName": "燧原科技",
+      "reason": "未上市，不纳入年报趋势"
+    },
+    {
+      "companyKey": "semidrive",
+      "companyName": "芯驰科技",
+      "reason": "未上市，不纳入年报趋势"
+    }
+  ]
+}

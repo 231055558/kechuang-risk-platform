@@ -7,6 +7,7 @@ export type NavGroup = "风险研判" | "信息与比较" | "输出与策略"
 export type NavigationItemId =
   | "risk-assessment"
   | "indicator-analysis"
+  | "narrative-risk"
   | "realtime-intelligence"
   | "risk-reports"
   | "risk-transmission"

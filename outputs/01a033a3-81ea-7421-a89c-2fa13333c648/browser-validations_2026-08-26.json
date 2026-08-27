@@ -1,0 +1,151 @@
+{
+  "taskSpaceId": 9,
+  "checkedAt": "2026-08-26T15:46:10+08:00",
+  "tool": "ego-browser 1.2.3",
+  "validations": [
+    {
+      "validationId": "ego-roadshow-34929",
+      "sourceId": "roadshow-34929",
+      "url": "https://roadshow.sseinfo.com/webappActivityDetail/34929",
+      "validationType": "roadshow-answer-count",
+      "status": "confirmed",
+      "details": { "apiTotal": 24, "managementQaRecords": 19, "systemRecords": 5 }
+    },
+    {
+      "validationId": "ego-roadshow-38704",
+      "sourceId": "roadshow-38704",
+      "url": "https://roadshow.sseinfo.com/webappActivityDetail/38704",
+      "validationType": "roadshow-answer-count",
+      "status": "confirmed",
+      "details": { "apiTotal": 41, "managementQaRecords": 36, "systemRecords": 5, "legacyWorkbookClaim": 43 }
+    },
+    {
+      "validationId": "ego-roadshow-40262",
+      "sourceId": "roadshow-40262",
+      "url": "https://roadshow.sseinfo.com/webappActivityDetail/40262",
+      "validationType": "roadshow-answer-count",
+      "status": "confirmed",
+      "details": { "apiTotal": 69, "managementQaRecords": 64, "systemRecords": 5 }
+    },
+    {
+      "validationId": "ego-roadshow-37197",
+      "sourceId": "roadshow-37197",
+      "url": "https://roadshow.sseinfo.com/webappActivityDetail/37197",
+      "validationType": "roadshow-answer-count",
+      "status": "confirmed",
+      "details": { "apiTotal": 5, "managementQaRecords": 3, "systemRecords": 2 }
+    },
+    {
+      "validationId": "ego-pdf-cam-2025q3",
+      "sourceId": "cam-2025q3",
+      "url": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2025-10-18/688256_20251018_S0FQ.pdf",
+      "validationType": "official-pdf-live",
+      "status": "confirmed",
+      "details": { "finalUrl": "https://static.sse.com.cn/disclosure/listedinfo/announcement/c/new/2025-10-18/688256_20251018_S0FQ.pdf" }
+    },
+    {
+      "validationId": "ego-pdf-cam-2026q1",
+      "sourceId": "cam-2026q1",
+      "url": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-04-30/688256_20260430_I4ZK.pdf",
+      "validationType": "official-pdf-live",
+      "status": "confirmed",
+      "details": { "finalUrl": "https://static.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-04-30/688256_20260430_I4ZK.pdf" }
+    },
+    {
+      "validationId": "ego-pdf-cam-2026h1",
+      "sourceId": "cam-2026h1",
+      "url": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-08-08/688256_20260808_TUNG.pdf",
+      "validationType": "official-pdf-live",
+      "status": "confirmed",
+      "details": { "finalUrl": "https://static.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-08-08/688256_20260808_TUNG.pdf" }
+    },
+    {
+      "validationId": "ego-pdf-baili-2025h1",
+      "sourceId": "baili-2025h1",
+      "url": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2025-08-20/688506_20250820_1WDV.pdf",
+      "validationType": "official-pdf-live",
+      "status": "confirmed",
+      "details": { "finalUrl": "https://static.sse.com.cn/disclosure/listedinfo/announcement/c/new/2025-08-20/688506_20250820_1WDV.pdf" }
+    },
+    {
+      "validationId": "ego-repair-cam-2025a",
+      "sourceId": "cam-2025a",
+      "url": "https://static.cninfo.com.cn/finalpage/2026-03-13/1225007336.PDF",
+      "validationType": "missing-url-repair",
+      "status": "confirmed",
+      "details": { "title": "中科寒武纪科技股份有限公司2025年年度报告" }
+    },
+    {
+      "validationId": "ego-repair-baili-2025a",
+      "sourceId": "baili-2025a",
+      "url": "https://static.cninfo.com.cn/finalpage/2026-04-28/1225217117.PDF",
+      "validationType": "missing-url-repair",
+      "status": "confirmed",
+      "details": { "title": "四川百利天恒药业股份有限公司2025年年度报告" }
+    },
+    {
+      "validationId": "ego-repair-left-2021a",
+      "sourceId": "left-2021a",
+      "url": "https://static.cninfo.com.cn/finalpage/2022-04-28/1213167893.PDF",
+      "validationType": "missing-url-repair",
+      "status": "confirmed",
+      "details": { "title": "北京左江科技股份有限公司2021年年度报告全文" }
+    },
+    {
+      "validationId": "ego-repair-left-2023h1",
+      "sourceId": "left-2023h1",
+      "url": "https://static.cninfo.com.cn/finalpage/2023-08-29/1217680253.PDF",
+      "validationType": "missing-url-repair",
+      "status": "confirmed",
+      "details": { "title": "北京左江科技股份有限公司2023年半年度报告" }
+    },
+    {
+      "validationId": "ego-repair-left-2023q3",
+      "sourceId": "left-2023q3",
+      "url": "https://static.cninfo.com.cn/finalpage/2023-10-25/1218138997.PDF",
+      "validationType": "missing-url-repair",
+      "status": "confirmed",
+      "details": { "title": "北京左江科技股份有限公司2023年第三季度报告" }
+    },
+    {
+      "validationId": "ego-repair-baili-bms",
+      "sourceId": "baili-bms",
+      "url": "https://news.bms.com/news/details/2023/SystImmune-and-Bristol-Myers-Squibb-Announce-a-Global-Strategic-Collaboration-Agreement-for-the-Development-and-Commercialization-of-BL-B01D1/default.aspx",
+      "validationType": "missing-url-repair",
+      "status": "confirmed",
+      "details": { "title": "SystImmune and Bristol Myers Squibb Announce a Global Strategic Collaboration Agreement for BL-B01D1" }
+    },
+    {
+      "validationId": "ego-media-cam-d65a9b",
+      "sourceId": "media-cambricon-d65a9bcc4d0a",
+      "url": "https://www.p5w.net/roll/company/202603/t20260313_6442208.htm",
+      "validationType": "article-live",
+      "status": "confirmed",
+      "details": { "title": "寒武纪首次年度盈利 营收同比增453%", "responseLength": 8707 }
+    },
+    {
+      "validationId": "ego-media-cam-af4426",
+      "sourceId": "media-cambricon-af44268d9c7f",
+      "url": "https://www.p5w.net/roll/company/202509/t20250901_6393127.htm",
+      "validationType": "article-live",
+      "status": "confirmed",
+      "details": { "title": "2104元！“高盛”强CALL，寒武纪目标价再度被拔高！是否存在风险？", "responseLength": 9458 }
+    },
+    {
+      "validationId": "ego-media-cam-8bc149",
+      "sourceId": "media-cambricon-8bc149f0481b",
+      "url": "https://www.p5w.net/roll/company/202508/t20250827_6389625.htm",
+      "validationType": "article-live",
+      "status": "confirmed",
+      "details": { "title": "寒武纪上半年业绩爆发：营收增长43倍 净利超10亿元", "responseLength": 8537 }
+    },
+    {
+      "validationId": "ego-media-baili-196b1e",
+      "sourceId": "media-bailitannheng-196b1e750bf8",
+      "url": "https://www.p5w.net/roll/lanjinger/202608/t20260807_6491722.htm",
+      "validationType": "article-live",
+      "status": "confirmed",
+      "details": { "title": "百利天恒四度递表港交所，去年IPO临门一脚“刹车”后再闯关", "responseLength": 8988 }
+    }
+  ]
+}

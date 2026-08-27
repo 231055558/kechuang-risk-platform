@@ -13,6 +13,15 @@ import {
   scoreKcrAssessment,
 } from "./kcr-assessment-service.ts"
 import { getRiskGraph, listRiskGraphCompanies } from "./risk-graph-service.ts"
+import {
+  getNarrativeAnnualAudit,
+  getNarrativeAnnualMethodology,
+  getNarrativeAnnualTrends,
+  getNarrativeRiskAuditSummary,
+  getNarrativeRiskCompany,
+  listNarrativeRiskCompanies,
+  listNarrativeRiskSources,
+} from "./narrative-risk-service.ts"
 
 function readPort(value: string | undefined) {
   const port = Number(value ?? "5000")
@@ -41,6 +50,13 @@ const server = createProductionServer({
   getIndustryRiskGraph: getIndustryRiskKnowledgeGraph,
   listRiskGraphCompanies,
   getRiskGraph,
+  listNarrativeRiskCompanies,
+  getNarrativeRiskCompany,
+  listNarrativeRiskSources,
+  getNarrativeRiskAuditSummary,
+  getNarrativeAnnualTrends,
+  getNarrativeAnnualMethodology,
+  getNarrativeAnnualAudit,
 })
 
 server.listen(port, host, () => {
