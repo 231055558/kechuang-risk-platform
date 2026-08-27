@@ -22,6 +22,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from .unified_storage import ensure_unified_storage_schema
+
 
 AGENT_VERSION = "r01r22-1.3.0"
 LOW_CONFIDENCE = 0.60
@@ -312,6 +314,7 @@ def _display_source_name(value: Any) -> str:
 
 def ensure_master_graph_schema(conn: sqlite3.Connection) -> None:
     conn.executescript(MASTER_GRAPH_SCHEMA)
+    ensure_unified_storage_schema(conn)
     conn.commit()
 
 

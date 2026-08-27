@@ -100,7 +100,7 @@ def _listed_sources(slug: str, target: dict[str, Any], mode: str) -> list[dict[s
             "company": target["name"], "stock_code": code, "page_size": 30, "max_pages": 3,
             "column": exchange, "plate": exchange, "searchkey": code, "category": PERIODIC_CATEGORIES,
             "limit": 6, "include_text_fallback": True, "pdf_dir": "data/pdfs/reports",
-            "registry_db": "data/pdf_registry.sqlite", "manifest": f"data/pdf_manifests/{code}_periodic_reports.json", "source_name": "CNINFO",
+            "registry_db": "data/risk_data.sqlite", "manifest": f"data/pdf_manifests/{code}_periodic_reports.json", "source_name": "CNINFO",
         }, "official"))
     return listed
 

@@ -14,6 +14,11 @@
 
 不包含密码、付费原始响应、生产 SQLite、数据库备份、Cookie 或本机路径。
 
+完整本地部署只使用 `backend/data/risk_data.sqlite` 一个事实主库。采集流水线、iFinD解析、
+PDF登记、R01-R22计算和图谱快照在同一文件中使用不同表命名空间；Neo4j是可重建投影。
+历史多数据库项目可使用 `backend/tools/consolidate_to_master_db.py` 迁移，并在完整校验后使用
+`backend/tools/cleanup_secondary_databases.ps1` 清理辅助数据库。
+
 ## 立即运行演示图谱
 
 ```powershell

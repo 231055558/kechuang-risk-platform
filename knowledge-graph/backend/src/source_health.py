@@ -6,6 +6,8 @@ import importlib.util
 import sqlite3
 from pathlib import Path
 
+from .database import connect, init_db
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 _REPORT_PATH = PROJECT_ROOT / "tools" / "source_health_report.py"
@@ -17,8 +19,8 @@ def write_source_health_report(db_path: Path, report_path: Path, days: int = 30)
         raise RuntimeError(f"unable to load source health report module: {_REPORT_PATH}")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    connection = sqlite3.connect(db_path)
-    connection.row_factory = sqlite3.Row
+    connection = connect(db_path)
+    init_db(connection)
     summary, details = module.build_health_report(connection, days)
     connection.close()
     module.save_markdown(report_path, summary, details)

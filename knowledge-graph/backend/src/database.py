@@ -1,4 +1,5 @@
 import json
+import re
 import sqlite3
 from dataclasses import asdict
 from pathlib import Path
@@ -6,6 +7,67 @@ from typing import Iterable
 
 from .models import Evidence, EntityRecord, EntityRelation, IndicatorScore, PipelineRun, ReviewFeedback, utc_now_iso
 from .evidence_review import apply_auto_review, should_apply_auto_review
+from .unified_storage import ensure_unified_storage_schema
+
+
+CRAWLER_TABLE_MAP = {
+    "companies": "crawler_companies",
+    "indicators": "crawler_indicators",
+    "data_types": "crawler_data_types",
+    "indicator_data_requirements": "crawler_indicator_data_requirements",
+    "sources": "crawler_sources",
+    "evidence": "crawler_evidence",
+    "entities": "crawler_entities",
+    "entity_relations": "crawler_entity_relations",
+    "pipeline_runs": "crawler_pipeline_runs",
+    "pipeline_source_runs": "crawler_pipeline_source_runs",
+    "review_feedback": "crawler_review_feedback",
+    "indicator_scores": "crawler_indicator_scores",
+}
+
+
+def crawler_sql(sql: str) -> str:
+    """Map the legacy crawler schema into namespaced tables in the master DB."""
+    rewritten = sql
+    for source, target in sorted(CRAWLER_TABLE_MAP.items(), key=lambda item: -len(item[0])):
+        escaped = re.escape(source)
+        rewritten = re.sub(
+            rf"(?i)(\bCREATE\s+TABLE\s+IF\s+NOT\s+EXISTS\s+){escaped}\b",
+            rf"\1{target}",
+            rewritten,
+        )
+        rewritten = re.sub(
+            rf"(?i)(\bCREATE\s+TABLE\s+){escaped}\b", rf"\1{target}", rewritten
+        )
+        rewritten = re.sub(
+            rf"(?i)(\b(?:FROM|JOIN|INTO|UPDATE|REFERENCES|ALTER\s+TABLE|DELETE\s+FROM)\s+){escaped}\b",
+            rf"\1{target}",
+            rewritten,
+        )
+        rewritten = re.sub(
+            rf"(?i)(\bON\s+){escaped}(?=\s*\()", rf"\1{target}", rewritten
+        )
+        rewritten = re.sub(
+            rf"(?i)(PRAGMA\s+table_info\s*\(\s*){escaped}(\s*\))",
+            rf"\1{target}\2",
+            rewritten,
+        )
+        rewritten = re.sub(rf"(?i)\b{escaped}\.", f"{target}.", rewritten)
+        rewritten = re.sub(
+            rf"(?i)\bidx_{escaped}", f"idx_{target}", rewritten
+        )
+    return rewritten
+
+
+class CrawlerConnection(sqlite3.Connection):
+    def execute(self, sql: str, parameters=()):  # type: ignore[override]
+        return super().execute(crawler_sql(sql), parameters)
+
+    def executemany(self, sql: str, seq_of_parameters):  # type: ignore[override]
+        return super().executemany(crawler_sql(sql), seq_of_parameters)
+
+    def executescript(self, sql_script: str):  # type: ignore[override]
+        return super().executescript(crawler_sql(sql_script))
 
 
 SCHEMA = """
@@ -362,7 +424,7 @@ DATA_TYPE_LABELS = {
 def connect(db_path: Path) -> sqlite3.Connection:
     db_path.parent.mkdir(parents=True, exist_ok=True)
     # A busy timeout turns transient concurrent writes into a recoverable wait.
-    conn = sqlite3.connect(db_path, timeout=30)
+    conn = sqlite3.connect(db_path, timeout=30, factory=CrawlerConnection)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     conn.execute("PRAGMA busy_timeout = 30000")
@@ -370,27 +432,31 @@ def connect(db_path: Path) -> sqlite3.Connection:
 
 
 def init_db(conn: sqlite3.Connection) -> None:
-    conn.executescript(SCHEMA)
+    conn.executescript(crawler_sql(SCHEMA))
+    ensure_unified_storage_schema(conn)
     _migrate_schema(conn)
     conn.commit()
 
 
 def _migrate_schema(conn: sqlite3.Connection) -> None:
-    columns = {row["name"] for row in conn.execute("PRAGMA table_info(evidence)").fetchall()}
+    def execute(sql: str, parameters=()):
+        return conn.execute(crawler_sql(sql), parameters)
+
+    columns = {row["name"] for row in execute("PRAGMA table_info(evidence)").fetchall()}
     if "run_id" not in columns:
-        conn.execute("ALTER TABLE evidence ADD COLUMN run_id TEXT NOT NULL DEFAULT ''")
+        execute("ALTER TABLE evidence ADD COLUMN run_id TEXT NOT NULL DEFAULT ''")
     if "first_seen_run_id" not in columns:
-        conn.execute("ALTER TABLE evidence ADD COLUMN first_seen_run_id TEXT NOT NULL DEFAULT ''")
+        execute("ALTER TABLE evidence ADD COLUMN first_seen_run_id TEXT NOT NULL DEFAULT ''")
     if "last_seen_run_id" not in columns:
-        conn.execute("ALTER TABLE evidence ADD COLUMN last_seen_run_id TEXT NOT NULL DEFAULT ''")
-    conn.execute("UPDATE evidence SET first_seen_run_id = run_id WHERE first_seen_run_id = ''")
-    conn.execute("UPDATE evidence SET last_seen_run_id = run_id WHERE last_seen_run_id = ''")
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_evidence_run_id ON evidence(run_id)")
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_evidence_first_seen_run_id ON evidence(first_seen_run_id)")
-    score_columns = {row["name"] for row in conn.execute("PRAGMA table_info(indicator_scores)").fetchall()}
+        execute("ALTER TABLE evidence ADD COLUMN last_seen_run_id TEXT NOT NULL DEFAULT ''")
+    execute("UPDATE evidence SET first_seen_run_id = run_id WHERE first_seen_run_id = ''")
+    execute("UPDATE evidence SET last_seen_run_id = run_id WHERE last_seen_run_id = ''")
+    execute("CREATE INDEX IF NOT EXISTS idx_evidence_run_id ON evidence(run_id)")
+    execute("CREATE INDEX IF NOT EXISTS idx_evidence_first_seen_run_id ON evidence(first_seen_run_id)")
+    score_columns = {row["name"] for row in execute("PRAGMA table_info(indicator_scores)").fetchall()}
     if "calculation_json" not in score_columns:
-        conn.execute("ALTER TABLE indicator_scores ADD COLUMN calculation_json TEXT NOT NULL DEFAULT '{}'")
-    indicator_columns = {row["name"] for row in conn.execute("PRAGMA table_info(indicators)").fetchall()}
+        execute("ALTER TABLE indicator_scores ADD COLUMN calculation_json TEXT NOT NULL DEFAULT '{}'")
+    indicator_columns = {row["name"] for row in execute("PRAGMA table_info(indicators)").fetchall()}
     indicator_migrations = {
         "indicator_kind": "TEXT NOT NULL DEFAULT 'risk'",
         "weight_policy": "TEXT NOT NULL DEFAULT 'included_weight_undefined'",
@@ -401,12 +467,12 @@ def _migrate_schema(conn: sqlite3.Connection) -> None:
     }
     for column, definition in indicator_migrations.items():
         if column not in indicator_columns:
-            conn.execute(f"ALTER TABLE indicators ADD COLUMN {column} {definition}")
-    source_columns = {row["name"] for row in conn.execute("PRAGMA table_info(pipeline_source_runs)").fetchall()}
+            execute(f"ALTER TABLE indicators ADD COLUMN {column} {definition}")
+    source_columns = {row["name"] for row in execute("PRAGMA table_info(pipeline_source_runs)").fetchall()}
     if "source_name" not in source_columns:
-        conn.execute("ALTER TABLE pipeline_source_runs ADD COLUMN source_name TEXT NOT NULL DEFAULT ''")
+        execute("ALTER TABLE pipeline_source_runs ADD COLUMN source_name TEXT NOT NULL DEFAULT ''")
     if "source_type" not in source_columns:
-        conn.execute("ALTER TABLE pipeline_source_runs ADD COLUMN source_type TEXT NOT NULL DEFAULT ''")
+        execute("ALTER TABLE pipeline_source_runs ADD COLUMN source_type TEXT NOT NULL DEFAULT ''")
 
 
 def _json(value) -> str:
