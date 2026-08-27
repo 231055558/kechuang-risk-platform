@@ -59,6 +59,15 @@ test("enterprise event fallback projects facts without inventing causal edges", 
   assert.ok(graph.nodes.some((node) => node.type === "risk_event"))
   assert.ok(graph.nodes.some((node) => node.type === "risk_indicator"))
   assert.ok(
+    graph.nodes.some(
+      (node) =>
+        node.type === "risk_event" &&
+        typeof node.attributes.impact_weight === "number" &&
+        node.attributes.impact_weight >= 0 &&
+        node.attributes.impact_weight <= 1
+    )
+  )
+  assert.ok(
     graph.edges.every((edge) =>
       [
         "event_impacts_company",

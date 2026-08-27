@@ -61,6 +61,28 @@ function isSafePublicUrl(value: string) {
   }
 }
 
+function publicSourceLabel(value: string) {
+  try {
+    const hostname = new URL(value).hostname.replace(/^www\./, "")
+    const knownSources: Array<[RegExp, string]> = [
+      [/(?:^|\.)sse\.com\.cn$/, "上海证券交易所"],
+      [/(?:^|\.)szse\.cn$/, "深圳证券交易所"],
+      [/(?:^|\.)cninfo\.com\.cn$/, "巨潮资讯"],
+      [/(?:^|\.)csrc\.gov\.cn$/, "中国证监会"],
+      [/(?:^|\.)court\.gov\.cn$/, "人民法院公开信息"],
+      [/(?:^|\.)gov\.cn$/, "政府公开信息"],
+      [/(?:^|\.)eastmoney\.com$/, "东方财富"],
+    ]
+    return (
+      knownSources.find(([pattern]) => pattern.test(hostname))?.[1] ??
+      hostname ??
+      "公开来源"
+    )
+  } catch {
+    return "公开来源"
+  }
+}
+
 function cleanAttributes(value: unknown): Record<string, unknown> {
   if (!isRecord(value)) return {}
   return Object.fromEntries(
@@ -224,7 +246,17 @@ function buildStructuredEventGraph(
   })
 
   const indicatorById = new Map(indicators.map((item) => [item.id, item]))
+  const metricByIndicatorId = new Map(
+    response.assessment.metrics.map((item) => [item.indicatorId, item])
+  )
   for (const event of events) {
+    const eventRiskScore = event.indicatorId
+      ? (metricByIndicatorId.get(event.indicatorId)?.riskScore ?? null)
+      : null
+    const eventRiskWeight =
+      eventRiskScore === null
+        ? null
+        : Math.max(0, Math.min(1, eventRiskScore / 100))
     const eventNodeId = `event:${event.id}`
     nodes.set(eventNodeId, {
       id: eventNodeId,
@@ -239,6 +271,7 @@ function buildStructuredEventGraph(
         event_type: event.eventType,
         source_url: event.url,
         notes: event.notes,
+        ...(eventRiskWeight === null ? {} : { impact_weight: eventRiskWeight }),
       },
     })
     edges.set(`event-company:${event.id}`, {
@@ -249,14 +282,17 @@ function buildStructuredEventGraph(
       relationCode: "event_impacts_company",
       confidence: event.confidence,
       evidenceState: "verified",
-      attributes: { factual_projection: true },
+      attributes: {
+        factual_projection: true,
+        ...(eventRiskWeight === null ? {} : { impact_weight: eventRiskWeight }),
+      },
     })
 
     if (event.url) {
       const sourceNodeId = `source:${event.id}`
       nodes.set(sourceNodeId, {
         id: sourceNodeId,
-        label: "公开来源",
+        label: publicSourceLabel(event.url),
         type: "evidence_source",
         typeLabel: "证据来源",
         confidence: event.confidence,
@@ -293,6 +329,7 @@ function buildStructuredEventGraph(
       attributes: {
         chain_role: "risk_indicator",
         indicator_id: indicator.id,
+        ...(eventRiskWeight === null ? {} : { impact_weight: eventRiskWeight }),
       },
     })
     nodes.set(categoryNodeId, {
@@ -312,7 +349,10 @@ function buildStructuredEventGraph(
       relationCode: "event_maps_to_indicator",
       confidence: event.confidence,
       evidenceState: "verified",
-      attributes: { factual_projection: true },
+      attributes: {
+        factual_projection: true,
+        ...(eventRiskWeight === null ? {} : { impact_weight: eventRiskWeight }),
+      },
     })
     edges.set(`indicator-category:${indicator.id}`, {
       id: `indicator-category:${indicator.id}`,

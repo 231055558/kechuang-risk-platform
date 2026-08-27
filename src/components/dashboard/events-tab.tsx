@@ -8,16 +8,14 @@ import {
   Clock3Icon,
   FileSignatureIcon,
   DatabaseZapIcon,
-  GitBranchIcon,
   LandmarkIcon,
-  NetworkIcon,
   SearchCheckIcon,
   ShieldCheckIcon,
 } from "lucide-react"
 
+import { RiskPropagationGraph } from "@/components/dashboard/risk-propagation-graph"
 import { usePrefersReducedMotion } from "@/components/motion/workflow-transition"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import type { IndustryRiskAssessmentApiResponse } from "@/domain/industry-risk-v1/index.ts"
 import { fetchIndustryRiskAssessment } from "@/lib/industry-risk-api"
 import { riskHeatColor } from "@/lib/risk-heat"
@@ -57,72 +55,7 @@ export function EventsTab({ detail, events, section }: EventsTabProps) {
       <InvestorDecisionPanel detail={detail} events={events} mode="response" />
     )
   }
-  return <GraphIntegrationPanel detail={detail} />
-}
-
-function GraphIntegrationPanel({ detail }: { detail: CompanyDetail }) {
-  return (
-    <div
-      className="graph-integration page-stack"
-      data-graph-contract="KCR-TEMPORAL-GRAPH-PENDING-v1"
-    >
-      <header className="graph-integration__header">
-        <div>
-          <span className="eyebrow">Risk propagation</span>
-          <h2>{detail.name}风险传导</h2>
-          <p>
-            本页只承载团队后续提供的风险演化知识图谱。当前指标、事件和来源关系不会被前端自动解释为因果或传播路径。
-          </p>
-        </div>
-        <Badge variant="outline">图谱接口待接入</Badge>
-      </header>
-
-      <section
-        className="graph-integration__stage"
-        aria-label="风险传导图谱接入区域"
-      >
-        <div className="graph-integration__toolbar" aria-label="图谱控制预留">
-          <Button variant="outline" size="sm" disabled>
-            时间范围
-          </Button>
-          <Button variant="outline" size="sm" disabled>
-            实体层
-          </Button>
-          <Button variant="outline" size="sm" disabled>
-            风险层
-          </Button>
-          <Button variant="outline" size="sm" disabled>
-            全屏
-          </Button>
-        </div>
-        <div className="graph-integration__empty">
-          <div aria-hidden="true">
-            <NetworkIcon />
-            <span />
-            <GitBranchIcon />
-          </div>
-          <h3>动态图谱组件将在此接入</h3>
-          <p>
-            接口需提供实体、关系方向、有效期、边权、置信度、来源和抽取版本；缺少这些字段时不生成关系边。
-          </p>
-          <dl>
-            <div>
-              <dt>当前页面</dt>
-              <dd>布局、加载态、工具栏与全屏容器已预留</dd>
-            </div>
-            <div>
-              <dt>待同学提供</dt>
-              <dd>图谱组件、时序数据和关系语义</dd>
-            </div>
-            <div>
-              <dt>接入边界</dt>
-              <dd>不复用旧证据星型图，不伪造风险传导</dd>
-            </div>
-          </dl>
-        </div>
-      </section>
-    </div>
-  )
+  return <RiskPropagationGraph detail={detail} />
 }
 
 function InvestorDecisionPanel({

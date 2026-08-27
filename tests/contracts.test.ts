@@ -339,19 +339,28 @@ test("investor strategy and graph integration have no enterprise task workflows"
   const eventsSource = readProjectFile(
     "src/components/dashboard/events-tab.tsx"
   )
+  const graphSource = readProjectFile(
+    "src/components/dashboard/risk-propagation-graph.tsx"
+  )
 
   assert.doesNotMatch(eventsSource, /TabsTrigger/)
   assert.doesNotMatch(eventsSource, /TabsList/)
   assert.doesNotMatch(eventsSource, /TabsContent/)
   assert.match(eventsSource, /section === "investment"/)
   assert.match(eventsSource, /section === "advice"/)
-  assert.match(eventsSource, /<GraphIntegrationPanel detail=\{detail\}/)
-  assert.match(eventsSource, /KCR-TEMPORAL-GRAPH-PENDING-v1/)
+  assert.match(eventsSource, /<RiskPropagationGraph detail=\{detail\}/)
+  assert.match(graphSource, /KCR-RISK-GRAPH-2026\.08-v1/)
+  assert.match(graphSource, /"enterprise-event"/)
+  assert.match(graphSource, /"external-subject"/)
+  assert.match(graphSource, /fetchRiskGraph\(detail\.id, view/)
   assert.doesNotMatch(
-    eventsSource,
+    `${eventsSource}\n${graphSource}`,
     /EventRegister|Governance|AutomaticRiskAdvice/
   )
-  assert.doesNotMatch(eventsSource, />负责人<|>待处理<|>截止日期<|>处置任务</)
+  assert.doesNotMatch(
+    `${eventsSource}\n${graphSource}`,
+    />负责人<|>待处理<|>截止日期<|>处置任务/
+  )
 })
 
 test("risk-news drawers remain scoped and cannot promote management tasks", () => {
@@ -478,7 +487,10 @@ test("legacy governance entry is absent from the investor overview", () => {
   )
 
   assert.match(overviewSource, /<IndustryRiskReviewPanel/)
-  assert.doesNotMatch(overviewSource, /governance-entry-action|事件清单|责任状态/)
+  assert.doesNotMatch(
+    overviewSource,
+    /governance-entry-action|事件清单|责任状态/
+  )
 })
 
 test("assessment overview leads with top risks and excludes management actions", () => {
@@ -594,6 +606,9 @@ test("the eight investor workflows use the approved terminology", () => {
   const eventsSource = readProjectFile(
     "src/components/dashboard/events-tab.tsx"
   )
+  const graphSource = readProjectFile(
+    "src/components/dashboard/risk-propagation-graph.tsx"
+  )
   const reportsSource = readProjectFile(
     "src/components/dashboard/risk-reports-tab.tsx"
   )
@@ -606,7 +621,7 @@ test("the eight investor workflows use the approved terminology", () => {
   assert.match(intelligenceSource, /点击行查看公式与来源/)
   assert.match(intelligenceSource, /方法含义/)
   assert.match(compareSource, /六维风险对照图/)
-  assert.match(eventsSource, /风险传导/)
+  assert.match(`${eventsSource}\n${graphSource}`, /风险传导/)
   assert.match(eventsSource, /投资研判/)
   assert.match(eventsSource, /风险应对/)
   assert.match(reportsSource, /企业风险报告/)
@@ -705,8 +720,8 @@ test("the investor workstation defines the shell and major workflow surfaces", (
       pattern: /className="compare-company-glass"/,
     },
     {
-      path: "src/components/dashboard/events-tab.tsx",
-      pattern: /className="graph-integration__stage"/,
+      path: "src/components/dashboard/risk-propagation-graph.tsx",
+      pattern: /className="risk-propagation__workspace"/,
     },
   ]
   const riskOsStyles = readProjectFile("src/styles/risk-os.css")
@@ -742,13 +757,17 @@ test("reading-heavy workflows use dense investor surfaces and removed pages stay
   const eventsSource = readProjectFile(
     "src/components/dashboard/events-tab.tsx"
   )
+  const graphSource = readProjectFile(
+    "src/components/dashboard/risk-propagation-graph.tsx"
+  )
 
   assert.match(realtimeSource, /className="risk-news__grid"/)
   assert.match(
     intelligenceSource,
     /className="indicator-analysis__peer-matrix"/
   )
-  assert.match(eventsSource, /className="graph-integration__stage"/)
+  assert.match(eventsSource, /<RiskPropagationGraph detail=\{detail\}/)
+  assert.match(graphSource, /className="risk-propagation__workspace"/)
   assert.doesNotMatch(eventsSource, /event-register|governance-workspace/)
 
   ;[
