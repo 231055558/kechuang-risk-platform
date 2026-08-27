@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Risk KG Visible Table Capture",
+  "version": "1.0.0",
+  "description": "Capture only user-visible HTML tables from the active Edge tab and export reviewed JSON.",
+  "action": {
+    "default_title": "采集当前可见表格",
+    "default_popup": "popup.html"
+  },
+  "permissions": ["activeTab", "downloads"],
+  "host_permissions": ["http://127.0.0.1:8770/*"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

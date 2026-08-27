@@ -1,0 +1,35 @@
+{
+  "sources": [
+    {
+      "id": "edge_reviewed_visible_tables",
+      "name": "Edge扩展人工确认可见表格",
+      "type": "local_data_directory",
+      "path": "data/structured_exports",
+      "reliability": "reviewed_browser_visible",
+      "update_frequency": "manual",
+      "parser": "local_structured_dataset",
+      "indicators": [
+        "供应链进口依赖度",
+        "工程化与商业转化率",
+        "股权稀释程度",
+        "高管关联风险暴露度",
+        "高管稳定性",
+        "诉讼风险",
+        "监管处罚次数"
+      ],
+      "params": {
+        "recursive": true,
+        "patterns": ["edge_capture_*.json"],
+        "review_required": true,
+        "provider": "Edge visible-table capture; user-reviewed"
+      }
+    }
+  ],
+  "target_companies": [
+    {
+      "name": "中科寒武纪科技股份有限公司",
+      "aliases": ["寒武纪", "中科寒武纪", "CAMBRICON", "688256"],
+      "stock_code": "688256"
+    }
+  ]
+}

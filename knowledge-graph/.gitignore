@@ -1,0 +1,13 @@
+backend/data/*
+!backend/data/README.md
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+tmp/
+output/
+.env
+.env.*
+*.bak
+*.backup
+*.sqlite-wal
+*.sqlite-shm
