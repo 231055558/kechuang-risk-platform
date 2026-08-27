@@ -13,28 +13,9 @@ if (-not $Python) {
     $Python = (Get-Command python -ErrorAction Stop).Source
 }
 
-$Verification = @'
-import sqlite3, sys
-p = sys.argv[1]
-c = sqlite3.connect("file:" + p.replace("\\", "/") + "?mode=ro", uri=True)
-integrity = c.execute("PRAGMA integrity_check").fetchone()[0]
-foreign_keys = c.execute("PRAGMA foreign_key_check").fetchall()
-migration = c.execute(
-    "SELECT COUNT(*) FROM unified_database_migrations WHERE migration_id=?",
-    ("single-master-sqlite-20260827-v1",),
-).fetchone()[0]
-c.close()
-if integrity != "ok" or foreign_keys or migration != 1:
-    raise SystemExit(
-        f"master verification failed: integrity={integrity}, "
-        f"foreign_keys={len(foreign_keys)}, migration={migration}"
-    )
-print("MASTER_VERIFIED")
-'@
-
-& $Python -c $Verification $MainDb
+& $Python (Join-Path $PSScriptRoot 'verify_single_master_db.py') --db $MainDb
 if ($LASTEXITCODE -ne 0) {
-    throw '主数据库验证失败，拒绝删除其他数据库。'
+    throw 'Master database verification failed. Refusing cleanup.'
 }
 
 $Databases = @(
@@ -48,10 +29,10 @@ $Databases = @(
 foreach ($Database in $Databases) {
     $Resolved = (Resolve-Path -LiteralPath $Database.FullName).Path
     if (-not $Resolved.StartsWith($Prefix, [StringComparison]::OrdinalIgnoreCase)) {
-        throw "发现项目目录外数据库，拒绝继续：$Resolved"
+        throw "Database outside project root detected: $Resolved"
     }
     if ($Resolved -eq $MainDb) {
-        throw '主数据库错误地进入删除清单，拒绝继续。'
+        throw 'Main database entered the deletion list. Refusing cleanup.'
     }
 }
 
@@ -60,10 +41,10 @@ foreach ($Database in ($Databases | Sort-Object Length -Descending)) {
     Write-Output ("{0} | {1:N3} GB | {2:yyyy-MM-dd HH:mm:ss}" -f $Database.FullName, ($Database.Length / 1GB), $Database.LastWriteTime)
 }
 
-Write-Output ("待删除数据库：{0} 个，共 {1:N3} GB" -f $Databases.Count, ($TotalBytes / 1GB))
+Write-Output ("Secondary databases: {0}; total size: {1:N3} GB" -f $Databases.Count, ($TotalBytes / 1GB))
 
 if (-not $Apply) {
-    Write-Output '当前为预览模式；确认后使用 -Apply 执行删除。'
+    Write-Output 'Preview only. Re-run with -Apply to delete the listed databases.'
     exit 0
 }
 
@@ -82,7 +63,7 @@ foreach ($Directory in $EmptyCandidates) {
     }
     $Resolved = (Resolve-Path -LiteralPath $Directory).Path
     if (-not $Resolved.StartsWith($DataRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
-        throw "拒绝删除数据目录外路径：$Resolved"
+        throw "Directory outside data root detected: $Resolved"
     }
     if (-not (Get-ChildItem -LiteralPath $Resolved -Force)) {
         Remove-Item -LiteralPath $Resolved -Force
@@ -97,7 +78,7 @@ $Remaining = @(
         }
 )
 if ($Remaining.Count) {
-    throw "清理后仍存在 $($Remaining.Count) 个辅助数据库。"
+    throw "$($Remaining.Count) secondary databases remain after cleanup."
 }
 
-Write-Output ("清理完成：删除 {0} 个数据库，释放约 {1:N3} GB；保留 {2}" -f $Databases.Count, ($TotalBytes / 1GB), $MainDb)
+Write-Output ("Cleanup complete: deleted {0} databases, freed about {1:N3} GB, kept {2}" -f $Databases.Count, ($TotalBytes / 1GB), $MainDb)
