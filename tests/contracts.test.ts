@@ -350,9 +350,8 @@ test("investor strategy and graph integration have no enterprise task workflows"
   assert.match(eventsSource, /section === "advice"/)
   assert.match(eventsSource, /<RiskPropagationGraph detail=\{detail\}/)
   assert.match(graphSource, /KCR-RISK-GRAPH-2026\.08-v1/)
-  assert.match(graphSource, /"enterprise-event"/)
-  assert.match(graphSource, /"external-subject"/)
-  assert.match(graphSource, /fetchRiskGraph\(detail\.id, view/)
+  assert.match(graphSource, /data-graph-ui="teammate-fee-kbg"/)
+  assert.match(graphSource, /stock_code/)
   assert.doesNotMatch(
     `${eventsSource}\n${graphSource}`,
     /EventRegister|Governance|AutomaticRiskAdvice/
@@ -721,7 +720,7 @@ test("the investor workstation defines the shell and major workflow surfaces", (
     },
     {
       path: "src/components/dashboard/risk-propagation-graph.tsx",
-      pattern: /className="risk-propagation__workspace"/,
+      pattern: /className="teammate-graph-workspace"/,
     },
   ]
   const riskOsStyles = readProjectFile("src/styles/risk-os.css")
@@ -767,7 +766,7 @@ test("reading-heavy workflows use dense investor surfaces and removed pages stay
     /className="indicator-analysis__peer-matrix"/
   )
   assert.match(eventsSource, /<RiskPropagationGraph detail=\{detail\}/)
-  assert.match(graphSource, /className="risk-propagation__workspace"/)
+  assert.match(graphSource, /className="teammate-graph-workspace"/)
   assert.doesNotMatch(eventsSource, /event-register|governance-workspace/)
 
   ;[
