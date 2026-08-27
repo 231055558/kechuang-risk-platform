@@ -14,12 +14,12 @@ const graph = getIndustryRiskKnowledgeGraph()
 
 test("industry graph keeps the agreed company-category-indicator-evidence structure", () => {
   assert.deepEqual(graph.counts, {
-    nodes: 1289,
-    edges: 3291,
+    nodes: 1388,
+    edges: 3387,
     companies: 94,
     categories: 6,
     indicators: 22,
-    sources: 558,
+    sources: 657,
     events: 609,
   })
   const kinds = graph.edges.reduce<Record<string, number>>((counts, edge) => {
@@ -28,7 +28,7 @@ test("industry graph keeps the agreed company-category-indicator-evidence struct
   }, {})
   assert.deepEqual(kinds, {
     hierarchy: 586,
-    provenance: 2096,
+    provenance: 2192,
     "event-link": 609,
   })
   const nodeIds = new Set(graph.nodes.map((node) => node.id))
@@ -47,10 +47,10 @@ test("company focus is complete but contains no other enterprise", () => {
     focus.nodes.filter((node) => node.kind === "indicator").length,
     22
   )
-  assert.equal(focus.nodes.filter((node) => node.kind === "source").length, 13)
+  assert.equal(focus.nodes.filter((node) => node.kind === "source").length, 15)
   assert.equal(focus.nodes.filter((node) => node.kind === "event").length, 22)
-  assert.equal(focus.nodes.length, 64)
-  assert.equal(focus.edges.length, 92)
+  assert.equal(focus.nodes.length, 66)
+  assert.equal(focus.edges.length, 94)
   assert.ok(
     focus.edges.every((edge) => edge.companyIds.includes("star-688256"))
   )
@@ -67,7 +67,7 @@ test("company focus is complete but contains no other enterprise", () => {
   )
   assert.equal(
     focus.nodes.find((node) => node.id === "category:技术风险")?.score,
-    43.41
+    41.79
   )
   assert.ok(
     focus.nodes.every(
@@ -140,8 +140,8 @@ test("Cytoscape view uses a complete semantic radial graph without dropping rela
     .map((element) => element.data)
     .filter((data) => "source" in data)
 
-  assert.equal(nodes.length, 64)
-  assert.equal(edges.length, 92)
+  assert.equal(nodes.length, 66)
+  assert.equal(edges.length, 94)
   assert.equal(nodes.filter((node) => node.kind === "category").length, 6)
   assert.ok(
     nodeElements.every(
@@ -182,18 +182,19 @@ test("risk data controls Cytoscape node area and continuous heat color", () => {
   const peer = selectIndustryRiskGraph(graph, "star-688213")
   const lowRiskIndicator = nodeData(cambricon, "indicator:R05")
   const highRiskIndicator = nodeData(cambricon, "indicator:R19")
-  const missingIndicator = nodeData(cambricon, "indicator:R08")
+  const milestoneIndicator = nodeData(cambricon, "indicator:R08")
   const peerR19 = nodeData(peer, "indicator:R19")
 
   assert.ok(lowRiskIndicator)
   assert.ok(highRiskIndicator)
-  assert.ok(missingIndicator)
+  assert.ok(milestoneIndicator)
   assert.ok(peerR19)
   assert.ok(highRiskIndicator.size > lowRiskIndicator.size)
   assert.notEqual(highRiskIndicator.color, lowRiskIndicator.color)
-  assert.equal(missingIndicator.scored, false)
-  assert.equal(missingIndicator.color, "#64748b")
-  assert.equal(missingIndicator.size, 44)
+  assert.equal(milestoneIndicator.scored, true)
+  assert.equal(milestoneIndicator.score, 35.32)
+  assert.notEqual(milestoneIndicator.color, "#64748b")
+  assert.ok(milestoneIndicator.size > 44)
   assert.equal(highRiskIndicator.width, highRiskIndicator.size)
   assert.equal(highRiskIndicator.height, highRiskIndicator.size)
   assert.notEqual(highRiskIndicator.size, peerR19.size)

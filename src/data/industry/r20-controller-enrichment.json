@@ -1,0 +1,499 @@
+{
+  "schemaVersion": "KCR-R20-CONTROLLER-2026.08-v1",
+  "dataVersion": "r20-controller-2026-08-27-v1",
+  "asOfDate": "2026-08-27",
+  "method": "对天眼查网页公开主要股东表中明确标记为实际控制人的记录，计算单一控制人直接持股与间接持股之和，并在共同控制人中取最大值；网页未解析的企业经用户授权调用天眼数据疑似实际控制人接口1123，只有姓名非空、比例为正且与网页股东结构不存在明显冲突的结果才准入。",
+  "audit": {
+    "publicPageCompanyCount": 64,
+    "publicPageControllerTaggedCount": 35,
+    "acceptedPublicPageCount": 33,
+    "paidApiId": 1123,
+    "paidApiName": "疑似实际控制人",
+    "paidApiUnitPriceCny": 1,
+    "paidApiAuthorizedCapCny": 32,
+    "paidApiRequestCount": 29,
+    "paidApiSuccessCount": 11,
+    "paidApiNoResultCount": 18,
+    "paidApiAcceptedCount": 4,
+    "paidApiRejectedCount": 7,
+    "actualCostCny": 11,
+    "balanceBeforeCny": 836.6,
+    "balanceAfterCny": 825.6,
+    "acceptedObservationCount": 37,
+    "unresolvedCompanyCount": 27,
+    "rawApiResponseRedistributed": false,
+    "credentialStored": false
+  },
+  "records": [
+    {
+      "companyId": "star-688213",
+      "stockCode": "688213",
+      "controllerNames": ["徐辰"],
+      "valuePct": 13.67,
+      "asOfDate": "2026-06-30",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/3323560572"
+    },
+    {
+      "companyId": "star-688256",
+      "stockCode": "688256",
+      "controllerNames": ["陈天石"],
+      "valuePct": 28.5107,
+      "asOfDate": "2026-06-30",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/3392806133"
+    },
+    {
+      "companyId": "star-688262",
+      "stockCode": "688262",
+      "controllerNames": ["郑茳", "肖佐楠"],
+      "valuePct": 9.7895,
+      "asOfDate": "2026-03-31",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/3305073093"
+    },
+    {
+      "companyId": "star-688332",
+      "stockCode": "688332",
+      "controllerNames": ["黄志强"],
+      "valuePct": 26.24,
+      "asOfDate": "2026-06-30",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/3381769550"
+    },
+    {
+      "companyId": "star-688380",
+      "stockCode": "688380",
+      "controllerNames": ["杨勇", "周彦", "周飞"],
+      "valuePct": 31.47,
+      "asOfDate": "2026-06-30",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/3402446938"
+    },
+    {
+      "companyId": "star-688416",
+      "stockCode": "688416",
+      "controllerNames": ["吕轶南"],
+      "valuePct": 8.27,
+      "asOfDate": "2026-06-30",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/265133300"
+    },
+    {
+      "companyId": "star-688449",
+      "stockCode": "688449",
+      "controllerNames": ["方小玲"],
+      "valuePct": 6.58,
+      "asOfDate": "2026-06-30",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/73142740"
+    },
+    {
+      "companyId": "star-688525",
+      "stockCode": "688525",
+      "controllerNames": ["孙成思"],
+      "valuePct": 17.8293,
+      "asOfDate": "2026-08-20",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/2358768350"
+    },
+    {
+      "companyId": "star-688591",
+      "stockCode": "688591",
+      "controllerNames": ["王维航"],
+      "valuePct": 7.6121,
+      "asOfDate": "2026-06-30",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/815777326"
+    },
+    {
+      "companyId": "star-688595",
+      "stockCode": "688595",
+      "controllerNames": ["卢国建"],
+      "valuePct": 32.9361,
+      "asOfDate": "2026-03-31",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/2346894985"
+    },
+    {
+      "companyId": "star-688608",
+      "stockCode": "688608",
+      "controllerNames": ["汤晓冬", "赵国光"],
+      "valuePct": 11.3101,
+      "asOfDate": "2026-06-30",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/3384538408"
+    },
+    {
+      "companyId": "star-688766",
+      "stockCode": "688766",
+      "controllerNames": ["王楠", "李兆桂"],
+      "valuePct": 21.8258,
+      "asOfDate": "2026-07-28",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/3412384284"
+    },
+    {
+      "companyId": "star-688795",
+      "stockCode": "688795",
+      "controllerNames": ["张建中"],
+      "valuePct": 9.415,
+      "asOfDate": "2025-12-05",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/3445549881"
+    },
+    {
+      "companyId": "star-688802",
+      "stockCode": "688802",
+      "controllerNames": ["陈维良"],
+      "valuePct": 5.59,
+      "asOfDate": "2025-10-24",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/3474768890"
+    },
+    {
+      "companyId": "star-688807",
+      "stockCode": "688807",
+      "controllerNames": ["柯炳粦"],
+      "valuePct": 8.19,
+      "asOfDate": "2025-12-19",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/432260024"
+    },
+    {
+      "companyId": "star-688047",
+      "stockCode": "688047",
+      "controllerNames": ["胡伟武"],
+      "valuePct": 10.4142,
+      "asOfDate": "2026-08-27",
+      "sourceKind": "paid-api-1123",
+      "companyPageUrl": "https://www.tianyancha.com/company/6823511"
+    },
+    {
+      "companyId": "star-688123",
+      "stockCode": "688123",
+      "controllerNames": ["陈作涛"],
+      "valuePct": 21.3358,
+      "asOfDate": "2026-08-27",
+      "sourceKind": "paid-api-1123",
+      "companyPageUrl": "https://www.tianyancha.com/company/3237891849"
+    },
+    {
+      "companyId": "star-688709",
+      "stockCode": "688709",
+      "controllerNames": ["国务院国有资产监督管理委员会"],
+      "valuePct": 37.7101,
+      "asOfDate": "2026-08-27",
+      "sourceKind": "paid-api-1123",
+      "companyPageUrl": "https://www.tianyancha.com/company/824832226"
+    },
+    {
+      "companyId": "star-688045",
+      "stockCode": "688045",
+      "controllerNames": ["谢朋村"],
+      "valuePct": 21.0348,
+      "asOfDate": "2026-06-30",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/3463840056"
+    },
+    {
+      "companyId": "star-688052",
+      "stockCode": "688052",
+      "controllerNames": ["盛云", "王升杨", "王一峰"],
+      "valuePct": 10.474,
+      "asOfDate": "2026-03-31",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/2351468662"
+    },
+    {
+      "companyId": "star-688061",
+      "stockCode": "688061",
+      "controllerNames": ["罗立权"],
+      "valuePct": 39.0549,
+      "asOfDate": "2026-06-30",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/654461595"
+    },
+    {
+      "companyId": "star-688130",
+      "stockCode": "688130",
+      "controllerNames": ["吕汉泉", "罗洛仪"],
+      "valuePct": 44.6403,
+      "asOfDate": "2026-06-30",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/1411448374"
+    },
+    {
+      "companyId": "star-688173",
+      "stockCode": "688173",
+      "controllerNames": ["唐娅"],
+      "valuePct": 15.9149,
+      "asOfDate": "2026-03-31",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/1246994872"
+    },
+    {
+      "companyId": "star-688209",
+      "stockCode": "688209",
+      "controllerNames": ["黄洪伟"],
+      "valuePct": 1.1427,
+      "asOfDate": "2026-08-10",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/2316150629"
+    },
+    {
+      "companyId": "star-688220",
+      "stockCode": "688220",
+      "controllerNames": ["戴保家"],
+      "valuePct": 8.43,
+      "asOfDate": "2026-03-31",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/3465897274"
+    },
+    {
+      "companyId": "star-688270",
+      "stockCode": "688270",
+      "controllerNames": ["郁发新"],
+      "valuePct": 25.8244,
+      "asOfDate": "2026-06-30",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/2354702402"
+    },
+    {
+      "companyId": "star-688286",
+      "stockCode": "688286",
+      "controllerNames": ["李刚"],
+      "valuePct": 20.0096,
+      "asOfDate": "2026-06-30",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/2326520912"
+    },
+    {
+      "companyId": "star-688368",
+      "stockCode": "688368",
+      "controllerNames": ["胡黎强"],
+      "valuePct": 15.0333,
+      "asOfDate": "2026-08-05",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/3010580773"
+    },
+    {
+      "companyId": "star-688381",
+      "stockCode": "688381",
+      "controllerNames": ["鞠建宏"],
+      "valuePct": 19.54,
+      "asOfDate": "2026-08-07",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/3464313484"
+    },
+    {
+      "companyId": "star-688484",
+      "stockCode": "688484",
+      "controllerNames": ["阮晨杰"],
+      "valuePct": 17.0625,
+      "asOfDate": "2026-06-30",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/2318300058"
+    },
+    {
+      "companyId": "star-688508",
+      "stockCode": "688508",
+      "controllerNames": ["张立新"],
+      "valuePct": 23.95,
+      "asOfDate": "2026-06-30",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/872494011"
+    },
+    {
+      "companyId": "star-688512",
+      "stockCode": "688512",
+      "controllerNames": ["李阳", "郭耀辉"],
+      "valuePct": 9.8001,
+      "asOfDate": "2026-03-31",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/2316256865"
+    },
+    {
+      "companyId": "star-688582",
+      "stockCode": "688582",
+      "controllerNames": ["金晓冬"],
+      "valuePct": 8.02,
+      "asOfDate": "2026-06-30",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/359406853"
+    },
+    {
+      "companyId": "star-688653",
+      "stockCode": "688653",
+      "controllerNames": ["彭宇红", "赵奂"],
+      "valuePct": 9.3507,
+      "asOfDate": "2026-06-30",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/839622787"
+    },
+    {
+      "companyId": "star-688699",
+      "stockCode": "688699",
+      "controllerNames": ["王乐康"],
+      "valuePct": 37.7481,
+      "asOfDate": "2026-06-30",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/2311169085"
+    },
+    {
+      "companyId": "star-688798",
+      "stockCode": "688798",
+      "controllerNames": ["孙洪军"],
+      "valuePct": 41.8071,
+      "asOfDate": "2026-06-30",
+      "sourceKind": "public-shareholder-page",
+      "companyPageUrl": "https://www.tianyancha.com/company/343932526"
+    },
+    {
+      "companyId": "star-688325",
+      "stockCode": "688325",
+      "controllerNames": ["赵建华", "蒋燕波", "葛伟国"],
+      "valuePct": 3.4392,
+      "asOfDate": "2026-08-27",
+      "sourceKind": "paid-api-1123",
+      "companyPageUrl": "https://www.tianyancha.com/company/667680459"
+    }
+  ],
+  "unresolved": [
+    {
+      "companyId": "star-688008",
+      "stockCode": "688008",
+      "reason": "付费接口明确返回经查无结果；第一大股东为结算机构，不作为控制人。"
+    },
+    {
+      "companyId": "star-688018",
+      "stockCode": "688018",
+      "reason": "付费接口明确返回经查无结果；香港持股平台尚未穿透。"
+    },
+    {
+      "companyId": "star-688041",
+      "stockCode": "688041",
+      "reason": "付费接口明确返回经查无结果；法人股东控制链尚未形成可比比例。"
+    },
+    {
+      "companyId": "star-688049",
+      "stockCode": "688049",
+      "reason": "付费接口明确返回经查无结果。"
+    },
+    {
+      "companyId": "star-688099",
+      "stockCode": "688099",
+      "reason": "付费接口明确返回经查无结果；境外持股平台尚未穿透。"
+    },
+    {
+      "companyId": "star-688107",
+      "stockCode": "688107",
+      "reason": "付费接口明确返回经查无结果；国有法人控制链尚未形成可比比例。"
+    },
+    {
+      "companyId": "star-688110",
+      "stockCode": "688110",
+      "reason": "付费接口比例与网页控股股东比例显著冲突，进入人工复核。"
+    },
+    {
+      "companyId": "star-688252",
+      "stockCode": "688252",
+      "reason": "付费接口明确返回经查无结果；境外持股平台尚未穿透。"
+    },
+    {
+      "companyId": "star-688259",
+      "stockCode": "688259",
+      "reason": "网页股东数据没有可靠更新日期，不进入当前同业分位。"
+    },
+    {
+      "companyId": "star-688279",
+      "stockCode": "688279",
+      "reason": "付费接口仅返回空姓名和零比例对象，视为无效结果。"
+    },
+    {
+      "companyId": "star-688385",
+      "stockCode": "688385",
+      "reason": "付费接口明确返回经查无结果；结算代理人不作为控制人。"
+    },
+    {
+      "companyId": "star-688486",
+      "stockCode": "688486",
+      "reason": "付费接口比例与网页受益所有人比例显著冲突，进入人工复核。"
+    },
+    {
+      "companyId": "star-688521",
+      "stockCode": "688521",
+      "reason": "付费接口明确返回经查无结果；境外持股平台尚未穿透。"
+    },
+    {
+      "companyId": "star-688589",
+      "stockCode": "688589",
+      "reason": "付费接口明确返回经查无结果；受益所有人未被标记为实际控制人。"
+    },
+    {
+      "companyId": "star-688593",
+      "stockCode": "688593",
+      "reason": "付费接口仅返回空姓名和零比例对象，视为无效结果。"
+    },
+    {
+      "companyId": "star-688620",
+      "stockCode": "688620",
+      "reason": "付费接口仅返回空姓名和零比例对象，视为无效结果。"
+    },
+    {
+      "companyId": "star-688702",
+      "stockCode": "688702",
+      "reason": "付费接口明确返回经查无结果；国有法人控制链尚未形成可比比例。"
+    },
+    {
+      "companyId": "star-688728",
+      "stockCode": "688728",
+      "reason": "网页显示境外法人100%持股，和A股同业的自然人控制比例不可直接比较。"
+    },
+    {
+      "companyId": "star-688825",
+      "stockCode": "688825",
+      "reason": "付费接口明确返回经查无结果；多层国有股东结构尚未形成可比比例。"
+    },
+    {
+      "companyId": "star-688141",
+      "stockCode": "688141",
+      "reason": "付费接口明确返回经查无结果；境外持股平台尚未穿透。"
+    },
+    {
+      "companyId": "star-688153",
+      "stockCode": "688153",
+      "reason": "付费接口明确返回经查无结果；受益所有人未被标记为实际控制人。"
+    },
+    {
+      "companyId": "star-688391",
+      "stockCode": "688391",
+      "reason": "付费接口明确返回经查无结果；境外持股平台尚未穿透。"
+    },
+    {
+      "companyId": "star-688458",
+      "stockCode": "688458",
+      "reason": "付费接口仅返回空姓名和零比例对象，视为无效结果。"
+    },
+    {
+      "companyId": "star-688515",
+      "stockCode": "688515",
+      "reason": "付费接口明确返回经查无结果；受益所有人未被标记为实际控制人。"
+    },
+    {
+      "companyId": "star-688536",
+      "stockCode": "688536",
+      "reason": "付费接口明确返回经查无结果。"
+    },
+    {
+      "companyId": "star-688601",
+      "stockCode": "688601",
+      "reason": "付费接口明确返回经查无结果；法人股东控制链尚未形成可比比例。"
+    },
+    {
+      "companyId": "star-688790",
+      "stockCode": "688790",
+      "reason": "网页股东数据停留在2023年，付费接口比例过低且缺少当前结构交叉验证。"
+    }
+  ]
+}
