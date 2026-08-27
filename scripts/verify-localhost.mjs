@@ -90,6 +90,68 @@ async function verifyApi(path) {
   }
 }
 
+async function verifyNarrativeRisk() {
+  const directoryResponse = await fetch(
+    `${baseUrl}/api/v1/narrative-risk/companies`
+  )
+  const directory = await directoryResponse.json()
+  if (
+    !directoryResponse.ok ||
+    directory?.counts?.uniqueCompanies !== 7 ||
+    directory?.counts?.scopeCompanyRecords !== 8 ||
+    !["postgres", "snapshot"].includes(directory?.sourceMode)
+  ) {
+    throw new Error("Narrative risk directory did not pass invariant checks.")
+  }
+
+  const detailResponse = await fetch(
+    `${baseUrl}/api/v1/narrative-risk/companies/cambricon`
+  )
+  const detail = await detailResponse.json()
+  if (
+    !detailResponse.ok ||
+    detail?.assessments?.length !== 2 ||
+    detail.metrics.some(
+      (metric) => metric.metricClass === "proxy" && metric.scoreEligible
+    )
+  ) {
+    throw new Error("Cambricon narrative scopes or proxy admission are invalid.")
+  }
+
+  const auditResponse = await fetch(
+    `${baseUrl}/api/v1/narrative-risk/audit-summary`
+  )
+  const audit = await auditResponse.json()
+  if (!auditResponse.ok || audit?.counts?.linkedUniqueSources !== 83) {
+    throw new Error("Narrative risk source audit is incomplete.")
+  }
+
+  const annualTrendsResponse = await fetch(
+    `${baseUrl}/api/v1/narrative-risk/annual-trends`
+  )
+  const annualTrends = await annualTrendsResponse.json()
+  const annualMethodologyResponse = await fetch(
+    `${baseUrl}/api/v1/narrative-risk/annual-trends/methodology`
+  )
+  const annualMethodology = await annualMethodologyResponse.json()
+  const annualAuditResponse = await fetch(
+    `${baseUrl}/api/v1/narrative-risk/annual-trends/audit`
+  )
+  const annualAudit = await annualAuditResponse.json()
+  if (
+    !annualTrendsResponse.ok ||
+    !annualMethodologyResponse.ok ||
+    !annualAuditResponse.ok ||
+    annualTrends?.companies?.length !== 7 ||
+    annualTrends?.observations?.length !== 210 ||
+    annualMethodology?.methodology?.length !== 10 ||
+    annualAudit?.documents?.length !== 21 ||
+    annualAudit?.audit?.archivedReportCount !== 21
+  ) {
+    throw new Error("Revised narrative annual trends failed invariant checks.")
+  }
+}
+
 async function stopDevelopmentServer() {
   if (developmentServer.exitCode !== null) return
 
@@ -109,6 +171,7 @@ try {
   await waitForServices()
   await verifyApi("/api/v1/technology-risk/score")
   await verifyApi("/api/v1/technology-risk/baseline-quantify")
+  await verifyNarrativeRisk()
   console.log(`Localhost verification passed at ${baseUrl}`)
 } catch (error) {
   console.error(error)

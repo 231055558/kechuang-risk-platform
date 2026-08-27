@@ -2,7 +2,13 @@ export type RiskLevel = "low" | "attention" | "medium-high" | "high"
 export type EventSeverity = "high" | "medium" | "watch"
 export type EventStatus = "pending" | "in-progress" | "done"
 export type TabValue =
-  "overview" | "realtime" | "reports" | "intelligence" | "compare" | "events"
+  | "overview"
+  | "narrative"
+  | "realtime"
+  | "reports"
+  | "intelligence"
+  | "compare"
+  | "events"
 
 export type LegacyTabValue =
   TabValue | "lifecycle" | "ai-flow" | "transmission" | "governance"

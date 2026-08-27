@@ -1,0 +1,329 @@
+{
+  "schemaVersion": "NARRATIVE-PILOT-FEASIBILITY-2026.08-v1",
+  "asOf": "2026-08-25",
+  "timezone": "Asia/Shanghai",
+  "purpose": "pipeline-feasibility-not-model-validation",
+  "scoringPolicy": {
+    "aggregateScoreEnabled": false,
+    "reason": "Four companies are sufficient for ingestion and feature-computability testing, but not for learning weights, thresholds, or statistical validation.",
+    "requiredOutputs": [
+      "attention_fundamental_divergence",
+      "self_third_party_divergence",
+      "claim_realization_gap",
+      "narrative_instability",
+      "coverage",
+      "confidence"
+    ],
+    "normalization": "within-industry-and-period",
+    "growthHandling": "winsorize-before-standardization",
+    "deduplication": [
+      "canonical_url",
+      "normalized_title",
+      "content_hash"
+    ]
+  },
+  "samples": [
+    {
+      "entityId": "cambricon-688256",
+      "name": "中科寒武纪科技股份有限公司",
+      "shortName": "寒武纪",
+      "stockCode": "688256",
+      "role": "target-unknown-risk",
+      "existingPlatformEntity": true,
+      "recommendedFeatureWindow": {
+        "start": "2020-07-20T00:00:00+08:00",
+        "end": "2026-08-24T23:59:59+08:00"
+      },
+      "feasibility": {
+        "overall": "high",
+        "selfNarrative": "high",
+        "thirdPartyNarrative": "high",
+        "fundamentals": "high",
+        "marketAttention": "high",
+        "label": "unknown-by-design"
+      },
+      "exploratoryNewsResultEstimate": {
+        "source": "Eastmoney search UI",
+        "query": "寒武纪",
+        "countApprox": 9108,
+        "eligibleAsModelFeature": false
+      },
+      "financialBenchmarksCny100m": {
+        "year": 2025,
+        "revenue": 64.9719619868,
+        "netProfitAttributable": 20.5922853867,
+        "researchAndDevelopmentInvestment": 11.6910096215,
+        "researchAndDevelopmentExpense": 13.5080457197,
+        "operatingCashFlow": -4.9839813701,
+        "prepayments": 7.4453970847,
+        "inventory": 49.4353251026
+      },
+      "qualityFlags": [
+        "extreme-revenue-growth-base-effect",
+        "winsorization-required",
+        "customer-concentration",
+        "inventory-growth"
+      ],
+      "sources": [
+        {
+          "type": "annual-report",
+          "url": "https://static.cninfo.com.cn/",
+          "localArchive": "data/raw/企业信息/cambricon/寒武纪2025年年报.pdf",
+          "featureEligible": true
+        },
+        {
+          "type": "official-news-archive",
+          "url": "https://www.cambricon.com/index.php?m=content&c=index&a=lists&catid=127&year=2025",
+          "featureEligible": true
+        },
+        {
+          "type": "third-party-news-search",
+          "url": "https://so.eastmoney.com/news/s?keyword=寒武纪",
+          "featureEligibleAfterDetailCollectionAndDeduplication": true
+        }
+      ]
+    },
+    {
+      "entityId": "enflame-688801-prelisting",
+      "name": "上海燧原科技股份有限公司",
+      "shortName": "燧原科技",
+      "stockCode": "688801",
+      "role": "pre-ipo-out-of-distribution-comparator",
+      "existingPlatformEntity": false,
+      "recommendedFeatureWindow": {
+        "start": "2021-01-01T00:00:00+08:00",
+        "primaryEnd": "2026-08-23T23:59:59+08:00",
+        "sensitivityEnd": "2026-08-24T18:00:00+08:00"
+      },
+      "postCutoffValidation": {
+        "source": "prospectus-and-risk-disclosures",
+        "publishedAt": "2026-08-25T00:00:00+08:00",
+        "featureEligible": false
+      },
+      "feasibility": {
+        "overall": "medium-high",
+        "selfNarrative": "high",
+        "thirdPartyNarrative": "medium",
+        "fundamentals": "high-after-prospectus-for-validation-only",
+        "marketAttention": "low-comparability",
+        "label": "post-cutoff-prospectus-validation"
+      },
+      "exploratoryNewsResultEstimate": {
+        "source": "Eastmoney search UI",
+        "query": "燧原科技",
+        "countApprox": 33,
+        "eligibleAsModelFeature": false
+      },
+      "financialBenchmarksCny100m": {
+        "years": [2023, 2024, 2025],
+        "revenue": [3.011874, 7.223874, 9.9016],
+        "researchAndDevelopmentExpense": [12.288758, 13.122938, 11.349902],
+        "operatingCashFlow": [-12.090041, -17.977378, -9.650871],
+        "prepayments": [2.035339, 1.275699, 3.881322],
+        "inventory": [1.02143, 7.96901, 8.634897]
+      },
+      "customerConcentration2025": {
+        "tencentDirectRevenueSharePct": 74.9,
+        "tencentDirectAndAvapRevenueSharePct": 83.79
+      },
+      "qualityFlags": [
+        "no-prelisting-market-price",
+        "no-comparable-dedicated-stock-forum",
+        "small-third-party-corpus",
+        "prospectus-leakage-risk-on-2026-08-24-evening"
+      ],
+      "sources": [
+        {
+          "type": "cninfo-disclosure-page",
+          "url": "https://www.cninfo.com.cn/new/disclosure/stock?stockCode=688801&orgId=9920000029",
+          "featureEligible": false
+        },
+        {
+          "type": "prospectus",
+          "url": "https://static.cninfo.com.cn/finalpage/2026-08-25/1225500101.PDF",
+          "featureEligible": false
+        },
+        {
+          "type": "official-news-archive",
+          "url": "https://www.enflame-tech.com/news",
+          "featureEligibleBeforeCutoff": true
+        },
+        {
+          "type": "third-party-news-search",
+          "url": "https://so.eastmoney.com/news/s?keyword=燧原科技",
+          "featureEligibleAfterDetailCollectionAndDeduplication": true
+        }
+      ]
+    },
+    {
+      "entityId": "jl-huami-600360",
+      "name": "吉林华微电子股份有限公司",
+      "shortName": "华微电子",
+      "stockCode": "600360",
+      "role": "regulator-confirmed-major-risk-positive",
+      "existingPlatformEntity": false,
+      "entityDisambiguation": {
+        "mustNotMatch": [
+          "成都华微电子科技股份有限公司",
+          "杭州晶华微电子股份有限公司"
+        ]
+      },
+      "recommendedCutoffs": {
+        "blindEarlyWarning": "2024-04-29T23:59:59+08:00",
+        "publicRedFlagConfirmation": "2024-05-15T23:59:59+08:00",
+        "firstInvestigationEvent": "2024-05-16T00:00:00+08:00",
+        "finalLabelDecisionDate": "2025-04-22T00:00:00+08:00",
+        "finalLabelPublicationDate": "2025-04-30T00:00:00+08:00"
+      },
+      "feasibility": {
+        "overall": "high-for-label-medium-high-for-blind-test",
+        "selfNarrative": "high",
+        "thirdPartyNarrative": "high",
+        "fundamentals": "contaminated-requires-multi-source-constraints",
+        "marketAttention": "high",
+        "label": "regulator-confirmed"
+      },
+      "exploratoryNewsResultEstimate": {
+        "source": "Eastmoney search UI",
+        "query": "华微电子",
+        "countApprox": 213,
+        "eligibleAsModelFeature": false
+      },
+      "labelFacts": {
+        "affectedAnnualReports": "2015-2023",
+        "unrepaidFundOccupationCny100mApprox": 14.91,
+        "inquiryRepliesContainedFalseRecords": true,
+        "formerChairmanMarketBan": "lifetime"
+      },
+      "qualityFlags": [
+        "reported-financials-not-ground-truth",
+        "double-cutoff-required",
+        "post-event-restatements-label-only",
+        "name-collision-with-two-other-a-share-companies"
+      ],
+      "sources": [
+        {
+          "type": "regulatory-penalty",
+          "url": "https://www.csrc.gov.cn/jilin/c103788/c7554826/content.shtml",
+          "featureEligible": false,
+          "labelEvidence": true
+        },
+        {
+          "type": "risk-warning-removal",
+          "url": "https://static.cninfo.com.cn/finalpage/2026-05-19/1225312619.PDF",
+          "featureEligible": false,
+          "labelEvidence": true
+        },
+        {
+          "type": "official-news-archive",
+          "url": "https://www.hwdz.com.cn/News/67",
+          "featureEligibleBeforeCutoff": true,
+          "archiveSnapshot": {
+            "itemsShownBySite": 323,
+            "pagesShownBySite": 54
+          }
+        },
+        {
+          "type": "third-party-news-search",
+          "url": "https://so.eastmoney.com/news/s?keyword=华微电子",
+          "featureEligibleAfterDetailCollectionAndDeduplication": true
+        }
+      ]
+    },
+    {
+      "entityId": "hengrui-600276",
+      "name": "江苏恒瑞医药股份有限公司",
+      "shortName": "恒瑞医药",
+      "stockCode": "600276",
+      "role": "cross-industry-low-event-control",
+      "existingPlatformEntity": false,
+      "recommendedFeatureWindow": {
+        "start": "2020-01-01T00:00:00+08:00",
+        "end": "2026-08-24T23:59:59+08:00"
+      },
+      "feasibility": {
+        "overall": "high-with-pharma-dictionary",
+        "selfNarrative": "high",
+        "thirdPartyNarrative": "high",
+        "fundamentals": "high",
+        "marketAttention": "high",
+        "label": "low-event-control-not-zero-risk"
+      },
+      "exploratoryNewsResultEstimate": {
+        "source": "Eastmoney search UI",
+        "query": "恒瑞医药",
+        "countApprox": 3003,
+        "eligibleAsModelFeature": false
+      },
+      "financialBenchmarksCny100m": {
+        "year": 2025,
+        "revenue": 316.2941619383,
+        "innovationDrugSales": 163.42,
+        "licensingIncome": 33.92,
+        "researchAndDevelopmentInvestment": 87.2385244623,
+        "researchAndDevelopmentExpense": 69.6115541323,
+        "operatingCashFlow": 112.3537813063,
+        "prepayments": 10.5655836854,
+        "inventory": 28.7841249688
+      },
+      "pipelineMilestones2025": {
+        "innovationApprovals": 14,
+        "ndaOrBlaAccepted": 15,
+        "phase3": 28,
+        "phase2": 61,
+        "firstEnteredPhase1": 28
+      },
+      "qualityFlags": [
+        "pharma-specific-dictionary-required",
+        "license-income-affects-revenue-and-operating-cash-flow",
+        "control-means-low-event-not-zero-risk",
+        "cross-industry-raw-score-not-comparable"
+      ],
+      "sources": [
+        {
+          "type": "annual-report",
+          "url": "https://static.cninfo.com.cn/finalpage/2026-03-26/1225032585.PDF",
+          "featureEligibleAfterPublication": true
+        },
+        {
+          "type": "official-news-archive",
+          "url": "https://www.hengrui.com/media/NewsType-1.html",
+          "featureEligibleBeforeCutoff": true
+        },
+        {
+          "type": "third-party-news-search",
+          "url": "https://so.eastmoney.com/news/s?keyword=恒瑞医药",
+          "featureEligibleAfterDetailCollectionAndDeduplication": true
+        }
+      ],
+      "requiredVocabulary": [
+        "clinical-phase",
+        "indication",
+        "enrollment",
+        "primary-endpoint",
+        "nda-bla",
+        "approval",
+        "medical-insurance",
+        "license-out",
+        "upfront-payment",
+        "milestone-payment",
+        "first-in-class",
+        "best-in-class",
+        "potential-blockbuster"
+      ]
+    }
+  ],
+  "minimumExpansionForScientificValidation": {
+    "companies": "12-20",
+    "confirmedPositiveEvents": "4-6",
+    "history": "3-5 years or 8-12 quarters",
+    "additionalRequirements": [
+      "matched-industry-controls",
+      "out-of-sample-evaluation",
+      "ablation-tests",
+      "sensitivity-to-cutoff",
+      "labeler-agreement",
+      "coverage-and-confidence-reporting"
+    ]
+  }
+}

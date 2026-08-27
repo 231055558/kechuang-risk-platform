@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.kechuang.risk-backend</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/opt/homebrew/bin/node</string>
+    <string>__PROJECT_ROOT__/dist/server/production-server.js</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>__PROJECT_ROOT__</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>HOST</key>
+    <string>127.0.0.1</string>
+    <key>PORT</key>
+    <string>5050</string>
+    <key>STATIC_ROOT</key>
+    <string>__PROJECT_ROOT__/dist</string>
+    <key>PGHOST</key>
+    <string>/tmp</string>
+    <key>PGPORT</key>
+    <string>5432</string>
+    <key>PGDATABASE</key>
+    <string>kechuang_risk</string>
+    <key>PGUSER</key>
+    <string>kechuang_backend</string>
+  </dict>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>ThrottleInterval</key>
+  <integer>10</integer>
+  <key>StandardOutPath</key>
+  <string>__LOG_DIR__/kechuang-risk-backend.log</string>
+  <key>StandardErrorPath</key>
+  <string>__LOG_DIR__/kechuang-risk-backend.error.log</string>
+</dict>
+</plist>

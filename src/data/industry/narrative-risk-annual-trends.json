@@ -1,0 +1,3667 @@
+{
+  "schemaVersion": "KCR-NARRATIVE-RISK-2026.08-v1",
+  "dataVersion": "narrative-method-revised-2026-08-26-v1",
+  "asOfDate": "2026-08-26",
+  "sourceMode": "snapshot",
+  "methodVersion": {
+    "methodVersion": "narrative-method-revised-2026-08-26-v1",
+    "name": "叙事风险维度测度（修改版）",
+    "effectiveDate": "2026-08-26",
+    "sourceDocumentSha256": "8d25a5c81962fc6422694afb818c077eadad0d9f399338d2bf62df07662f15bf",
+    "innovationLexiconStatus": "核心词简化口径",
+    "innovationLexiconSize": 40,
+    "innovationLexiconSha256": "62b9049c97c5948e4ce46b483c801b1c0d939c56dd005c5f5399223e0b6de29b",
+    "stopwordListSha256": "297ce680ea84cfff6d8e05d242133db54f1996b8bc29dab7a0ecbae524c16ce3",
+    "sentimentDictionaryName": "姜富伟等中文金融情感词典",
+    "sentimentDictionarySha256": "0d2078ff28d2d38d3784a1c791c7efd220b5d9c40b46b2e358c0e6323ee384e4",
+    "sentimentDictionarySource": "https://github.com/MengLingchao/Chinese_financial_sentiment_dictionary",
+    "peerBenchmarkStatus": "缺失：公开完整同行业—年度基准尚未满足",
+    "notes": [
+      "此前指标文件、旧词库、旧公式和旧结果不参与新版趋势计算或展示。",
+      "综合披露质量按已确认解释使用三项等权，不构造跨维度总分。",
+      "创新词表为冻结的40词核心简化口径，不冒充完整693词词库。",
+      "叙事夸大度仅在同行业—年度标准化条件完整时计算。"
+    ]
+  },
+  "companies": [
+    {
+      "companyKey": "cambricon",
+      "companyName": "寒武纪",
+      "stockCode": "688256",
+      "listingStatus": "上市",
+      "includedYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "exclusionReason": null
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "companyName": "恒瑞医药",
+      "stockCode": "600276",
+      "listingStatus": "上市",
+      "includedYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "exclusionReason": null
+    },
+    {
+      "companyKey": "huami-electronics",
+      "companyName": "华微电子",
+      "stockCode": "600360",
+      "listingStatus": "上市",
+      "includedYears": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "exclusionReason": null
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "companyName": "百利天恒",
+      "stockCode": "688506",
+      "listingStatus": "上市",
+      "includedYears": [
+        2023,
+        2024,
+        2025
+      ],
+      "exclusionReason": null
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "companyName": "左江科技",
+      "stockCode": "300799",
+      "listingStatus": "已退市",
+      "includedYears": [
+        2021,
+        2022,
+        2023
+      ],
+      "exclusionReason": null
+    },
+    {
+      "companyKey": "enflame",
+      "companyName": "燧原科技",
+      "stockCode": "688801",
+      "listingStatus": "未上市",
+      "includedYears": [],
+      "exclusionReason": "未上市，不纳入年报趋势"
+    },
+    {
+      "companyKey": "semidrive",
+      "companyName": "芯驰科技",
+      "stockCode": null,
+      "listingStatus": "未上市",
+      "includedYears": [],
+      "exclusionReason": "未上市，不纳入年报趋势"
+    }
+  ],
+  "methodology": [
+    {
+      "metricKey": "information_sufficiency",
+      "name": "信息总量充分性",
+      "category": "年报披露质量",
+      "formula": "经营情况讨论与分析及风险章节的有效词数÷10,000",
+      "unit": "万有效词",
+      "riskDirection": "数值越高，信息容量越充分；过长文本仍需结合其他指标判断",
+      "methodStatus": "新版正式口径"
+    },
+    {
+      "metricKey": "risk_context_ambiguity",
+      "name": "风险语境模糊度",
+      "category": "年报披露质量",
+      "formula": "业绩展望及风险提示中的模糊词次数÷该范围有效词数",
+      "unit": "比例",
+      "riskDirection": "数值越高，风险叙述越模糊",
+      "methodStatus": "新版正式口径"
+    },
+    {
+      "metricKey": "data_support_ratio",
+      "name": "信息数据支撑度",
+      "category": "年报披露质量",
+      "formula": "定量信息出现次数÷同一披露范围有效词数",
+      "unit": "比例",
+      "riskDirection": "数值越高，叙述的定量支撑越充分",
+      "methodStatus": "新版正式口径"
+    },
+    {
+      "metricKey": "disclosure_quality",
+      "name": "年报披露质量",
+      "category": "年报披露质量",
+      "formula": "信息充分性归一值、风险语境清晰度和数据支撑度三项等权平均",
+      "unit": "指数",
+      "riskDirection": "数值越高，披露质量越高、叙事风险越低",
+      "methodStatus": "新版解释确认口径"
+    },
+    {
+      "metricKey": "innovation_talk_density",
+      "name": "创新文本密度",
+      "category": "叙事夸大性",
+      "formula": "管理层讨论与分析及公司业务概要中的创新词次数÷有效词数×1,000",
+      "unit": "次/千词",
+      "riskDirection": "需与创新行动强度进行同行业同年度比较",
+      "methodStatus": "核心词简化口径"
+    },
+    {
+      "metricKey": "innovation_action_strength",
+      "name": "创新行动强度",
+      "category": "叙事夸大性",
+      "formula": "当年发明专利申请数加一后取自然对数",
+      "unit": "对数值",
+      "riskDirection": "数值越高，已公开验证的创新行动越强",
+      "methodStatus": "年报明确披露值；专利明细待国家知识产权局逐项复核"
+    },
+    {
+      "metricKey": "innovation_divergence",
+      "name": "叙事夸大度",
+      "category": "叙事夸大性",
+      "formula": "同行业同年度创新文本密度标准分减创新行动强度标准分，再映射至0—1",
+      "unit": "指数",
+      "riskDirection": "数值越高，越可能存在多言寡行",
+      "methodStatus": "同行基准未满足时保持缺失"
+    },
+    {
+      "metricKey": "positive_tone_intensity",
+      "name": "正面语调强度",
+      "category": "管理者语调",
+      "formula": "管理层回答中的正面情感词数÷管理层回答有效词数",
+      "unit": "比例",
+      "riskDirection": "异常高值需结合负面语调和净正面语调判断",
+      "methodStatus": "新版正式词频口径"
+    },
+    {
+      "metricKey": "negative_tone_intensity",
+      "name": "负面语调强度",
+      "category": "管理者语调",
+      "formula": "管理层回答中的负面情感词数÷管理层回答有效词数",
+      "unit": "比例",
+      "riskDirection": "数值越高，负面风险信号越强",
+      "methodStatus": "新版正式词频口径"
+    },
+    {
+      "metricKey": "manager_net_positive_tone",
+      "name": "管理者净正面语调",
+      "category": "管理者语调",
+      "formula": "正面语调强度减负面语调强度，再除以两者之和",
+      "unit": "指数",
+      "riskDirection": "负值为高风险，0至0.4为中风险，0.4至1为低风险",
+      "methodStatus": "新版正式词频口径"
+    }
+  ],
+  "documents": [
+    {
+      "documentId": "annual-report:baili-tianheng:2023",
+      "companyKey": "baili-tianheng",
+      "year": 2023,
+      "title": "百利天恒2023年年度报告",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2024-04-27/688506_20240427_LUES.pdf",
+      "publicationDate": "2024-04-27",
+      "archiveStatus": "已归档",
+      "parseStatus": "已解析",
+      "fileSha256": "02fc0c0525e00da43641a3c9634e2dfdb581ea2f9809eb1e6f35445d78f360ad",
+      "byteSize": 5138707,
+      "pageCount": 283,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "二、报告期内公司所从事的主要业务、经营模式、行业情况及研发情况说明",
+          "四、风险因素",
+          "六、公司关于公司未来发展的讨论与分析"
+        ]
+      },
+      "browserValidation": "Ego已确认交易所公开入口；归档文件使用公开镜像交叉下载"
+    },
+    {
+      "documentId": "annual-report:baili-tianheng:2024",
+      "companyKey": "baili-tianheng",
+      "year": 2024,
+      "title": "百利天恒2024年年度报告",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2025-03-29/688506_20250329_F2B0.pdf",
+      "publicationDate": "2025-03-29",
+      "archiveStatus": "已归档",
+      "parseStatus": "已解析",
+      "fileSha256": "a8073ca9f8a7c971946fd1887ea1b3c3ddf912198d4786a87c983b2c49911f38",
+      "byteSize": 4826242,
+      "pageCount": 262,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "二、报告期内公司所从事的主要业务、经营模式、行业情况及研发情况说明",
+          "四、风险因素",
+          "六、公司关于公司未来发展的讨论与分析"
+        ]
+      },
+      "browserValidation": "Ego已确认交易所公开入口；归档文件使用公开镜像交叉下载"
+    },
+    {
+      "documentId": "annual-report:baili-tianheng:2025",
+      "companyKey": "baili-tianheng",
+      "year": 2025,
+      "title": "百利天恒2025年年度报告",
+      "officialUrl": "https://static.cninfo.com.cn/finalpage/2026-04-28/1225217117.PDF",
+      "publicationDate": "2026-04-28",
+      "archiveStatus": "已归档",
+      "parseStatus": "已解析",
+      "fileSha256": "a014b59498351974f9eb22a1cd3d706c00c6f7a861ddef508fa022908122f3b5",
+      "byteSize": 3102474,
+      "pageCount": 270,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "(一) 主营业务分析",
+          "四、风险因素",
+          "六、公司关于公司未来发展的讨论与分析"
+        ]
+      },
+      "browserValidation": "Ego已确认交易所公开入口；归档文件使用公开镜像交叉下载"
+    },
+    {
+      "documentId": "annual-report:cambricon:2021",
+      "companyKey": "cambricon",
+      "year": 2021,
+      "title": "寒武纪2021年年度报告",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2022-05-26/688256_20220526_3_uGToftWd.pdf",
+      "publicationDate": "2022-05-26",
+      "archiveStatus": "已归档",
+      "parseStatus": "已解析",
+      "fileSha256": "60aeeabba03bce6293e1ae1eee4153e3a1fc3efd33e8cb980d61f6b26b0f06f5",
+      "byteSize": 4397003,
+      "pageCount": 246,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "二、报告期内公司所从事的主要业务、经营模式、行业情况及研发情况说明",
+          "四、风险因素",
+          "六、公司关于公司未来发展的讨论与分析"
+        ]
+      },
+      "browserValidation": "Ego已确认交易所公开入口；归档文件使用公开镜像交叉下载"
+    },
+    {
+      "documentId": "annual-report:cambricon:2022",
+      "companyKey": "cambricon",
+      "year": 2022,
+      "title": "寒武纪2022年年度报告",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2023-04-29/688256_20230429_HKHJ.pdf",
+      "publicationDate": "2023-04-29",
+      "archiveStatus": "已归档",
+      "parseStatus": "已解析",
+      "fileSha256": "d14fedd06d401ded89a096d746a7bdf020fbdb657c6aed99709cd3801c6a2227",
+      "byteSize": 4320981,
+      "pageCount": 269,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "二、报告期内公司所从事的主要业务、经营模式、行业情况及研发情况说明",
+          "四、风险因素",
+          "六、公司关于公司未来发展的讨论与分析"
+        ]
+      },
+      "browserValidation": "Ego已确认交易所公开入口；归档文件使用公开镜像交叉下载"
+    },
+    {
+      "documentId": "annual-report:cambricon:2023",
+      "companyKey": "cambricon",
+      "year": 2023,
+      "title": "寒武纪2023年年度报告",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2024-04-30/688256_20240430_NRC5.pdf",
+      "publicationDate": "2024-04-30",
+      "archiveStatus": "已归档",
+      "parseStatus": "已解析",
+      "fileSha256": "bc268c9cbefc304fde0ef0bcccd2b0c9a673fa0f3f265a04c1de303af8f98a40",
+      "byteSize": 4244584,
+      "pageCount": 255,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "二、报告期内公司所从事的主要业务、经营模式、行业情况及研发情况说明",
+          "四、风险因素",
+          "六、公司关于公司未来发展的讨论与分析"
+        ]
+      },
+      "browserValidation": "Ego已确认交易所公开入口；归档文件使用公开镜像交叉下载"
+    },
+    {
+      "documentId": "annual-report:cambricon:2024",
+      "companyKey": "cambricon",
+      "year": 2024,
+      "title": "寒武纪2024年年度报告",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2025-04-19/688256_20250419_11FJ.pdf",
+      "publicationDate": "2025-04-19",
+      "archiveStatus": "已归档",
+      "parseStatus": "已解析",
+      "fileSha256": "87f63aad82dc43fd0613de60bb72e3c88fcacffb9e074767c947d4bd76cb4d7b",
+      "byteSize": 1505155,
+      "pageCount": 239,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "二、报告期内公司所从事的主要业务、经营模式、行业情况及研发情况说明",
+          "四、风险因素",
+          "(三) 经营计划"
+        ]
+      },
+      "browserValidation": "Ego已确认交易所公开入口；归档文件使用公开镜像交叉下载"
+    },
+    {
+      "documentId": "annual-report:cambricon:2025",
+      "companyKey": "cambricon",
+      "year": 2025,
+      "title": "寒武纪2025年年度报告",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-03-13/688256_20260313_GWH3.pdf",
+      "publicationDate": "2026-03-13",
+      "archiveStatus": "已归档",
+      "parseStatus": "已解析",
+      "fileSha256": "e9360bfb6ad2d66ce7b65da15f8fa2fcdda9fde526e2a76dba3964327507f4ab",
+      "byteSize": 1531788,
+      "pageCount": 219,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "(一) 主营业务分析",
+          "四、风险因素",
+          "(三) 经营计划"
+        ]
+      },
+      "browserValidation": "Ego已确认交易所公开入口；归档文件使用公开镜像交叉下载"
+    },
+    {
+      "documentId": "annual-report:hengrui-pharma:2021",
+      "companyKey": "hengrui-pharma",
+      "year": 2021,
+      "title": "恒瑞医药2021年年度报告",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2022-04-23/600276_20220423_5_seb5H8n0.pdf",
+      "publicationDate": "2022-04-23",
+      "archiveStatus": "已归档",
+      "parseStatus": "已解析",
+      "fileSha256": "ee82b8ecf661ebd8701149e3ddef16282cbfd2530d0626a1a9abd1241d2526c4",
+      "byteSize": 4692408,
+      "pageCount": 219,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "(一) 主营业务分析",
+          "(四)可能面对的风险",
+          "六、公司关于公司未来发展的讨论与分析"
+        ]
+      },
+      "browserValidation": "Ego已确认交易所公开入口；归档文件使用公开镜像交叉下载"
+    },
+    {
+      "documentId": "annual-report:hengrui-pharma:2022",
+      "companyKey": "hengrui-pharma",
+      "year": 2022,
+      "title": "恒瑞医药2022年年度报告",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2023-04-22/600276_20230422_H5YS.pdf",
+      "publicationDate": "2023-04-22",
+      "archiveStatus": "已归档",
+      "parseStatus": "已解析",
+      "fileSha256": "958bf49bbade87f62e7f867d18d9a00cb8f1bd29245cd61d22b45ab6bb24112f",
+      "byteSize": 5089679,
+      "pageCount": 220,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "(一) 主营业务分析",
+          "(四)可能面对的风险",
+          "六、公司关于公司未来发展的讨论与分析"
+        ]
+      },
+      "browserValidation": "Ego已确认交易所公开入口；归档文件使用公开镜像交叉下载"
+    },
+    {
+      "documentId": "annual-report:hengrui-pharma:2023",
+      "companyKey": "hengrui-pharma",
+      "year": 2023,
+      "title": "恒瑞医药2023年年度报告",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2024-04-18/600276_20240418_YRIP.pdf",
+      "publicationDate": "2024-04-18",
+      "archiveStatus": "已归档",
+      "parseStatus": "已解析",
+      "fileSha256": "4fe601137654acbb46898486bb61501678ba952426e66e7b0efbbd8fa48639cc",
+      "byteSize": 6014937,
+      "pageCount": 246,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "(一) 主营业务分析",
+          "(四)可能面对的风险",
+          "六、公司关于公司未来发展的讨论与分析"
+        ]
+      },
+      "browserValidation": "Ego已确认交易所公开入口；归档文件使用公开镜像交叉下载"
+    },
+    {
+      "documentId": "annual-report:hengrui-pharma:2024",
+      "companyKey": "hengrui-pharma",
+      "year": 2024,
+      "title": "恒瑞医药2024年年度报告",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2025-03-31/600276_20250331_BC5C.pdf",
+      "publicationDate": "2025-03-31",
+      "archiveStatus": "已归档",
+      "parseStatus": "已解析",
+      "fileSha256": "7fad40fef23755f81ce5322f45483ea257ef026ebf1f7f5655c8d5998d7049fc",
+      "byteSize": 7710195,
+      "pageCount": 249,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "(一) 主营业务分析",
+          "(四)可能面对的风险",
+          "六、公司关于公司未来发展的讨论与分析"
+        ]
+      },
+      "browserValidation": "Ego已确认交易所公开入口；归档文件使用公开镜像交叉下载"
+    },
+    {
+      "documentId": "annual-report:hengrui-pharma:2025",
+      "companyKey": "hengrui-pharma",
+      "year": 2025,
+      "title": "恒瑞医药2025年年度报告",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-03-26/600276_20260326_RAEC.pdf",
+      "publicationDate": "2026-03-26",
+      "archiveStatus": "已归档",
+      "parseStatus": "已解析",
+      "fileSha256": "fae80e2d132f5b6f2bfbb8bcdfd40e1267edb91d689389d63c8e291b0856ace6",
+      "byteSize": 3457175,
+      "pageCount": 236,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "(一) 主营业务分析",
+          "(四)可能面对的风险",
+          "六、公司关于公司未来发展的讨论与分析"
+        ]
+      },
+      "browserValidation": "Ego已确认交易所公开入口；归档文件使用公开镜像交叉下载"
+    },
+    {
+      "documentId": "annual-report:huami-electronics:2021",
+      "companyKey": "huami-electronics",
+      "year": 2021,
+      "title": "华微电子2021年年度报告",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2022-04-29/600360_20220429_7_obssBQXH.pdf",
+      "publicationDate": "2022-04-29",
+      "archiveStatus": "已归档",
+      "parseStatus": "已解析",
+      "fileSha256": "11b9a88545b0ab961569146d10c29c9eabfa06df7df3b5dba13cce02c752a65b",
+      "byteSize": 3428242,
+      "pageCount": 191,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "(一) 主营业务分析",
+          "(四)可能面对的风险",
+          "六、公司关于公司未来发展的讨论与分析"
+        ]
+      },
+      "browserValidation": "Ego已确认交易所公开入口；归档文件使用公开镜像交叉下载"
+    },
+    {
+      "documentId": "annual-report:huami-electronics:2022",
+      "companyKey": "huami-electronics",
+      "year": 2022,
+      "title": "华微电子2022年年度报告",
+      "officialUrl": "https://static.cninfo.com.cn/finalpage/2023-06-30/1217164546.PDF",
+      "publicationDate": "2023-06-30",
+      "archiveStatus": "已归档",
+      "parseStatus": "已解析",
+      "fileSha256": "0a37427e89b134ec890f421bdc0155c3fc0bc293a700f60f9ba53e7a63592506",
+      "byteSize": 3311543,
+      "pageCount": 175,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "(一) 主营业务分析",
+          "(四)可能面对的风险",
+          "六、公司关于公司未来发展的讨论与分析"
+        ]
+      },
+      "browserValidation": "Ego已确认交易所公开入口；归档文件使用公开镜像交叉下载"
+    },
+    {
+      "documentId": "annual-report:huami-electronics:2023",
+      "companyKey": "huami-electronics",
+      "year": 2023,
+      "title": "华微电子2023年年度报告",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2024-04-30/600360_20240430_1BJB.pdf",
+      "publicationDate": "2024-04-30",
+      "archiveStatus": "已归档",
+      "parseStatus": "已解析",
+      "fileSha256": "acdb0a6dfc7bb75251d4c424c41857f95f0bc1ee23600be0731abddf6fc548f0",
+      "byteSize": 3764408,
+      "pageCount": 218,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "(一) 主营业务分析",
+          "(四)可能面对的风险",
+          "六、公司关于公司未来发展的讨论与分析"
+        ]
+      },
+      "browserValidation": "Ego已确认交易所公开入口；归档文件使用公开镜像交叉下载"
+    },
+    {
+      "documentId": "annual-report:huami-electronics:2024",
+      "companyKey": "huami-electronics",
+      "year": 2024,
+      "title": "华微电子2024年年度报告",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2025-04-30/600360_20250430_TWE7.pdf",
+      "publicationDate": "2025-04-30",
+      "archiveStatus": "已归档",
+      "parseStatus": "已解析",
+      "fileSha256": "350b6b8b0be1284e11cddf16be90fc42f1d5eee26d23df3d3d2a5d488a1589df",
+      "byteSize": 1267069,
+      "pageCount": 230,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "(一) 主营业务分析",
+          "(四)可能面对的风险",
+          "六、公司关于公司未来发展的讨论与分析"
+        ]
+      },
+      "browserValidation": "Ego已确认交易所公开入口；归档文件使用公开镜像交叉下载"
+    },
+    {
+      "documentId": "annual-report:huami-electronics:2025",
+      "companyKey": "huami-electronics",
+      "year": 2025,
+      "title": "华微电子2025年年度报告",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-04-21/600360_20260421_1EEL.pdf",
+      "publicationDate": "2026-04-21",
+      "archiveStatus": "已归档",
+      "parseStatus": "已解析",
+      "fileSha256": "c3fe162ace8e063e1ecb1f6e20743d5fa24bb757d701c3df6288ce5986a8235c",
+      "byteSize": 1333718,
+      "pageCount": 222,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "(一) 主营业务分析",
+          "(四)可能面对的风险",
+          "六、公司关于公司未来发展的讨论与分析"
+        ]
+      },
+      "browserValidation": "Ego已确认交易所公开入口；归档文件使用公开镜像交叉下载"
+    },
+    {
+      "documentId": "annual-report:zuojiang-technology:2021",
+      "companyKey": "zuojiang-technology",
+      "year": 2021,
+      "title": "左江科技2021年年度报告",
+      "officialUrl": "https://static.cninfo.com.cn/finalpage/2022-04-28/1213167893.PDF",
+      "publicationDate": "2022-04-28",
+      "archiveStatus": "已归档",
+      "parseStatus": "已解析",
+      "fileSha256": "22c882824f0f7db1c1c28de5a8efca1362957a0c73db7a5751c6fcd0146e85a4",
+      "byteSize": 2960324,
+      "pageCount": 175,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": false,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "四、主营业务分析",
+          "十一、公司未来发展的展望"
+        ]
+      },
+      "browserValidation": "Ego已确认交易所公开入口；归档文件使用公开镜像交叉下载"
+    },
+    {
+      "documentId": "annual-report:zuojiang-technology:2022",
+      "companyKey": "zuojiang-technology",
+      "year": 2022,
+      "title": "左江科技2022年年度报告",
+      "officialUrl": "https://static.cninfo.com.cn/finalpage/2023-04-28/1216662763.PDF",
+      "publicationDate": "2023-04-28",
+      "archiveStatus": "已归档",
+      "parseStatus": "已解析",
+      "fileSha256": "fbd48a3aba209ac2b433e10da65b42a76c11762f943f21c93c8df39b964bd590",
+      "byteSize": 3396734,
+      "pageCount": 204,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": false,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "四、主营业务分析",
+          "十一、公司未来发展的展望"
+        ]
+      },
+      "browserValidation": "Ego已确认交易所公开入口；归档文件使用公开镜像交叉下载"
+    },
+    {
+      "documentId": "annual-report:zuojiang-technology:2023",
+      "companyKey": "zuojiang-technology",
+      "year": 2023,
+      "title": "左江科技2023年年度报告",
+      "officialUrl": "https://static.cninfo.com.cn/finalpage/2024-04-29/1219874104.PDF",
+      "publicationDate": "2024-04-29",
+      "archiveStatus": "已归档",
+      "parseStatus": "已解析",
+      "fileSha256": "12ca1095ff8fd212fa129e6d29cf166d78c6e130012d86858327b3cfe9292719",
+      "byteSize": 3503094,
+      "pageCount": 168,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": false,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "四、主营业务分析",
+          "十一、公司未来发展的展望"
+        ]
+      },
+      "browserValidation": "Ego已确认交易所公开入口；归档文件使用公开镜像交叉下载"
+    }
+  ],
+  "observations": [
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2023,
+      "metricKey": "data_support_ratio",
+      "value": 0.1180499129,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:baili-tianheng:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "numericOccurrenceCount": 2034,
+        "effectiveWordCount": 17230
+      }
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2024,
+      "metricKey": "data_support_ratio",
+      "value": 0.1260842627,
+      "changeRate": 0.0680583454,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:baili-tianheng:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "numericOccurrenceCount": 1628,
+        "effectiveWordCount": 12912
+      }
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2025,
+      "metricKey": "data_support_ratio",
+      "value": 0.1037489701,
+      "changeRate": -0.1771443555,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:baili-tianheng:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "numericOccurrenceCount": 1511,
+        "effectiveWordCount": 14564
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2021,
+      "metricKey": "data_support_ratio",
+      "value": 0.0741395728,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "numericOccurrenceCount": 1090,
+        "effectiveWordCount": 14702
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2022,
+      "metricKey": "data_support_ratio",
+      "value": 0.0711663948,
+      "changeRate": -0.0401019022,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "numericOccurrenceCount": 1047,
+        "effectiveWordCount": 14712
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2023,
+      "metricKey": "data_support_ratio",
+      "value": 0.0797277589,
+      "changeRate": 0.1202989673,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "numericOccurrenceCount": 820,
+        "effectiveWordCount": 10285
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2024,
+      "metricKey": "data_support_ratio",
+      "value": 0.0799034019,
+      "changeRate": 0.0022030068,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "numericOccurrenceCount": 761,
+        "effectiveWordCount": 9524
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2025,
+      "metricKey": "data_support_ratio",
+      "value": 0.0756805265,
+      "changeRate": -0.0528490959,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "numericOccurrenceCount": 759,
+        "effectiveWordCount": 10029
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2021,
+      "metricKey": "data_support_ratio",
+      "value": 0.0793197015,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "numericOccurrenceCount": 1637,
+        "effectiveWordCount": 20638
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2022,
+      "metricKey": "data_support_ratio",
+      "value": 0.0819024725,
+      "changeRate": 0.0325611215,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "numericOccurrenceCount": 1908,
+        "effectiveWordCount": 23296
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2023,
+      "metricKey": "data_support_ratio",
+      "value": 0.0841666667,
+      "changeRate": 0.0276446667,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "numericOccurrenceCount": 2525,
+        "effectiveWordCount": 30000
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2024,
+      "metricKey": "data_support_ratio",
+      "value": 0.1038630581,
+      "changeRate": 0.234013751,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "numericOccurrenceCount": 2245,
+        "effectiveWordCount": 21615
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2025,
+      "metricKey": "data_support_ratio",
+      "value": 0.0970941297,
+      "changeRate": -0.0651710373,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "numericOccurrenceCount": 2653,
+        "effectiveWordCount": 27324
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2021,
+      "metricKey": "data_support_ratio",
+      "value": 0.1098047031,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "numericOccurrenceCount": 551,
+        "effectiveWordCount": 5018
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2022,
+      "metricKey": "data_support_ratio",
+      "value": 0.1132040628,
+      "changeRate": 0.0309579521,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "numericOccurrenceCount": 613,
+        "effectiveWordCount": 5415
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2023,
+      "metricKey": "data_support_ratio",
+      "value": 0.0973357016,
+      "changeRate": -0.1401736001,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "numericOccurrenceCount": 548,
+        "effectiveWordCount": 5630
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2024,
+      "metricKey": "data_support_ratio",
+      "value": 0.0924899969,
+      "changeRate": -0.0497829146,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "numericOccurrenceCount": 601,
+        "effectiveWordCount": 6498
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2025,
+      "metricKey": "data_support_ratio",
+      "value": 0.084545331,
+      "changeRate": -0.0858966404,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "numericOccurrenceCount": 622,
+        "effectiveWordCount": 7357
+      }
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2021,
+      "metricKey": "data_support_ratio",
+      "value": 0.0648220724,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:zuojiang-technology:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "numericOccurrenceCount": 827,
+        "effectiveWordCount": 12758
+      }
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2022,
+      "metricKey": "data_support_ratio",
+      "value": 0.0686410865,
+      "changeRate": 0.058914426,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:zuojiang-technology:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "numericOccurrenceCount": 839,
+        "effectiveWordCount": 12223
+      }
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2023,
+      "metricKey": "data_support_ratio",
+      "value": 0.084644657,
+      "changeRate": 0.2331451638,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:zuojiang-technology:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "numericOccurrenceCount": 823,
+        "effectiveWordCount": 9723
+      }
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2023,
+      "metricKey": "disclosure_quality",
+      "value": 0.6933678281,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:baili-tianheng:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "normalizedInformationSufficiency": 1.0
+      }
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2024,
+      "metricKey": "disclosure_quality",
+      "value": 0.6966550942,
+      "changeRate": 0.0047410065,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:baili-tianheng:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "normalizedInformationSufficiency": 1.0
+      }
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2025,
+      "metricKey": "disclosure_quality",
+      "value": 0.6879360472,
+      "changeRate": -0.0125155684,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:baili-tianheng:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "normalizedInformationSufficiency": 1.0
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2021,
+      "metricKey": "disclosure_quality",
+      "value": 0.683994703,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "normalizedInformationSufficiency": 1.0
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2022,
+      "metricKey": "disclosure_quality",
+      "value": 0.6832417567,
+      "changeRate": -0.0011008056,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "normalizedInformationSufficiency": 1.0
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2023,
+      "metricKey": "disclosure_quality",
+      "value": 0.6849143312,
+      "changeRate": 0.0024479945,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "normalizedInformationSufficiency": 1.0
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2024,
+      "metricKey": "disclosure_quality",
+      "value": 0.6513749632,
+      "changeRate": -0.0489686337,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "normalizedInformationSufficiency": 0.9048
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2025,
+      "metricKey": "disclosure_quality",
+      "value": 0.6848851864,
+      "changeRate": 0.0514452867,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "normalizedInformationSufficiency": 1.0
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2021,
+      "metricKey": "disclosure_quality",
+      "value": 0.688766654,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "normalizedInformationSufficiency": 1.0
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2022,
+      "metricKey": "disclosure_quality",
+      "value": 0.6900487164,
+      "changeRate": 0.0018613859,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "normalizedInformationSufficiency": 1.0
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2023,
+      "metricKey": "disclosure_quality",
+      "value": 0.6910990338,
+      "changeRate": 0.0015220895,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "normalizedInformationSufficiency": 1.0
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2024,
+      "metricKey": "disclosure_quality",
+      "value": 0.6957034936,
+      "changeRate": 0.0066625084,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "normalizedInformationSufficiency": 1.0
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2025,
+      "metricKey": "disclosure_quality",
+      "value": 0.6946426618,
+      "changeRate": -0.001524831,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "normalizedInformationSufficiency": 1.0
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2021,
+      "metricKey": "disclosure_quality",
+      "value": 0.3698478997,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "normalizedInformationSufficiency": 0.0036
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2022,
+      "metricKey": "disclosure_quality",
+      "value": 0.3972331861,
+      "changeRate": 0.0740445258,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "normalizedInformationSufficiency": 0.083
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2023,
+      "metricKey": "disclosure_quality",
+      "value": 0.4062685634,
+      "changeRate": 0.0227457193,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "normalizedInformationSufficiency": 0.126
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2024,
+      "metricKey": "disclosure_quality",
+      "value": 0.4606516206,
+      "changeRate": 0.1338595408,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "normalizedInformationSufficiency": 0.2996
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2025,
+      "metricKey": "disclosure_quality",
+      "value": 0.5144357001,
+      "changeRate": 0.1167562651,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "normalizedInformationSufficiency": 0.4714
+      }
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2021,
+      "metricKey": "disclosure_quality",
+      "value": 0.6786432055,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:zuojiang-technology:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "normalizedInformationSufficiency": 1.0
+      }
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2022,
+      "metricKey": "disclosure_quality",
+      "value": 0.6811082103,
+      "changeRate": 0.0036322491,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:zuojiang-technology:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "normalizedInformationSufficiency": 1.0
+      }
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2023,
+      "metricKey": "disclosure_quality",
+      "value": 0.6670398857,
+      "changeRate": -0.0206550204,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:zuojiang-technology:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "normalizedInformationSufficiency": 0.9446
+      }
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2023,
+      "metricKey": "information_sufficiency",
+      "value": 1.723,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:baili-tianheng:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "effectiveWordCount": 17230
+      }
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2024,
+      "metricKey": "information_sufficiency",
+      "value": 1.2912,
+      "changeRate": -0.2506092568,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:baili-tianheng:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "effectiveWordCount": 12912
+      }
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2025,
+      "metricKey": "information_sufficiency",
+      "value": 1.4564,
+      "changeRate": 0.1279428997,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:baili-tianheng:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "effectiveWordCount": 14564
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2021,
+      "metricKey": "information_sufficiency",
+      "value": 1.4702,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "effectiveWordCount": 14702
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2022,
+      "metricKey": "information_sufficiency",
+      "value": 1.4712,
+      "changeRate": 0.0006801791,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "effectiveWordCount": 14712
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2023,
+      "metricKey": "information_sufficiency",
+      "value": 1.0285,
+      "changeRate": -0.3009106166,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "effectiveWordCount": 10285
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2024,
+      "metricKey": "information_sufficiency",
+      "value": 0.9524,
+      "changeRate": -0.0739911775,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "effectiveWordCount": 9524
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2025,
+      "metricKey": "information_sufficiency",
+      "value": 1.0029,
+      "changeRate": 0.0530238838,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "effectiveWordCount": 10029
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2021,
+      "metricKey": "information_sufficiency",
+      "value": 2.0638,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "effectiveWordCount": 20638
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2022,
+      "metricKey": "information_sufficiency",
+      "value": 2.3296,
+      "changeRate": 0.1287914872,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "effectiveWordCount": 23296
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2023,
+      "metricKey": "information_sufficiency",
+      "value": 3.0,
+      "changeRate": 0.2877746017,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "effectiveWordCount": 30000
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2024,
+      "metricKey": "information_sufficiency",
+      "value": 2.1615,
+      "changeRate": -0.2794999068,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "effectiveWordCount": 21615
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2025,
+      "metricKey": "information_sufficiency",
+      "value": 2.7324,
+      "changeRate": 0.2641220152,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "effectiveWordCount": 27324
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2021,
+      "metricKey": "information_sufficiency",
+      "value": 0.5018,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "effectiveWordCount": 5018
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2022,
+      "metricKey": "information_sufficiency",
+      "value": 0.5415,
+      "changeRate": 0.0791150277,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "effectiveWordCount": 5415
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2023,
+      "metricKey": "information_sufficiency",
+      "value": 0.563,
+      "changeRate": 0.0397044511,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "effectiveWordCount": 5630
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2024,
+      "metricKey": "information_sufficiency",
+      "value": 0.6498,
+      "changeRate": 0.1541737937,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "effectiveWordCount": 6498
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2025,
+      "metricKey": "information_sufficiency",
+      "value": 0.7357,
+      "changeRate": 0.132194318,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "effectiveWordCount": 7357
+      }
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2021,
+      "metricKey": "information_sufficiency",
+      "value": 1.2758,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:zuojiang-technology:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "effectiveWordCount": 12758
+      }
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2022,
+      "metricKey": "information_sufficiency",
+      "value": 1.2223,
+      "changeRate": -0.0419344396,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:zuojiang-technology:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "effectiveWordCount": 12223
+      }
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2023,
+      "metricKey": "information_sufficiency",
+      "value": 0.9723,
+      "changeRate": -0.2045322715,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:zuojiang-technology:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "effectiveWordCount": 9723
+      }
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2023,
+      "metricKey": "innovation_action_strength",
+      "value": 4.7004803658,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:baili-tianheng:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "annualInventionApplications": 109,
+        "verification": "年度报告明确披露；国家知识产权局申请号明细待逐项复核"
+      }
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2024,
+      "metricKey": "innovation_action_strength",
+      "value": 5.0751738152,
+      "changeRate": 0.0797138464,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:baili-tianheng:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "annualInventionApplications": 159,
+        "verification": "年度报告明确披露；国家知识产权局申请号明细待逐项复核"
+      }
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2025,
+      "metricKey": "innovation_action_strength",
+      "value": 5.1590552992,
+      "changeRate": 0.0165278019,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:baili-tianheng:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "annualInventionApplications": 173,
+        "verification": "年度报告明确披露；国家知识产权局申请号明细待逐项复核"
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2021,
+      "metricKey": "innovation_action_strength",
+      "value": 5.9427993751,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "annualInventionApplications": 380,
+        "verification": "年度报告明确披露；国家知识产权局申请号明细待逐项复核"
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2022,
+      "metricKey": "innovation_action_strength",
+      "value": 5.2203558251,
+      "changeRate": -0.1215661817,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "annualInventionApplications": 184,
+        "verification": "年度报告明确披露；国家知识产权局申请号明细待逐项复核"
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2023,
+      "metricKey": "innovation_action_strength",
+      "value": 4.7361984484,
+      "changeRate": -0.0927441156,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "annualInventionApplications": 113,
+        "verification": "年度报告明确披露；国家知识产权局申请号明细待逐项复核"
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2024,
+      "metricKey": "innovation_action_strength",
+      "value": 4.6347289882,
+      "changeRate": -0.0214242372,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "annualInventionApplications": 102,
+        "verification": "年度报告明确披露；国家知识产权局申请号明细待逐项复核"
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2025,
+      "metricKey": "innovation_action_strength",
+      "value": 4.6249728133,
+      "changeRate": -0.0021050147,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "annualInventionApplications": 101,
+        "verification": "年度报告明确披露；国家知识产权局申请号明细待逐项复核"
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2021,
+      "metricKey": "innovation_action_strength",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "年报未明确披露当年发明专利申请数，或仅披露授权数、累计数或全部专利数",
+      "documentId": "annual-report:hengrui-pharma:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2022,
+      "metricKey": "innovation_action_strength",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "年报未明确披露当年发明专利申请数，或仅披露授权数、累计数或全部专利数",
+      "documentId": "annual-report:hengrui-pharma:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2023,
+      "metricKey": "innovation_action_strength",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "年报未明确披露当年发明专利申请数，或仅披露授权数、累计数或全部专利数",
+      "documentId": "annual-report:hengrui-pharma:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2024,
+      "metricKey": "innovation_action_strength",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "年报未明确披露当年发明专利申请数，或仅披露授权数、累计数或全部专利数",
+      "documentId": "annual-report:hengrui-pharma:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2025,
+      "metricKey": "innovation_action_strength",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "年报未明确披露当年发明专利申请数，或仅披露授权数、累计数或全部专利数",
+      "documentId": "annual-report:hengrui-pharma:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2021,
+      "metricKey": "innovation_action_strength",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "年报未明确披露当年发明专利申请数，或仅披露授权数、累计数或全部专利数",
+      "documentId": "annual-report:huami-electronics:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2022,
+      "metricKey": "innovation_action_strength",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "年报未明确披露当年发明专利申请数，或仅披露授权数、累计数或全部专利数",
+      "documentId": "annual-report:huami-electronics:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2023,
+      "metricKey": "innovation_action_strength",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "年报未明确披露当年发明专利申请数，或仅披露授权数、累计数或全部专利数",
+      "documentId": "annual-report:huami-electronics:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2024,
+      "metricKey": "innovation_action_strength",
+      "value": 2.8332133441,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "annualInventionApplications": 16,
+        "verification": "年度报告明确披露；国家知识产权局申请号明细待逐项复核"
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2025,
+      "metricKey": "innovation_action_strength",
+      "value": 2.6390573296,
+      "changeRate": -0.0685285301,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "annualInventionApplications": 13,
+        "verification": "年度报告明确披露；国家知识产权局申请号明细待逐项复核"
+      }
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2021,
+      "metricKey": "innovation_action_strength",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "年报未明确披露当年发明专利申请数，或仅披露授权数、累计数或全部专利数",
+      "documentId": "annual-report:zuojiang-technology:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2022,
+      "metricKey": "innovation_action_strength",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "年报未明确披露当年发明专利申请数，或仅披露授权数、累计数或全部专利数",
+      "documentId": "annual-report:zuojiang-technology:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2023,
+      "metricKey": "innovation_action_strength",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "年报未明确披露当年发明专利申请数，或仅披露授权数、累计数或全部专利数",
+      "documentId": "annual-report:zuojiang-technology:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2023,
+      "metricKey": "innovation_divergence",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "公开数据尚不足以构造不少于10家的同行业—年度完整基准，不以五家目标样本替代",
+      "documentId": "annual-report:baili-tianheng:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2024,
+      "metricKey": "innovation_divergence",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "公开数据尚不足以构造不少于10家的同行业—年度完整基准，不以五家目标样本替代",
+      "documentId": "annual-report:baili-tianheng:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2025,
+      "metricKey": "innovation_divergence",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "公开数据尚不足以构造不少于10家的同行业—年度完整基准，不以五家目标样本替代",
+      "documentId": "annual-report:baili-tianheng:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2021,
+      "metricKey": "innovation_divergence",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "公开数据尚不足以构造不少于10家的同行业—年度完整基准，不以五家目标样本替代",
+      "documentId": "annual-report:cambricon:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2022,
+      "metricKey": "innovation_divergence",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "公开数据尚不足以构造不少于10家的同行业—年度完整基准，不以五家目标样本替代",
+      "documentId": "annual-report:cambricon:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2023,
+      "metricKey": "innovation_divergence",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "公开数据尚不足以构造不少于10家的同行业—年度完整基准，不以五家目标样本替代",
+      "documentId": "annual-report:cambricon:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2024,
+      "metricKey": "innovation_divergence",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "公开数据尚不足以构造不少于10家的同行业—年度完整基准，不以五家目标样本替代",
+      "documentId": "annual-report:cambricon:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2025,
+      "metricKey": "innovation_divergence",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "公开数据尚不足以构造不少于10家的同行业—年度完整基准，不以五家目标样本替代",
+      "documentId": "annual-report:cambricon:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2021,
+      "metricKey": "innovation_divergence",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "公开数据尚不足以构造不少于10家的同行业—年度完整基准，不以五家目标样本替代",
+      "documentId": "annual-report:hengrui-pharma:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2022,
+      "metricKey": "innovation_divergence",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "公开数据尚不足以构造不少于10家的同行业—年度完整基准，不以五家目标样本替代",
+      "documentId": "annual-report:hengrui-pharma:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2023,
+      "metricKey": "innovation_divergence",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "公开数据尚不足以构造不少于10家的同行业—年度完整基准，不以五家目标样本替代",
+      "documentId": "annual-report:hengrui-pharma:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2024,
+      "metricKey": "innovation_divergence",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "公开数据尚不足以构造不少于10家的同行业—年度完整基准，不以五家目标样本替代",
+      "documentId": "annual-report:hengrui-pharma:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2025,
+      "metricKey": "innovation_divergence",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "公开数据尚不足以构造不少于10家的同行业—年度完整基准，不以五家目标样本替代",
+      "documentId": "annual-report:hengrui-pharma:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2021,
+      "metricKey": "innovation_divergence",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "公开数据尚不足以构造不少于10家的同行业—年度完整基准，不以五家目标样本替代",
+      "documentId": "annual-report:huami-electronics:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2022,
+      "metricKey": "innovation_divergence",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "公开数据尚不足以构造不少于10家的同行业—年度完整基准，不以五家目标样本替代",
+      "documentId": "annual-report:huami-electronics:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2023,
+      "metricKey": "innovation_divergence",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "公开数据尚不足以构造不少于10家的同行业—年度完整基准，不以五家目标样本替代",
+      "documentId": "annual-report:huami-electronics:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2024,
+      "metricKey": "innovation_divergence",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "公开数据尚不足以构造不少于10家的同行业—年度完整基准，不以五家目标样本替代",
+      "documentId": "annual-report:huami-electronics:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2025,
+      "metricKey": "innovation_divergence",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "公开数据尚不足以构造不少于10家的同行业—年度完整基准，不以五家目标样本替代",
+      "documentId": "annual-report:huami-electronics:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2021,
+      "metricKey": "innovation_divergence",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "公开数据尚不足以构造不少于10家的同行业—年度完整基准，不以五家目标样本替代",
+      "documentId": "annual-report:zuojiang-technology:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2022,
+      "metricKey": "innovation_divergence",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "公开数据尚不足以构造不少于10家的同行业—年度完整基准，不以五家目标样本替代",
+      "documentId": "annual-report:zuojiang-technology:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2023,
+      "metricKey": "innovation_divergence",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "公开数据尚不足以构造不少于10家的同行业—年度完整基准，不以五家目标样本替代",
+      "documentId": "annual-report:zuojiang-technology:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2023,
+      "metricKey": "innovation_talk_density",
+      "value": 19.7330237957,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:baili-tianheng:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "innovationOccurrenceCount": 340,
+        "effectiveWordCount": 17230,
+        "lexiconStatus": "核心词简化口径"
+      }
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2024,
+      "metricKey": "innovation_talk_density",
+      "value": 17.1158612144,
+      "changeRate": -0.1326285559,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:baili-tianheng:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "innovationOccurrenceCount": 221,
+        "effectiveWordCount": 12912,
+        "lexiconStatus": "核心词简化口径"
+      }
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2025,
+      "metricKey": "innovation_talk_density",
+      "value": 17.2342762977,
+      "changeRate": 0.006918441,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:baili-tianheng:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "innovationOccurrenceCount": 251,
+        "effectiveWordCount": 14564,
+        "lexiconStatus": "核心词简化口径"
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2021,
+      "metricKey": "innovation_talk_density",
+      "value": 17.820704666,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "innovationOccurrenceCount": 262,
+        "effectiveWordCount": 14702,
+        "lexiconStatus": "核心词简化口径"
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2022,
+      "metricKey": "innovation_talk_density",
+      "value": 18.6922240348,
+      "changeRate": 0.0489048742,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "innovationOccurrenceCount": 275,
+        "effectiveWordCount": 14712,
+        "lexiconStatus": "核心词简化口径"
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2023,
+      "metricKey": "innovation_talk_density",
+      "value": 24.0155566359,
+      "changeRate": 0.2847886001,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "innovationOccurrenceCount": 247,
+        "effectiveWordCount": 10285,
+        "lexiconStatus": "核心词简化口径"
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2024,
+      "metricKey": "innovation_talk_density",
+      "value": 23.4145317094,
+      "changeRate": -0.0250264822,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "innovationOccurrenceCount": 223,
+        "effectiveWordCount": 9524,
+        "lexiconStatus": "核心词简化口径"
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2025,
+      "metricKey": "innovation_talk_density",
+      "value": 21.3381194536,
+      "changeRate": -0.0886804909,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "innovationOccurrenceCount": 214,
+        "effectiveWordCount": 10029,
+        "lexiconStatus": "核心词简化口径"
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2021,
+      "metricKey": "innovation_talk_density",
+      "value": 13.5672061246,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "innovationOccurrenceCount": 280,
+        "effectiveWordCount": 20638,
+        "lexiconStatus": "核心词简化口径"
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2022,
+      "metricKey": "innovation_talk_density",
+      "value": 13.178228022,
+      "changeRate": -0.0286704625,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "innovationOccurrenceCount": 307,
+        "effectiveWordCount": 23296,
+        "lexiconStatus": "核心词简化口径"
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2023,
+      "metricKey": "innovation_talk_density",
+      "value": 11.7,
+      "changeRate": -0.1121719785,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "innovationOccurrenceCount": 351,
+        "effectiveWordCount": 30000,
+        "lexiconStatus": "核心词简化口径"
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2024,
+      "metricKey": "innovation_talk_density",
+      "value": 9.6692111959,
+      "changeRate": -0.1735716778,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "innovationOccurrenceCount": 209,
+        "effectiveWordCount": 21615,
+        "lexiconStatus": "核心词简化口径"
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2025,
+      "metricKey": "innovation_talk_density",
+      "value": 8.2711169668,
+      "changeRate": -0.1445923619,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "innovationOccurrenceCount": 226,
+        "effectiveWordCount": 27324,
+        "lexiconStatus": "核心词简化口径"
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2021,
+      "metricKey": "innovation_talk_density",
+      "value": 15.1454762854,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "innovationOccurrenceCount": 76,
+        "effectiveWordCount": 5018,
+        "lexiconStatus": "核心词简化口径"
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2022,
+      "metricKey": "innovation_talk_density",
+      "value": 12.9270544783,
+      "changeRate": -0.1464742091,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "innovationOccurrenceCount": 70,
+        "effectiveWordCount": 5415,
+        "lexiconStatus": "核心词简化口径"
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2023,
+      "metricKey": "innovation_talk_density",
+      "value": 12.6110124334,
+      "changeRate": -0.0244481077,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "innovationOccurrenceCount": 71,
+        "effectiveWordCount": 5630,
+        "lexiconStatus": "核心词简化口径"
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2024,
+      "metricKey": "innovation_talk_density",
+      "value": 13.8504155125,
+      "changeRate": 0.0982794195,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "innovationOccurrenceCount": 90,
+        "effectiveWordCount": 6498,
+        "lexiconStatus": "核心词简化口径"
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2025,
+      "metricKey": "innovation_talk_density",
+      "value": 12.0973222781,
+      "changeRate": -0.1265733224,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "innovationOccurrenceCount": 89,
+        "effectiveWordCount": 7357,
+        "lexiconStatus": "核心词简化口径"
+      }
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2021,
+      "metricKey": "innovation_talk_density",
+      "value": 12.9330616084,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:zuojiang-technology:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "innovationOccurrenceCount": 165,
+        "effectiveWordCount": 12758,
+        "lexiconStatus": "核心词简化口径"
+      }
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2022,
+      "metricKey": "innovation_talk_density",
+      "value": 12.8446371595,
+      "changeRate": -0.006837085,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:zuojiang-technology:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "innovationOccurrenceCount": 157,
+        "effectiveWordCount": 12223,
+        "lexiconStatus": "核心词简化口径"
+      }
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2023,
+      "metricKey": "innovation_talk_density",
+      "value": 13.8846035174,
+      "changeRate": 0.0809650179,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:zuojiang-technology:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "innovationOccurrenceCount": 135,
+        "effectiveWordCount": 9723,
+        "lexiconStatus": "核心词简化口径"
+      }
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2023,
+      "metricKey": "manager_net_positive_tone",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2024,
+      "metricKey": "manager_net_positive_tone",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2025,
+      "metricKey": "manager_net_positive_tone",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2021,
+      "metricKey": "manager_net_positive_tone",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2022,
+      "metricKey": "manager_net_positive_tone",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2023,
+      "metricKey": "manager_net_positive_tone",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2024,
+      "metricKey": "manager_net_positive_tone",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2025,
+      "metricKey": "manager_net_positive_tone",
+      "value": 0.8550724638,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "performance-briefing:cambricon:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "answerCount": 36,
+        "effectiveWordCount": 1812,
+        "positiveWordCount": 256,
+        "negativeWordCount": 20,
+        "sourceUrl": "https://roadshow.sseinfo.com/roadshowIndex.do?id=38704",
+        "riskLabel": "低风险"
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2021,
+      "metricKey": "manager_net_positive_tone",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2022,
+      "metricKey": "manager_net_positive_tone",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2023,
+      "metricKey": "manager_net_positive_tone",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2024,
+      "metricKey": "manager_net_positive_tone",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2025,
+      "metricKey": "manager_net_positive_tone",
+      "value": 0.7086614173,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "performance-briefing:hengrui-pharma:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "answerCount": 14,
+        "effectiveWordCount": 1464,
+        "positiveWordCount": 217,
+        "negativeWordCount": 37,
+        "sourceUrl": "https://roadshow.sseinfo.com/roadshowIndex.do?id=38193",
+        "riskLabel": "低风险"
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2021,
+      "metricKey": "manager_net_positive_tone",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2022,
+      "metricKey": "manager_net_positive_tone",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2023,
+      "metricKey": "manager_net_positive_tone",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2024,
+      "metricKey": "manager_net_positive_tone",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2025,
+      "metricKey": "manager_net_positive_tone",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2021,
+      "metricKey": "manager_net_positive_tone",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2022,
+      "metricKey": "manager_net_positive_tone",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2023,
+      "metricKey": "manager_net_positive_tone",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2023,
+      "metricKey": "negative_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2024,
+      "metricKey": "negative_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2025,
+      "metricKey": "negative_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2021,
+      "metricKey": "negative_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2022,
+      "metricKey": "negative_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2023,
+      "metricKey": "negative_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2024,
+      "metricKey": "negative_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2025,
+      "metricKey": "negative_tone_intensity",
+      "value": 0.0110375276,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "performance-briefing:cambricon:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "answerCount": 36,
+        "effectiveWordCount": 1812,
+        "positiveWordCount": 256,
+        "negativeWordCount": 20,
+        "sourceUrl": "https://roadshow.sseinfo.com/roadshowIndex.do?id=38704"
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2021,
+      "metricKey": "negative_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2022,
+      "metricKey": "negative_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2023,
+      "metricKey": "negative_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2024,
+      "metricKey": "negative_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2025,
+      "metricKey": "negative_tone_intensity",
+      "value": 0.025273224,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "performance-briefing:hengrui-pharma:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "answerCount": 14,
+        "effectiveWordCount": 1464,
+        "positiveWordCount": 217,
+        "negativeWordCount": 37,
+        "sourceUrl": "https://roadshow.sseinfo.com/roadshowIndex.do?id=38193"
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2021,
+      "metricKey": "negative_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2022,
+      "metricKey": "negative_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2023,
+      "metricKey": "negative_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2024,
+      "metricKey": "negative_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2025,
+      "metricKey": "negative_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2021,
+      "metricKey": "negative_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2022,
+      "metricKey": "negative_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2023,
+      "metricKey": "negative_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2023,
+      "metricKey": "positive_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2024,
+      "metricKey": "positive_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2025,
+      "metricKey": "positive_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2021,
+      "metricKey": "positive_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2022,
+      "metricKey": "positive_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2023,
+      "metricKey": "positive_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2024,
+      "metricKey": "positive_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2025,
+      "metricKey": "positive_tone_intensity",
+      "value": 0.1412803532,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "performance-briefing:cambricon:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "answerCount": 36,
+        "effectiveWordCount": 1812,
+        "positiveWordCount": 256,
+        "negativeWordCount": 20,
+        "sourceUrl": "https://roadshow.sseinfo.com/roadshowIndex.do?id=38704"
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2021,
+      "metricKey": "positive_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2022,
+      "metricKey": "positive_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2023,
+      "metricKey": "positive_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2024,
+      "metricKey": "positive_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2025,
+      "metricKey": "positive_tone_intensity",
+      "value": 0.1482240437,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "performance-briefing:hengrui-pharma:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "answerCount": 14,
+        "effectiveWordCount": 1464,
+        "positiveWordCount": 217,
+        "negativeWordCount": 37,
+        "sourceUrl": "https://roadshow.sseinfo.com/roadshowIndex.do?id=38193"
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2021,
+      "metricKey": "positive_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2022,
+      "metricKey": "positive_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2023,
+      "metricKey": "positive_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2024,
+      "metricKey": "positive_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2025,
+      "metricKey": "positive_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2021,
+      "metricKey": "positive_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2022,
+      "metricKey": "positive_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2023,
+      "metricKey": "positive_tone_intensity",
+      "value": null,
+      "changeRate": null,
+      "status": "缺失",
+      "missingReason": "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集",
+      "documentId": null,
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {}
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2023,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.0379464286,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:baili-tianheng:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "uncertaintyOccurrenceCount": 68,
+        "effectiveWordCount": 1792
+      }
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2024,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.0361189802,
+      "changeRate": -0.0481573711,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:baili-tianheng:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "uncertaintyOccurrenceCount": 51,
+        "effectiveWordCount": 1412
+      }
+    },
+    {
+      "companyKey": "baili-tianheng",
+      "year": 2025,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.0399408284,
+      "changeRate": 0.1058098088,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:baili-tianheng:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "uncertaintyOccurrenceCount": 54,
+        "effectiveWordCount": 1352
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2021,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.0221554638,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "uncertaintyOccurrenceCount": 59,
+        "effectiveWordCount": 2663
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2022,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.0214411248,
+      "changeRate": -0.0322406593,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "uncertaintyOccurrenceCount": 61,
+        "effectiveWordCount": 2845
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2023,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.0249847654,
+      "changeRate": 0.1652653659,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "uncertaintyOccurrenceCount": 41,
+        "effectiveWordCount": 1641
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2024,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.0305785124,
+      "changeRate": 0.2238773522,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "uncertaintyOccurrenceCount": 37,
+        "effectiveWordCount": 1210
+      }
+    },
+    {
+      "companyKey": "cambricon",
+      "year": 2025,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.0210249671,
+      "changeRate": -0.3124165348,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:cambricon:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "uncertaintyOccurrenceCount": 32,
+        "effectiveWordCount": 1522
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2021,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.0130197396,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "uncertaintyOccurrenceCount": 31,
+        "effectiveWordCount": 2381
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2022,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.0117563235,
+      "changeRate": -0.097031055,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "uncertaintyOccurrenceCount": 33,
+        "effectiveWordCount": 2807
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2023,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.0108695652,
+      "changeRate": -0.0754217829,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "uncertaintyOccurrenceCount": 36,
+        "effectiveWordCount": 3312
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2024,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.0167525773,
+      "changeRate": 0.5411873248,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "uncertaintyOccurrenceCount": 65,
+        "effectiveWordCount": 3880
+      }
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2025,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.0131661442,
+      "changeRate": -0.2140696901,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:hengrui-pharma:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "uncertaintyOccurrenceCount": 42,
+        "effectiveWordCount": 3190
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2021,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.0038610039,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "uncertaintyOccurrenceCount": 3,
+        "effectiveWordCount": 777
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2022,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.0045045045,
+      "changeRate": 0.1666234982,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "uncertaintyOccurrenceCount": 4,
+        "effectiveWordCount": 888
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2023,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.0045300113,
+      "changeRate": 0.0056612528,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "uncertaintyOccurrenceCount": 4,
+        "effectiveWordCount": 883
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2024,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.0101351351,
+      "changeRate": 1.2370580051,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2024",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "uncertaintyOccurrenceCount": 12,
+        "effectiveWordCount": 1184
+      }
+    },
+    {
+      "companyKey": "huami-electronics",
+      "year": 2025,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.0126382306,
+      "changeRate": 0.2469477247,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:huami-electronics:2025",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "uncertaintyOccurrenceCount": 16,
+        "effectiveWordCount": 1266
+      }
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2021,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.0288924559,
+      "changeRate": null,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:zuojiang-technology:2021",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "uncertaintyOccurrenceCount": 36,
+        "effectiveWordCount": 1246
+      }
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2022,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.0253164557,
+      "changeRate": -0.1237650564,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:zuojiang-technology:2022",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "uncertaintyOccurrenceCount": 30,
+        "effectiveWordCount": 1185
+      }
+    },
+    {
+      "companyKey": "zuojiang-technology",
+      "year": 2023,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.028125,
+      "changeRate": 0.110933118,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "annual-report:zuojiang-technology:2023",
+      "methodVersion": "narrative-method-revised-2026-08-26-v1",
+      "details": {
+        "uncertaintyOccurrenceCount": 27,
+        "effectiveWordCount": 960
+      }
+    }
+  ],
+  "peerBenchmarks": [],
+  "toneAudits": [
+    {
+      "companyKey": "cambricon",
+      "year": 2025,
+      "formalMethod": "姜富伟等中文金融情感词典词频法",
+      "sourceUrl": "https://roadshow.sseinfo.com/roadshowIndex.do?id=38704",
+      "answerCount": 36,
+      "dictionaryReview": "已完成",
+      "modelReview": "待复核",
+      "modelReviewReason": "逐句大模型结果尚未形成可复现、可脱敏的完整审计记录，不生成第二条正式折线"
+    },
+    {
+      "companyKey": "hengrui-pharma",
+      "year": 2025,
+      "formalMethod": "姜富伟等中文金融情感词典词频法",
+      "sourceUrl": "https://roadshow.sseinfo.com/roadshowIndex.do?id=38193",
+      "answerCount": 14,
+      "dictionaryReview": "已完成",
+      "modelReview": "待复核",
+      "modelReviewReason": "逐句大模型结果尚未形成可复现、可脱敏的完整审计记录，不生成第二条正式折线"
+    }
+  ],
+  "audit": {
+    "generatedAt": "2026-08-26T13:16:40.931986+00:00",
+    "targetReportCount": 21,
+    "archivedReportCount": 21,
+    "parsedReportCount": 21,
+    "partialReportCount": 0,
+    "toneYearCount": 2,
+    "peerBenchmarkYearCount": 0,
+    "missingObservationCount": 89,
+    "calculatedObservationCount": 121,
+    "publicPayloadContainsFullText": false,
+    "publicPayloadContainsPrivatePath": false
+  }
+}
