@@ -64,7 +64,7 @@ test("revised annual snapshot exposes 21 reports, ten Chinese metrics, and no pr
   const audit = await service.getAnnualAudit()
 
   assert.equal(trends.sourceMode, "snapshot")
-  assert.equal(trends.companies.length, 7)
+  assert.equal(trends.companies.length, 5)
   assert.equal(trends.observations.length, 210)
   assert.equal(methodology.methodology.length, 10)
   assert.ok(
@@ -79,20 +79,75 @@ test("revised annual snapshot exposes 21 reports, ten Chinese metrics, and no pr
   assert.equal(audit.documents.length, 21)
   assert.equal(audit.audit.archivedReportCount, 21)
   assert.equal(audit.peerBenchmarks.length, 0)
-
-  const unlisted = trends.companies.filter(
-    (item) => item.includedYears.length === 0
+  assert.equal(
+    trends.observations.filter((item) => item.value !== null).length,
+    trends.observations.filter((item) => item.riskScore !== null).length
   )
-  assert.deepEqual(unlisted.map((item) => item.companyName).sort(), [
-    "燧原科技",
-    "芯驰科技",
-  ])
   assert.ok(
-    unlisted.every((item) => item.exclusionReason === "未上市，不纳入年报趋势")
+    trends.observations.every(
+      (item) =>
+        item.riskScore === null ||
+        (item.riskScore >= 0 && item.riskScore <= 100)
+    )
+  )
+  assert.ok(
+    methodology.methodology.every(
+      (item) =>
+        item.riskMapping.formula.length > 0 &&
+        item.riskMapping.parameterSource.length > 0 &&
+        item.riskMapping.name.startsWith("当前样本极差") &&
+        item.riskMapping.parameters.some(
+          (parameter) => parameter.name === "样本最小值"
+        ) &&
+        item.riskMapping.parameters.some(
+          (parameter) => parameter.name === "样本最大值"
+        )
+    )
+  )
+
+  assert.ok(trends.companies.every((item) => item.includedYears.length > 0))
+  assert.equal(methodology.methodVersion.innovationLexiconSize, 692)
+  assert.match(
+    methodology.methodVersion.innovationLexiconStatus,
+    /完整词典/
   )
 
   const serialized = JSON.stringify({ trends, methodology, audit })
   assert.doesNotMatch(serialized, /\/Users\//)
   assert.doesNotMatch(serialized, /private\//)
   assert.doesNotMatch(serialized, /管理层回答文本|年报全文/)
+})
+
+test("industry narrative snapshot exposes raw annual ranges for all 94 companies", async () => {
+  const service = createNarrativeRiskService({ forceSnapshot: true })
+  const trends = await service.getIndustryTrends()
+  assert.equal(trends.sourceMode, "snapshot")
+  assert.equal(trends.companies.length, 94)
+  assert.equal(trends.documents.length, 470)
+  assert.equal(trends.methodology.length, 3)
+  assert.equal(trends.observations.length, 1137)
+  assert.equal(trends.industryStatistics.length, 45)
+  assert.equal(trends.audit.archivedReportCount, 379)
+  assert.equal(trends.audit.calculatedObservationCount, 1129)
+  assert.equal(trends.audit.patentObservationCount, 372)
+  assert.ok(
+    trends.observations.every(
+      (item) =>
+        !Object.hasOwn(item, "riskScore") &&
+        !Object.hasOwn(item, "riskScoreChange")
+    )
+  )
+  assert.ok(
+    trends.industryStatistics.every(
+      (item) =>
+        item.sampleSize >= 0 &&
+        (item.minimum === null ||
+          item.maximum === null ||
+          item.minimum <= item.maximum)
+    )
+  )
+  const serialized = JSON.stringify(trends)
+  assert.doesNotMatch(serialized, /\/Users\//)
+  assert.doesNotMatch(serialized, /private\//)
+  assert.doesNotMatch(serialized, /fullText|extractedText/)
 })

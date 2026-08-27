@@ -1,5 +1,5 @@
 export const REVISED_NARRATIVE_METHOD_VERSION =
-  "narrative-method-revised-2026-08-26-v1" as const
+  "narrative-method-revised-2026-08-27-v2" as const
 
 const EPSILON = 1e-6
 
@@ -80,6 +80,36 @@ export function calculateInnovationActionStrength(
     throw new RangeError("当年发明专利申请数必须为非负整数。")
   }
   return Math.log1p(annualInventionApplications)
+}
+
+export function calculateInnovationNarrativeDivergence(
+  innovationTalkDensity: number,
+  annualInventionApplications: number
+) {
+  if (innovationTalkDensity < 0 || !Number.isFinite(innovationTalkDensity)) {
+    throw new RangeError("创新文本密度必须为有限非负数。")
+  }
+  return (
+    Math.log1p(innovationTalkDensity) -
+    calculateInnovationActionStrength(annualInventionApplications)
+  )
+}
+
+export function mapSampleRangeRisk(
+  value: number,
+  minimum: number,
+  maximum: number,
+  higherIsRiskier: boolean
+) {
+  if (![value, minimum, maximum].every(Number.isFinite)) {
+    throw new RangeError("样本映射参数必须是有限数值。")
+  }
+  if (maximum < minimum) {
+    throw new RangeError("样本最大值不能小于样本最小值。")
+  }
+  if (maximum === minimum) return 50
+  const normalized = clamp((value - minimum) / (maximum - minimum))
+  return (higherIsRiskier ? normalized : 1 - normalized) * 100
 }
 
 export function calculateTone(

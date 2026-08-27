@@ -24,6 +24,7 @@ async function startTestServer(options?: {
   getNarrativeAnnualTrends?: () => unknown | Promise<unknown>
   getNarrativeAnnualMethodology?: () => unknown | Promise<unknown>
   getNarrativeAnnualAudit?: () => unknown | Promise<unknown>
+  getNarrativeIndustryTrends?: () => unknown | Promise<unknown>
   maxBodyBytes?: number
 }) {
   const staticRoot = mkdtempSync(join(tmpdir(), "risk-platform-server-test-"))
@@ -65,6 +66,7 @@ async function startTestServer(options?: {
     getNarrativeAnnualTrends: options?.getNarrativeAnnualTrends,
     getNarrativeAnnualMethodology: options?.getNarrativeAnnualMethodology,
     getNarrativeAnnualAudit: options?.getNarrativeAnnualAudit,
+    getNarrativeIndustryTrends: options?.getNarrativeIndustryTrends,
     maxBodyBytes: options?.maxBodyBytes,
   })
 
@@ -410,8 +412,8 @@ test("narrative risk GET endpoints expose directory, detail, sources, and audit 
 test("revised annual narrative endpoints expose trends, Chinese methodology, and audit", async () => {
   const envelope = {
     schemaVersion: "KCR-NARRATIVE-RISK-2026.08-v1",
-    dataVersion: "narrative-method-revised-2026-08-26-v1",
-    asOfDate: "2026-08-26",
+    dataVersion: "narrative-method-revised-2026-08-27-v2",
+    asOfDate: "2026-08-27",
     sourceMode: "postgres",
   }
   const testServer = await startTestServer({
@@ -434,6 +436,25 @@ test("revised annual narrative endpoints expose trends, Chinese methodology, and
       })),
       audit: { archivedReportCount: 21 },
     }),
+    getNarrativeIndustryTrends: () => ({
+      ...envelope,
+      dataVersion: "narrative-industry-raw-2026-08-27-v1",
+      companies: Array.from({ length: 94 }, (_, index) => ({
+        companyId: `company-${index}`,
+      })),
+      industryGroups: [],
+      methodology: [
+        { name: "信息模糊性" },
+        { name: "叙事夸大性" },
+        { name: "风险披露充分性" },
+      ],
+      documents: Array.from({ length: 470 }, (_, index) => ({
+        documentId: index,
+      })),
+      observations: [],
+      industryStatistics: [],
+      audit: { archivedReportCount: 379 },
+    }),
   })
 
   try {
@@ -446,15 +467,20 @@ test("revised annual narrative endpoints expose trends, Chinese methodology, and
     const audit = await fetch(
       `${testServer.baseUrl}/api/v1/narrative-risk/annual-trends/audit`
     )
+    const industry = await fetch(
+      `${testServer.baseUrl}/api/v1/narrative-risk/industry-trends`
+    )
     assert.equal(trends.status, 200)
     assert.equal(methodology.status, 200)
     assert.equal(audit.status, 200)
+    assert.equal(industry.status, 200)
     assert.equal((await trends.json()).companies[0].companyName, "寒武纪")
     assert.equal(
       (await methodology.json()).methodology[0].name,
       "信息总量充分性"
     )
     assert.equal((await audit.json()).documents.length, 21)
+    assert.equal((await industry.json()).companies.length, 94)
   } finally {
     await testServer.close()
   }

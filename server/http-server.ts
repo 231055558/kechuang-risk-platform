@@ -22,6 +22,7 @@ import {
   NARRATIVE_RISK_ANNUAL_METHODOLOGY_API_PATH,
   NARRATIVE_RISK_ANNUAL_TRENDS_API_PATH,
   NARRATIVE_RISK_COMPANIES_API_PATH,
+  NARRATIVE_RISK_INDUSTRY_TRENDS_API_PATH,
 } from "../src/domain/narrative-risk-v1/assessment-api.ts"
 import type { NarrativeRiskSourceFilters } from "./narrative-risk-service.ts"
 
@@ -39,6 +40,7 @@ const NARRATIVE_RISK_AUDIT_SUMMARY_PATH = `/${NARRATIVE_RISK_AUDIT_SUMMARY_API_P
 const NARRATIVE_RISK_ANNUAL_TRENDS_PATH = `/${NARRATIVE_RISK_ANNUAL_TRENDS_API_PATH}`
 const NARRATIVE_RISK_ANNUAL_METHODOLOGY_PATH = `/${NARRATIVE_RISK_ANNUAL_METHODOLOGY_API_PATH}`
 const NARRATIVE_RISK_ANNUAL_AUDIT_PATH = `/${NARRATIVE_RISK_ANNUAL_AUDIT_API_PATH}`
+const NARRATIVE_RISK_INDUSTRY_TRENDS_PATH = `/${NARRATIVE_RISK_INDUSTRY_TRENDS_API_PATH}`
 const DEFAULT_MAX_BODY_BYTES = 1024 * 1024
 
 const contentTypes: Record<string, string> = {
@@ -92,6 +94,7 @@ export interface ProductionServerOptions {
   getNarrativeAnnualTrends?: NarrativeRiskAuditSummaryReader
   getNarrativeAnnualMethodology?: NarrativeRiskAuditSummaryReader
   getNarrativeAnnualAudit?: NarrativeRiskAuditSummaryReader
+  getNarrativeIndustryTrends?: NarrativeRiskAuditSummaryReader
   basePath?: string
   maxBodyBytes?: number
 }
@@ -969,6 +972,16 @@ export function createProductionServer(
           response,
           options.getNarrativeAnnualAudit,
           "叙事风险年度审计尚未配置。"
+        )
+        return
+      }
+
+      if (pathname === NARRATIVE_RISK_INDUSTRY_TRENDS_PATH) {
+        await handleNarrativeRiskRead(
+          request,
+          response,
+          options.getNarrativeIndustryTrends,
+          "行业叙事风险年度分布尚未配置。"
         )
         return
       }

@@ -4,12 +4,14 @@ import {
   NARRATIVE_RISK_ANNUAL_METHODOLOGY_API_PATH,
   NARRATIVE_RISK_ANNUAL_TRENDS_API_PATH,
   NARRATIVE_RISK_COMPANIES_API_PATH,
+  NARRATIVE_RISK_INDUSTRY_TRENDS_API_PATH,
   getNarrativeRiskCompanyApiPath,
   getNarrativeRiskCompanySourcesApiPath,
   isNarrativeRiskAuditSummaryResponse,
   isNarrativeAnnualAuditResponse,
   isNarrativeAnnualMethodologyResponse,
   isNarrativeAnnualTrendResponse,
+  isNarrativeIndustryTrendResponse,
   isNarrativeRiskCompanyResponse,
   isNarrativeRiskDirectoryResponse,
   isNarrativeRiskSourcePageResponse,
@@ -17,6 +19,7 @@ import {
   type NarrativeAnnualAuditResponse,
   type NarrativeAnnualMethodologyResponse,
   type NarrativeAnnualTrendResponse,
+  type NarrativeIndustryTrendResponse,
   type NarrativeRiskCompanyDirectoryResponse,
   type NarrativeRiskCompanyResponse,
   type NarrativeRiskSourcePageResponse,
@@ -156,5 +159,12 @@ export function getNarrativeAnnualAudit(): Promise<NarrativeAnnualAuditResponse>
   return request(
     NARRATIVE_RISK_ANNUAL_AUDIT_API_PATH,
     isNarrativeAnnualAuditResponse
+  )
+}
+
+export function getNarrativeIndustryTrends(): Promise<NarrativeIndustryTrendResponse> {
+  return request(
+    NARRATIVE_RISK_INDUSTRY_TRENDS_API_PATH,
+    isNarrativeIndustryTrendResponse
   )
 }

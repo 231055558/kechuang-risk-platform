@@ -8,6 +8,7 @@ copies full text or local paths into the public snapshot.
 from __future__ import annotations
 
 import hashlib
+import html
 import json
 import math
 import re
@@ -26,12 +27,15 @@ import jieba  # type: ignore  # installed into the private task runtime
 from openpyxl import load_workbook
 from pypdf import PdfReader
 
-METHOD_VERSION = "narrative-method-revised-2026-08-26-v1"
-AS_OF_DATE = "2026-08-26"
+METHOD_VERSION = "narrative-method-revised-2026-08-27-v2"
+AS_OF_DATE = "2026-08-27"
 SCHEMA_VERSION = "KCR-NARRATIVE-RISK-2026.08-v1"
 REPORT_MANIFEST_PATH = ROOT / "config/narrative-risk-annual-reports.json"
 STOPWORDS_PATH = ROOT / "config/narrative-risk-stopwords.txt"
-INNOVATION_LEXICON_PATH = ROOT / "config/narrative-risk-innovation-core-lexicon.txt"
+INNOVATION_LEXICON_PATH = (
+    PRIVATE_ROOT / "dictionaries/程新生论文2022创新信息披露关键词词典.xlsx"
+)
+TONE_MANIFEST_PATH = ROOT / "config/narrative-risk-tone-sources.json"
 METHOD_DOCUMENT_PATH = Path("/Users/mao/Downloads/叙事风险维度测度（修改版）.docx")
 SENTIMENT_DICTIONARY_PATH = (
     PRIVATE_ROOT / "dictionaries/中文金融情感词典_姜富伟等(2020).xlsx"
@@ -50,33 +54,25 @@ UNCERTAINTY_WORDS = [
     "一定程度上",
 ]
 
-# Only observations with an explicit annual invention-application count in the
-# corresponding official annual report are entered. Other patent disclosures
-# (totals, grants, all patent types, or pending counts) are deliberately absent.
+# Only observations with an annual invention-application count explicitly
+# disclosed in the corresponding official annual report are entered. The
+# disclosure basis is retained in the sanitized observation details.
 ANNUAL_REPORT_INVENTION_APPLICATIONS = {
-    ("cambricon", 2021): 380,
-    ("cambricon", 2022): 184,
-    ("cambricon", 2023): 113,
-    ("cambricon", 2024): 102,
-    ("cambricon", 2025): 101,
-    ("baili-tianheng", 2023): 109,
-    ("baili-tianheng", 2024): 159,
-    ("baili-tianheng", 2025): 173,
-    ("huami-electronics", 2024): 16,
-    ("huami-electronics", 2025): 13,
-}
-
-TONE_SOURCES = {
-    ("cambricon", 2025): {
-        "activityId": 38704,
-        "url": "https://roadshow.sseinfo.com/roadshowIndex.do?id=38704",
-        "file": PRIVATE_ROOT / "tone/cambricon-2025-38704.json",
-    },
-    ("hengrui-pharma", 2025): {
-        "activityId": 38193,
-        "url": "https://roadshow.sseinfo.com/roadshowIndex.do?id=38193",
-        "file": PRIVATE_ROOT / "tone/hengrui-pharma-2025-38193.json",
-    },
+    ("cambricon", 2021): (380, "年报知识产权表：发明专利本年新增申请数"),
+    ("cambricon", 2022): (184, "年报研发成果：新增发明专利申请数"),
+    ("cambricon", 2023): (113, "年报研发成果：新增发明专利申请数"),
+    ("cambricon", 2024): (102, "年报研发成果：新增发明专利申请数"),
+    ("cambricon", 2025): (101, "年报研发成果：新增发明专利申请数"),
+    ("hengrui-pharma", 2021): (244, "年报研发成果：国内新申请专利数"),
+    ("hengrui-pharma", 2022): (169, "年报研发成果：国内新申请专利数"),
+    ("hengrui-pharma", 2023): (246, "年报研发成果：国内新申请专利数"),
+    ("hengrui-pharma", 2024): (456, "年报研发成果：大中华地区新申请专利数"),
+    ("hengrui-pharma", 2025): (459, "年报研发成果：大中华地区新申请专利数"),
+    ("baili-tianheng", 2023): (109, "年报知识产权表：发明专利本年新增申请数"),
+    ("baili-tianheng", 2024): (159, "年报知识产权表：发明专利本年新增申请数"),
+    ("baili-tianheng", 2025): (173, "年报知识产权表：发明专利本年新增申请数"),
+    ("huami-electronics", 2024): (16, "年报研发成果：申请发明专利数"),
+    ("huami-electronics", 2025): (13, "年报研发成果：申请发明专利数"),
 }
 
 COMPANY_META = {
@@ -85,8 +81,6 @@ COMPANY_META = {
     "huami-electronics": ("华微电子", "600360", "上市", [2021, 2022, 2023, 2024, 2025]),
     "baili-tianheng": ("百利天恒", "688506", "上市", [2023, 2024, 2025]),
     "zuojiang-technology": ("左江科技", "300799", "已退市", [2021, 2022, 2023]),
-    "enflame": ("燧原科技", "688801", "未上市", []),
-    "semidrive": ("芯驰科技", None, "未上市", []),
 }
 
 METRICS = [
@@ -132,8 +126,8 @@ METRICS = [
         "category": "叙事夸大性",
         "formula": "管理层讨论与分析及公司业务概要中的创新词次数÷有效词数×1,000",
         "unit": "次/千词",
-        "riskDirection": "需与创新行动强度进行同行业同年度比较",
-        "methodStatus": "核心词简化口径",
+        "riskDirection": "数值越高表示创新叙事投入越强，需结合创新行动与叙事夸大度判断",
+        "methodStatus": "程新生等（2022）完整词典口径",
     },
     {
         "metricKey": "innovation_action_strength",
@@ -148,10 +142,10 @@ METRICS = [
         "metricKey": "innovation_divergence",
         "name": "叙事夸大度",
         "category": "叙事夸大性",
-        "formula": "同行业同年度创新文本密度标准分减创新行动强度标准分，再映射至0—1",
-        "unit": "指数",
-        "riskDirection": "数值越高，越可能存在多言寡行",
-        "methodStatus": "同行基准未满足时保持缺失",
+        "formula": "创新文本密度加一取自然对数，减去当年发明专利申请数加一的自然对数",
+        "unit": "对数差",
+        "riskDirection": "大于零为多言寡行；小于或等于零为言行匹配或寡言多行",
+        "methodStatus": "新版方案二：企业自身言行对数差",
     },
     {
         "metricKey": "positive_tone_intensity",
@@ -199,8 +193,41 @@ def load_word_list(path: Path) -> list[str]:
     return [line.strip() for line in path.read_text("utf-8").splitlines() if line.strip()]
 
 
+def load_innovation_dictionary(path: Path) -> tuple[list[str], Counter]:
+    workbook = load_workbook(path, read_only=True, data_only=True)
+    sheet = workbook["逐词词典"]
+    terms: list[str] = []
+    categories: Counter = Counter()
+    for row in sheet.iter_rows(min_row=2, values_only=True):
+        category, _, term = row[:3]
+        if isinstance(category, str) and isinstance(term, str) and term.strip():
+            terms.append(term.strip())
+            categories[category.strip()] += 1
+    return terms, categories
+
+
+def expand_innovation_term(term: str) -> str:
+    pattern = re.escape(term)
+    pattern = pattern.replace(re.escape("（的）"), "(?:的)?")
+    for roman, chinese in (("Ⅰ", "一"), ("Ⅱ", "二"), ("Ⅲ", "三"), ("Ⅳ", "四")):
+        pattern = pattern.replace(
+            re.escape(f"{roman}（{chinese}）"),
+            f"(?:{re.escape(roman)}|{re.escape(chinese)})",
+        )
+    return pattern
+
+
 STOPWORDS = set(load_word_list(STOPWORDS_PATH))
-INNOVATION_TERMS = load_word_list(INNOVATION_LEXICON_PATH)
+INNOVATION_DICTIONARY_ROWS, INNOVATION_CATEGORY_COUNTS = load_innovation_dictionary(
+    INNOVATION_LEXICON_PATH
+)
+INNOVATION_TERMS = sorted(set(INNOVATION_DICTIONARY_ROWS))
+INNOVATION_PATTERN = re.compile(
+    "|".join(
+        expand_innovation_term(term)
+        for term in sorted(INNOVATION_TERMS, key=lambda item: (-len(item), item))
+    )
+)
 
 
 def clean_pdf_text(value: str) -> str:
@@ -302,14 +329,7 @@ FINANCIAL_RATIO_PATTERN = re.compile(
 
 
 def innovation_hits(value: str) -> int:
-    remaining = value
-    total = 0
-    for term in sorted(INNOVATION_TERMS, key=lambda item: (-len(item), item)):
-        count = remaining.count(term)
-        if count:
-            total += count
-            remaining = remaining.replace(term, " ")
-    return total
+    return sum(1 for _ in INNOVATION_PATTERN.finditer(value))
 
 
 def publication_date(url: str) -> str | None:
@@ -325,6 +345,96 @@ def risk_label(value: float | None) -> str | None:
     if value < 0.4:
         return "中风险"
     return "低风险"
+
+
+def clamp(value: float, lower: float = 0.0, upper: float = 1.0) -> float:
+    return min(upper, max(lower, value))
+
+
+def apply_risk_scores(observations: list[dict]) -> None:
+    values_by_metric = {
+        metric["metricKey"]: [
+            float(item["value"])
+            for item in observations
+            if item["metricKey"] == metric["metricKey"] and item["value"] is not None
+        ]
+        for metric in METRICS
+    }
+    higher_is_riskier_metrics = {
+        "risk_context_ambiguity",
+        "innovation_talk_density",
+        "innovation_divergence",
+        "positive_tone_intensity",
+        "negative_tone_intensity",
+    }
+    mapping_by_metric = {}
+    for metric in METRICS:
+        metric_key = metric["metricKey"]
+        values = values_by_metric[metric_key]
+        minimum = min(values)
+        maximum = max(values)
+        higher_is_riskier = metric_key in higher_is_riskier_metrics
+        scorer = lambda value, minimum=minimum, maximum=maximum, higher_is_riskier=higher_is_riskier: (
+            50.0
+            if maximum == minimum
+            else (
+                clamp((value - minimum) / (maximum - minimum))
+                if higher_is_riskier
+                else 1 - clamp((value - minimum) / (maximum - minimum))
+            )
+            * 100
+        )
+        parameters = [
+            {"name": "有效观测数", "value": str(len(values))},
+            {"name": "样本最小值", "value": f"{minimum:.10g}"},
+            {"name": "样本最大值", "value": f"{maximum:.10g}"},
+        ]
+        if metric_key == "information_sufficiency":
+            parameters.append({"name": "方法参考区间", "value": "0.5至1.0万有效词"})
+        elif metric_key == "innovation_divergence":
+            parameters.append({"name": "多言寡行原始分界", "value": "0"})
+        elif metric_key == "manager_net_positive_tone":
+            parameters.append({"name": "原始风险区间", "value": "负值高；0至0.4中；0.4至1低"})
+        mapping = {
+            "name": "当前样本极差" + ("正向" if higher_is_riskier else "反向") + "映射",
+            "formula": (
+                "(原始值−样本最小值)÷(样本最大值−样本最小值)×100"
+                if higher_is_riskier
+                else "(样本最大值−原始值)÷(样本最大值−样本最小值)×100"
+            ),
+            "parameterSource": "最新版方法文件确定风险方向；样本参数取五家上市企业2021—2025窗口内该指标的全部有效原始观测",
+            "parameters": parameters,
+            "limitation": "0和100表示当前五家上市样本窗口内的相对最低与相对最高风险；样本或窗口改变后需重算，不代表跨样本绝对风险。",
+        }
+
+        metric["riskMapping"] = mapping
+        mapping_by_metric[metric_key] = (scorer, mapping)
+
+    for item in observations:
+        if item["value"] is None:
+            item["riskScore"] = None
+            continue
+        scorer, _ = mapping_by_metric[item["metricKey"]]
+        item["riskScore"] = round(clamp(float(scorer(float(item["value"]))), 0, 100), 10)
+
+    observation_index = {
+        (item["companyKey"], item["year"], item["metricKey"]): item
+        for item in observations
+    }
+    for company_key, (_, _, _, years) in COMPANY_META.items():
+        for metric in METRICS:
+            previous = None
+            for year in years:
+                item = observation_index.get((company_key, year, metric["metricKey"]))
+                if item is None:
+                    continue
+                current = item["riskScore"]
+                item["riskScoreChange"] = (
+                    round(current - previous, 10)
+                    if current is not None and previous is not None
+                    else None
+                )
+                previous = current
 
 
 def value_record(
@@ -343,6 +453,8 @@ def value_record(
         "metricKey": metric_key,
         "value": round(value, 10) if value is not None else None,
         "changeRate": None,
+        "riskScore": None,
+        "riskScoreChange": None,
         "status": status,
         "missingReason": reason,
         "documentId": document_id,
@@ -364,8 +476,31 @@ def load_sentiment_dictionary() -> tuple[set[str], set[str], str]:
     return result["positive"], result["negative"], sha256_file(SENTIMENT_DICTIONARY_PATH)
 
 
+def clean_answer_text(value: str) -> str:
+    value = html.unescape(value)
+    value = re.sub(r"<br\s*/?>", "\n", value, flags=re.I)
+    value = re.sub(r"<[^>]+>", " ", value)
+    value = re.sub(r"[\t\r ]+", " ", value)
+    return value.strip()
+
+
 def main() -> None:
     manifest = json.loads(REPORT_MANIFEST_PATH.read_text("utf-8"))
+    tone_manifest = json.loads(TONE_MANIFEST_PATH.read_text("utf-8"))
+    tone_sources = {
+        (item["companyKey"], item["year"]): {
+            **item,
+            "url": f"https://roadshow.sseinfo.com/activityDetails/{item['activityId']}?navId=48",
+            "file": PRIVATE_ROOT
+            / "tone"
+            / f"{item['companyKey']}-{item['year']}-{item['activityId']}.json",
+        }
+        for item in tone_manifest["sources"]
+    }
+    tone_exclusions = {
+        (item["companyKey"], item["year"]): item["reason"]
+        for item in tone_manifest.get("exclusions", [])
+    }
     EXTRACTED_TEXT_ROOT.mkdir(parents=True, exist_ok=True)
     positive_words, negative_words, sentiment_hash = load_sentiment_dictionary()
     for word in positive_words | negative_words | set(INNOVATION_TERMS):
@@ -390,7 +525,7 @@ def main() -> None:
 
     for (company_key, year), item in sorted(report_lookup.items()):
         pdf_path = PRIVATE_ROOT / "reports" / company_key / f"{year}.pdf"
-        document_id = f"annual-report:{company_key}:{year}"
+        document_id = f"annual-report:{company_key}:{year}:{METHOD_VERSION}"
         if not pdf_path.exists():
             documents.append(
                 {
@@ -578,6 +713,7 @@ def main() -> None:
                 )
             )
 
+        talk = None
         if innovation_words:
             hits = innovation_hits(innovation_text)
             talk = hits / len(innovation_words) * 1000
@@ -593,7 +729,9 @@ def main() -> None:
                     {
                         "innovationOccurrenceCount": hits,
                         "effectiveWordCount": len(innovation_words),
-                        "lexiconStatus": "核心词简化口径",
+                        "lexiconStatus": "程新生等（2022）完整词典口径",
+                        "dictionaryRowCount": len(INNOVATION_DICTIONARY_ROWS),
+                        "effectiveUniquePatternCount": len(INNOVATION_TERMS),
                     },
                 )
             )
@@ -602,8 +740,9 @@ def main() -> None:
                 value_record(company_key, year, "innovation_talk_density", None, "缺失", "创新文本章节未满足提取条件", document_id)
             )
 
-        patent_count = ANNUAL_REPORT_INVENTION_APPLICATIONS.get((company_key, year))
-        if patent_count is None:
+        patent_observation = ANNUAL_REPORT_INVENTION_APPLICATIONS.get((company_key, year))
+        if patent_observation is None:
+            patent_count = None
             observations.append(
                 value_record(
                     company_key,
@@ -611,11 +750,12 @@ def main() -> None:
                     "innovation_action_strength",
                     None,
                     "缺失",
-                    "年报未明确披露当年发明专利申请数，或仅披露授权数、累计数或全部专利数",
+                    "公开年报未明确披露当年发明专利申请数，国家知识产权局检索需登录，未以授权数、累计数或申请中存量替代",
                     document_id,
                 )
             )
         else:
+            patent_count, patent_basis = patent_observation
             observations.append(
                 value_record(
                     company_key,
@@ -627,35 +767,68 @@ def main() -> None:
                     document_id,
                     {
                         "annualInventionApplications": patent_count,
-                        "verification": "年度报告明确披露；国家知识产权局申请号明细待逐项复核",
+                        "verification": patent_basis,
                     },
                 )
             )
 
-        observations.append(
-            value_record(
-                company_key,
-                year,
-                "innovation_divergence",
-                None,
-                "缺失",
-                "公开数据尚不足以构造不少于10家的同行业—年度完整基准，不以五家目标样本替代",
-                document_id,
+        if talk is not None and patent_count is not None:
+            divergence = math.log1p(talk) - math.log1p(patent_count)
+            observations.append(
+                value_record(
+                    company_key,
+                    year,
+                    "innovation_divergence",
+                    divergence,
+                    "已计算",
+                    None,
+                    document_id,
+                    {
+                        "innovationTalkDensity": round(talk, 10),
+                        "annualInventionApplications": patent_count,
+                        "interpretation": "多言寡行" if divergence > 0 else "言行匹配或寡言多行",
+                        "scheme": "方案二：企业自身言行对数差",
+                    },
+                )
             )
-        )
+        else:
+            missing_parts = []
+            if talk is None:
+                missing_parts.append("创新文本密度")
+            if patent_count is None:
+                missing_parts.append("当年发明专利申请数")
+            observations.append(
+                value_record(
+                    company_key,
+                    year,
+                    "innovation_divergence",
+                    None,
+                    "缺失",
+                    "、".join(missing_parts) + "缺失，方案二无法计算",
+                    document_id,
+                )
+            )
 
     tone_audits = []
     for company_key, (_, _, _, years) in COMPANY_META.items():
         for year in years:
-            tone_source = TONE_SOURCES.get((company_key, year))
+            tone_source = tone_sources.get((company_key, year))
             if tone_source and tone_source["file"].exists():
                 payload = json.loads(tone_source["file"].read_text("utf-8"))
                 records = payload.get("datas", [{}])[0].get("records", [])
+                target_company_id = tone_source.get("targetCompanyId")
                 answers = [
-                    record.get("content", "")
+                    clean_answer_text(record.get("content", ""))
                     for record in records
-                    if record.get("questionType") == 2 and record.get("isAnswered") is True and record.get("content")
+                    if record.get("questionType") == 2
+                    and record.get("isAnswered") is True
+                    and record.get("content")
+                    and (
+                        target_company_id is None
+                        or record.get("companyId") == target_company_id
+                    )
                 ]
+                answers = [answer for answer in answers if answer]
                 answer_text = "\n".join(answers)
                 answer_words = tokenize(answer_text, remove_numeric=True)
                 counts = Counter(answer_words)
@@ -675,6 +848,9 @@ def main() -> None:
                     "positiveWordCount": positive_count,
                     "negativeWordCount": negative_count,
                     "sourceUrl": tone_source["url"],
+                    "activityId": tone_source["activityId"],
+                    "activityTitle": tone_source["activityTitle"],
+                    "matchingMethod": "用户提供的姜富伟等（2020）中文金融情感词典词频法",
                 }
                 observations.extend(
                     [
@@ -700,12 +876,15 @@ def main() -> None:
                         "sourceUrl": tone_source["url"],
                         "answerCount": len(answers),
                         "dictionaryReview": "已完成",
-                        "modelReview": "待复核",
-                        "modelReviewReason": "逐句大模型结果尚未形成可复现、可脱敏的完整审计记录，不生成第二条正式折线",
+                        "modelReview": "不适用",
+                        "modelReviewReason": "用户指定指标三不使用大模型，正式结果仅使用所提供情感词典",
                     }
                 )
             else:
-                reason = "未定位到可公开验证且满足排除规则的年度业绩说明会管理层回答全集"
+                reason = tone_exclusions.get(
+                    (company_key, year),
+                    "未定位到可公开验证且满足排除规则的上证路演中心年度业绩说明会管理层回答全集",
+                )
                 for metric_key in (
                     "positive_tone_intensity",
                     "negative_tone_intensity",
@@ -726,6 +905,8 @@ def main() -> None:
                     record["changeRate"] = round((current - previous) / (abs(previous) + 1e-6), 10)
                 previous = current
 
+    apply_risk_scores(observations)
+
     documents.sort(key=lambda item: (item["companyKey"], item["year"]))
     observations.sort(key=lambda item: (item["metricKey"], item["companyKey"], item["year"]))
     method_hash = sha256_file(METHOD_DOCUMENT_PATH) if METHOD_DOCUMENT_PATH.exists() else None
@@ -739,19 +920,23 @@ def main() -> None:
             "name": "叙事风险维度测度（修改版）",
             "effectiveDate": AS_OF_DATE,
             "sourceDocumentSha256": method_hash,
-            "innovationLexiconStatus": "核心词简化口径",
-            "innovationLexiconSize": len(INNOVATION_TERMS),
+            "innovationLexiconStatus": "程新生等（2022）完整词典口径",
+            "innovationLexiconSize": len(INNOVATION_DICTIONARY_ROWS),
+            "innovationLexiconUniqueSize": len(INNOVATION_TERMS),
+            "innovationLexiconCategoryCounts": dict(INNOVATION_CATEGORY_COUNTS),
             "innovationLexiconSha256": sha256_file(INNOVATION_LEXICON_PATH),
             "stopwordListSha256": sha256_file(STOPWORDS_PATH),
             "sentimentDictionaryName": "姜富伟等中文金融情感词典",
             "sentimentDictionarySha256": sentiment_hash,
             "sentimentDictionarySource": "https://github.com/MengLingchao/Chinese_financial_sentiment_dictionary",
-            "peerBenchmarkStatus": "缺失：公开完整同行业—年度基准尚未满足",
+            "peerBenchmarkStatus": "不适用：叙事夸大度采用方案二，不需要同行业基准",
             "notes": [
                 "此前指标文件、旧词库、旧公式和旧结果不参与新版趋势计算或展示。",
                 "综合披露质量按已确认解释使用三项等权，不构造跨维度总分。",
-                "创新词表为冻结的40词核心简化口径，不冒充完整693词词库。",
-                "叙事夸大度仅在同行业—年度标准化条件完整时计算。",
+                "创新词典按用户提供工作簿读取：692条记录、691个唯一匹配词项；专利一词跨类别重复时不重复计数。",
+                "叙事夸大度采用方案二：创新文本密度与当年发明专利申请数分别加一取自然对数后作差。",
+                "管理者语调只使用上证路演中心管理层回答和用户提供的姜富伟等（2020）中文金融情感词典，不使用大模型。",
+                "0至100风险分按风险方向在当前五家上市样本窗口内做极差映射；样本最小值、最大值和有效观测数随方法元数据公开。",
             ],
         },
         "companies": companies,

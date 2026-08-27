@@ -11,7 +11,7 @@ import {
 } from "./model.ts"
 
 export const INDUSTRY_RISK_MVP_METHOD_VERSION =
-  "IRAWC-CRITIC-2026.08-v2" as const
+  "IRAWC-CRITIC-2026.08-v3" as const
 export const INDUSTRY_RISK_FULL_METHOD_VERSION =
   "IRAWC-FULL-2026.08-v2" as const
 
@@ -497,6 +497,12 @@ interface ResolvedMetricValue {
   sourceIds: string[]
 }
 
+interface R17LowRiskFloorEvidence {
+  sourceId: string
+  sourceIds: string[]
+  evidenceLabel: string
+}
+
 interface IndustryRiskScoringOptions {
   industryRisk?: number
   alpha?: number
@@ -805,6 +811,51 @@ function resolveMetricValue(
   return null
 }
 
+function resolveR17LowRiskFloorEvidence(
+  dataset: IndustryRiskDataset,
+  companyId: string
+): R17LowRiskFloorEvidence | null {
+  const zeroSupplierObservation = dataset.observations.find(
+    (item) =>
+      item.companyId === companyId &&
+      item.indicatorId === "R17" &&
+      item.numericValue === 0 &&
+      item.confidence >= 0.75 &&
+      [
+        "tyc_paid_supplier_disclosed_count",
+        "verified_external_supplier_count",
+        "verified_overseas_supplier_count",
+        "external_supplier_count",
+        "overseas_supplier_count",
+      ].includes(item.metricName)
+  )
+  if (zeroSupplierObservation) {
+    return {
+      sourceId: zeroSupplierObservation.sourceId,
+      sourceIds:
+        zeroSupplierObservation.sourceIds ?? [zeroSupplierObservation.sourceId],
+      evidenceLabel: "结构化供应商检查明确返回零条记录",
+    }
+  }
+
+  const zeroSupplierDisclosure = dataset.supplementaryObservations?.find(
+    (item) =>
+      item.companyId === companyId &&
+      item.relatedIndicatorId === "R17" &&
+      item.numericValue === 0 &&
+      item.confidence >= 0.8 &&
+      /供应商/.test(item.factName) &&
+      /采购占比|集中度|外部|境外/.test(item.factName) &&
+      item.sourceId !== null
+  )
+  if (!zeroSupplierDisclosure?.sourceId) return null
+  return {
+    sourceId: zeroSupplierDisclosure.sourceId,
+    sourceIds: [zeroSupplierDisclosure.sourceId],
+    evidenceLabel: `${zeroSupplierDisclosure.factName}明确披露为零`,
+  }
+}
+
 function scoreMetric(
   dataset: IndustryRiskDataset,
   companyId: string,
@@ -815,6 +866,40 @@ function scoreMetric(
   beta: number
 ): IndustryRiskMetricScore {
   const resolved = resolveMetricValue(dataset, companyId, definition)
+  const r17FloorEvidence =
+    definition.indicatorId === "R17" && resolved === null
+      ? resolveR17LowRiskFloorEvidence(dataset, companyId)
+      : null
+  if (r17FloorEvidence) {
+    const riskPercentile = 0
+    const riskScore = calculateMvpRiskScore(
+      riskPercentile,
+      industryRisk,
+      alpha,
+      beta
+    )
+    return {
+      indicatorId: definition.indicatorId,
+      metricName: "no_identified_external_supplier_floor",
+      comparableGroup: "r17-no-external-supplier-floor",
+      label: definition.label,
+      unit: "家（代理）",
+      rawValue: 0,
+      riskPercentile,
+      riskScore,
+      centeredRiskScore: round(riskScore - 50, 2),
+      sampleSize: 0,
+      sourceId: r17FloorEvidence.sourceId,
+      sourceIds: r17FloorEvidence.sourceIds,
+      status: "scored",
+      direction: definition.direction,
+      kind: definition.kind,
+      dimensionId: definition.dimensionId,
+      formulaTrace: `${r17FloorEvidence.evidenceLabel}，启用低风险保底；r_rel=0；r=100×(${round(alpha)}×${round(industryRisk)}+${round(beta)}×0)=${riskScore}`,
+      limitation: `${definition.limitation.replace(/。$/, "")}；保底分只适用于有明确零值证据的企业。未识别到供应商不等于证明实际进口依赖为零；后续出现境外采购证据时必须撤销并重算。`,
+      missingReason: null,
+    }
+  }
   const sample = resolved
     ? benchmarkCompanyIds
         .map((peerId) => resolveMetricValue(dataset, peerId, definition))

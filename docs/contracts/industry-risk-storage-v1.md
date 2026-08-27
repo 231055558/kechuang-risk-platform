@@ -13,6 +13,7 @@
 | coverage            | `companyId`、`indicatorId`、`status`、`reason`、`recommendedNextSource`                                                                                 |
 | event               | `id`、`companyId`、`eventType`、`date`、`title`、`url`、`relatedIndicatorId`、`confidence`                                                              |
 | narrative corpus    | `companyId`、`reportPeriod`、`reportSection`、`sourceId`、`textLocator`、`extractedText`、`extractorVersion`                                            |
+| narrative annual statistic | `industryGroupId`、`year`、`metricKey`、`sampleSize`、`mean`、`minimum`、`maximum`、`standardDeviation`                                      |
 | temporal graph edge | `sourceEntityId`、`targetEntityId`、`relationType`、`validFrom`、`validTo`、`confidence`、`sourceId`、`extractionVersion`                               |
 
 ## 约束

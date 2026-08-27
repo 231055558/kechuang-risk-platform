@@ -16,6 +16,7 @@ import {
   getNarrativeAnnualAudit,
   getNarrativeAnnualMethodology,
   getNarrativeAnnualTrends,
+  getNarrativeIndustryTrends,
   getNarrativeRiskAuditSummary,
   getNarrativeRiskCompany,
   listNarrativeRiskCompanies,
@@ -54,6 +55,7 @@ const server = createProductionServer({
   getNarrativeAnnualTrends,
   getNarrativeAnnualMethodology,
   getNarrativeAnnualAudit,
+  getNarrativeIndustryTrends,
 })
 
 server.listen(port, host, () => {

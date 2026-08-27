@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge"
 import type {
   NarrativeAnnualAuditResponse,
   NarrativeAnnualCompany,
+  NarrativeAnnualDocumentAudit,
   NarrativeAnnualMethodologyItem,
   NarrativeAnnualMethodologyResponse,
   NarrativeAnnualObservation,
@@ -22,7 +23,7 @@ import { cn } from "@/lib/utils"
 const YEARS = [2021, 2022, 2023, 2024, 2025]
 const COMPANY_COLORS = ["#2563eb", "#e11d48", "#059669", "#d97706", "#7c3aed"]
 
-type TrendMode = "年度值" | "年度演变率"
+type TrendMode = "风险分" | "年度风险变化"
 
 interface NarrativeAnnualTrendsProps {
   trends: NarrativeAnnualTrendResponse
@@ -30,18 +31,75 @@ interface NarrativeAnnualTrendsProps {
   audit: NarrativeAnnualAuditResponse
 }
 
-function displayNumber(value: number | null, unit: string, mode: TrendMode) {
+function displayNumber(value: number | null, mode: TrendMode) {
   if (value === null) return "—"
-  if (mode === "年度演变率") {
-    return `${(value * 100).toFixed(Math.abs(value) >= 1 ? 1 : 2)}%`
+  if (mode === "年度风险变化") {
+    const prefix = value > 0 ? "+" : ""
+    return `${prefix}${value.toFixed(1)}`
   }
-  if (unit === "比例" || unit === "指数") {
-    return value.toFixed(4)
-  }
-  if (unit === "万有效词" || unit === "对数值") {
+  return value.toFixed(1)
+}
+
+function displayRawNumber(value: number | null, unit: string) {
+  if (value === null) return "—"
+  if (unit === "比例" || unit === "指数") return value.toFixed(4)
+  if (unit === "万有效词" || unit === "对数值" || unit === "对数差") {
     return value.toFixed(3)
   }
   return value.toFixed(2)
+}
+
+function displayRawChange(value: number | null) {
+  if (value === null) return "—"
+  const prefix = value > 0 ? "+" : ""
+  return `${prefix}${(value * 100).toFixed(Math.abs(value) >= 1 ? 1 : 2)}%`
+}
+
+function numericDetail(
+  observation: NarrativeAnnualObservation | undefined,
+  key: string
+) {
+  const value = observation?.details[key]
+  return typeof value === "number" ? value.toLocaleString("zh-CN") : null
+}
+
+function calculationInputs(
+  observation: NarrativeAnnualObservation | undefined,
+  metricKey: string
+) {
+  if (!observation) return []
+  const inputs: string[] = []
+  const add = (label: string, key: string) => {
+    const value = numericDetail(observation, key)
+    if (value !== null) inputs.push(`${label}${value}`)
+  }
+
+  if (metricKey === "information_sufficiency") {
+    add("有效词数", "effectiveWordCount")
+  } else if (metricKey === "risk_context_ambiguity") {
+    add("模糊词命中", "uncertaintyOccurrenceCount")
+    add("有效词数", "effectiveWordCount")
+  } else if (metricKey === "data_support_ratio") {
+    add("定量信息命中", "numericOccurrenceCount")
+    add("有效词数", "effectiveWordCount")
+  } else if (metricKey === "disclosure_quality") {
+    add("信息充分性归一值", "normalizedInformationSufficiency")
+  } else if (metricKey === "innovation_talk_density") {
+    add("创新词命中", "innovationOccurrenceCount")
+    add("有效词数", "effectiveWordCount")
+    add("词典记录数", "dictionaryRowCount")
+  } else if (metricKey === "innovation_action_strength") {
+    add("发明专利申请数", "annualInventionApplications")
+  } else if (metricKey === "innovation_divergence") {
+    add("创新文本密度", "innovationTalkDensity")
+    add("发明专利申请数", "annualInventionApplications")
+  } else {
+    add("管理层回答数", "answerCount")
+    add("有效词数", "effectiveWordCount")
+    add("正面词命中", "positiveWordCount")
+    add("负面词命中", "negativeWordCount")
+  }
+  return inputs
 }
 
 function observationValue(
@@ -49,7 +107,9 @@ function observationValue(
   mode: TrendMode
 ) {
   if (!observation) return null
-  return mode === "年度值" ? observation.value : observation.changeRate
+  return mode === "风险分"
+    ? observation.riskScore
+    : observation.riskScoreChange
 }
 
 function buildPath(points: Array<{ x: number; y: number }>) {
@@ -78,8 +138,8 @@ function metricMissingGroups(
     const value = observationValue(observation, mode)
     if (value !== null) continue
     const reason =
-      mode === "年度演变率" && observation.value !== null
-        ? "首个可计算年度没有上一年度同口径值"
+      mode === "年度风险变化" && observation.riskScore !== null
+        ? "首个可计算年度没有上一年度风险分"
         : (observation.missingReason ?? "当前年度不满足计算条件")
     const entries = groups.get(reason) ?? []
     entries.push(
@@ -95,11 +155,15 @@ function TrendChart({
   observations,
   companies,
   mode,
+  documents,
+  methodVersion,
 }: {
   metric: NarrativeAnnualMethodologyItem
   observations: NarrativeAnnualObservation[]
   companies: NarrativeAnnualCompany[]
   mode: TrendMode
+  documents: NarrativeAnnualDocumentAudit[]
+  methodVersion: NarrativeAnnualMethodologyResponse["methodVersion"]
 }) {
   const width = 760
   const height = 270
@@ -117,8 +181,10 @@ function TrendChart({
   const rawMinimum = values.length ? Math.min(...values) : 0
   const rawMaximum = values.length ? Math.max(...values) : 1
   const range = rawMaximum - rawMinimum || Math.max(Math.abs(rawMaximum), 1)
-  const minimum = rawMinimum - range * 0.08
-  const maximum = rawMaximum + range * 0.08
+  const minimum =
+    mode === "风险分" ? 0 : Math.min(0, rawMinimum - range * 0.08)
+  const maximum =
+    mode === "风险分" ? 100 : Math.max(0, rawMaximum + range * 0.08)
   const x = (year: number) =>
     margin.left + ((year - YEARS[0]) / (YEARS.at(-1)! - YEARS[0])) * innerWidth
   const y = (value: number) =>
@@ -157,6 +223,24 @@ function TrendChart({
       segments,
     }
   })
+  const documentById = new Map(
+    documents.map((document) => [document.documentId, document])
+  )
+  const methodHash = methodVersion.sourceDocumentSha256?.slice(0, 12)
+  const parameterSource =
+    metric.category === "叙事夸大性"
+      ? `计算方法文件${methodHash ? `（摘要 ${methodHash}…）` : ""}；程新生等（2022）创新词典（摘要 ${methodVersion.innovationLexiconSha256.slice(0, 12)}…）；公司年报专利披露。`
+      : metric.category === "管理者语调"
+        ? `计算方法文件${methodHash ? `（摘要 ${methodHash}…）` : ""}；姜富伟等（2020）中文金融情感词典（摘要 ${methodVersion.sentimentDictionarySha256.slice(0, 12)}…）；上证路演中心管理层回答。`
+        : `计算方法文件${methodHash ? `（摘要 ${methodHash}…）` : ""}；21份公司年度报告的指定章节。`
+
+  function sourceUrl(observation: NarrativeAnnualObservation | undefined) {
+    const answerSource = observation?.details.sourceUrl
+    if (typeof answerSource === "string") return answerSource
+    return observation?.documentId
+      ? (documentById.get(observation.documentId)?.officialUrl ?? null)
+      : null
+  }
 
   return (
     <article className="nr-trend-card">
@@ -164,9 +248,9 @@ function TrendChart({
         <div>
           <span className="nr-eyebrow">{metric.category}</span>
           <h3>{metric.name}</h3>
-          <p>{metric.formula}</p>
+          <p>{metric.riskDirection}</p>
         </div>
-        <Badge variant="outline">{metric.methodStatus}</Badge>
+        <Badge variant="outline">0—100风险分</Badge>
       </div>
 
       {values.length ? (
@@ -182,7 +266,7 @@ function TrendChart({
             </title>
             <desc id={`trend-${metric.metricKey}-description`}>
               展示所选企业2021年至2025年的{metric.name}
-              {mode}；缺失值以断点表示。
+              {mode}；风险分越高表示风险越大，缺失值以断点表示。
             </desc>
             {ticks.map((tick) => (
               <g key={tick}>
@@ -199,7 +283,7 @@ function TrendChart({
                   textAnchor="end"
                   className="nr-trend-axis-label"
                 >
-                  {displayNumber(tick, metric.unit, mode)}
+                  {displayNumber(tick, mode)}
                 </text>
               </g>
             ))}
@@ -247,7 +331,7 @@ function TrendChart({
                   >
                     <title>
                       {company.companyName} {point.year}：
-                      {displayNumber(point.value, metric.unit, mode)}
+                      {displayNumber(point.value, mode)}分
                     </title>
                   </circle>
                 )),
@@ -287,12 +371,56 @@ function TrendChart({
       ) : null}
 
       <details className="nr-trend-table-wrap">
-        <summary>查看{metric.name}对应数据表</summary>
+        <summary>展开公式、映射参数、来源和原始结果</summary>
+        <div className="nr-trend-method-grid">
+          <section>
+            <span>原始指标口径</span>
+            <h4>{metric.methodStatus}</h4>
+            <dl>
+              <div>
+                <dt>原始公式</dt>
+                <dd>{metric.formula}</dd>
+              </div>
+              <div>
+                <dt>风险方向</dt>
+                <dd>{metric.riskDirection}</dd>
+              </div>
+            </dl>
+          </section>
+          <section>
+            <span>风险分映射</span>
+            <h4>{metric.riskMapping.name}</h4>
+            <dl>
+              <div>
+                <dt>映射公式</dt>
+                <dd>{metric.riskMapping.formula}</dd>
+              </div>
+              <div>
+                <dt>参数来源</dt>
+                <dd>{metric.riskMapping.parameterSource}</dd>
+              </div>
+            </dl>
+            <div className="nr-risk-parameter-list">
+              {metric.riskMapping.parameters.map((parameter) => (
+                <span key={parameter.name}>
+                  {parameter.name}：<strong>{parameter.value}</strong>
+                </span>
+              ))}
+            </div>
+            {metric.riskMapping.limitation ? (
+              <p>{metric.riskMapping.limitation}</p>
+            ) : null}
+          </section>
+          <section>
+            <span>文件与数据来源</span>
+            <h4>哈希锁定、按年度追溯</h4>
+            <p>{parameterSource}</p>
+          </section>
+        </div>
         <div className="nr-trend-table-scroll">
           <table>
             <caption>
-              {metric.name}
-              {mode}，缺失项不按零处理
+              {metric.name}风险分、原始计算结果与原始年度演变率；缺失项不按零处理
             </caption>
             <thead>
               <tr>
@@ -315,17 +443,49 @@ function TrendChart({
                     const observation = observationMap.get(
                       `${company.companyKey}:${year}`
                     )
-                    const value = observationValue(observation, mode)
+                    const url = sourceUrl(observation)
+                    const inputs = calculationInputs(
+                      observation,
+                      metric.metricKey
+                    )
                     return (
                       <td
                         key={year}
                         title={
-                          value === null
+                          observation?.riskScore === null
                             ? (observation?.missingReason ?? "缺失")
                             : undefined
                         }
                       >
-                        {displayNumber(value, metric.unit, mode)}
+                        <strong className="nr-risk-score-value">
+                          {observation?.riskScore === null || !observation
+                            ? "—"
+                            : `${observation.riskScore.toFixed(1)}分`}
+                        </strong>
+                        <span>
+                          原始值：
+                          {displayRawNumber(observation?.value ?? null, metric.unit)}
+                        </span>
+                        <span>
+                          原始演变：
+                          {displayRawChange(observation?.changeRate ?? null)}
+                        </span>
+                        <span>
+                          风险变化：
+                          {observation?.riskScoreChange === null || !observation
+                            ? "—"
+                            : `${observation.riskScoreChange > 0 ? "+" : ""}${observation.riskScoreChange.toFixed(1)}分`}
+                        </span>
+                        {inputs.length ? (
+                          <span title={inputs.join("；")}>
+                            参与计算：{inputs.join("；")}
+                          </span>
+                        ) : null}
+                        {url ? (
+                          <a href={url} target="_blank" rel="noreferrer">
+                            查看来源 <ExternalLinkIcon aria-hidden="true" />
+                          </a>
+                        ) : null}
                       </td>
                     )
                   })}
@@ -350,7 +510,7 @@ export function NarrativeAnnualTrends({
   const [selectedCompanyKeys, setSelectedCompanyKeys] = useState(() =>
     listedCompanies.map((company) => company.companyKey)
   )
-  const [mode, setMode] = useState<TrendMode>("年度值")
+  const [mode, setMode] = useState<TrendMode>("风险分")
   const selectedCompanies = useMemo(
     () =>
       listedCompanies.filter((company) =>
@@ -382,7 +542,7 @@ export function NarrativeAnnualTrends({
           <span className="nr-eyebrow">新版唯一计算口径</span>
           <h2 id="nr-annual-trends-title">年度趋势</h2>
           <p>
-            仅采用《叙事风险维度测度（修改版）》；不构造跨维度总分，缺失年份按断点展示。
+            折线默认展示0—100风险分，分数越高表示风险越大；原始指标不覆盖，仍可在每张图下展开核对。
           </p>
         </div>
         <div className="nr-annual-trends__source">
@@ -399,9 +559,9 @@ export function NarrativeAnnualTrends({
       <div className="nr-method-alert" role="note">
         <AlertTriangleIcon />
         <div>
-          <strong>创新文本采用“核心词简化口径”</strong>
+          <strong>风险分是展示层，原始计算结果保持不变</strong>
           <p>
-            冻结40词，不显示成完整693词口径；同行业—年度基准不足时，叙事夸大度保持缺失。
+            按各指标风险方向，将当前五家上市样本窗口内的最低风险映射为0、最高风险映射为100。每项样本最小值、最大值和有效观测数可在详情中核对；缺失仍为空。
           </p>
         </div>
       </div>
@@ -450,7 +610,7 @@ export function NarrativeAnnualTrends({
           </div>
         </div>
         <div className="nr-mode-switch" aria-label="年度趋势显示方式">
-          {(["年度值", "年度演变率"] as const).map((item) => (
+          {(["风险分", "年度风险变化"] as const).map((item) => (
             <button
               key={item}
               type="button"
@@ -477,6 +637,8 @@ export function NarrativeAnnualTrends({
             key={metric.metricKey}
             metric={metric}
             companies={selectedCompanies}
+            documents={audit.documents}
+            methodVersion={methodology.methodVersion}
             observations={trends.observations.filter(
               (item) =>
                 item.metricKey === metric.metricKey &&
@@ -494,8 +656,9 @@ export function NarrativeAnnualTrends({
             仅展示公开来源、归档状态、章节覆盖和文件摘要；不公开年报全文或本机归档路径。
           </p>
           <Badge variant="outline">
-            情感词典已锁定 · 文件摘要{" "}
-            {methodology.methodVersion.sentimentDictionarySha256.slice(0, 12)}…
+            创新词典与情感词典均已锁定 · 文件摘要{" "}
+            {methodology.methodVersion.innovationLexiconSha256.slice(0, 8)}… /{" "}
+            {methodology.methodVersion.sentimentDictionarySha256.slice(0, 8)}…
           </Badge>
         </div>
         <div className="nr-annual-source-ledger__scroll">

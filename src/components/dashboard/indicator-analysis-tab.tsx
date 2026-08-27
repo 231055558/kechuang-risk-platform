@@ -264,6 +264,9 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
             </thead>
             <tbody>
               {weightedMetrics.map((metric) => {
+                const isR17LowRiskFloor =
+                  metric.metricName ===
+                  "no_identified_external_supplier_floor"
                 const observations = response.observations
                   .filter(
                     (observation) =>
@@ -314,11 +317,21 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
                       </span>
                     </td>
                     <td>{metric.riskScore ?? "—"}</td>
-                    <td>n={metric.sampleSize}</td>
                     <td>
-                      <ObservationDots
-                        values={observations.map((item) => item.numericValue!)}
-                      />
+                      {isR17LowRiskFloor
+                        ? "保底规则"
+                        : `n=${metric.sampleSize}`}
+                    </td>
+                    <td>
+                      {isR17LowRiskFloor ? (
+                        <span>明确零值</span>
+                      ) : (
+                        <ObservationDots
+                          values={observations.map(
+                            (item) => item.numericValue!
+                          )}
+                        />
+                      )}
                     </td>
                   </tr>
                 )
@@ -354,6 +367,8 @@ function MetricMethodSheet({
   const observations = response.observations.filter(
     (item) => item.indicatorId === metric?.indicatorId
   )
+  const isR17LowRiskFloor =
+    metric?.metricName === "no_identified_external_supplier_floor"
   const sourceIds = new Set(metric?.sourceIds ?? [])
   observations.forEach((item) => {
     sourceIds.add(item.sourceId)
@@ -372,7 +387,11 @@ function MetricMethodSheet({
             <SheetHeader>
               <div className="signal-drawer-badges">
                 <Badge variant="outline">{metric.indicatorId}</Badge>
-                <Badge variant="outline">n={metric.sampleSize}</Badge>
+                <Badge variant="outline">
+                  {isR17LowRiskFloor
+                    ? "明确零值保底"
+                    : `n=${metric.sampleSize}`}
+                </Badge>
                 <Badge variant="outline">
                   {riskHeatLabel(metric.riskPercentile)}
                 </Badge>
@@ -435,6 +454,10 @@ function MetricMethodSheet({
                       </li>
                     ))}
                   </ol>
+                ) : isR17LowRiskFloor ? (
+                  <p>
+                    本项由已披露的供应商采购暴露零值触发，代理原值为0；完整判定依据见“本次计算”和“证据来源”。
+                  </p>
                 ) : (
                   <p>当前没有可展示观测；不会以 0 代替。</p>
                 )}

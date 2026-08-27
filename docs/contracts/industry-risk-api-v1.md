@@ -5,6 +5,7 @@
 - `GET /api/v1/industry-risk/companies`
 - `GET /api/v1/industry-risk/companies/{companyId}/assessment`
 - `GET /api/v1/industry-risk/graph`（旧证据图端点，产品页不再默认使用）
+- `GET /api/v1/narrative-risk/industry-trends`（94家年报原始叙事指数与行业范围）
 
 权威 TypeScript 类型位于 `src/domain/industry-risk-v1/assessment-api.ts`，前端运行时解析位于 `src/lib/industry-risk-api.ts`。后端增加字段时，两处和测试必须在同一 PR 内更新。
 
@@ -30,6 +31,13 @@
 ## 前端禁止字段
 
 投资者页面和其新 DTO 禁止出现：`owner`、`dueDate`、`taskStatus`、`pendingAction`、`responsibleDepartment`。新闻和事件的关联只表示研究关联，不表示已进入评分。
+
+## 行业叙事年度响应
+
+- `observations[].value` 是直接计算得到的原始指数，不是0–100风险分；
+- `industryStatistics` 必须按同业组、年度和指标返回均值、最小值、最大值及样本量；
+- 企业缺失年度保持 `null + missingReason`，折线显示断点；
+- 响应不得包含年报全文、私有归档路径或付费原始数据。
 
 ## 后续预留
 

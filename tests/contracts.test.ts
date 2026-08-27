@@ -584,7 +584,7 @@ test("structured research method states the automatic calculation and action bou
   )
 })
 
-test("the eight investor workflows use the approved terminology", () => {
+test("the nine investor workflows use the approved terminology", () => {
   const overviewSource = readProjectFile(
     "src/components/dashboard/industry-risk-review-panel.tsx"
   )
