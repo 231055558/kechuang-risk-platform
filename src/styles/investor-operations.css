@@ -1,4 +1,3 @@
-.graph-integration__header,
 .investor-decision__header {
   display: flex;
   align-items: flex-start;
@@ -7,126 +6,18 @@
   padding: 4px 2px 10px;
 }
 
-.graph-integration__header h2,
 .investor-decision__header h2 {
   margin: 5px 0 7px;
   font-size: clamp(28px, 3vw, 42px);
   letter-spacing: 0;
 }
 
-.graph-integration__header p,
 .investor-decision__header p {
   max-width: 82ch;
   margin: 0;
   color: var(--risk-os-muted);
   font-size: 14px;
   line-height: 1.65;
-}
-
-.graph-integration__stage {
-  min-height: min(72vh, 760px);
-  border: 1px solid color-mix(in srgb, var(--risk-os-ink) 14%, transparent);
-  background:
-    radial-gradient(
-      circle at 50% 40%,
-      color-mix(in srgb, #5b77d8 8%, transparent),
-      transparent 34%
-    ),
-    linear-gradient(
-      color-mix(in srgb, var(--risk-os-ink) 4%, transparent) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--risk-os-ink) 4%, transparent) 1px,
-      transparent 1px
-    ),
-    var(--risk-os-surface);
-  background-size:
-    auto,
-    28px 28px,
-    28px 28px,
-    auto;
-}
-
-.graph-integration__toolbar {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  padding: 12px;
-  border-bottom: 1px solid
-    color-mix(in srgb, var(--risk-os-ink) 10%, transparent);
-}
-
-.graph-integration__empty {
-  display: grid;
-  min-height: 610px;
-  place-items: center;
-  align-content: center;
-  gap: 14px;
-  padding: 40px;
-  text-align: center;
-}
-
-.graph-integration__empty > div:first-child {
-  display: flex;
-  align-items: center;
-  color: #5b77d8;
-}
-
-.graph-integration__empty > div:first-child svg {
-  width: 44px;
-  height: 44px;
-  padding: 10px;
-  border: 1px solid color-mix(in srgb, #5b77d8 38%, transparent);
-  border-radius: 50%;
-  background: color-mix(in srgb, #5b77d8 9%, var(--risk-os-surface));
-}
-
-.graph-integration__empty > div:first-child span {
-  width: 86px;
-  height: 1px;
-  background: #5b77d8;
-}
-
-.graph-integration__empty h3 {
-  margin: 8px 0 0;
-  font-size: 23px;
-}
-
-.graph-integration__empty > p {
-  max-width: 68ch;
-  margin: 0;
-  color: var(--risk-os-muted);
-  line-height: 1.65;
-}
-
-.graph-integration__empty dl {
-  display: grid;
-  width: min(100%, 900px);
-  grid-template-columns: repeat(3, 1fr);
-  margin: 28px 0 0;
-  border: 1px solid color-mix(in srgb, var(--risk-os-ink) 11%, transparent);
-}
-
-.graph-integration__empty dl div {
-  padding: 16px;
-  text-align: left;
-}
-
-.graph-integration__empty dl div + div {
-  border-left: 1px solid color-mix(in srgb, var(--risk-os-ink) 11%, transparent);
-}
-
-.graph-integration__empty dt {
-  color: var(--risk-os-muted);
-  font-size: 11px;
-}
-
-.graph-integration__empty dd {
-  margin: 6px 0 0;
-  font-size: 13px;
-  line-height: 1.5;
 }
 
 .investor-decision__dashboard {
@@ -463,21 +354,14 @@
 }
 
 @media (max-width: 720px) {
-  .graph-integration__header,
   .investor-decision__header {
     flex-direction: column;
   }
-  .graph-integration__empty {
-    min-height: 520px;
-    padding: 24px;
-  }
-  .graph-integration__empty dl,
   .investor-decision__dashboard,
   .investor-decision__constraints,
   .risk-response__timeline {
     grid-template-columns: 1fr;
   }
-  .graph-integration__empty dl div + div,
   .investor-decision__dashboard > article + article,
   .investor-decision__constraints > article + article,
   .risk-response__timeline > article + article {
