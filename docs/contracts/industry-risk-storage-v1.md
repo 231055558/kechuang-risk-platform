@@ -21,6 +21,8 @@
 - 所有用于评分的 observation 必须能追溯到 source 和期间。
 - 新闻语料与财报叙事语料分表/分类型保存，禁止在导入器中合并。
 - 时间图谱边必须带有效期、来源和抽取版本；缺少关系语义时不得生成边。
+- `enterprise-event` 的结构化投影只允许连接已存在的 `event.relatedIndicatorId`、指标分类和事件 URL；不得由标题关键词临时生成因果边。
+- `external-subject` 快照必须同时具备目标企业股票代码、外部主体关系证据和外部事件证据。只有企业节点不得标记为该视图可用。
 - SQLite 发布前必须启用并通过 `PRAGMA foreign_key_check`，同时写入非零 `user_version`。当前历史快照尚未迁移的限制必须保留在发布说明中。
 
 ## 变更流程

@@ -6,6 +6,8 @@
 - `GET /api/v1/industry-risk/companies/{companyId}/assessment`
 - `GET /api/v1/industry-risk/graph`（旧证据图端点，产品页不再默认使用）
 
+风险传导使用独立的 `risk-graph-api-v1` 合同和 `/api/v1/risk-graphs/*` 端点，不复用旧行业证据图。
+
 权威 TypeScript 类型位于 `src/domain/industry-risk-v1/assessment-api.ts`，前端运行时解析位于 `src/lib/industry-risk-api.ts`。后端增加字段时，两处和测试必须在同一 PR 内更新。
 
 ## Assessment 响应
@@ -33,4 +35,4 @@
 
 ## 后续预留
 
-正式财报叙事评分、动态图谱和 GNN 必须使用新版本端点/合同，不能复用新闻字段或旧星型证据图伪装实现。
+正式财报叙事评分和 GNN 必须使用新版本端点/合同，不能复用新闻字段或旧星型证据图伪装实现。当前风险传导 v1 已独立建约，但时间演化/GNN 仍未纳入该合同。

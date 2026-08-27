@@ -12,6 +12,7 @@ import {
   getKcrCompanyAssessment,
   scoreKcrAssessment,
 } from "./kcr-assessment-service.ts"
+import { getRiskGraph, listRiskGraphCompanies } from "./risk-graph-service.ts"
 
 function readPort(value: string | undefined) {
   const port = Number(value ?? "5000")
@@ -38,6 +39,8 @@ const server = createProductionServer({
   listIndustryRiskCompanies,
   getIndustryRiskAssessment,
   getIndustryRiskGraph: getIndustryRiskKnowledgeGraph,
+  listRiskGraphCompanies,
+  getRiskGraph,
 })
 
 server.listen(port, host, () => {

@@ -3,6 +3,7 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import test from "node:test"
+import type { RiskGraphView } from "../src/domain/risk-graph-v1/index.ts"
 import { createProductionServer } from "./http-server.ts"
 
 async function startTestServer(options?: {
@@ -14,6 +15,12 @@ async function startTestServer(options?: {
   listIndustryRiskCompanies?: () => unknown | Promise<unknown>
   getIndustryRiskAssessment?: (companyId: string) => unknown | Promise<unknown>
   getIndustryRiskGraph?: () => unknown | Promise<unknown>
+  listRiskGraphCompanies?: () => unknown | Promise<unknown>
+  getRiskGraph?: (
+    companyId: string,
+    view: RiskGraphView,
+    minWeight?: number
+  ) => unknown | Promise<unknown>
   maxBodyBytes?: number
 }) {
   const staticRoot = mkdtempSync(join(tmpdir(), "risk-platform-server-test-"))
@@ -48,6 +55,8 @@ async function startTestServer(options?: {
     listIndustryRiskCompanies: options?.listIndustryRiskCompanies,
     getIndustryRiskAssessment: options?.getIndustryRiskAssessment,
     getIndustryRiskGraph: options?.getIndustryRiskGraph,
+    listRiskGraphCompanies: options?.listRiskGraphCompanies,
+    getRiskGraph: options?.getRiskGraph,
     maxBodyBytes: options?.maxBodyBytes,
   })
 
@@ -313,6 +322,67 @@ test("industry risk API returns safe 404 and method errors", async () => {
     )
     assert.equal(wrongMethod.status, 405)
     assert.equal(wrongMethod.headers.get("allow"), "GET")
+  } finally {
+    await testServer.close()
+  }
+})
+
+test("risk graph API exposes coverage and validates the versioned view query", async () => {
+  const received: unknown[] = []
+  const testServer = await startTestServer({
+    listRiskGraphCompanies() {
+      return {
+        contractVersion: "KCR-RISK-GRAPH-2026.08-v1",
+        sampleSize: 94,
+        companies: [],
+      }
+    },
+    getRiskGraph(companyId, view, minWeight) {
+      received.push({ companyId, view, minWeight })
+      return {
+        contractVersion: "KCR-RISK-GRAPH-2026.08-v1",
+        company: { companyId, companyName: "寒武纪", stockCode: "688256" },
+        view,
+        minWeight,
+        nodes: [],
+        edges: [],
+      }
+    },
+  })
+
+  try {
+    const directory = await fetch(
+      `${testServer.baseUrl}/api/v1/risk-graphs/companies`
+    )
+    assert.equal(directory.status, 200)
+    assert.equal((await directory.json()).sampleSize, 94)
+
+    const graph = await fetch(
+      `${testServer.baseUrl}/api/v1/risk-graphs/companies/star-688256/views/external-subject?minWeight=0.7`
+    )
+    assert.equal(graph.status, 200)
+    assert.equal((await graph.json()).view, "external-subject")
+    assert.deepEqual(received, [
+      {
+        companyId: "star-688256",
+        view: "external-subject",
+        minWeight: 0.7,
+      },
+    ])
+
+    const invalidWeight = await fetch(
+      `${testServer.baseUrl}/api/v1/risk-graphs/companies/star-688256/views/enterprise-event?minWeight=2`
+    )
+    assert.equal(invalidWeight.status, 400)
+    assert.equal(
+      (await invalidWeight.json()).error.code,
+      "RISK_GRAPH_QUERY_INVALID"
+    )
+
+    const invalidView = await fetch(
+      `${testServer.baseUrl}/api/v1/risk-graphs/companies/star-688256/views/made-up`
+    )
+    assert.equal(invalidView.status, 404)
   } finally {
     await testServer.close()
   }
