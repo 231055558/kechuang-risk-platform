@@ -16,6 +16,11 @@ import {
   INDUSTRY_RISK_COMPANIES_API_PATH,
   INDUSTRY_RISK_GRAPH_API_PATH,
 } from "../src/domain/industry-risk-v1/assessment-api.ts"
+import {
+  RISK_GRAPH_COMPANIES_API_PATH,
+  RISK_GRAPH_VIEWS,
+  type RiskGraphView,
+} from "../src/domain/risk-graph-v1/api.ts"
 
 const TECHNOLOGY_SCORE_PATH = "/api/v1/technology-risk/score"
 const TECHNOLOGY_BASELINE_QUANTIFY_PATH =
@@ -25,6 +30,8 @@ const KCR_COMPANY_ASSESSMENT_PATH_PREFIX = `/${KCR_COMPANY_ASSESSMENT_API_PREFIX
 const INDUSTRY_RISK_COMPANIES_PATH = `/${INDUSTRY_RISK_COMPANIES_API_PATH}`
 const INDUSTRY_RISK_COMPANY_PATH_PREFIX = `${INDUSTRY_RISK_COMPANIES_PATH}/`
 const INDUSTRY_RISK_GRAPH_PATH = `/${INDUSTRY_RISK_GRAPH_API_PATH}`
+const RISK_GRAPH_COMPANIES_PATH = `/${RISK_GRAPH_COMPANIES_API_PATH}`
+const RISK_GRAPH_COMPANY_PATH_PREFIX = `${RISK_GRAPH_COMPANIES_PATH}/`
 const DEFAULT_MAX_BODY_BYTES = 1024 * 1024
 
 const contentTypes: Record<string, string> = {
@@ -54,6 +61,12 @@ export type KcrAssessmentReader = (
 ) => unknown | Promise<unknown>
 export type IndustryRiskCompanyLister = () => unknown | Promise<unknown>
 export type IndustryRiskAssessmentReader = KcrAssessmentReader
+export type RiskGraphCompanyLister = IndustryRiskCompanyLister
+export type RiskGraphReader = (
+  companyId: string,
+  view: RiskGraphView,
+  minWeight?: number
+) => unknown | Promise<unknown>
 
 export interface ProductionServerOptions {
   staticRoot: string
@@ -64,6 +77,8 @@ export interface ProductionServerOptions {
   listIndustryRiskCompanies?: IndustryRiskCompanyLister
   getIndustryRiskAssessment?: IndustryRiskAssessmentReader
   getIndustryRiskGraph?: IndustryRiskCompanyLister
+  listRiskGraphCompanies?: RiskGraphCompanyLister
+  getRiskGraph?: RiskGraphReader
   basePath?: string
   maxBodyBytes?: number
 }
@@ -158,6 +173,31 @@ function getRequestPath(request: IncomingMessage, basePath: string) {
   } catch {
     return null
   }
+}
+
+function getRiskGraphViewRequest(pathname: string) {
+  if (!pathname.startsWith(RISK_GRAPH_COMPANY_PATH_PREFIX)) return null
+  const suffix = pathname.slice(RISK_GRAPH_COMPANY_PATH_PREFIX.length)
+  const match = suffix.match(/^([^/]+)\/views\/([^/]+)$/)
+  if (!match) return null
+  try {
+    const companyId = decodeURIComponent(match[1])
+    const view = decodeURIComponent(match[2])
+    if (!companyId || !RISK_GRAPH_VIEWS.includes(view as RiskGraphView)) {
+      return null
+    }
+    return { companyId, view: view as RiskGraphView }
+  } catch {
+    return null
+  }
+}
+
+function readRiskGraphMinWeight(request: IncomingMessage) {
+  const url = new URL(request.url ?? "/", "http://127.0.0.1")
+  const raw = url.searchParams.get("minWeight")
+  if (raw === null || raw === "") return 0.5
+  const value = Number(raw)
+  return Number.isFinite(value) && value >= 0.35 && value <= 0.95 ? value : null
 }
 
 async function readJsonBody(
@@ -624,6 +664,101 @@ async function handleIndustryRiskAssessment(
   }
 }
 
+async function handleRiskGraphCompanyDirectory(
+  request: IncomingMessage,
+  response: ServerResponse,
+  listCompanies?: RiskGraphCompanyLister
+) {
+  if (request.method !== "GET") {
+    sendApiError(
+      response,
+      405,
+      "METHOD_NOT_ALLOWED",
+      "该接口仅支持 GET 请求。",
+      { allow: "GET" }
+    )
+    return
+  }
+  if (!listCompanies) {
+    sendApiError(
+      response,
+      503,
+      "RISK_GRAPH_UNAVAILABLE",
+      "风险图谱服务尚未配置。"
+    )
+    return
+  }
+  try {
+    sendJson(response, 200, await listCompanies())
+  } catch (error) {
+    console.error("Risk graph company directory failed", error)
+    sendApiError(
+      response,
+      500,
+      "RISK_GRAPH_FAILED",
+      "风险图谱覆盖信息暂时不可用。"
+    )
+  }
+}
+
+async function handleRiskGraph(
+  request: IncomingMessage,
+  response: ServerResponse,
+  companyId: string,
+  view: RiskGraphView,
+  getGraph?: RiskGraphReader
+) {
+  if (request.method !== "GET") {
+    sendApiError(
+      response,
+      405,
+      "METHOD_NOT_ALLOWED",
+      "该接口仅支持 GET 请求。",
+      { allow: "GET" }
+    )
+    return
+  }
+  if (!getGraph) {
+    sendApiError(
+      response,
+      503,
+      "RISK_GRAPH_UNAVAILABLE",
+      "风险图谱服务尚未配置。"
+    )
+    return
+  }
+  const minWeight = readRiskGraphMinWeight(request)
+  if (minWeight === null) {
+    sendApiError(
+      response,
+      400,
+      "RISK_GRAPH_QUERY_INVALID",
+      "minWeight 必须是 0.35 到 0.95 之间的数字。"
+    )
+    return
+  }
+  try {
+    sendJson(response, 200, await getGraph(companyId, view, minWeight))
+  } catch (error) {
+    const publicError = getPublicError(
+      error,
+      "RISK_GRAPH_QUERY_INVALID",
+      "风险图谱查询无效。"
+    )
+    if (publicError) {
+      sendApiError(
+        response,
+        publicError.statusCode,
+        publicError.code,
+        publicError.message
+      )
+      return
+    }
+    console.error("Risk graph retrieval failed", error)
+    sendApiError(response, 500, "RISK_GRAPH_FAILED", "风险图谱暂时不可用。")
+  }
+}
+
 function isPrivateStaticPath(pathname: string) {
   const segments = pathname.split("/").filter(Boolean)
   return (
@@ -805,6 +940,27 @@ export function createProductionServer(
           request,
           response,
           options.getIndustryRiskGraph
+        )
+        return
+      }
+
+      if (pathname === RISK_GRAPH_COMPANIES_PATH) {
+        await handleRiskGraphCompanyDirectory(
+          request,
+          response,
+          options.listRiskGraphCompanies
+        )
+        return
+      }
+
+      const riskGraphRequest = getRiskGraphViewRequest(pathname)
+      if (riskGraphRequest !== null) {
+        await handleRiskGraph(
+          request,
+          response,
+          riskGraphRequest.companyId,
+          riskGraphRequest.view,
+          options.getRiskGraph
         )
         return
       }
