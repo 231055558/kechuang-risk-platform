@@ -26,6 +26,29 @@ python tools/serve_fee_kbg_preview.py `
 
 打开 `http://127.0.0.1:8766/`。
 
+## 将演示快照同步到自己的 Neo4j
+
+每位协作者安装并启动自己的 Neo4j Desktop（或兼容的 Neo4j 5.x），然后：
+
+```powershell
+cd knowledge-graph/backend
+python -m pip install -r requirements.txt
+$secure = Read-Host "Neo4j password" -AsSecureString
+$env:NEO4J_PASSWORD = [System.Net.NetworkCredential]::new("", $secure).Password
+python tools/sync_neo4j_graph.py `
+  --db ../demo/cambricon_fee_kbg_demo.sqlite `
+  --run-id cambricon_fee_kbg_20260826_v1 `
+  --mark-not-in-snapshot `
+  --replace-relation-types
+python tools/serve_risk_graph_api.py
+```
+
+随后访问 `http://127.0.0.1:8765/`。Neo4j 中会得到演示快照的 143 个节点和 295 条关系。
+
+Neo4j 定位为可查询、可计算的运行投影，JSON/SQLite 快照和构图规则才是可提交的事实来源。
+可以在 Neo4j Browser 中试验 Cypher，但需要共享的正式修改应回写到
+`demo/cambricon_fee_kbg_snapshot.json`、配置或构图代码，再重新生成 SQLite 并同步，避免个人 Neo4j 与仓库漂移。
+
 ## 如何修改
 
 1. 布局、颜色和交互：修改 `frontend/risk-knowledge-graph.html`。

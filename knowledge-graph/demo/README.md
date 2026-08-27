@@ -13,3 +13,6 @@ python tools/snapshot_bundle.py import `
 ```
 
 工具默认拒绝覆盖已有文件。确认新文件后再自行替换旧演示快照。
+
+生成后可使用 `backend/tools/sync_neo4j_graph.py --db` 将新 SQLite 投影到个人 Neo4j。
+不要只修改个人 Neo4j 而不提交 JSON/配置，否则其他协作者无法复现这些变化。
