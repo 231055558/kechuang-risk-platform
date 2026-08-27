@@ -10,7 +10,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Verify a completed Cambricon FEE-KBG pilot snapshot.")
+    parser = argparse.ArgumentParser(description="Verify a completed company FEE-KBG pilot snapshot.")
     parser.add_argument("--run-id", required=True)
     parser.add_argument("--db", default="data/risk_data.sqlite")
     args = parser.parse_args()
@@ -41,8 +41,8 @@ def main() -> None:
         """SELECT COUNT(*) FROM knowledge_graph_snapshot_nodes s
            JOIN knowledge_graph_nodes n ON n.node_key=s.node_key
            WHERE s.run_id=? AND n.node_type='company'
-             AND json_extract(n.attributes_json,'$.stock_code')<>'688256'""",
-        (args.run_id,),
+             AND json_extract(n.attributes_json,'$.stock_code')<>?""",
+        (args.run_id, run["stock_code"]),
     ).fetchone()[0]
     invalid_impact_weights = conn.execute(
         """SELECT COUNT(*) FROM fee_subject_impacts
@@ -103,7 +103,7 @@ def main() -> None:
         "validation_issues": [dict(row) for row in issue_rows],
         "checks": {
             "completed": run["status"] == "completed",
-            "cambricon_only": run["stock_code"] == "688256" and other_companies == 0,
+            "target_company_only": other_companies == 0,
             "no_dangling_edges": dangling == 0,
             "all_evolution_edges_forward": non_forward == 0,
             "subject_impact_weights_valid": invalid_impact_weights == 0 and subject_impact_count > 0,
