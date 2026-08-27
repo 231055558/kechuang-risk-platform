@@ -21,7 +21,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.neo4j_sync import load_schema  # noqa: E402
 
-DEFAULT_WEB_ROOT = PROJECT_ROOT.parent / "frontend"
+DEFAULT_WEB_ROOT = Path(r"D:\codex\知识图谱")
 MAX_GRAPH_LIMIT = 600
 CHAIN_PARTNER_RELATIONS = {
     "procures_from": "upstream",
@@ -227,7 +227,8 @@ class GraphReader:
         node_rows = self._run(
             """
             MATCH (n:RiskNode)
-            WHERE n.in_snapshot = true AND n.snapshot_run_id = $run_id
+            WHERE n.in_snapshot = true
+              AND $run_id IN coalesce(n.snapshot_run_ids, [n.snapshot_run_id])
               AND n.attributes_json CONTAINS '"fee_kbg": true'
             RETURN n
             ORDER BY n.node_type, n.canonical_name
@@ -241,7 +242,8 @@ class GraphReader:
         edge_rows = self._run(
             """
             MATCH (source:RiskNode)-[rel]->(target:RiskNode)
-            WHERE rel.in_snapshot = true AND rel.snapshot_run_id = $run_id
+            WHERE rel.in_snapshot = true
+              AND $run_id IN coalesce(rel.snapshot_run_ids, [rel.snapshot_run_id])
               AND rel.attributes_json CONTAINS '"fee_kbg": true'
               AND source.node_key IN $node_keys AND target.node_key IN $node_keys
             RETURN source, rel, target

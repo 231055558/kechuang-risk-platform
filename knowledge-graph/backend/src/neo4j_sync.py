@@ -104,6 +104,7 @@ class Neo4jRiskGraphSync:
                         session,
                         [str(row["node_key"]) for row in nodes],
                         [str(row["edge_key"]) for row in edges],
+                        run_id,
                     )
             return {"run_id": run_id, "nodes_synced": len(nodes), "edges_synced": len(edges), "prune_snapshot_members": int(prune_snapshot_members), "legacy_relation_types_removed": int(replace_relation_types)}
         finally:
@@ -122,8 +123,22 @@ class Neo4jRiskGraphSync:
             "first_seen_run_id": row["first_seen_run_id"], "last_seen_run_id": row["last_seen_run_id"],
             "snapshot_run_id": run_id, "in_snapshot": True, "created_at": row["created_at"], "updated_at": row["updated_at"],
         }
-        query = f"MERGE (n:RiskNode {{node_key: $node_key}}) SET n += $props SET n:{label}"
-        session.run(query, node_key=row["node_key"], props=props).consume()
+        query = f"""
+            MERGE (n:RiskNode {{node_key: $node_key}})
+            WITH n, CASE
+                WHEN n.snapshot_run_ids IS NOT NULL THEN n.snapshot_run_ids
+                WHEN n.snapshot_run_id IS NOT NULL THEN [n.snapshot_run_id]
+                ELSE []
+            END AS previous_memberships
+            SET n += $props
+            SET n.snapshot_run_ids = CASE
+                WHEN $run_id IN previous_memberships THEN previous_memberships
+                ELSE previous_memberships + $run_id
+            END,
+            n.in_snapshot = true
+            SET n:{label}
+        """
+        session.run(query, node_key=row["node_key"], props=props, run_id=run_id).consume()
 
     def _merge_edge(self, session, row: sqlite3.Row, run_id: str) -> None:
         relation = self.schema["relationship_types"].get(row["relation_type"], "RELATED_TO")
@@ -140,25 +155,60 @@ class Neo4jRiskGraphSync:
         query = f"""
             MATCH (s:RiskNode {{node_key: $subject_key}}), (o:RiskNode {{node_key: $object_key}})
             MERGE (s)-[r:{relation} {{edge_key: $edge_key}}]->(o)
+            WITH r, CASE
+                WHEN r.snapshot_run_ids IS NOT NULL THEN r.snapshot_run_ids
+                WHEN r.snapshot_run_id IS NOT NULL THEN [r.snapshot_run_id]
+                ELSE []
+            END AS previous_memberships
             SET r += $props
+            SET r.snapshot_run_ids = CASE
+                WHEN $run_id IN previous_memberships THEN previous_memberships
+                ELSE previous_memberships + $run_id
+            END,
+            r.in_snapshot = true
         """
-        session.run(query, subject_key=row["subject_key"], object_key=row["object_key"], edge_key=row["edge_key"], props=props).consume()
+        session.run(
+            query, subject_key=row["subject_key"], object_key=row["object_key"],
+            edge_key=row["edge_key"], props=props, run_id=run_id,
+        ).consume()
 
-    def _mark_not_in_snapshot(self, session, node_keys: list[str], edge_keys: list[str]) -> None:
-        """Deactivate exactly the Neo4j members absent from this SQLite snapshot.
+    def _mark_not_in_snapshot(self, session, node_keys: list[str], edge_keys: list[str], run_id: str) -> None:
+        """Remove one run membership from members absent from its rebuilt snapshot.
 
         A run id may be rebuilt in place during curation.  Comparing only the
         previous ``snapshot_run_id`` leaves nodes that were removed from the
         rebuilt run incorrectly active.  Snapshot membership is the actual
         contract, so use the stable node/edge keys loaded from SQLite instead.
+        Other companies' active snapshot memberships are preserved.
         """
         session.run(
-            "MATCH (n:RiskNode) WHERE NOT (n.node_key IN $node_keys) SET n.in_snapshot = false",
-            node_keys=node_keys,
+            """
+            MATCH (n:RiskNode)
+            WITH n, CASE
+                WHEN n.snapshot_run_ids IS NOT NULL THEN n.snapshot_run_ids
+                WHEN n.snapshot_run_id IS NOT NULL THEN [n.snapshot_run_id]
+                ELSE []
+            END AS memberships
+            WHERE $run_id IN memberships AND NOT (n.node_key IN $node_keys)
+            WITH n, [value IN memberships WHERE value <> $run_id] AS remaining
+            SET n.snapshot_run_ids = remaining, n.in_snapshot = size(remaining) > 0
+            """,
+            node_keys=node_keys, run_id=run_id,
         ).consume()
         session.run(
-            "MATCH ()-[r]->() WHERE r.edge_key IS NOT NULL AND NOT (r.edge_key IN $edge_keys) SET r.in_snapshot = false",
-            edge_keys=edge_keys,
+            """
+            MATCH ()-[r]->()
+            WHERE r.edge_key IS NOT NULL
+            WITH r, CASE
+                WHEN r.snapshot_run_ids IS NOT NULL THEN r.snapshot_run_ids
+                WHEN r.snapshot_run_id IS NOT NULL THEN [r.snapshot_run_id]
+                ELSE []
+            END AS memberships
+            WHERE $run_id IN memberships AND NOT (r.edge_key IN $edge_keys)
+            WITH r, [value IN memberships WHERE value <> $run_id] AS remaining
+            SET r.snapshot_run_ids = remaining, r.in_snapshot = size(remaining) > 0
+            """,
+            edge_keys=edge_keys, run_id=run_id,
         ).consume()
 
     def _remove_legacy_relation_types(self, session) -> None:

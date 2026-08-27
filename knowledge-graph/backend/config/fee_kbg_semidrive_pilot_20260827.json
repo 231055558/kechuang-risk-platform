@@ -1,0 +1,357 @@
+{
+  "version": "fee-kbg-semidrive-1.0.0",
+  "scope": "semidrive-company-pilot",
+  "pilot_company": {
+    "stock_code": "PRIVATE-SEMIDRIVE",
+    "name": "北京芯驰半导体科技股份有限公司",
+    "as_of_date": "2026-08-27"
+  },
+  "quality": {
+    "minimum_event_confidence": 0.6,
+    "maximum_concepts": 6,
+    "maximum_evolution_gap_days": 3650,
+    "include_review_candidates_in_graph": true,
+    "include_review_candidates_in_scores": false
+  },
+  "event_type_topics": {
+    "不正当竞争诉讼事件": {
+      "topic": "诉讼与知识产权",
+      "indicators": ["R09", "R12", "R21"],
+      "risk_polarity": 0.82,
+      "direction": "adverse"
+    },
+    "核心管理层变动事件": {
+      "topic": "关键人员变动",
+      "indicators": ["R06", "R21", "R22"],
+      "risk_polarity": 0.65,
+      "direction": "adverse"
+    },
+    "智能驾驶业务调整事件": {
+      "topic": "产品战略与研发路线调整",
+      "indicators": ["R07", "R08", "R16", "R22"],
+      "risk_polarity": 0.8,
+      "direction": "adverse"
+    }
+  },
+  "title_rules": [
+    {
+      "pattern": "恩智浦.*起诉|不正当竞争.*诉讼|诉讼.*不正当竞争",
+      "topic": "诉讼与知识产权",
+      "indicators": ["R09", "R12", "R21"],
+      "risk_polarity": 0.82,
+      "direction": "adverse"
+    },
+    {
+      "pattern": "中止.*智能驾驶|智能驾驶.*业务.*中止|智驾.*业务.*调整",
+      "topic": "产品战略与研发路线调整",
+      "indicators": ["R07", "R08", "R16", "R22"],
+      "risk_polarity": 0.8,
+      "direction": "adverse"
+    },
+    {
+      "pattern": "首席执行官.*(加入|调整|变动)|管理层.*(调整|变动)|创始人.*分工",
+      "topic": "关键人员变动",
+      "indicators": ["R06", "R21", "R22"],
+      "risk_polarity": 0.65,
+      "direction": "adverse"
+    }
+  ],
+  "event_evolution": {
+    "model_version": "fee-evolution-char-tfidf-1.0.0",
+    "threshold": 0.48,
+    "top_k_forward": 2,
+    "time_decay_days": 1095,
+    "weights": {
+      "time_decay": 0.25,
+      "topic": 0.25,
+      "semantic": 0.25,
+      "subject": 0.15,
+      "polarity": 0.1
+    }
+  },
+  "risk_transmission": {
+    "model_version": "fee-subject-impact-semidrive-1.0.0",
+    "default_min_weight": 0.5,
+    "minimum_supported_weight": 0.35,
+    "maximum_subjects": 14,
+    "weights": {
+      "event_severity": 0.45,
+      "evidence_confidence": 0.35,
+      "relation_directness": 0.2
+    },
+    "supplier_weights": {
+      "purchase_share": 0.45,
+      "event_severity": 0.35,
+      "evidence_confidence": 0.2
+    },
+    "role_directness": {
+      "listing_authority": 0.95,
+      "regulator": 0.9,
+      "inquirer": 0.8,
+      "adjudicator": 0.85,
+      "participant": 0.6,
+      "key_person_group": 0.9,
+      "internal_factor": 0.9
+    },
+    "impact_levels": {
+      "high": 0.75,
+      "medium": 0.5,
+      "low": 0.35
+    }
+  },
+  "subject_panorama": {
+    "model_version": "fee-subject-influence-semidrive-1.0.0",
+    "default_min_weight": 0.5,
+    "minimum_supported_weight": 0.35,
+    "counterparty_weights": {
+      "relationship_scale": 0.55,
+      "recency": 0.25,
+      "evidence_confidence": 0.2
+    },
+    "counterparty_overrides": {
+      "台积电": 0.95,
+      "安谋科技（中国）有限公司": 0.88,
+      "新思科技有限公司": 0.86,
+      "铿腾电子设计系统公司": 0.84,
+      "通富微电子股份有限公司": 0.8,
+      "日月光集团": 0.76,
+      "西门子电子设计自动化": 0.72,
+      "想象科技": 0.7,
+      "安特瑞斯知识产权公司": 0.68,
+      "宜特科技": 0.62
+    },
+    "equity_weights": {
+      "holding_ratio": 0.7,
+      "relationship_directness": 0.1,
+      "evidence_confidence": 0.2
+    },
+    "personnel_weights": {
+      "role_criticality": 0.65,
+      "technical_criticality": 0.15,
+      "evidence_confidence": 0.2
+    }
+  },
+  "external_subject_transmission": {
+    "model_version": "fee-external-subject-transmission-semidrive-1.0.0",
+    "weights": {
+      "subject_importance": 0.45,
+      "event_severity": 0.35,
+      "evidence_confidence": 0.2
+    },
+    "paths": [
+      {
+        "path_id": "arm-china-governance-20220429-semidrive",
+        "event_owner": {
+          "name": "安谋科技（中国）有限公司",
+          "entity_type": "supplier",
+          "confidence": 0.98
+        },
+        "via_subject": {"name": "安谋科技（中国）有限公司"},
+        "via_subject_verified": true,
+        "external_event": {
+          "event_date": "2022-04-29",
+          "event_type": "external_governance_event",
+          "topic": "外部主体治理风险",
+          "title": "安谋科技长期公司治理问题经董事会改选后解决",
+          "severity": 0.65,
+          "status": "resolved_with_residual_exposure",
+          "source_url": "https://newsroom.arm.com/news/arm-China-majority-shareholders-announce-the-companys-corporate-governance-issue-has-been-resolved",
+          "source_title": "安谋科技多数股东关于公司治理问题已解决的公告",
+          "source_institution": "安谋控股新闻中心",
+          "evidence_quote": "安谋控股多数股东公告确认安谋科技曾存在长期公司治理问题，并于2022年4月29日经董事会表决改任联席首席执行官后解决。",
+          "confidence": 0.98,
+          "browser_verified": true
+        },
+        "transmission_channel": "知识产权授权与技术服务连续性",
+        "mechanism": "安谋科技的治理稳定性可能经知识产权授权与技术服务合作关系影响芯驰的产品研发和授权连续性；该事件已经解决，因此仅保留历史暴露。",
+        "indicator_ids": ["R17", "R19"],
+        "path_attenuation": 0.84
+      },
+      {
+        "path_id": "synopsys-china-export-restriction-20250529-semidrive",
+        "event_owner": {
+          "name": "新思科技有限公司",
+          "entity_type": "supplier",
+          "confidence": 0.97
+        },
+        "via_subject": {"name": "新思科技有限公司"},
+        "via_subject_verified": true,
+        "external_event": {
+          "event_date": "2025-05-29",
+          "event_type": "external_export_control_event",
+          "topic": "供应商出口管制事件",
+          "title": "新思科技收到美国对华电子设计自动化产品出口许可限制通知",
+          "severity": 0.85,
+          "status": "subsequently_rescinded",
+          "source_url": "https://investor.synopsys.com/news/news-details/2025/Synopsys-Issues-Statement-in-Connection-to-the-Lifting-of-Recent-U-S--Export-Restrictions-Related-to-China/default.aspx",
+          "source_title": "新思科技关于近期对华出口限制解除的声明",
+          "source_institution": "新思科技投资者关系网站",
+          "evidence_quote": "新思科技官方声明确认其于2025年5月29日收到限制通知，并在2025年7月2日获知相关限制已撤销。",
+          "confidence": 0.97,
+          "browser_verified": true
+        },
+        "transmission_channel": "电子设计自动化工具与技术服务可得性",
+        "mechanism": "芯驰官网将新思科技列为电子设计自动化合作伙伴；供应商的出口许可限制可能影响研发工具访问和技术服务连续性。",
+        "indicator_ids": ["R17", "R19"],
+        "path_attenuation": 0.88
+      },
+      {
+        "path_id": "synopsys-restriction-rescinded-20250702-semidrive",
+        "evolves_from_event_id": "synopsys-china-export-restriction-20250529-semidrive",
+        "event_owner": {
+          "name": "新思科技有限公司",
+          "entity_type": "supplier",
+          "confidence": 0.97
+        },
+        "via_subject": {"name": "新思科技有限公司"},
+        "via_subject_verified": true,
+        "external_event": {
+          "event_date": "2025-07-02",
+          "event_type": "external_risk_mitigation_event",
+          "topic": "出口管制缓释事件",
+          "title": "美国撤销对新思科技相关对华出口限制",
+          "severity": 0.25,
+          "status": "mitigated",
+          "source_url": "https://investor.synopsys.com/news/news-details/2025/Synopsys-Issues-Statement-in-Connection-to-the-Lifting-of-Recent-U-S--Export-Restrictions-Related-to-China/default.aspx",
+          "source_title": "新思科技关于近期对华出口限制解除的声明",
+          "source_institution": "新思科技投资者关系网站",
+          "evidence_quote": "新思科技官方声明确认相关限制已撤销，公司开始恢复中国客户对受限产品的访问。",
+          "confidence": 0.97,
+          "browser_verified": true
+        },
+        "transmission_channel": "电子设计自动化工具供应风险缓释",
+        "mechanism": "限制撤销降低了芯驰研发工具可得性的短期冲击，但不能消除未来政策变化风险。",
+        "indicator_ids": ["R17", "R19"],
+        "path_attenuation": 0.75
+      },
+      {
+        "path_id": "cadence-export-compliance-20250728-semidrive",
+        "event_owner": {
+          "name": "铿腾电子设计系统公司",
+          "entity_type": "supplier",
+          "confidence": 0.96
+        },
+        "via_subject": {"name": "铿腾电子设计系统公司"},
+        "via_subject_verified": true,
+        "external_event": {
+          "event_date": "2025-07-28",
+          "event_type": "external_compliance_event",
+          "topic": "供应商出口合规事件",
+          "title": "铿腾电子同意就违规出口电子设计自动化技术认罪并支付逾1.4亿美元",
+          "severity": 0.78,
+          "status": "resolved_with_residual_exposure",
+          "source_url": "https://www.justice.gov/opa/pr/cadence-design-systems-agrees-plead-guilty-and-pay-over-140-million-unlawfully-exporting",
+          "source_title": "美国司法部关于铿腾电子违规出口案件的公告",
+          "source_institution": "美国司法部",
+          "evidence_quote": "美国司法部公开结果显示，铿腾电子同意就违规出口相关技术认罪并支付超过1.4亿美元。",
+          "confidence": 0.96,
+          "browser_verified": true
+        },
+        "transmission_channel": "电子设计自动化供应商合规与服务连续性",
+        "mechanism": "芯驰官网将铿腾电子列为电子设计自动化合作伙伴；供应商的出口合规处罚可能提高后续许可审查、服务交付与政策不确定性。",
+        "indicator_ids": ["R10", "R17", "R19", "R21"],
+        "path_attenuation": 0.82
+      }
+    ]
+  },
+  "forward_risk_evolution": {
+    "model_version": "semidrive-conditional-risk-evolution-1.0.0",
+    "max_rules_per_event": 1,
+    "rules": [
+      {
+        "rule_id": "product-pause-to-roadmap-pressure",
+        "event_pattern": "中止.*智能驾驶|智能驾驶.*业务.*中止|产品战略与研发路线调整",
+        "steps": [
+          {
+            "scenario_id": "semidrive-intelligent-driving-restart-delay",
+            "label": "智能驾驶产品路线持续收缩或恢复延迟",
+            "severity": 0.88,
+            "probability": 0.56,
+            "horizon": "6-18个月",
+            "conditions": "产品认证、客户定点或研发资源投入未达到重启要求",
+            "indicator_ids": ["R07", "R08"]
+          },
+          {
+            "scenario_id": "semidrive-talent-resource-pressure",
+            "label": "核心人才流失与研发资源配置压力扩大",
+            "severity": 0.94,
+            "probability": 0.42,
+            "horizon": "12-24个月",
+            "conditions": "战略调整持续且关键岗位补充和团队稳定措施不及预期",
+            "indicator_ids": ["R16", "R22"]
+          }
+        ]
+      },
+      {
+        "rule_id": "management-change-to-governance-pressure",
+        "event_pattern": "首席执行官|管理层|关键人员变动",
+        "steps": [
+          {
+            "scenario_id": "semidrive-management-stability-pressure",
+            "label": "管理层协同与关键岗位稳定性承压",
+            "severity": 0.78,
+            "probability": 0.45,
+            "horizon": "3-12个月",
+            "conditions": "职责边界、战略分工或关键岗位交接未形成稳定机制",
+            "indicator_ids": ["R06", "R22"]
+          },
+          {
+            "scenario_id": "semidrive-strategy-execution-delay",
+            "label": "产品战略执行与客户项目推进延迟",
+            "severity": 0.86,
+            "probability": 0.34,
+            "horizon": "6-18个月",
+            "conditions": "组织调整影响研发决策、客户支持或量产项目交付",
+            "indicator_ids": ["R08", "R16"]
+          }
+        ]
+      },
+      {
+        "rule_id": "litigation-to-ip-governance-pressure",
+        "event_pattern": "诉讼|不正当竞争|知识产权",
+        "steps": [
+          {
+            "scenario_id": "semidrive-litigation-compliance-pressure",
+            "label": "诉讼成本与商业秘密合规压力扩大",
+            "severity": 0.89,
+            "probability": 0.45,
+            "horizon": "3-12个月",
+            "conditions": "案件出现不利裁判、赔偿义务或同类争议再次发生",
+            "indicator_ids": ["R09", "R12", "R21"]
+          },
+          {
+            "scenario_id": "semidrive-rd-reputation-pressure",
+            "label": "核心研发团队稳定性与融资声誉承压",
+            "severity": 0.95,
+            "probability": 0.32,
+            "horizon": "6-18个月",
+            "conditions": "诉讼结果影响人才、客户合作或后续融资尽调",
+            "indicator_ids": ["R16", "R22"]
+          }
+        ]
+      }
+    ]
+  },
+  "risk_indexes": {
+    "model_version": "paper-baseline-semidrive-1.0.0",
+    "relation_weights": {
+      "equity": 0.4,
+      "industry": 0.3,
+      "personnel": 0.2,
+      "concept": 0.1
+    },
+    "experimental_layers": ["supply_chain"],
+    "historical_risk_categories": [
+      "技术风险",
+      "合规风险",
+      "财务融资风险",
+      "外部环境风险",
+      "人员与治理风险"
+    ],
+    "warning_weights": {
+      "entity_association_conservative": 0.5,
+      "historical_risk": 0.5
+    }
+  }
+}
+
