@@ -5,7 +5,9 @@ import {
   calculateAnnualChange,
   calculateDisclosureQuality,
   calculateInnovationActionStrength,
+  calculateInnovationNarrativeDivergence,
   calculateTone,
+  mapSampleRangeRisk,
   minMaxMap,
   normalizeInformationSufficiency,
   winsorize,
@@ -47,6 +49,29 @@ test("创新行动强度只接受非负整数的年度发明申请数", () => {
   assert.equal(calculateInnovationActionStrength(9), Math.log(10))
   assert.throws(() => calculateInnovationActionStrength(-1), RangeError)
   assert.throws(() => calculateInnovationActionStrength(1.5), RangeError)
+})
+
+test("叙事夸大度按方案二计算企业自身言行对数差", () => {
+  assert.equal(calculateInnovationNarrativeDivergence(20, 0), Math.log(21))
+  assert.equal(
+    calculateInnovationNarrativeDivergence(20, 10),
+    Math.log(21) - Math.log(11)
+  )
+  assert.ok(calculateInnovationNarrativeDivergence(5, 10) < 0)
+  assert.throws(
+    () => calculateInnovationNarrativeDivergence(-1, 10),
+    RangeError
+  )
+})
+
+test("风险展示分按当前样本极差和指标方向映射至0至100", () => {
+  assert.equal(mapSampleRangeRisk(0, 0, 10, true), 0)
+  assert.equal(mapSampleRangeRisk(10, 0, 10, true), 100)
+  assert.equal(mapSampleRangeRisk(0, 0, 10, false), 100)
+  assert.equal(mapSampleRangeRisk(10, 0, 10, false), 0)
+  assert.equal(mapSampleRangeRisk(5, 0, 10, true), 50)
+  assert.equal(mapSampleRangeRisk(5, 0, 10, false), 50)
+  assert.equal(mapSampleRangeRisk(5, 5, 5, true), 50)
 })
 
 test("管理者语调零分母保持缺失并按新版区间标记", () => {

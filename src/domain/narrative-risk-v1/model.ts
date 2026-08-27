@@ -231,6 +231,13 @@ export interface NarrativeAnnualMethodologyItem {
   unit: string
   riskDirection: string
   methodStatus: string
+  riskMapping: {
+    name: string
+    formula: string
+    parameterSource: string
+    parameters: Array<{ name: string; value: string }>
+    limitation: string | null
+  }
 }
 
 export interface NarrativeAnnualObservation {
@@ -239,6 +246,8 @@ export interface NarrativeAnnualObservation {
   metricKey: string
   value: number | null
   changeRate: number | null
+  riskScore: number | null
+  riskScoreChange: number | null
   status: NarrativeAnnualObservationStatus
   missingReason: string | null
   documentId: string | null
@@ -302,6 +311,91 @@ export interface NarrativeAnnualAuditResponse extends NarrativeRiskEnvelope {
     peerBenchmarkYearCount: number
     missingObservationCount: number
     calculatedObservationCount: number
+    publicPayloadContainsFullText: boolean
+    publicPayloadContainsPrivatePath: boolean
+  }
+}
+
+export interface NarrativeIndustryCompany {
+  companyId: string
+  companyName: string
+  stockCode: string
+  peerGroupId: string
+  industryGroupId: string
+  includedYears: number[]
+}
+
+export interface NarrativeIndustryGroup {
+  industryGroupId: string
+  label: string
+  peerGroupIds: string[]
+}
+
+export interface NarrativeIndustryMethodologyItem {
+  metricKey: string
+  name: string
+  formula: string
+  unit: string
+  direction: string
+}
+
+export interface NarrativeIndustryObservation {
+  companyId: string
+  year: number
+  metricKey: string
+  value: number | null
+  status: "已计算" | "缺失"
+  missingReason: string | null
+  documentId: string
+  details: Record<string, unknown>
+}
+
+export interface NarrativeIndustryStatistic {
+  industryGroupId: string
+  year: number
+  metricKey: string
+  sampleSize: number
+  mean: number | null
+  minimum: number | null
+  maximum: number | null
+  standardDeviation: number | null
+  domainMinimum: number | null
+  domainMaximum: number | null
+}
+
+export interface NarrativeIndustryDocument {
+  documentId: string
+  companyId: string
+  year: number
+  title: string
+  officialUrl: string | null
+  publicationDate: string | null
+  archiveStatus: string
+  parseStatus: string
+  sha256: string | null
+  byteSize: number | null
+  pageCount: number | null
+  sectionCoverage: Record<string, unknown>
+}
+
+export interface NarrativeIndustryTrendResponse extends NarrativeRiskEnvelope {
+  companies: NarrativeIndustryCompany[]
+  industryGroups: NarrativeIndustryGroup[]
+  methodology: NarrativeIndustryMethodologyItem[]
+  documents: NarrativeIndustryDocument[]
+  observations: NarrativeIndustryObservation[]
+  industryStatistics: NarrativeIndustryStatistic[]
+  audit: {
+    generatedAt: string
+    targetCompanyCount: number
+    targetCompanyYearCount: number
+    archivedReportCount: number
+    parsedReportCount: number
+    partialReportCount: number
+    failedReportCount: number
+    calculatedObservationCount: number
+    missingObservationCount: number
+    patentObservationCount: number
     publicPayloadContainsFullText: boolean
     publicPayloadContainsPrivatePath: boolean
   }

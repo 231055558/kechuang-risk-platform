@@ -5,6 +5,7 @@
 - `GET /api/v1/industry-risk/companies`
 - `GET /api/v1/industry-risk/companies/{companyId}/assessment`
 - `GET /api/v1/industry-risk/graph`（旧证据图端点，产品页不再默认使用）
+- `GET /api/v1/narrative-risk/industry-trends`（94家年报原始叙事指数与行业范围）
 
 风险传导使用独立的 `risk-graph-api-v1` 合同和 `/api/v1/risk-graphs/*` 端点，不复用旧行业证据图。
 
@@ -49,6 +50,13 @@
 - 财报语料或结果缺失时，维度 `score` 和总 `score` 必须为 `null`，状态为 `data-pending`；
 - 财报叙事不进入 R05–R22 客观风险总分，`affectsObjectiveScore` 必须为 `false`；
 - 旧 R01–R04 代理观测不得改名或映射成上述三个正式维度结果。
+
+## 行业叙事年度响应
+
+- `observations[].value` 是直接计算得到的原始指数，不是0–100风险分；
+- `industryStatistics` 必须按同业组、年度和指标返回均值、最小值、最大值及样本量；
+- 企业缺失年度保持 `null + missingReason`，折线显示断点；
+- 响应不得包含年报全文、私有归档路径或付费原始数据。
 
 ## 后续预留
 

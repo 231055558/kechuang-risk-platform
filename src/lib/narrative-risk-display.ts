@@ -26,6 +26,7 @@ const variantLabels: Record<string, string> = {
   "formal-industry-year-normalized": "同行业同年度标准化正式口径",
   "reference-range-[0.5,1.0]": "参考区间归一化代理口径",
   "IRAWC-CRITIC-2026.08-v2": "客观风险评分模型（2026 年 8 月第 2 版）",
+  "IRAWC-CRITIC-2026.08-v3": "客观风险评分模型（2026 年 8 月第 3 版）",
   "QA-only-36": "36 条管理层问答口径",
   "TONE-QA-only-36": "36 条管理层问答语调口径",
   "TONE-QA-only": "仅管理层问答的语调口径",

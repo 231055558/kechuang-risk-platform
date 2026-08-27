@@ -681,7 +681,7 @@ export const riskIndicators: RiskIndicator[] = dataset.indicators.map(
 
 export const indicatorTaxonomy: IndicatorTaxonomy = {
   sourceFile: "r01-r22-unified.json",
-  methodVersion: "IRAWC-CRITIC-2026.08-v2",
+  methodVersion: "IRAWC-CRITIC-2026.08-v3",
   admissionGovernance: {
     decisionVersion: "R01-R22-ADM-2026.08-v1",
     decisionDate: snapshotAt,
@@ -776,7 +776,7 @@ function buildBaseAssessment(companyId: string): RiskAssessment {
   const totalRiskScore = industryAssessment?.totalRiskScore ?? null
   return {
     methodVersion:
-      industryAssessment?.methodVersion ?? "IRAWC-CRITIC-2026.08-v2",
+      industryAssessment?.methodVersion ?? "IRAWC-CRITIC-2026.08-v3",
     label: "风险辅助研判指数",
     score: totalRiskScore,
     scoreLabel:

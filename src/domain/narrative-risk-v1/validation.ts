@@ -4,6 +4,7 @@ import {
   type NarrativeAnnualAuditResponse,
   type NarrativeAnnualMethodologyResponse,
   type NarrativeAnnualTrendResponse,
+  type NarrativeIndustryTrendResponse,
   type NarrativeRiskCompanyDirectoryResponse,
   type NarrativeRiskCompanyResponse,
   type NarrativeRiskEnvelope,
@@ -12,6 +13,46 @@ import {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value)
+}
+
+export function isNarrativeIndustryTrendResponse(
+  value: unknown
+): value is NarrativeIndustryTrendResponse {
+  return (
+    isEnvelope(value) &&
+    Array.isArray(value.companies) &&
+    value.companies.every(
+      (item) =>
+        isRecord(item) &&
+        typeof item.companyId === "string" &&
+        typeof item.companyName === "string" &&
+        typeof item.industryGroupId === "string" &&
+        Array.isArray(item.includedYears)
+    ) &&
+    Array.isArray(value.industryGroups) &&
+    Array.isArray(value.methodology) &&
+    value.methodology.length === 3 &&
+    Array.isArray(value.documents) &&
+    Array.isArray(value.observations) &&
+    value.observations.every(
+      (item) =>
+        isRecord(item) &&
+        typeof item.companyId === "string" &&
+        Number.isInteger(item.year) &&
+        typeof item.metricKey === "string" &&
+        (item.value === null || typeof item.value === "number")
+    ) &&
+    Array.isArray(value.industryStatistics) &&
+    value.industryStatistics.every(
+      (item) =>
+        isRecord(item) &&
+        typeof item.industryGroupId === "string" &&
+        Number.isInteger(item.year) &&
+        typeof item.metricKey === "string" &&
+        Number.isInteger(item.sampleSize)
+    ) &&
+    isRecord(value.audit)
+  )
 }
 
 function isEnvelope(
@@ -102,6 +143,12 @@ export function isNarrativeAnnualTrendResponse(
         typeof item.metricKey === "string" &&
         (item.value === null || typeof item.value === "number") &&
         (item.changeRate === null || typeof item.changeRate === "number") &&
+        (item.riskScore === null ||
+          (typeof item.riskScore === "number" &&
+            item.riskScore >= 0 &&
+            item.riskScore <= 100)) &&
+        (item.riskScoreChange === null ||
+          typeof item.riskScoreChange === "number") &&
         (item.status === "已计算" || item.status === "缺失")
     )
   )
@@ -120,7 +167,10 @@ export function isNarrativeAnnualMethodologyResponse(
         isRecord(item) &&
         typeof item.metricKey === "string" &&
         typeof item.name === "string" &&
-        typeof item.formula === "string"
+        typeof item.formula === "string" &&
+        isRecord(item.riskMapping) &&
+        typeof item.riskMapping.formula === "string" &&
+        Array.isArray(item.riskMapping.parameters)
     )
   )
 }

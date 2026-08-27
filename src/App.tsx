@@ -434,14 +434,14 @@ function App() {
     overviewDescription: "汇总企业风险结论、同业位置、关键事件与可追溯证据",
   }
   const narrativeAssessmentSummary = {
-    label: "新版年度趋势",
-    scoreLabel: "不设跨维度总分",
-    methodVersion: "新版年度方法 · 2026-08-26",
+    label: "行业年度分布",
+    scoreLabel: "原始指数",
+    methodVersion: "行业年报原始指数 · 2026-08-27",
     overviewDescription:
-      "按最新版测度口径查看五家上市样本的年度指标、缺失断点与年报来源",
-    contextName: "七家叙事样本",
-    contextSector: "五家上市年报 · 两家未上市不适用",
-    snapshotAt: "2026-08-26",
+      "查看94家企业的行业年度区间、均值与单家企业原始叙事指数",
+    contextName: "94家行业样本",
+    contextSector: "379份年报 · 2021—2025年窗口",
+    snapshotAt: "2026-08-27",
   }
   const promotedSignalIdsForCompany = useMemo(
     () => getPromotedSignalIdsForCompany(promotedSignalIds, detail.id),

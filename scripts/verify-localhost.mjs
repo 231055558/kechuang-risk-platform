@@ -142,13 +142,99 @@ async function verifyNarrativeRisk() {
     !annualTrendsResponse.ok ||
     !annualMethodologyResponse.ok ||
     !annualAuditResponse.ok ||
-    annualTrends?.companies?.length !== 7 ||
+    annualTrends?.companies?.length !== 5 ||
     annualTrends?.observations?.length !== 210 ||
+    annualTrends?.observations?.some(
+      (item) =>
+        item.riskScore !== null &&
+        (typeof item.riskScore !== "number" ||
+          item.riskScore < 0 ||
+          item.riskScore > 100)
+    ) ||
+    annualTrends?.observations?.some(
+      (item) => (item.value === null) !== (item.riskScore === null)
+    ) ||
     annualMethodology?.methodology?.length !== 10 ||
+    annualMethodology?.methodology?.some(
+      (item) =>
+        !item.riskMapping?.formula ||
+        !item.riskMapping?.parameterSource ||
+        !item.riskMapping?.name?.startsWith("当前样本极差") ||
+        !Array.isArray(item.riskMapping?.parameters) ||
+        !item.riskMapping.parameters.some(
+          (parameter) => parameter.name === "样本最小值"
+        ) ||
+        !item.riskMapping.parameters.some(
+          (parameter) => parameter.name === "样本最大值"
+        )
+    ) ||
+    annualMethodology?.methodVersion?.innovationLexiconSize !== 692 ||
+    !annualMethodology?.methodVersion?.peerBenchmarkStatus?.includes(
+      "方案二"
+    ) ||
     annualAudit?.documents?.length !== 21 ||
-    annualAudit?.audit?.archivedReportCount !== 21
+    annualAudit?.audit?.archivedReportCount !== 21 ||
+    annualAudit?.audit?.toneYearCount !== 16
   ) {
     throw new Error("Revised narrative annual trends failed invariant checks.")
+  }
+
+
+  const industryTrendsResponse = await fetch(
+    `${baseUrl}/api/v1/narrative-risk/industry-trends`
+  )
+  const industryTrends = await industryTrendsResponse.json()
+  if (
+    !industryTrendsResponse.ok ||
+    industryTrends?.sourceMode !== "postgres" ||
+    industryTrends?.companies?.length !== 94 ||
+    industryTrends?.documents?.length !== 470 ||
+    industryTrends?.methodology?.length !== 3 ||
+    industryTrends?.observations?.length !== 1137 ||
+    industryTrends?.industryStatistics?.length !== 45 ||
+    industryTrends?.audit?.archivedReportCount !== 379 ||
+    industryTrends?.observations?.some(
+      (item) => "riskScore" in item || "riskScoreChange" in item
+    )
+  ) {
+    throw new Error("Industry narrative raw trends failed invariant checks.")
+  }
+}
+
+async function verifyR17LowRiskFloor() {
+  const floorResponse = await fetch(
+    `${baseUrl}/api/v1/industry-risk/companies/star-688505/assessment`
+  )
+  const floorPayload = await floorResponse.json()
+  const floorMetric = floorPayload?.assessment?.metrics?.find(
+    (item) => item.indicatorId === "R17"
+  )
+  if (
+    !floorResponse.ok ||
+    floorPayload?.assessment?.methodVersion !== "IRAWC-CRITIC-2026.08-v3" ||
+    floorMetric?.metricName !== "no_identified_external_supplier_floor" ||
+    floorMetric?.rawValue !== 0 ||
+    floorMetric?.riskPercentile !== 0 ||
+    floorMetric?.riskScore !== 25 ||
+    floorMetric?.status !== "scored"
+  ) {
+    throw new Error("R17 explicit-zero low-risk floor failed invariant checks.")
+  }
+
+  const missingResponse = await fetch(
+    `${baseUrl}/api/v1/industry-risk/companies/star-688506/assessment`
+  )
+  const missingPayload = await missingResponse.json()
+  const missingMetric = missingPayload?.assessment?.metrics?.find(
+    (item) => item.indicatorId === "R17"
+  )
+  if (
+    !missingResponse.ok ||
+    missingMetric?.rawValue !== null ||
+    missingMetric?.riskScore !== null ||
+    missingMetric?.status !== "missing"
+  ) {
+    throw new Error("R17 unknown supplier exposure was incorrectly floored.")
   }
 }
 
@@ -171,6 +257,7 @@ try {
   await waitForServices()
   await verifyApi("/api/v1/technology-risk/score")
   await verifyApi("/api/v1/technology-risk/baseline-quantify")
+  await verifyR17LowRiskFloor()
   await verifyNarrativeRisk()
   console.log(`Localhost verification passed at ${baseUrl}`)
 } catch (error) {

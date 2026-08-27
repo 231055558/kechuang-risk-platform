@@ -41,8 +41,25 @@ export interface NarrativeAnnualRuntimeSnapshot {
   audit: Record<string, unknown>
 }
 
+export interface NarrativeIndustryRuntimeSnapshot {
+  schemaVersion: "KCR-NARRATIVE-RISK-2026.08-v1"
+  dataVersion: string
+  asOfDate: string
+  sourceMode: NarrativeRiskSourceMode
+  companies: Array<Record<string, unknown>>
+  industryGroups: Array<Record<string, unknown>>
+  methodology: Array<Record<string, unknown>>
+  documents: Array<Record<string, unknown>>
+  observations: Array<Record<string, unknown>>
+  industryStatistics: Array<Record<string, unknown>>
+  audit: Record<string, unknown>
+}
+
 function dateOnly(value: unknown) {
-  if (value instanceof Date) return value.toISOString().slice(0, 10)
+  if (value instanceof Date) {
+    const pad = (part: number) => String(part).padStart(2, "0")
+    return `${value.getFullYear()}-${pad(value.getMonth() + 1)}-${pad(value.getDate())}`
+  }
   if (typeof value === "string") return value.slice(0, 10)
   return null
 }
@@ -247,7 +264,7 @@ export async function readNarrativeAnnualRuntimeSnapshot(
                sentiment_dictionary_source AS "sentimentDictionarySource",
                peer_benchmark_status AS "peerBenchmarkStatus", methodology, notes
         FROM narrative_risk.method_versions
-        WHERE method_version = 'narrative-method-revised-2026-08-26-v1'
+        WHERE method_version = 'narrative-method-revised-2026-08-27-v2'
       `),
     client.query(
       `
@@ -269,8 +286,6 @@ export async function readNarrativeAnnualRuntimeSnapshot(
           "huami-electronics",
           "baili-tianheng",
           "zuojiang-technology",
-          "enflame",
-          "semidrive",
         ],
       ]
     ),
@@ -283,17 +298,18 @@ export async function readNarrativeAnnualRuntimeSnapshot(
                section_coverage AS "sectionCoverage",
                browser_validation AS "browserValidation"
         FROM narrative_risk.annual_documents
-        WHERE method_version = 'narrative-method-revised-2026-08-26-v1'
+        WHERE method_version = 'narrative-method-revised-2026-08-27-v2'
         ORDER BY company_key, report_year
       `),
     client.query(`
         SELECT company_key AS "companyKey", report_year AS year,
                metric_key AS "metricKey", numeric_value AS value,
-               annual_change_rate AS "changeRate", status,
+               annual_change_rate AS "changeRate", risk_score AS "riskScore",
+               risk_score_change AS "riskScoreChange", status,
                missing_reason AS "missingReason", document_id AS "documentId",
                method_version AS "methodVersion", details
         FROM narrative_risk.annual_metric_observations
-        WHERE method_version = 'narrative-method-revised-2026-08-26-v1'
+        WHERE method_version = 'narrative-method-revised-2026-08-27-v2'
         ORDER BY metric_key, company_key, report_year
       `),
     client.query(`
@@ -308,7 +324,7 @@ export async function readNarrativeAnnualRuntimeSnapshot(
                divergence_maximum AS "divergenceMaximum",
                fallback_reason AS "fallbackReason", audit
         FROM narrative_risk.peer_benchmarks
-        WHERE method_version = 'narrative-method-revised-2026-08-26-v1'
+        WHERE method_version = 'narrative-method-revised-2026-08-27-v2'
         ORDER BY report_year, industry_level, industry_code
       `),
     client.query(`
@@ -317,7 +333,7 @@ export async function readNarrativeAnnualRuntimeSnapshot(
                dictionary_review AS "dictionaryReview", model_review AS "modelReview",
                model_review_reason AS "modelReviewReason"
         FROM narrative_risk.tone_audits
-        WHERE method_version = 'narrative-method-revised-2026-08-26-v1'
+        WHERE method_version = 'narrative-method-revised-2026-08-27-v2'
         ORDER BY company_key, report_year
       `),
   ])
@@ -348,6 +364,9 @@ export async function readNarrativeAnnualRuntimeSnapshot(
     year: Number(row.year),
     value: row.value === null ? null : Number(row.value),
     changeRate: row.changeRate === null ? null : Number(row.changeRate),
+    riskScore: row.riskScore === null ? null : Number(row.riskScore),
+    riskScoreChange:
+      row.riskScoreChange === null ? null : Number(row.riskScoreChange),
   }))
   const documents: Array<Record<string, unknown>> = documentsResult.rows.map(
     (row) => ({
@@ -366,7 +385,7 @@ export async function readNarrativeAnnualRuntimeSnapshot(
   return {
     schemaVersion: "KCR-NARRATIVE-RISK-2026.08-v1",
     dataVersion: String(method.methodVersion),
-    asOfDate: "2026-08-26",
+    asOfDate: dateOnly(method.effectiveDate) ?? "2026-08-27",
     sourceMode,
     methodVersion: {
       ...method,
@@ -399,5 +418,103 @@ export async function readNarrativeAnnualRuntimeSnapshot(
       publicPayloadContainsFullText: false,
       publicPayloadContainsPrivatePath: false,
     },
+  }
+}
+
+export async function readNarrativeIndustryRuntimeSnapshot(
+  client: Queryable,
+  sourceMode: NarrativeRiskSourceMode
+): Promise<NarrativeIndustryRuntimeSnapshot> {
+  const runResult = await client.query(`
+    SELECT data_version AS "dataVersion", as_of_date AS "asOfDate",
+           methodology, industry_groups AS "industryGroups", audit
+    FROM narrative_risk.industry_annual_runs
+    ORDER BY imported_at DESC LIMIT 1
+  `)
+  const run = runResult.rows[0]
+  if (!run) throw new Error("行业叙事风险年度数据尚未导入。")
+  const dataVersion = String(run.dataVersion)
+  const [companiesResult, documentsResult, observationsResult, statisticsResult] =
+    await Promise.all([
+      client.query(
+        `SELECT company_id AS "companyId", company_name AS "companyName",
+                stock_code AS "stockCode", peer_group_id AS "peerGroupId",
+                industry_group_id AS "industryGroupId",
+                included_years AS "includedYears"
+         FROM narrative_risk.industry_annual_companies
+         WHERE data_version=$1 ORDER BY company_name`,
+        [dataVersion]
+      ),
+      client.query(
+        `SELECT document_id AS "documentId", company_id AS "companyId",
+                report_year AS year, title, official_url AS "officialUrl",
+                publication_date AS "publicationDate",
+                archive_status AS "archiveStatus", parse_status AS "parseStatus",
+                file_sha256 AS sha256, byte_size AS "byteSize",
+                page_count AS "pageCount", section_coverage AS "sectionCoverage"
+         FROM narrative_risk.industry_annual_documents
+         WHERE data_version=$1 ORDER BY company_id, report_year`,
+        [dataVersion]
+      ),
+      client.query(
+        `SELECT company_id AS "companyId", report_year AS year,
+                metric_key AS "metricKey", numeric_value AS value, status,
+                missing_reason AS "missingReason", document_id AS "documentId",
+                details
+         FROM narrative_risk.industry_annual_observations
+         WHERE data_version=$1 ORDER BY metric_key, company_id, report_year`,
+        [dataVersion]
+      ),
+      client.query(
+        `SELECT industry_group_id AS "industryGroupId", report_year AS year,
+                metric_key AS "metricKey", sample_size AS "sampleSize",
+                mean_value AS mean, minimum_value AS minimum,
+                maximum_value AS maximum,
+                standard_deviation AS "standardDeviation",
+                domain_minimum AS "domainMinimum", domain_maximum AS "domainMaximum"
+         FROM narrative_risk.industry_annual_statistics
+         WHERE data_version=$1 ORDER BY industry_group_id, metric_key, report_year`,
+        [dataVersion]
+      ),
+    ])
+
+  const numeric = (value: unknown) =>
+    value === null || value === undefined ? null : Number(value)
+  return {
+    schemaVersion: "KCR-NARRATIVE-RISK-2026.08-v1",
+    dataVersion,
+    asOfDate: dateOnly(run.asOfDate) ?? "2026-08-27",
+    sourceMode,
+    companies: companiesResult.rows,
+    industryGroups: Array.isArray(run.industryGroups)
+      ? (run.industryGroups as Array<Record<string, unknown>>)
+      : [],
+    methodology: Array.isArray(run.methodology)
+      ? (run.methodology as Array<Record<string, unknown>>)
+      : [],
+    documents: documentsResult.rows.map((row) => ({
+      ...row,
+      year: Number(row.year),
+      publicationDate: dateOnly(row.publicationDate),
+      byteSize: numeric(row.byteSize),
+      pageCount: numeric(row.pageCount),
+    })),
+    observations: observationsResult.rows.map((row) => ({
+      ...row,
+      year: Number(row.year),
+      value: numeric(row.value),
+    })),
+    industryStatistics: statisticsResult.rows.map((row) => ({
+      ...row,
+      year: Number(row.year),
+      sampleSize: Number(row.sampleSize),
+      mean: numeric(row.mean),
+      minimum: numeric(row.minimum),
+      maximum: numeric(row.maximum),
+      standardDeviation: numeric(row.standardDeviation),
+      domainMinimum: numeric(row.domainMinimum),
+      domainMaximum: numeric(row.domainMaximum),
+    })),
+    audit: (run.audit ?? {}) as Record<string, unknown>,
   }
 }

@@ -794,6 +794,68 @@
   color: var(--brand-strong);
 }
 
+.nr-trend-method-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+  margin-top: 10px;
+}
+
+.nr-trend-method-grid section {
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid color-mix(in oklch, var(--border) 68%, transparent);
+  border-radius: 9px;
+  background: color-mix(in oklch, var(--muted) 27%, transparent);
+}
+
+.nr-trend-method-grid section > span {
+  color: var(--text-soft);
+  font-size: 9px;
+}
+
+.nr-trend-method-grid h4 {
+  margin: 4px 0 8px;
+  color: var(--text-strong);
+  font-size: 11px;
+}
+
+.nr-trend-method-grid dl,
+.nr-trend-method-grid p {
+  margin: 0;
+  color: var(--text-body);
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.nr-trend-method-grid dl > div + div {
+  margin-top: 7px;
+}
+
+.nr-trend-method-grid dt {
+  color: var(--text-soft);
+}
+
+.nr-trend-method-grid dd {
+  margin: 2px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.nr-risk-parameter-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 8px 0;
+}
+
+.nr-risk-parameter-list span {
+  padding: 4px 6px;
+  border-radius: 5px;
+  background: color-mix(in oklch, var(--background) 72%, transparent);
+  color: var(--text-soft);
+  font-size: 9px;
+}
+
 .nr-trend-table-scroll {
   margin-top: 9px;
   overflow-x: auto;
@@ -824,6 +886,32 @@
   left: 0;
   background: var(--background);
   text-align: left;
+}
+
+.nr-trend-table-wrap td > span,
+.nr-trend-table-wrap td > a {
+  display: block;
+  max-width: 180px;
+  margin-top: 2px;
+  color: var(--text-soft);
+  font-size: 9px;
+  line-height: 1.4;
+  white-space: normal;
+}
+
+.nr-trend-table-wrap td > a {
+  color: var(--brand-strong);
+}
+
+.nr-trend-table-wrap td > a svg {
+  width: 10px;
+  height: 10px;
+}
+
+.nr-risk-score-value {
+  display: block;
+  color: var(--text-strong);
+  font-size: 11px;
 }
 
 .nr-annual-source-ledger {
@@ -901,6 +989,287 @@
   height: 13px;
 }
 
+.nr-industry-workspace {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid color-mix(in oklch, var(--border) 78%, transparent);
+  border-radius: 8px;
+  background: color-mix(in oklch, var(--background) 74%, transparent);
+}
+
+.nr-industry-heading,
+.nr-industry-controls {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.nr-industry-heading h2 {
+  margin: 5px 0 0;
+  color: var(--text-strong);
+  font-size: 23px;
+}
+
+.nr-industry-heading p {
+  margin: 7px 0 0;
+  color: var(--text-body);
+  font-size: 12px;
+}
+
+.nr-industry-controls {
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: color-mix(in oklch, var(--muted) 34%, transparent);
+}
+
+.nr-industry-controls label {
+  display: grid;
+  min-width: min(440px, 100%);
+  gap: 6px;
+  color: var(--text-soft);
+  font-size: 11px;
+}
+
+.nr-industry-controls select {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 36px 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--background);
+  color: var(--text-strong);
+  font: inherit;
+  font-size: 13px;
+}
+
+.nr-industry-company-summary {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.nr-industry-company-summary > svg {
+  width: 20px;
+  color: var(--brand-strong);
+}
+
+.nr-industry-company-summary div {
+  display: grid;
+  justify-items: end;
+  gap: 2px;
+}
+
+.nr-industry-company-summary strong {
+  color: var(--text-strong);
+  font-size: 13px;
+}
+
+.nr-industry-company-summary span {
+  color: var(--text-soft);
+  font-size: 10px;
+}
+
+.nr-industry-audit {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.nr-industry-audit article {
+  display: grid;
+  grid-template-columns: 25px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 7px;
+  padding: 11px 12px;
+  border: 1px solid color-mix(in oklch, var(--border) 72%, transparent);
+  border-radius: 7px;
+}
+
+.nr-industry-audit svg {
+  width: 16px;
+  color: var(--brand-strong);
+}
+
+.nr-industry-audit span {
+  color: var(--text-soft);
+  font-size: 10px;
+}
+
+.nr-industry-audit strong {
+  color: var(--text-strong);
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+}
+
+.nr-industry-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.nr-industry-chart {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid color-mix(in oklch, var(--border) 76%, transparent);
+  border-radius: 8px;
+  background: color-mix(in oklch, var(--background) 90%, transparent);
+}
+
+.nr-industry-chart > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.nr-industry-chart h3 {
+  margin: 4px 0 0;
+  color: var(--text-strong);
+  font-size: 16px;
+}
+
+.nr-industry-chart header p {
+  min-height: 34px;
+  margin: 5px 0 0;
+  color: var(--text-soft);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.nr-industry-chart__figure {
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.nr-industry-chart__figure svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 250px;
+}
+
+.nr-industry-gridline {
+  stroke: color-mix(in oklch, var(--border) 72%, transparent);
+  stroke-width: 1;
+}
+
+.nr-industry-gridline.is-vertical {
+  stroke-dasharray: 3 4;
+  opacity: 0.65;
+}
+
+.nr-industry-axis {
+  fill: var(--text-soft);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.nr-industry-chart__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin-top: 7px;
+}
+
+.nr-industry-chart__legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-soft);
+  font-size: 9px;
+}
+
+.nr-industry-chart__legend i {
+  width: 10px;
+  height: 3px;
+}
+
+.nr-industry-chart__legend i.is-band {
+  height: 8px;
+  opacity: 0.2;
+}
+
+.nr-industry-chart__legend i.is-company {
+  background: var(--text-strong);
+}
+
+.nr-industry-chart__domain {
+  margin: 9px 0 0;
+  color: var(--text-body);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.nr-industry-chart details {
+  margin-top: 9px;
+  color: var(--text-soft);
+  font-size: 10px;
+}
+
+.nr-industry-chart summary,
+.nr-industry-source-ledger > summary {
+  cursor: pointer;
+  color: var(--brand-strong);
+}
+
+.nr-industry-chart__table-scroll {
+  margin-top: 8px;
+  overflow-x: auto;
+}
+
+.nr-industry-chart table {
+  width: 100%;
+  min-width: 480px;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.nr-industry-chart th,
+.nr-industry-chart td {
+  padding: 6px;
+  border-bottom: 1px solid color-mix(in oklch, var(--border) 66%, transparent);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.nr-industry-chart th:first-child {
+  text-align: left;
+}
+
+.nr-industry-source-ledger {
+  padding: 13px 15px;
+  border: 1px solid color-mix(in oklch, var(--border) 72%, transparent);
+  border-radius: 8px;
+  color: var(--text-soft);
+  font-size: 11px;
+}
+
+.nr-industry-source-ledger > div {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.nr-industry-source-ledger article {
+  display: grid;
+  gap: 3px;
+  padding: 9px;
+  border-radius: 6px;
+  background: color-mix(in oklch, var(--muted) 35%, transparent);
+}
+
+.nr-industry-source-ledger strong {
+  color: var(--text-strong);
+}
+
+.nr-industry-source-ledger a {
+  color: var(--brand-strong);
+}
+
 @media (max-width: 1180px) {
   .nr-layout {
     grid-template-columns: 220px minmax(0, 1fr);
@@ -921,6 +1290,10 @@
   }
 
   .nr-trend-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .nr-industry-chart-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -978,9 +1351,31 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .nr-industry-heading,
+  .nr-industry-controls {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .nr-industry-company-summary div {
+    justify-items: start;
+  }
+
+  .nr-industry-audit {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .nr-industry-source-ledger > div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .nr-annual-source-ledger__intro {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .nr-trend-method-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1045,5 +1440,18 @@
   .nr-trend-card__head [data-slot="badge"] {
     max-width: none;
     text-align: left;
+  }
+
+  .nr-industry-workspace {
+    padding: 14px;
+  }
+
+  .nr-industry-audit,
+  .nr-industry-source-ledger > div {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .nr-industry-chart {
+    padding: 11px;
   }
 }

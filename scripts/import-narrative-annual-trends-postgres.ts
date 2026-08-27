@@ -6,9 +6,10 @@ import { Client, type ClientConfig } from "pg"
 
 type JsonRecord = Record<string, unknown>
 
-const MIGRATION_PATH = resolve(
-  "db/migrations/004_narrative_risk_annual_trends.sql"
-)
+const MIGRATION_PATHS = [
+  resolve("db/migrations/004_narrative_risk_annual_trends.sql"),
+  resolve("db/migrations/005_narrative_annual_risk_scores.sql"),
+]
 const SNAPSHOT_PATH = resolve(
   "src/data/industry/narrative-risk-annual-trends.json"
 )
@@ -30,9 +31,9 @@ function clientConfig(): ClientConfig {
   }
 }
 
-async function applyMigration(client: Client) {
-  const sql = await readFile(MIGRATION_PATH, "utf8")
-  const migrationName = basename(MIGRATION_PATH)
+async function applyMigration(client: Client, migrationPath: string) {
+  const sql = await readFile(migrationPath, "utf8")
+  const migrationName = basename(migrationPath)
   const sha256 = createHash("sha256").update(sql).digest("hex")
   const existing = await client.query<{ sha256: string }>(
     "SELECT sha256 FROM platform.schema_migrations WHERE migration_name = $1",
@@ -70,7 +71,12 @@ async function main() {
   await client.connect()
   try {
     await client.query("BEGIN")
-    const migrationApplied = await applyMigration(client)
+    const migrationsApplied: string[] = []
+    for (const migrationPath of MIGRATION_PATHS) {
+      if (await applyMigration(client, migrationPath)) {
+        migrationsApplied.push(basename(migrationPath))
+      }
+    }
     await client.query(
       `INSERT INTO narrative_risk.method_versions (
          method_version, method_name, effective_date, source_document_sha256,
@@ -148,13 +154,17 @@ async function main() {
       await client.query(
         `INSERT INTO narrative_risk.annual_metric_observations (
            company_key, report_year, metric_key, method_version, numeric_value,
-           annual_change_rate, status, missing_reason, document_id, details
-         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,
-           CASE WHEN $9::text LIKE 'annual-report:%' THEN $9 ELSE NULL END,
-           $10::jsonb)
+           annual_change_rate, risk_score, risk_score_change, status,
+           missing_reason, document_id, details
+         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,
+           CASE WHEN $11::text LIKE 'annual-report:%' THEN $11 ELSE NULL END,
+           $12::jsonb)
          ON CONFLICT (company_key, report_year, metric_key, method_version)
          DO UPDATE SET numeric_value=EXCLUDED.numeric_value,
-           annual_change_rate=EXCLUDED.annual_change_rate, status=EXCLUDED.status,
+           annual_change_rate=EXCLUDED.annual_change_rate,
+           risk_score=EXCLUDED.risk_score,
+           risk_score_change=EXCLUDED.risk_score_change,
+           status=EXCLUDED.status,
            missing_reason=EXCLUDED.missing_reason, document_id=EXCLUDED.document_id,
            details=EXCLUDED.details, updated_at=CURRENT_TIMESTAMP`,
         [
@@ -164,6 +174,8 @@ async function main() {
           methodVersion,
           item.value,
           item.changeRate,
+          item.riskScore,
+          item.riskScoreChange,
           item.status,
           item.missingReason,
           item.documentId,
@@ -201,7 +213,7 @@ async function main() {
     console.log(
       JSON.stringify({
         methodVersion,
-        migrationApplied,
+        migrationsApplied,
         documents: documents.length,
         observations: observations.length,
         toneAudits: toneAudits.length,

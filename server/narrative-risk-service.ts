@@ -2,6 +2,7 @@ import { Pool, type PoolConfig } from "pg"
 
 import snapshotData from "../src/data/industry/narrative-risk-runtime.json" with { type: "json" }
 import annualSnapshotData from "../src/data/industry/narrative-risk-annual-trends.json" with { type: "json" }
+import industryAnnualSnapshotData from "../src/data/industry/narrative-risk-industry-trends.json" with { type: "json" }
 import {
   NARRATIVE_RISK_SCHEMA_VERSION,
   type NarrativeArtifactStatus,
@@ -18,11 +19,14 @@ import {
   type NarrativeAnnualAuditResponse,
   type NarrativeAnnualMethodologyResponse,
   type NarrativeAnnualTrendResponse,
+  type NarrativeIndustryTrendResponse,
 } from "../src/domain/narrative-risk-v1/index.ts"
 import {
   readNarrativeAnnualRuntimeSnapshot,
+  readNarrativeIndustryRuntimeSnapshot,
   readNarrativeRuntimeSnapshot,
   type NarrativeAnnualRuntimeSnapshot,
+  type NarrativeIndustryRuntimeSnapshot,
   type NarrativeRuntimeSnapshot,
 } from "./narrative-risk-repository.ts"
 
@@ -33,6 +37,7 @@ interface NarrativeRiskServiceOptions {
   pool?: Pool
   snapshot?: NarrativeRuntimeSnapshot
   annualSnapshot?: NarrativeAnnualRuntimeSnapshot
+  industryAnnualSnapshot?: NarrativeIndustryRuntimeSnapshot
 }
 
 export interface NarrativeRiskSourceFilters {
@@ -275,12 +280,19 @@ export function createNarrativeRiskService(
   const annualFallback =
     options.annualSnapshot ??
     (annualSnapshotData as unknown as NarrativeAnnualRuntimeSnapshot)
+  const industryAnnualFallback =
+    options.industryAnnualSnapshot ??
+    (industryAnnualSnapshotData as unknown as NarrativeIndustryRuntimeSnapshot)
   const pool = options.pool ?? new Pool(postgresConfig())
   let cache: { expiresAt: number; value: NarrativeRuntimeSnapshot } | undefined
   let fallbackLogged = false
   let annualCache:
     { expiresAt: number; value: NarrativeAnnualRuntimeSnapshot } | undefined
   let annualFallbackLogged = false
+  let industryAnnualCache:
+    | { expiresAt: number; value: NarrativeIndustryRuntimeSnapshot }
+    | undefined
+  let industryAnnualFallbackLogged = false
 
   async function loadDataset() {
     if (forceSnapshot) return { ...fallback, sourceMode: "snapshot" as const }
@@ -323,6 +335,30 @@ export function createNarrativeRiskService(
         annualFallbackLogged = true
       }
       return { ...annualFallback, sourceMode: "snapshot" as const }
+    }
+  }
+
+  async function loadIndustryAnnualDataset() {
+    if (forceSnapshot) {
+      return { ...industryAnnualFallback, sourceMode: "snapshot" as const }
+    }
+    if (industryAnnualCache && industryAnnualCache.expiresAt > Date.now()) {
+      return industryAnnualCache.value
+    }
+    try {
+      const value = await readNarrativeIndustryRuntimeSnapshot(pool, "postgres")
+      industryAnnualCache = { expiresAt: Date.now() + 15_000, value }
+      industryAnnualFallbackLogged = false
+      return value
+    } catch (error) {
+      if (!industryAnnualFallbackLogged) {
+        console.warn(
+          "Narrative industry annual PostgreSQL unavailable; using sanitized snapshot.",
+          error instanceof Error ? error.message : String(error)
+        )
+        industryAnnualFallbackLogged = true
+      }
+      return { ...industryAnnualFallback, sourceMode: "snapshot" as const }
     }
   }
 
@@ -588,10 +624,16 @@ export function createNarrativeRiskService(
     }
   }
 
+  async function getIndustryTrends(): Promise<NarrativeIndustryTrendResponse> {
+    const dataset = await loadIndustryAnnualDataset()
+    return dataset as unknown as NarrativeIndustryTrendResponse
+  }
+
   return {
     getAnnualAudit,
     getAnnualMethodology,
     getAnnualTrends,
+    getIndustryTrends,
     getAuditSummary,
     getCompany,
     listCompanies,
@@ -609,3 +651,5 @@ export const getNarrativeAnnualTrends = narrativeRiskService.getAnnualTrends
 export const getNarrativeAnnualMethodology =
   narrativeRiskService.getAnnualMethodology
 export const getNarrativeAnnualAudit = narrativeRiskService.getAnnualAudit
+export const getNarrativeIndustryTrends =
+  narrativeRiskService.getIndustryTrends
