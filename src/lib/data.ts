@@ -208,6 +208,9 @@ export function buildCompanySummaries(
 ) {
   return (companySummariesData as CompanySummary[]).map((company) => ({
     ...company,
+    fullName: company.fullName ?? company.name,
+    stockCode:
+      company.stockCode ?? company.id.match(/\d{6}/)?.[0] ?? company.id,
     riskIndex: assessments[company.id]?.score ?? null,
     topRisks: getCanonicalRiskDimensionLabels(company.topRisks),
   }))

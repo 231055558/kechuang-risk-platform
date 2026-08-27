@@ -1,14 +1,7 @@
 import { DatabaseZapIcon, ShieldCheckIcon } from "lucide-react"
 import { useRef, useState } from "react"
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { CompanySearchSelect } from "@/components/layout/company-search-select"
 import { navGroups, navItems } from "@/lib/nav-data"
 import { cn } from "@/lib/utils"
 import type { NavigationItemId, NavigationTarget, NavItem } from "@/types/nav"
@@ -66,23 +59,11 @@ export function SidebarNav({
 
         <div className="sidebar-company-card risk-os-company-switcher">
           <span className="risk-os-company-label">当前研究对象</span>
-          <Select value={companyId} onValueChange={onCompanyChange}>
-            <SelectTrigger
-              className="sidebar-company-trigger"
-              aria-label="选择当前研究企业"
-            >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent position="popper" className="liquid-menu">
-              <SelectGroup>
-                {companySummaries.map((company) => (
-                  <SelectItem key={company.id} value={company.id}>
-                    {company.name}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          <CompanySearchSelect
+            companies={companySummaries}
+            value={companyId}
+            onValueChange={onCompanyChange}
+          />
           <div className="mt-2 flex items-center justify-between gap-3">
             <div className="min-w-0">
               <div className="truncate text-xs text-muted-foreground">

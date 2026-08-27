@@ -104,11 +104,16 @@ test("the shell exposes a skip link and a programmatically focusable main landma
 
 test("the sidebar company selector has an explicit accessible name", () => {
   const sidebarSource = readProjectFile("src/components/layout/sidebar-nav.tsx")
-
-  assert.match(
-    sidebarSource,
-    /<SelectTrigger[\s\S]*?className="sidebar-company-trigger"[\s\S]*?aria-label="选择当前研究企业"/
+  const selectorSource = readProjectFile(
+    "src/components/layout/company-search-select.tsx"
   )
+
+  assert.match(sidebarSource, /<CompanySearchSelect/)
+  assert.match(selectorSource, /简称、证券代码或中文全称搜索/)
+  assert.match(selectorSource, /type="search"/)
+  assert.match(selectorSource, /company\.name/)
+  assert.match(selectorSource, /company\.fullName/)
+  assert.match(selectorSource, /company\.stockCode/)
 })
 
 test("accepted primary navigation moves focus after mobile sheet closure", () => {
