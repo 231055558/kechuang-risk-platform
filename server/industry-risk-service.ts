@@ -130,7 +130,8 @@ export function listIndustryRiskCompanies(): IndustryRiskCompanyDirectoryRespons
         benchmarkGroupLabel: assessment.benchmarkGroupLabel,
         benchmarkSampleSize: assessment.benchmarkSampleSize,
         totalRiskScore: assessment.totalRiskScore,
-        narrativeRiskIndex: assessment.narrativeIndex.score,
+        financialNarrativeStatus:
+          assessment.financialReportNarrativeRisk.status,
         weightedDataCoverage: assessment.weightedDataCoverage,
         scoredIndicatorCount: assessment.scoredIndicatorCount,
         totalIndicatorCount: assessment.totalIndicatorCount,

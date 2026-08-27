@@ -81,6 +81,82 @@
   font-weight: 720;
 }
 
+.risk-profile-desk__narrative {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.72fr) minmax(0, 1.5fr);
+  align-items: center;
+  gap: 24px;
+  padding: 12px 22px;
+  border-bottom: 1px solid var(--risk-os-border, #d7dce7);
+  background: color-mix(
+    in srgb,
+    var(--risk-os-narrative, #7257c7) 5%,
+    var(--risk-os-surface, #ffffff)
+  );
+}
+
+.risk-profile-desk__narrative > div {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  gap: 3px 9px;
+}
+
+.risk-profile-desk__narrative > div .eyebrow {
+  grid-column: 1 / -1;
+}
+
+.risk-profile-desk__narrative > div strong {
+  color: var(--risk-os-ink, #151923);
+  font-size: 14px;
+}
+
+.risk-profile-desk__narrative > div small {
+  color: var(--risk-os-muted, #697386);
+  font-size: 11px;
+}
+
+.risk-profile-desk__narrative ul {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.risk-profile-desk__narrative li {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 9px;
+  border-left: 2px solid
+    color-mix(in srgb, var(--risk-os-narrative, #7257c7) 48%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--risk-os-surface, #ffffff) 82%,
+    transparent
+  );
+}
+
+.risk-profile-desk__narrative li > span {
+  overflow: hidden;
+  color: var(--risk-os-ink, #151923);
+  font-size: 12px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.risk-profile-desk__narrative li [data-slot="badge"] {
+  flex: 0 0 auto;
+  padding-inline: 6px;
+  color: var(--risk-os-narrative, #7257c7);
+  font-size: 9px;
+}
+
 .risk-profile-desk__matrix {
   display: grid;
   grid-template-columns:
@@ -562,6 +638,16 @@
     flex-direction: column;
     gap: 14px;
     padding: 20px;
+  }
+
+  .risk-profile-desk__narrative {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 14px 20px;
+  }
+
+  .risk-profile-desk__narrative ul {
+    grid-template-columns: 1fr;
   }
 
   .risk-profile-desk__matrix {

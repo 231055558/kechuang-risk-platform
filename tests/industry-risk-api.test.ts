@@ -40,6 +40,10 @@ test("industry risk client validates directory and assessment responses", async 
   assert.equal(assessment.company.shortName, "寒武纪")
   assert.equal(assessment.indicators.length, 22)
   assert.equal(assessment.coverage.length, 22)
+  assert.equal(
+    assessment.assessment.financialReportNarrativeRisk.dimensions.length,
+    3
+  )
   assert.deepEqual(paths, [
     "api/v1/industry-risk/companies",
     "api/v1/industry-risk/companies/star-688256/assessment",

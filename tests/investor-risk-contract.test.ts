@@ -25,6 +25,10 @@ test("investor contract fixes data semantics across the assessment API", () => {
   assert.equal(response.contract.audience, "investor")
   assert.equal(response.contract.newsUsage, "information-only")
   assert.equal(response.contract.financialNarrativeCorpus, "annual-report-only")
+  assert.equal(
+    response.contract.financialNarrativeScoreStatus,
+    "structure-ready-data-pending"
+  )
   assert.equal(response.contract.heatEncoding, "peer-risk-percentile")
   assert.deepEqual(
     INDUSTRY_RISK_OBJECTIVE_INDICATOR_IDS,
@@ -60,5 +64,8 @@ test("repository documents the cross-layer contract for future agents", () => {
   assert.match(agentInstructions, /前端、API、评分或数据导入/)
   assert.match(productContract, /新闻是资讯语料，不进入财报叙事评分/)
   assert.match(apiContract, /missingReason/)
+  assert.match(apiContract, /management-tone/)
+  assert.match(apiContract, /newsExcludedFromScore/)
   assert.match(storageContract, /禁止写入 0 作为占位/)
+  assert.match(storageContract, /没有修改 SQLite 表、列、索引/)
 })

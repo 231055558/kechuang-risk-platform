@@ -34,7 +34,7 @@ export interface IndustryRiskCompanySummary {
   benchmarkGroupLabel: string
   benchmarkSampleSize: number
   totalRiskScore: number | null
-  narrativeRiskIndex: number | null
+  financialNarrativeStatus: IndustryRiskCompanyAssessment["financialReportNarrativeRisk"]["status"]
   weightedDataCoverage: number
   scoredIndicatorCount: number
   totalIndicatorCount: number
