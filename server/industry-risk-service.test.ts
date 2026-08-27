@@ -45,6 +45,24 @@ test("industry assessment keeps raw values, formula traces, and sources together
   assert.equal(response.provenance.methodStatus, "usable-benchmark")
   assert.equal(response.narrativeNewsMetric?.retrievedCount, 250)
   assert.equal(response.narrativeNews.length, 50)
+  assert.equal(
+    response.assessment.financialReportNarrativeRisk.methodVersion,
+    "KCR-FINANCIAL-NARRATIVE-2026.08-v1"
+  )
+  assert.deepEqual(
+    response.assessment.financialReportNarrativeRisk.dimensions.map(
+      (dimension) => dimension.id
+    ),
+    [
+      "management-tone",
+      "innovation-talk-action-gap",
+      "effective-information-uncertainty",
+    ]
+  )
+  assert.equal(
+    response.assessment.financialReportNarrativeRisk.newsExcludedFromScore,
+    true
+  )
   assert.ok(
     response.assessment.metrics
       .filter((metric) => metric.kind === "narrative")

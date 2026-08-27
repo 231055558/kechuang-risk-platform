@@ -426,11 +426,47 @@ export interface IndustryRiskCandidateAggregate {
   note: string
 }
 
-export interface IndustryRiskNarrativeIndex {
+export const INDUSTRY_FINANCIAL_NARRATIVE_METHOD_VERSION =
+  "KCR-FINANCIAL-NARRATIVE-2026.08-v1" as const
+
+export const INDUSTRY_FINANCIAL_NARRATIVE_DIMENSIONS = [
+  {
+    id: "management-tone",
+    label: "管理层语调",
+    description: "基于正式财报文本识别管理层表述语调及其异常变化。",
+  },
+  {
+    id: "innovation-talk-action-gap",
+    label: "创新“多言寡行”",
+    description: "比较财报创新叙述与可核验创新产出之间的偏离程度。",
+  },
+  {
+    id: "effective-information-uncertainty",
+    label: "有效信息与不确定性",
+    description: "衡量财报有效信息含量、不确定性表述及其期间变化。",
+  },
+] as const
+
+export type IndustryFinancialNarrativeDimensionId =
+  (typeof INDUSTRY_FINANCIAL_NARRATIVE_DIMENSIONS)[number]["id"]
+
+export interface IndustryFinancialNarrativeDimensionAssessment {
+  id: IndustryFinancialNarrativeDimensionId
+  label: string
+  description: string
   score: number | null
-  availableIndicatorCount: number
-  totalIndicatorCount: 4
-  status: "usable-reference" | "unavailable"
+  status: "data-pending" | "assessable"
+  missingReason: string | null
+}
+
+export interface IndustryFinancialReportNarrativeRisk {
+  methodVersion: typeof INDUSTRY_FINANCIAL_NARRATIVE_METHOD_VERSION
+  corpus: "annual-report"
+  status: "data-pending" | "partially-assessable" | "assessed"
+  score: number | null
+  dimensions: IndustryFinancialNarrativeDimensionAssessment[]
+  newsExcludedFromScore: true
+  affectsObjectiveScore: false
   note: string
 }
 
@@ -462,7 +498,7 @@ export interface IndustryRiskCompanyAssessment {
   alpha: number
   beta: number
   metrics: IndustryRiskMetricScore[]
-  narrativeIndex: IndustryRiskNarrativeIndex
+  financialReportNarrativeRisk: IndustryFinancialReportNarrativeRisk
   dimensionScores: IndustryRiskDimensionScore[]
   totalRiskScore: number | null
   totalRiskStatus: "usable-benchmark" | "unavailable"
@@ -903,19 +939,21 @@ function weightedAverage(
   )
 }
 
-function narrativeIndex(metrics: readonly IndustryRiskMetricScore[]) {
-  const observedCount = metrics
-    .filter((item) => item.kind === "narrative")
-    .filter((item) => item.rawValue !== null).length
+function financialReportNarrativeRisk(): IndustryFinancialReportNarrativeRisk {
   return {
+    methodVersion: INDUSTRY_FINANCIAL_NARRATIVE_METHOD_VERSION,
+    corpus: "annual-report",
+    status: "data-pending",
     score: null,
-    availableIndicatorCount: observedCount,
-    totalIndicatorCount: 4 as const,
-    status: "unavailable" as const,
-    note:
-      observedCount > 0
-        ? `R01–R04已有 ${observedCount}/4 项代理观测；当前算法尚未通过会议确认，仅展示原始观察，不生成NRI或进入总风险分。`
-        : "R01–R04暂无叙事观察数据，不生成NRI。",
+    dimensions: INDUSTRY_FINANCIAL_NARRATIVE_DIMENSIONS.map((dimension) => ({
+      ...dimension,
+      score: null,
+      status: "data-pending",
+      missingReason: "当前企业财报语料与计算结果尚未接入。",
+    })),
+    newsExcludedFromScore: true,
+    affectsObjectiveScore: false,
+    note: "财报叙事按管理层语调、创新“多言寡行”、有效信息与不确定性三维度独立评估；新闻资讯不进入该评分，也不影响 R05–R22 客观风险总分。",
   }
 }
 
@@ -1044,7 +1082,7 @@ export function scoreIndustryRiskDataset(
       alpha: round(alpha),
       beta: round(beta),
       metrics,
-      narrativeIndex: narrativeIndex(metrics),
+      financialReportNarrativeRisk: financialReportNarrativeRisk(),
       scoredIndicatorCount: metrics.filter((item) => item.riskScore !== null)
         .length,
       weightedScoredIndicatorCount,

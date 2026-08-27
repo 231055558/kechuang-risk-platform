@@ -69,8 +69,9 @@ function isCompanySummary(value: unknown) {
     typeof value.benchmarkGroupLabel === "string" &&
     Number.isInteger(value.benchmarkSampleSize) &&
     (value.totalRiskScore === null || isFiniteNumber(value.totalRiskScore)) &&
-    (value.narrativeRiskIndex === null ||
-      isFiniteNumber(value.narrativeRiskIndex)) &&
+    (value.financialNarrativeStatus === "data-pending" ||
+      value.financialNarrativeStatus === "partially-assessable" ||
+      value.financialNarrativeStatus === "assessed") &&
     isFiniteNumber(value.weightedDataCoverage) &&
     Number.isInteger(value.scoredIndicatorCount) &&
     Number.isInteger(value.totalIndicatorCount) &&
@@ -158,13 +159,34 @@ function isMetricScore(value: unknown) {
   )
 }
 
-function isNarrativeIndex(value: unknown) {
+function isFinancialNarrativeDimension(value: unknown) {
   return (
     isRecord(value) &&
+    (value.id === "management-tone" ||
+      value.id === "innovation-talk-action-gap" ||
+      value.id === "effective-information-uncertainty") &&
+    typeof value.label === "string" &&
+    typeof value.description === "string" &&
     (value.score === null || isFiniteNumber(value.score)) &&
-    Number.isInteger(value.availableIndicatorCount) &&
-    value.totalIndicatorCount === 4 &&
-    (value.status === "usable-reference" || value.status === "unavailable") &&
+    (value.status === "data-pending" || value.status === "assessable") &&
+    (value.missingReason === null || typeof value.missingReason === "string")
+  )
+}
+
+function isFinancialReportNarrativeRisk(value: unknown) {
+  return (
+    isRecord(value) &&
+    value.methodVersion === "KCR-FINANCIAL-NARRATIVE-2026.08-v1" &&
+    value.corpus === "annual-report" &&
+    (value.status === "data-pending" ||
+      value.status === "partially-assessable" ||
+      value.status === "assessed") &&
+    (value.score === null || isFiniteNumber(value.score)) &&
+    Array.isArray(value.dimensions) &&
+    value.dimensions.length === 3 &&
+    value.dimensions.every(isFinancialNarrativeDimension) &&
+    value.newsExcludedFromScore === true &&
+    value.affectsObjectiveScore === false &&
     typeof value.note === "string"
   )
 }
@@ -246,7 +268,7 @@ function isAssessmentResponse(
     value.contract.newsUsage === "information-only" &&
     value.contract.financialNarrativeCorpus === "annual-report-only" &&
     value.contract.financialNarrativeScoreStatus ===
-      "method-trial-unavailable" &&
+      "structure-ready-data-pending" &&
     value.contract.missingValue === "null-with-reason" &&
     value.contract.heatEncoding === "peer-risk-percentile" &&
     value.contract.recommendationScope ===
@@ -269,7 +291,7 @@ function isAssessmentResponse(
     Array.isArray(assessment.metrics) &&
     assessment.metrics.length === 22 &&
     assessment.metrics.every(isMetricScore) &&
-    isNarrativeIndex(assessment.narrativeIndex) &&
+    isFinancialReportNarrativeRisk(assessment.financialReportNarrativeRisk) &&
     Array.isArray(assessment.dimensionScores) &&
     assessment.dimensionScores.length === 5 &&
     assessment.dimensionScores.every(isDimensionScore) &&

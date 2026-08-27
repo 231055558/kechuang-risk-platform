@@ -1300,7 +1300,7 @@ function MethodSheet({
                   index="03"
                   icon={ScaleIcon}
                   title="自动计算与排序"
-                  content="系统使用当前可用的 R05–R22 客观指标、同业风险分位和两级 CRITIC 权重自动形成企业风险指数、主要风险和行动优先级；R01–R04 仅作叙事观察。"
+                  content="系统使用当前可用的 R05–R22 客观指标、同业风险分位和两级 CRITIC 权重形成企业风险指数与主要风险；财报叙事按三个独立维度建约，待语料接入后评估，新闻不参与评分。"
                 />
                 <MethodFlow
                   index="04"

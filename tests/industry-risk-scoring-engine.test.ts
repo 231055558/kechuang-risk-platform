@@ -92,8 +92,23 @@ test("pilot scoring produces missing-aware R01-R22 usable baselines", () => {
     assert.equal(assessment.totalIndicatorCount, 22)
     assert.equal(assessment.isOfficialTotalScore, false)
     assert.equal(assessment.dimensionScores.length, 5)
-    assert.equal(assessment.narrativeIndex.score, null)
-    assert.equal(assessment.narrativeIndex.status, "unavailable")
+    assert.equal(assessment.financialReportNarrativeRisk.score, null)
+    assert.equal(assessment.financialReportNarrativeRisk.status, "data-pending")
+    assert.equal(
+      assessment.financialReportNarrativeRisk.corpus,
+      "annual-report"
+    )
+    assert.equal(assessment.financialReportNarrativeRisk.dimensions.length, 3)
+    assert.equal(
+      assessment.financialReportNarrativeRisk.newsExcludedFromScore,
+      true
+    )
+    assert.ok(
+      assessment.financialReportNarrativeRisk.dimensions.every(
+        (dimension) =>
+          dimension.score === null && dimension.status === "data-pending"
+      )
+    )
     assert.ok(assessment.totalRiskScore !== null)
     assert.ok(
       assessment.metrics

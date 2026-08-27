@@ -688,7 +688,7 @@ export const indicatorTaxonomy: IndicatorTaxonomy = {
     ).length,
     candidate: 0,
   },
-  note: "R01–R04 为叙事校验项，R05–R22 为客观候选项；缺失值保持 NA。",
+  note: "R05–R22 为当前客观评分项；财报叙事三维度独立建约，新闻仅用于资讯展示；缺失值保持 NA。",
   groups: dimensionDefinitions.map((dimension) => {
     const indicators = riskIndicators.filter((item) =>
       dimension.indicatorIds.includes(item.id as IndustryRiskIndicatorId)
@@ -729,7 +729,7 @@ function buildBaseAssessment(companyId: string): RiskAssessment {
     )
     const score =
       dimension.id === "narrative"
-        ? (industryAssessment?.narrativeIndex.score ?? null)
+        ? (industryAssessment?.financialReportNarrativeRisk.score ?? null)
         : (weightedDimension?.score ?? null)
     const evidenceIds = scoredMetrics.flatMap((metric) =>
       metric.sourceId ? [evidenceIdForSource(metric.sourceId)] : []
@@ -744,7 +744,7 @@ function buildBaseAssessment(companyId: string): RiskAssessment {
       summary:
         score === null
           ? dimension.id === "narrative"
-            ? "R01–R04仅展示原始叙事观察，不计算NRI，也不进入总分。"
+            ? "财报叙事按三个正式维度独立评估；新闻资讯不参与评分，当前结果尚待财报语料接入。"
             : "当前同业组尚无可比评分观测，展示原始覆盖与缺口。"
           : `由 ${scoredMetrics.map((metric) => metric.indicatorId).join("、")} 按CRITIC权重形成维度基准分。`,
       evidenceIds,

@@ -74,6 +74,7 @@ export function IndustryRiskProfileDesk({
     null
   )
   const { assessment } = response
+  const narrativeRisk = assessment.financialReportNarrativeRisk
   const totalScore = assessment.totalRiskScore
   const coveragePercent = Math.round(assessment.weightedDataCoverage * 100)
   const conclusion = buildIndustryRiskConclusion(assessment)
@@ -222,14 +223,35 @@ export function IndustryRiskProfileDesk({
           <span className="eyebrow">系统自动结论</span>
           <h3>{conclusion}</h3>
           <p>
-            综合指数和风险驱动由 R05–R22 客观指标自动计算；R01–R04
-            叙事观察保持独立，不混入总分。
+            综合指数和风险驱动由 R05–R22
+            客观指标自动计算；财报叙事独立评估，不混入客观总分。
           </p>
         </div>
         <Badge variant="outline">
           {riskLevel(totalScore)} · {riskHeatLabel(totalRiskPercentile)}
         </Badge>
       </header>
+
+      <section
+        className="risk-profile-desk__narrative"
+        aria-label="财报叙事风险结构"
+      >
+        <div>
+          <span className="eyebrow">Financial narrative</span>
+          <strong>财报叙事风险</strong>
+          <small>财报语料接入后独立计算；新闻资讯不参与评分</small>
+        </div>
+        <ul>
+          {narrativeRisk.dimensions.map((dimension) => (
+            <li key={dimension.id}>
+              <span>{dimension.label}</span>
+              <Badge variant="outline">
+                {dimension.status === "assessable" ? "可评估" : "数据接入中"}
+              </Badge>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       <div className="risk-profile-desk__matrix">
         <article className="risk-profile-desk__score">

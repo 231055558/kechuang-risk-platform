@@ -33,7 +33,7 @@ export const INDUSTRY_RISK_INVESTOR_SEMANTICS = {
   objectiveIndicators: INDUSTRY_RISK_OBJECTIVE_INDICATOR_IDS,
   newsUsage: "information-only",
   financialNarrativeCorpus: "annual-report-only",
-  financialNarrativeScoreStatus: "method-trial-unavailable",
+  financialNarrativeScoreStatus: "structure-ready-data-pending",
   missingValue: "null-with-reason",
   heatEncoding: "peer-risk-percentile",
   recommendationScope: "risk-research-not-trade-instruction",
