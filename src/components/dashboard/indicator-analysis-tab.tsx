@@ -24,6 +24,12 @@ import type {
   IndustryRiskMetricScore,
 } from "@/domain/industry-risk-v1/index.ts"
 import {
+  formatIndicatorRawValue,
+  indicatorUnitExplanation,
+  indicatorUnitLabel,
+  selectPeerRiskContext,
+} from "@/lib/indicator-analysis"
+import {
   fetchIndustryRiskAssessment,
   fetchIndustryRiskCompanies,
 } from "@/lib/industry-risk-api"
@@ -39,9 +45,6 @@ type AnalysisState =
     }
   | { status: "error"; message: string }
 
-const numberFormatter = new Intl.NumberFormat("zh-CN", {
-  maximumFractionDigits: 4,
-})
 const percentFormatter = new Intl.NumberFormat("zh-CN", {
   style: "percent",
   maximumFractionDigits: 0,
@@ -99,17 +102,13 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
   const selectedCompany = directory.companies.find(
     (company) => company.companyId === companyId
   )
-  const peers = directory.companies
-    .filter(
-      (company) =>
-        company.benchmarkGroupId === selectedCompany?.benchmarkGroupId
-    )
-    .sort((left, right) => {
-      if (left.companyId === companyId) return -1
-      if (right.companyId === companyId) return 1
-      return (right.totalRiskScore ?? -1) - (left.totalRiskScore ?? -1)
-    })
-    .slice(0, 12)
+  const peerPool = directory.companies.filter(
+    (company) => company.benchmarkGroupId === selectedCompany?.benchmarkGroupId
+  )
+  const peerContext = selectPeerRiskContext(peerPool, companyId)
+  const peerRankById = new Map(
+    peerContext.ranked.map((company, index) => [company.companyId, index + 1])
+  )
 
   return (
     <div className="indicator-analysis page-stack">
@@ -181,7 +180,10 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
           <div>
             <span className="eyebrow">Cross-company view</span>
             <h3>同业风险分位矩阵</h3>
-            <p>固定 0–100 色标，不按单个企业重新拉伸；灰色斜纹表示缺失。</p>
+            <p>
+              展示同业风险前 4 名及当前企业前后各 2
+              个邻位；固定色标不按单个企业重新拉伸，灰色斜纹表示缺失。
+            </p>
           </div>
           <HeatLegend />
         </header>
@@ -195,19 +197,26 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
               <tr>
                 <th>企业</th>
                 {weightedMetrics.map((metric) => (
-                  <th key={metric.indicatorId}>{metric.indicatorId}</th>
+                  <th key={metric.indicatorId}>
+                    <abbr title={`${metric.indicatorId} · ${metric.label}`}>
+                      {metric.indicatorId}
+                    </abbr>
+                  </th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {peers.map((company) => (
+              {peerContext.visible.map((company) => (
                 <tr
                   key={company.companyId}
                   data-active={company.companyId === companyId}
                 >
                   <th scope="row">
                     <strong>{company.companyName}</strong>
-                    <small>{company.stockCode}</small>
+                    <small>
+                      风险第 {peerRankById.get(company.companyId)} 位 ·{" "}
+                      {company.stockCode}
+                    </small>
                   </th>
                   {weightedMetrics.map((metric) => {
                     const heat = company.indicatorHeat.find(
@@ -218,7 +227,7 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
                         key={metric.indicatorId}
                         data-missing={heat?.riskPercentile == null}
                         style={heatStyle(heat?.riskPercentile ?? null)}
-                        title={`${company.companyName} · ${metric.indicatorId} · ${
+                        title={`${company.companyName} · ${metric.indicatorId} ${metric.label} · ${
                           heat?.riskPercentile == null
                             ? "缺失"
                             : percentFormatter.format(heat.riskPercentile)
@@ -241,7 +250,7 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
         <header>
           <div>
             <span className="eyebrow">Metric ledger</span>
-            <h3>指标明细、样本与观测序列</h3>
+            <h3>指标明细与同业评分</h3>
           </div>
           <Badge variant="outline">点击行查看公式与来源</Badge>
         </header>
@@ -251,6 +260,14 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
           tabIndex={0}
         >
           <table>
+            <colgroup>
+              <col className="indicator-analysis__col-metric" />
+              <col className="indicator-analysis__col-value" />
+              <col className="indicator-analysis__col-direction" />
+              <col className="indicator-analysis__col-percentile" />
+              <col className="indicator-analysis__col-score" />
+              <col className="indicator-analysis__col-sample" />
+            </colgroup>
             <thead>
               <tr>
                 <th>指标</th>
@@ -259,22 +276,10 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
                 <th>同业分位</th>
                 <th>风险分</th>
                 <th>样本</th>
-                <th>已披露观测</th>
               </tr>
             </thead>
             <tbody>
               {weightedMetrics.map((metric) => {
-                const observations = response.observations
-                  .filter(
-                    (observation) =>
-                      observation.indicatorId === metric.indicatorId &&
-                      typeof observation.numericValue === "number"
-                  )
-                  .sort((left, right) =>
-                    (left.asOfDate ?? left.periodEnd ?? "").localeCompare(
-                      right.asOfDate ?? right.periodEnd ?? ""
-                    )
-                  )
                 const DirectionIcon =
                   metric.direction === "higher-is-riskier"
                     ? ArrowUpIcon
@@ -292,9 +297,19 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
                       </button>
                     </th>
                     <td>
-                      {metric.rawValue === null
-                        ? "缺失"
-                        : `${numberFormatter.format(metric.rawValue)} ${metric.unit}`}
+                      <span
+                        className="indicator-analysis__raw-value"
+                        data-missing={metric.rawValue === null}
+                      >
+                        <strong>
+                          {formatIndicatorRawValue(metric.rawValue)}
+                        </strong>
+                        {metric.rawValue === null ? null : (
+                          <small title={indicatorUnitExplanation(metric.unit)}>
+                            {indicatorUnitLabel(metric.unit)}
+                          </small>
+                        )}
+                      </span>
                     </td>
                     <td>
                       <DirectionIcon aria-hidden="true" />
@@ -313,13 +328,10 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
                           : percentFormatter.format(metric.riskPercentile)}
                       </span>
                     </td>
-                    <td>{metric.riskScore ?? "—"}</td>
-                    <td>n={metric.sampleSize}</td>
-                    <td>
-                      <ObservationDots
-                        values={observations.map((item) => item.numericValue!)}
-                      />
+                    <td className="indicator-analysis__numeric">
+                      {metric.riskScore?.toFixed(2) ?? "—"}
                     </td>
+                    <td>n={metric.sampleSize}</td>
                   </tr>
                 )
               })}
@@ -381,15 +393,19 @@ function MetricMethodSheet({
               <SheetDescription>{indicator?.definition}</SheetDescription>
             </SheetHeader>
             <div className="sheet-scroll-content indicator-method-sheet__content">
-              <MethodBlock title="本次计算" icon={BookOpenCheckIcon}>
-                <p>{metric.formulaTrace}</p>
+              <MethodBlock title="方法含义与公式解析" icon={BookOpenCheckIcon}>
+                <RiskScoreFormula metric={metric} response={response} />
+                <p>{indicator?.rawValueFormula}</p>
+                <p>{metric.limitation}</p>
+                {metric.missingReason ? <p>{metric.missingReason}</p> : null}
                 <dl>
                   <div>
                     <dt>原值</dt>
                     <dd>
+                      {formatIndicatorRawValue(metric.rawValue)}
                       {metric.rawValue === null
-                        ? "缺失"
-                        : `${numberFormatter.format(metric.rawValue)} ${metric.unit}`}
+                        ? null
+                        : ` ${indicatorUnitLabel(metric.unit)}`}
                     </dd>
                   </div>
                   <div>
@@ -402,42 +418,9 @@ function MetricMethodSheet({
                   </div>
                   <div>
                     <dt>单指标风险分</dt>
-                    <dd>{metric.riskScore ?? "缺失"}</dd>
+                    <dd>{metric.riskScore?.toFixed(2) ?? "缺失"}</dd>
                   </div>
                 </dl>
-              </MethodBlock>
-              <MethodBlock title="方法含义" icon={InfoIcon}>
-                <p>{indicator?.rawValueFormula}</p>
-                <p>{metric.limitation}</p>
-                {metric.missingReason ? <p>{metric.missingReason}</p> : null}
-              </MethodBlock>
-              <MethodBlock
-                title={`原始观测（${observations.length}）`}
-                icon={DatabaseZapIcon}
-              >
-                {observations.length ? (
-                  <ol>
-                    {observations.map((observation) => (
-                      <li key={observation.id}>
-                        <strong>{observation.metricName}</strong>
-                        <span>
-                          {observation.numericValue ??
-                            observation.textValue ??
-                            "缺失"}{" "}
-                          {observation.unit}
-                        </span>
-                        <small>
-                          {observation.periodStart ?? ""}–
-                          {observation.periodEnd ??
-                            observation.asOfDate ??
-                            "期间待补"}
-                        </small>
-                      </li>
-                    ))}
-                  </ol>
-                ) : (
-                  <p>当前没有可展示观测；不会以 0 代替。</p>
-                )}
               </MethodBlock>
               <MethodBlock
                 title={`证据来源（${sources.length}）`}
@@ -495,30 +478,71 @@ function MethodBlock({
   )
 }
 
-function ObservationDots({ values }: { values: number[] }) {
-  const visible = values.slice(-6)
-  if (!visible.length)
-    return <span className="indicator-analysis__no-trend">无</span>
-  const minimum = Math.min(...visible)
-  const maximum = Math.max(...visible)
-  const range = maximum - minimum || 1
+function RiskScoreFormula({
+  metric,
+  response,
+}: {
+  metric: IndustryRiskMetricScore
+  response: IndustryRiskAssessmentApiResponse
+}) {
+  const { alpha, beta, industryRisk } = response.assessment
+  const percentile = metric.riskPercentile
   return (
-    <svg
-      viewBox="0 0 112 28"
-      role="img"
-      aria-label={`${visible.length} 个已披露观测点`}
-    >
-      {visible.map((value, index) => (
-        <circle
-          key={`${index}-${value}`}
-          cx={
-            visible.length === 1 ? 56 : 7 + (index / (visible.length - 1)) * 98
-          }
-          cy={21 - ((value - minimum) / range) * 14}
-          r="3.2"
-        />
-      ))}
-    </svg>
+    <div className="indicator-method-sheet__formula">
+      <div
+        className="indicator-method-sheet__equation"
+        role="math"
+        aria-label="R 下标 i 等于一百乘以 alpha 乘行业风险锚点加 beta 乘同业风险分位"
+      >
+        <var>
+          R<sub>i</sub>
+        </var>
+        <span>=</span>
+        <span>100</span>
+        <span>×</span>
+        <span>(</span>
+        <var>α</var>
+        <span>×</span>
+        <var>H</var>
+        <span>+</span>
+        <var>β</var>
+        <span>×</span>
+        <var>
+          P<sub>i</sub>
+        </var>
+        <span>)</span>
+      </div>
+      {percentile === null ? (
+        <p className="indicator-method-sheet__substitution">
+          当前原值或同业样本不足，因此不代入公式，也不补零。
+        </p>
+      ) : (
+        <p className="indicator-method-sheet__substitution">
+          本次代入：100 × ({alpha} × {industryRisk} + {beta} × {percentile}) ={" "}
+          <strong>{metric.riskScore?.toFixed(2)}</strong>
+        </p>
+      )}
+      <dl className="indicator-method-sheet__parameters">
+        <div>
+          <dt>Rᵢ</dt>
+          <dd>第 i 项指标风险分，范围 0–100</dd>
+        </div>
+        <div>
+          <dt>H</dt>
+          <dd>行业风险锚点，本次为 {industryRisk}</dd>
+        </div>
+        <div>
+          <dt>Pᵢ</dt>
+          <dd>按风险方向调整后的同业风险分位</dd>
+        </div>
+        <div>
+          <dt>α / β</dt>
+          <dd>
+            行业锚点与同业分位权重，本次为 {alpha} / {beta}
+          </dd>
+        </div>
+      </dl>
+    </div>
   )
 }
 
