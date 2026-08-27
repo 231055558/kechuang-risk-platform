@@ -50,6 +50,8 @@ export interface ManifestRecord {
 export interface CompanySummary {
   id: string
   name: string
+  fullName: string
+  stockCode: string
   sector: string
   stage: string
   riskIndex: number | null

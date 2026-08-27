@@ -819,6 +819,8 @@ export function buildCompanySummaries(
     return {
       id: company.id,
       name: company.shortName,
+      fullName: company.fullName,
+      stockCode: company.stockCode,
       sector: detail.sector,
       stage: detail.stage,
       riskIndex: assessment.score,

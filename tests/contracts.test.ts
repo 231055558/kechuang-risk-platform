@@ -362,7 +362,7 @@ test("investor strategy and graph integration have no enterprise task workflows"
   )
 })
 
-test("risk-news drawers remain scoped and cannot promote management tasks", () => {
+test("risk-news centered reading dialog remains scoped and cannot promote management tasks", () => {
   const realtimeSource = readProjectFile(
     "src/components/dashboard/realtime-tab.tsx"
   )
@@ -372,6 +372,11 @@ test("risk-news drawers remain scoped and cannot promote management tasks", () =
     /previousCompanyIdRef\.current === detail\.id[\s\S]*setSelectedSignalId\(null\)[\s\S]*onFocusSignalHandled\(\)/
   )
   assert.doesNotMatch(realtimeSource, /onPromote\(/)
+  assert.match(realtimeSource, /<RiskNewsDialog/)
+  assert.match(realtimeSource, /className="risk-news__modal"/)
+  assert.match(realtimeSource, /useGSAP\(/)
+  assert.match(realtimeSource, /usePrefersReducedMotion\(\)/)
+  assert.doesNotMatch(realtimeSource, /<Sheet/)
   assert.doesNotMatch(
     realtimeSource,
     /recommendedAction|researchQuestions|转为事件|待处理/

@@ -4,8 +4,11 @@ import {
   useMemo,
   useRef,
   useState,
+  type ComponentProps,
   type ReactNode,
 } from "react"
+import { useGSAP } from "@gsap/react"
+import gsap from "gsap"
 import {
   ExternalLinkIcon,
   FileSearchIcon,
@@ -17,8 +20,16 @@ import {
 } from "lucide-react"
 
 import { EmptyState, SeverityBadge } from "@/components/dashboard/shared"
+import { usePrefersReducedMotion } from "@/components/motion/workflow-transition"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import {
   Select,
@@ -28,13 +39,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet"
 import { getCompanyName, getCustomerVisibleIndicators } from "@/lib/data-r01"
 import { formatSourceDateTime, formatSourceListTime } from "@/lib/date-format"
 import { getCanonicalRiskDimensionLabels } from "@/lib/risk-dimensions"
@@ -57,6 +61,13 @@ type RealtimeTabProps = {
 }
 
 const PAGE_SIZE = 24
+
+type CardOrigin = {
+  left: number
+  top: number
+  width: number
+  height: number
+}
 
 const sourceReliabilityLabels: Record<
   NonNullable<RealTimeSignal["sourceReliability"]>,
@@ -82,6 +93,7 @@ export function RealtimeTab({
   )
   const [query, setQuery] = useState("")
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
+  const [cardOrigin, setCardOrigin] = useState<CardOrigin | null>(null)
   const deferredQuery = useDeferredValue(query)
   const previousCompanyIdRef = useRef(detail.id)
   const signalTriggerRef = useRef<HTMLButtonElement | null>(null)
@@ -90,6 +102,7 @@ export function RealtimeTab({
     if (previousCompanyIdRef.current === detail.id) return
     previousCompanyIdRef.current = detail.id
     setSelectedSignalId(null)
+    setCardOrigin(null)
     setVisibleCount(PAGE_SIZE)
     if (
       focusSignalId &&
@@ -228,6 +241,13 @@ export function RealtimeTab({
               signal={signal}
               onOpen={(trigger) => {
                 signalTriggerRef.current = trigger
+                const rect = trigger.getBoundingClientRect()
+                setCardOrigin({
+                  left: rect.left,
+                  top: rect.top,
+                  width: rect.width,
+                  height: rect.height,
+                })
                 setSelectedSignalId(signal.id)
               }}
             />
@@ -259,127 +279,26 @@ export function RealtimeTab({
         </div>
       ) : null}
 
-      <Sheet
-        open={Boolean(selectedSignal)}
-        onOpenChange={(open) => {
-          if (!open) {
-            setSelectedSignalId(null)
-            onFocusSignalHandled()
+      <RiskNewsDialog
+        signal={selectedSignal}
+        origin={cardOrigin}
+        selectedIndicatorNames={selectedIndicatorNames}
+        onClose={() => {
+          setSelectedSignalId(null)
+          setCardOrigin(null)
+          onFocusSignalHandled()
+        }}
+        onCloseAutoFocus={(event) => {
+          event.preventDefault()
+          if (signalTriggerRef.current?.isConnected) {
+            signalTriggerRef.current.focus({ preventScroll: true })
+          } else {
+            document
+              .getElementById("main-content")
+              ?.focus({ preventScroll: true })
           }
         }}
-      >
-        <SheetContent
-          size="signal"
-          className="method-sheet method-sheet--signal"
-          onCloseAutoFocus={(event) => {
-            event.preventDefault()
-            if (signalTriggerRef.current?.isConnected) {
-              signalTriggerRef.current.focus({ preventScroll: true })
-            } else {
-              document
-                .getElementById("main-content")
-                ?.focus({ preventScroll: true })
-            }
-          }}
-        >
-          {selectedSignal ? (
-            <>
-              <SheetHeader>
-                <div className="signal-drawer-badges">
-                  <SeverityBadge severity={selectedSignal.severity} />
-                  <Badge variant="outline">{selectedSignal.category}</Badge>
-                  {getCanonicalRiskDimensionLabels(
-                    selectedSignal.riskDimensionIds
-                  ).map((label) => (
-                    <Badge key={label} variant="outline">
-                      {label}
-                    </Badge>
-                  ))}
-                </div>
-                <SheetTitle>{selectedSignal.title}</SheetTitle>
-                <SheetDescription>
-                  {formatSourceDateTime(selectedSignal.publishedAt)} ·{" "}
-                  {selectedSignal.sourceName}
-                </SheetDescription>
-              </SheetHeader>
-              <div className="sheet-scroll-content risk-news__drawer">
-                <DrawerSection title="信息摘要" icon={NewspaperIcon} emphasized>
-                  <p>{selectedSignal.summary}</p>
-                </DrawerSection>
-                <DrawerSection title="投资者影响" icon={SparklesIcon}>
-                  <p>{selectedSignal.potentialImpact}</p>
-                </DrawerSection>
-                {selectedSignal.keyFacts.length ? (
-                  <DrawerSection title="关键事实" icon={FileSearchIcon}>
-                    <ul>
-                      {selectedSignal.keyFacts.map((fact) => (
-                        <li key={fact}>{fact}</li>
-                      ))}
-                    </ul>
-                  </DrawerSection>
-                ) : null}
-                <DrawerSection title="内容转述与分析" icon={NewspaperIcon}>
-                  <p>{selectedSignal.aiInsight}</p>
-                </DrawerSection>
-                <DrawerSection title="历史与口径背景" icon={HistoryIcon}>
-                  <p>{selectedSignal.historicalContext}</p>
-                </DrawerSection>
-                <DrawerSection title="来源与研究关联" icon={ExternalLinkIcon}>
-                  <dl>
-                    <div>
-                      <dt>企业</dt>
-                      <dd>
-                        {selectedSignal.companyIds
-                          .map(getCompanyName)
-                          .join("、")}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt>来源类型</dt>
-                      <dd>
-                        {selectedSignal.sourceReliability
-                          ? sourceReliabilityLabels[
-                              selectedSignal.sourceReliability
-                            ]
-                          : "来源类型未标注"}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt>原文定位</dt>
-                      <dd>{selectedSignal.sourceLocator}</dd>
-                    </div>
-                    <div>
-                      <dt>关联指标</dt>
-                      <dd>
-                        {selectedIndicatorNames.length
-                          ? selectedIndicatorNames.join("、")
-                          : "未建立指标关联"}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt>关联边界</dt>
-                      <dd>关联仅用于研究下钻，不表示已进入评分。</dd>
-                    </div>
-                    <div>
-                      <dt>快照时间</dt>
-                      <dd>{formatSourceDateTime(selectedSignal.capturedAt)}</dd>
-                    </div>
-                  </dl>
-                  <Button variant="outline" asChild>
-                    <a
-                      href={selectedSignal.sourceUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      打开原始来源 <ExternalLinkIcon data-icon="inline-end" />
-                    </a>
-                  </Button>
-                </DrawerSection>
-              </div>
-            </>
-          ) : null}
-        </SheetContent>
-      </Sheet>
+      />
     </div>
   )
 }
@@ -429,6 +348,190 @@ function NewsCard({
         <ExternalLinkIcon aria-hidden="true" />
       </footer>
     </button>
+  )
+}
+
+function RiskNewsDialog({
+  signal,
+  origin,
+  selectedIndicatorNames,
+  onClose,
+  onCloseAutoFocus,
+}: {
+  signal: RealTimeSignal | null
+  origin: CardOrigin | null
+  selectedIndicatorNames: string[]
+  onClose: () => void
+  onCloseAutoFocus: NonNullable<
+    ComponentProps<typeof DialogContent>["onCloseAutoFocus"]
+  >
+}) {
+  const cardRef = useRef<HTMLDivElement>(null)
+  const prefersReducedMotion = usePrefersReducedMotion()
+
+  useGSAP(
+    () => {
+      const card = cardRef.current
+      if (!card || !signal) return
+      if (prefersReducedMotion) {
+        gsap.set(card, { clearProps: "transform,opacity,visibility" })
+        return
+      }
+      const finalRect = card.getBoundingClientRect()
+      const x = origin
+        ? origin.left +
+          origin.width / 2 -
+          (finalRect.left + finalRect.width / 2)
+        : 0
+      const y = origin
+        ? origin.top +
+          origin.height / 2 -
+          (finalRect.top + finalRect.height / 2)
+        : 14
+      const scaleX = origin
+        ? Math.max(0.16, Math.min(1, origin.width / finalRect.width))
+        : 0.96
+      const scaleY = origin
+        ? Math.max(0.16, Math.min(1, origin.height / finalRect.height))
+        : 0.96
+      gsap.fromTo(
+        card,
+        {
+          x,
+          y,
+          scaleX,
+          scaleY,
+          opacity: origin ? 0.72 : 0,
+          transformOrigin: "center center",
+        },
+        {
+          x: 0,
+          y: 0,
+          scaleX: 1,
+          scaleY: 1,
+          opacity: 1,
+          duration: 0.44,
+          ease: "power3.out",
+          clearProps: "transform,opacity",
+        }
+      )
+    },
+    {
+      scope: cardRef,
+      dependencies: [
+        signal?.id,
+        origin?.left,
+        origin?.top,
+        origin?.width,
+        origin?.height,
+        prefersReducedMotion,
+      ],
+      revertOnUpdate: true,
+    }
+  )
+
+  return (
+    <Dialog
+      open={Boolean(signal)}
+      onOpenChange={(open) => {
+        if (!open) onClose()
+      }}
+    >
+      <DialogContent
+        className="risk-news__modal"
+        onCloseAutoFocus={onCloseAutoFocus}
+      >
+        {signal ? (
+          <article
+            ref={cardRef}
+            className="risk-news__modal-card"
+            data-importance={signal.severity}
+          >
+            <DialogHeader>
+              <div className="signal-drawer-badges">
+                <SeverityBadge severity={signal.severity} />
+                <Badge variant="outline">{signal.category}</Badge>
+                {getCanonicalRiskDimensionLabels(signal.riskDimensionIds).map(
+                  (label) => (
+                    <Badge key={label} variant="outline">
+                      {label}
+                    </Badge>
+                  )
+                )}
+              </div>
+              <DialogTitle>{signal.title}</DialogTitle>
+              <DialogDescription>
+                {formatSourceDateTime(signal.publishedAt)} · {signal.sourceName}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="risk-news__modal-content">
+              <DrawerSection title="信息摘要" icon={NewspaperIcon} emphasized>
+                <p>{signal.summary}</p>
+              </DrawerSection>
+              <DrawerSection title="投资者影响" icon={SparklesIcon}>
+                <p>{signal.potentialImpact}</p>
+              </DrawerSection>
+              {signal.keyFacts.length ? (
+                <DrawerSection title="关键事实" icon={FileSearchIcon}>
+                  <ul>
+                    {signal.keyFacts.map((fact) => (
+                      <li key={fact}>{fact}</li>
+                    ))}
+                  </ul>
+                </DrawerSection>
+              ) : null}
+              <DrawerSection title="内容转述与分析" icon={NewspaperIcon}>
+                <p>{signal.aiInsight}</p>
+              </DrawerSection>
+              <DrawerSection title="历史与口径背景" icon={HistoryIcon}>
+                <p>{signal.historicalContext}</p>
+              </DrawerSection>
+              <DrawerSection title="来源与研究关联" icon={ExternalLinkIcon}>
+                <dl>
+                  <div>
+                    <dt>企业</dt>
+                    <dd>{signal.companyIds.map(getCompanyName).join("、")}</dd>
+                  </div>
+                  <div>
+                    <dt>来源类型</dt>
+                    <dd>
+                      {signal.sourceReliability
+                        ? sourceReliabilityLabels[signal.sourceReliability]
+                        : "来源类型未标注"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>原文定位</dt>
+                    <dd>{signal.sourceLocator}</dd>
+                  </div>
+                  <div>
+                    <dt>关联指标</dt>
+                    <dd>
+                      {selectedIndicatorNames.length
+                        ? selectedIndicatorNames.join("、")
+                        : "未建立指标关联"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>关联边界</dt>
+                    <dd>关联仅用于研究下钻，不表示已进入评分。</dd>
+                  </div>
+                  <div>
+                    <dt>快照时间</dt>
+                    <dd>{formatSourceDateTime(signal.capturedAt)}</dd>
+                  </div>
+                </dl>
+                <Button variant="outline" asChild>
+                  <a href={signal.sourceUrl} target="_blank" rel="noreferrer">
+                    打开原始来源 <ExternalLinkIcon data-icon="inline-end" />
+                  </a>
+                </Button>
+              </DrawerSection>
+            </div>
+          </article>
+        ) : null}
+      </DialogContent>
+    </Dialog>
   )
 }
 
