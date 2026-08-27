@@ -1,11 +1,17 @@
 import unifiedData from "@/data/industry/r01-r22-unified.json"
+import r08MilestoneEnrichmentData from "@/data/industry/r08-milestone-enrichment.json"
+import r20ControllerEnrichmentData from "@/data/industry/r20-controller-enrichment.json"
 import {
+  attachIndustryRiskR08MilestoneEnrichment,
+  attachIndustryRiskR20ControllerEnrichment,
   scoreIndustryRiskDataset,
   type IndustryRiskCompany,
   type IndustryRiskDataset,
   type IndustryRiskIndicatorId,
   type IndustryRiskObservation,
   type IndustryRiskSource,
+  type R08MilestoneEnrichment,
+  type R20ControllerEnrichment,
 } from "@/domain/industry-risk-v1/index.ts"
 import type {
   CanonicalRiskDimensionId,
@@ -27,7 +33,13 @@ import type {
   TechnologyScoringCompanyState,
 } from "@/types/risk"
 
-const dataset = unifiedData as IndustryRiskDataset
+const dataset = attachIndustryRiskR08MilestoneEnrichment(
+  attachIndustryRiskR20ControllerEnrichment(
+    unifiedData as IndustryRiskDataset,
+    r20ControllerEnrichmentData as R20ControllerEnrichment
+  ),
+  r08MilestoneEnrichmentData as R08MilestoneEnrichment
+)
 const snapshotAt = dataset.metadata.sourceDate || "2026-08-19"
 const fallbackSourceUrl = "https://www.sse.com.cn/"
 

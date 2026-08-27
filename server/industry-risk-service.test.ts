@@ -30,7 +30,7 @@ test("industry assessment keeps raw values, formula traces, and sources together
   assert.equal(response.company.shortName, "寒武纪")
   assert.equal(response.assessment.metrics.length, 22)
   assert.equal(response.assessment.benchmarkSampleSize, 64)
-  assert.equal(response.assessment.weightedScoredIndicatorCount, 16)
+  assert.equal(response.assessment.weightedScoredIndicatorCount, 18)
   assert.ok(response.assessment.totalRiskScore !== null)
   assert.equal(response.indicators.length, 22)
   assert.equal(response.coverage.length, 22)

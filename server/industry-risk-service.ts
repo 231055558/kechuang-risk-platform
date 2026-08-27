@@ -1,6 +1,10 @@
 import unifiedData from "../src/data/industry/r01-r22-unified.json" with { type: "json" }
 import narrativeRuntimeData from "../src/data/industry/r01-r04-narrative-news.json" with { type: "json" }
+import r08MilestoneEnrichmentData from "../src/data/industry/r08-milestone-enrichment.json" with { type: "json" }
+import r20ControllerEnrichmentData from "../src/data/industry/r20-controller-enrichment.json" with { type: "json" }
 import {
+  attachIndustryRiskR08MilestoneEnrichment,
+  attachIndustryRiskR20ControllerEnrichment,
   attachIndustryRiskNarrativeRuntime,
   buildIndustryRiskKnowledgeGraph,
   scoreIndustryRiskDataset,
@@ -9,12 +13,20 @@ import {
   type IndustryRiskDataset,
   type IndustryRiskEvent,
   type IndustryRiskNarrativeRuntime,
+  type R08MilestoneEnrichment,
+  type R20ControllerEnrichment,
 } from "../src/domain/industry-risk-v1/index.ts"
 import { getIndustryRiskInvestorContract } from "../src/domain/industry-risk-v1/investor-contract.ts"
 
-const dataset = attachIndustryRiskNarrativeRuntime(
-  unifiedData as IndustryRiskDataset,
-  narrativeRuntimeData as IndustryRiskNarrativeRuntime
+const dataset = attachIndustryRiskR08MilestoneEnrichment(
+  attachIndustryRiskR20ControllerEnrichment(
+    attachIndustryRiskNarrativeRuntime(
+      unifiedData as IndustryRiskDataset,
+      narrativeRuntimeData as IndustryRiskNarrativeRuntime
+    ),
+    r20ControllerEnrichmentData as R20ControllerEnrichment
+  ),
+  r08MilestoneEnrichmentData as R08MilestoneEnrichment
 )
 const assessments = scoreIndustryRiskDataset(dataset)
 const knowledgeGraph = buildIndustryRiskKnowledgeGraph(dataset, assessments)
