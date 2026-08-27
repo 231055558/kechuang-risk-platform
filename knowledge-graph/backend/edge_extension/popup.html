@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>风险主体表格采集</title>
+  <style>
+    body{width:430px;margin:0;padding:14px;background:#0b1726;color:#e8f1fa;font:13px/1.45 system-ui,"Microsoft YaHei",sans-serif}h1{font-size:16px;margin:0 0 4px}p{margin:0 0 12px;color:#9eb3c8}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}button{border:1px solid #315675;border-radius:6px;padding:7px 10px;background:#14314c;color:#e6f4ff;cursor:pointer}button.primary{background:#58c9ff;color:#052034;border-color:#58c9ff;font-weight:650}button:disabled{opacity:.45;cursor:wait}label{display:grid;gap:4px;margin:8px 0;color:#afc4d8}input,select{border:1px solid #315675;border-radius:5px;padding:7px;background:#091526;color:#e8f1fa}.table{border:1px solid #294865;border-radius:7px;padding:9px;margin-top:8px}.table-head{display:flex;align-items:center;gap:7px}.table-head strong{flex:1}.meta{color:#8da8c0;font-size:11px}.status{min-height:18px;color:#ffd285;margin-top:8px}.notice{padding:8px;border-left:3px solid #58c9ff;background:#10263b;color:#bdd2e4;font-size:11px}
+  </style>
+</head>
+<body>
+  <h1>风险主体表格采集</h1>
+  <p>只读取当前页面中用户可见的 HTML 表格。</p>
+  <div class="notice">不会采集密码、Cookie 或隐藏数据。提交后仍需人工复核；付费页面不会自动打开。</div>
+  <label>目标企业<input id="company" value="中科寒武纪科技股份有限公司"></label>
+  <label>页面来源<select id="sourceAccess"><option value="public_visible">公开/免费页面</option><option value="authorized_existing">已授权且本次不产生费用</option><option value="paid_source">可能产生费用的付费来源</option></select></label>
+  <div class="toolbar"><button id="capture" class="primary">读取可见表格</button><button id="send" disabled>发送到本地项目</button><button id="download" disabled>下载 JSON</button></div>
+  <section id="tables"></section>
+  <div class="status" id="status"></div>
+  <script src="popup.js"></script>
+</body>
+</html>

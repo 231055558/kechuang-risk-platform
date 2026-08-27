@@ -1,0 +1,540 @@
+{
+  "version": "fee-kbg-cambricon-1.3.0",
+  "pilot_company": {
+    "stock_code": "688256",
+    "name": "中科寒武纪科技股份有限公司",
+    "as_of_date": "2026-08-26"
+  },
+  "quality": {
+    "minimum_event_confidence": 0.6,
+    "maximum_concepts": 6,
+    "maximum_evolution_gap_days": 1460,
+    "include_review_candidates_in_graph": true,
+    "include_review_candidates_in_scores": false
+  },
+  "event_type_topics": {
+    "交易所问询事件": {
+      "topic": "监管问询",
+      "indicators": ["R11"],
+      "risk_polarity": 0.65,
+      "direction": "adverse"
+    },
+    "监管处罚事件": {
+      "topic": "监管处罚与处置",
+      "indicators": ["R10"],
+      "risk_polarity": 0.8,
+      "direction": "adverse"
+    },
+    "行政处罚公告": {
+      "topic": "监管处罚与处置",
+      "indicators": ["R10"],
+      "risk_polarity": 0.8,
+      "direction": "adverse"
+    },
+    "诉讼事件": {
+      "topic": "诉讼与仲裁",
+      "indicators": ["R12"],
+      "risk_polarity": 0.75,
+      "direction": "adverse"
+    },
+    "诉讼公告": {
+      "topic": "诉讼与仲裁",
+      "indicators": ["R12"],
+      "risk_polarity": 0.75,
+      "direction": "adverse"
+    },
+    "诉讼仲裁": {
+      "topic": "诉讼与仲裁",
+      "indicators": ["R12"],
+      "risk_polarity": 0.75,
+      "direction": "adverse"
+    },
+    "仲裁公告": {
+      "topic": "诉讼与仲裁",
+      "indicators": ["R12"],
+      "risk_polarity": 0.75,
+      "direction": "adverse"
+    },
+    "关键人员变动事件": {
+      "topic": "关键人员变动",
+      "indicators": ["R06", "R22"],
+      "risk_polarity": 0.65,
+      "direction": "adverse"
+    },
+    "核心技术人员变动": {
+      "topic": "关键人员变动",
+      "indicators": ["R06", "R22"],
+      "risk_polarity": 0.65,
+      "direction": "adverse"
+    },
+    "募投延期": {
+      "topic": "研发与募投里程碑受阻",
+      "indicators": ["R07", "R08", "R16"],
+      "risk_polarity": 0.7,
+      "direction": "adverse"
+    },
+    "募投项目变动": {
+      "topic": "研发与募投里程碑变更",
+      "indicators": ["R07", "R08", "R16"],
+      "risk_polarity": 0.55,
+      "direction": "mixed"
+    },
+    "募投结项": {
+      "topic": "研发与募投里程碑完成",
+      "indicators": ["R07", "R08", "R16"],
+      "risk_polarity": 0.2,
+      "direction": "mitigating"
+    },
+    "研发负面里程碑": {
+      "topic": "研发与募投里程碑受阻",
+      "indicators": ["R07", "R08", "R16"],
+      "risk_polarity": 0.75,
+      "direction": "adverse"
+    },
+    "重大技术与知识产权事件": {
+      "topic": "重大技术与知识产权事件",
+      "indicators": ["R09"],
+      "risk_polarity": 0.7,
+      "direction": "adverse"
+    },
+    "知识产权事件": {
+      "topic": "重大技术与知识产权事件",
+      "indicators": ["R09"],
+      "risk_polarity": 0.7,
+      "direction": "adverse"
+    },
+    "资产减值计提事件": {
+      "topic": "资产负面与减值",
+      "indicators": ["R13", "R14", "R16"],
+      "risk_polarity": 0.85,
+      "direction": "adverse"
+    },
+    "出口管制与制裁事件": {
+      "topic": "政策与供应限制",
+      "indicators": ["R17", "R18", "R19"],
+      "risk_polarity": 0.85,
+      "direction": "adverse"
+    },
+    "供应链稳定风险披露": {
+      "topic": "供应链稳定压力",
+      "indicators": ["R17", "R19"],
+      "risk_polarity": 0.7,
+      "direction": "conditional"
+    },
+    "供应链与成本风险披露": {
+      "topic": "供应链稳定压力",
+      "indicators": ["R16", "R17", "R19"],
+      "risk_polarity": 0.75,
+      "direction": "conditional"
+    }
+  },
+  "title_rules": [
+    {
+      "pattern": "核心技术人员.*(离职|离任|变动|调整)|高级管理人员变动.*核心技术人员",
+      "topic": "关键人员变动",
+      "indicators": ["R06", "R08", "R22"],
+      "risk_polarity": 0.72,
+      "direction": "adverse"
+    },
+    {
+      "pattern": "实体清单|出口管制|\\bBIS\\b",
+      "topic": "政策与供应限制",
+      "indicators": ["R17", "R18", "R19"],
+      "risk_polarity": 0.85,
+      "direction": "adverse"
+    },
+    {
+      "pattern": "供应偏紧|供应短缺|供应链稳定|原材料价格.*上涨",
+      "topic": "供应链稳定压力",
+      "indicators": ["R16", "R17", "R19"],
+      "risk_polarity": 0.75,
+      "direction": "conditional"
+    },
+    {
+      "pattern": "资产减值|存货跌价|减值准备",
+      "topic": "资产负面与减值",
+      "indicators": ["R13", "R14", "R16"],
+      "risk_polarity": 0.85,
+      "direction": "adverse"
+    },
+    {
+      "pattern": "募投.*结项|结项.*募集资金",
+      "topic": "研发与募投里程碑完成",
+      "indicators": ["R07", "R08", "R16"],
+      "risk_polarity": 0.2,
+      "direction": "mitigating"
+    },
+    {
+      "pattern": "募投.*(延期|终止)|项目.*(延期|终止)",
+      "topic": "研发与募投里程碑受阻",
+      "indicators": ["R07", "R08", "R16"],
+      "risk_polarity": 0.75,
+      "direction": "adverse"
+    },
+    {
+      "pattern": "向特定对象发行.*问询|审核问询.*向特定对象发行",
+      "topic": "融资审核问询",
+      "indicators": ["R11", "R15", "R16", "R20"],
+      "risk_polarity": 0.65,
+      "direction": "adverse"
+    },
+    {
+      "pattern": "劳动争议",
+      "topic": "诉讼与仲裁",
+      "indicators": ["R12", "R21"],
+      "risk_polarity": 0.75,
+      "direction": "adverse"
+    },
+    {
+      "pattern": "诉讼|仲裁|判决书|裁定书",
+      "topic": "诉讼与仲裁",
+      "indicators": ["R12"],
+      "risk_polarity": 0.75,
+      "direction": "adverse"
+    }
+  ],
+  "event_evolution": {
+    "model_version": "fee-evolution-char-tfidf-1.0.0",
+    "threshold": 0.48,
+    "top_k_forward": 2,
+    "time_decay_days": 730,
+    "weights": {
+      "time_decay": 0.25,
+      "topic": 0.25,
+      "semantic": 0.25,
+      "subject": 0.15,
+      "polarity": 0.1
+    }
+  },
+  "risk_transmission": {
+    "model_version": "fee-subject-impact-cambricon-1.0.0",
+    "default_min_weight": 0.5,
+    "minimum_supported_weight": 0.35,
+    "maximum_subjects": 12,
+    "weights": {
+      "event_severity": 0.45,
+      "evidence_confidence": 0.35,
+      "relation_directness": 0.2
+    },
+    "supplier_weights": {
+      "purchase_share": 0.45,
+      "event_severity": 0.35,
+      "evidence_confidence": 0.2
+    },
+    "role_directness": {
+      "listing_authority": 0.95,
+      "regulator": 0.9,
+      "inquirer": 0.8,
+      "adjudicator": 0.85,
+      "participant": 0.6,
+      "key_person_group": 0.9,
+      "internal_factor": 0.9
+    },
+    "impact_levels": {
+      "high": 0.75,
+      "medium": 0.5,
+      "low": 0.35
+    }
+  },
+  "subject_panorama": {
+    "model_version": "fee-subject-influence-cambricon-1.0.0",
+    "default_min_weight": 0.5,
+    "minimum_supported_weight": 0.35,
+    "counterparty_weights": {
+      "relationship_scale": 0.55,
+      "recency": 0.25,
+      "evidence_confidence": 0.2
+    },
+    "equity_weights": {
+      "holding_ratio": 0.7,
+      "relationship_directness": 0.1,
+      "evidence_confidence": 0.2
+    },
+    "personnel_weights": {
+      "role_criticality": 0.65,
+      "technical_criticality": 0.15,
+      "evidence_confidence": 0.2
+    }
+  },
+  "external_subject_transmission": {
+    "model_version": "fee-external-subject-transmission-cambricon-1.0.0",
+    "weights": {
+      "subject_importance": 0.45,
+      "event_severity": 0.35,
+      "evidence_confidence": 0.2
+    },
+    "paths": [
+      {
+        "path_id": "arm-china-governance-20220429",
+        "event_owner": {
+          "name": "安谋科技(中国)有限公司",
+          "entity_type": "supplier",
+          "confidence": 0.98
+        },
+        "via_subject": {
+          "name": "安谋科技(中国)有限公司"
+        },
+        "via_subject_verified": true,
+        "external_event": {
+          "event_date": "2022-04-29",
+          "event_type": "external_governance_event",
+          "topic": "外部主体治理风险",
+          "title": "安谋科技长期公司治理问题经董事会改选后解决",
+          "severity": 0.65,
+          "status": "resolved_with_residual_exposure",
+          "source_url": "https://newsroom.arm.com/news/arm-China-majority-shareholders-announce-the-companys-corporate-governance-issue-has-been-resolved",
+          "source_title": "Arm China Majority Shareholders Announce the Company’s Corporate Governance Issue has been Resolved",
+          "source_institution": "Arm Newsroom",
+          "evidence_quote": "Arm多数股东公告确认安谋科技曾存在长期公司治理问题，并于2022年4月29日经董事会一致表决改任联席CEO后解决。",
+          "confidence": 0.98,
+          "browser_verified": true
+        },
+        "transmission_channel": "供应商治理与IP授权连续性",
+        "mechanism": "安谋科技自身治理争议可能经其IP授权与技术服务连续性，向寒武纪的研发和供应链稳定性传导；公告同时证明该问题已解决，因此保留历史暴露而非断言当前仍在恶化。",
+        "indicator_ids": ["R17", "R19"],
+        "path_attenuation": 0.85
+      },
+      {
+        "path_id": "synopsys-china-export-restriction-20250529",
+        "event_owner": {
+          "name": "新思科技有限公司",
+          "entity_type": "supplier",
+          "confidence": 0.97
+        },
+        "via_subject": {
+          "name": "新思科技有限公司"
+        },
+        "via_subject_verified": true,
+        "external_event": {
+          "event_date": "2025-05-29",
+          "event_type": "external_export_control_event",
+          "topic": "供应商出口管制事件",
+          "title": "新思科技收到美国BIS对华EDA出口许可限制通知",
+          "severity": 0.85,
+          "status": "subsequently_rescinded",
+          "source_url": "https://investor.synopsys.com/news/news-details/2025/Synopsys-Issues-Statement-in-Connection-to-the-Lifting-of-Recent-U-S--Export-Restrictions-Related-to-China/default.aspx",
+          "source_title": "Synopsys Issues Statement in Connection to the Lifting of Recent U.S. Export Restrictions Related to China",
+          "source_institution": "Synopsys Investor Relations",
+          "evidence_quote": "Synopsys官方声明确认其于2025年5月29日收到BIS通知，对面向中国的相关产品施加出口限制。",
+          "confidence": 0.97,
+          "browser_verified": true
+        },
+        "transmission_channel": "EDA工具与技术服务可得性",
+        "mechanism": "供应商自身受到EDA出口许可限制，会沿软件工具和技术服务供应关系传导至寒武纪研发进度、供应连续性及出口管制暴露。",
+        "indicator_ids": ["R17", "R19"],
+        "path_attenuation": 0.88
+      },
+      {
+        "path_id": "synopsys-restriction-rescinded-20250702",
+        "evolves_from_event_id": "synopsys-china-export-restriction-20250529",
+        "event_owner": {
+          "name": "新思科技有限公司",
+          "entity_type": "supplier",
+          "confidence": 0.97
+        },
+        "via_subject": {
+          "name": "新思科技有限公司"
+        },
+        "via_subject_verified": true,
+        "external_event": {
+          "event_date": "2025-07-02",
+          "event_type": "external_risk_mitigation_event",
+          "topic": "出口管制缓释事件",
+          "title": "美国BIS撤销对新思科技相关对华出口限制",
+          "severity": 0.25,
+          "status": "mitigated",
+          "source_url": "https://investor.synopsys.com/news/news-details/2025/Synopsys-Issues-Statement-in-Connection-to-the-Lifting-of-Recent-U-S--Export-Restrictions-Related-to-China/default.aspx",
+          "source_title": "Synopsys Issues Statement in Connection to the Lifting of Recent U.S. Export Restrictions Related to China",
+          "source_institution": "Synopsys Investor Relations",
+          "evidence_quote": "Synopsys官方声明确认BIS于2025年7月2日撤销相关限制，公司开始恢复中国客户对受限产品的访问。",
+          "confidence": 0.97,
+          "browser_verified": true
+        },
+        "transmission_channel": "EDA工具供应风险缓释",
+        "mechanism": "限制撤销降低了供应商对寒武纪研发工具可得性的短期冲击，但不消除未来政策反复的不确定性。",
+        "indicator_ids": ["R17", "R19"],
+        "path_attenuation": 0.75
+      },
+      {
+        "path_id": "loongson-entity-list-liuxinyu-20230306",
+        "event_owner": {
+          "name": "龙芯中科技术股份有限公司",
+          "entity_type": "associated_company",
+          "association_to_subject": "刘新宇任龙芯中科董事",
+          "association_source_url": "https://static.sse.com.cn/stock/disclosure/announcement/c/202112/000964_20211210_97JL.pdf",
+          "source_ref": "SSE/龙芯中科招股说明书",
+          "confidence": 0.96
+        },
+        "via_subject": {
+          "name": "刘新宇"
+        },
+        "via_subject_verified": true,
+        "external_event": {
+          "event_date": "2023-03-06",
+          "event_type": "external_sanctions_event",
+          "topic": "关联企业出口管制事件",
+          "title": "龙芯中科被美国BIS列入实体清单",
+          "severity": 0.85,
+          "status": "active_exposure",
+          "source_url": "https://public-inspection.federalregister.gov/2023-04558.pdf",
+          "source_title": "Additions of Entities to the Entity List",
+          "source_institution": "U.S. Department of Commerce, Bureau of Industry and Security",
+          "evidence_quote": "BIS最终规则将Loongson Technology及其别名Loongson Technology Corporation Limited列入实体清单，许可审查原则为推定拒绝。",
+          "confidence": 0.96,
+          "browser_verified": true
+        },
+        "transmission_channel": "高管关联企业政策风险暴露",
+        "mechanism": "刘新宇任龙芯中科董事，龙芯中科的实体清单事件可通过关键董事这一主体节点，向寒武纪的治理声誉与关联方出口管制暴露传导；该路径是风险暴露评估而非直接因果认定。",
+        "indicator_ids": ["R19", "R21"],
+        "path_attenuation": 0.78
+      }
+    ]
+  },
+  "forward_risk_evolution": {
+    "model_version": "cambricon-conditional-risk-evolution-1.0.0",
+    "max_rules_per_event": 1,
+    "rules": [
+      {
+        "rule_id": "export-control-to-rd-pressure",
+        "event_pattern": "实体清单|出口管制|供应链.*(稳定|偏紧|短缺)",
+        "steps": [
+          {
+            "scenario_id": "critical-tools-components-access-decline",
+            "label": "关键EDA/IP或核心组件可得性进一步下降",
+            "severity": 0.88,
+            "probability": 0.68,
+            "horizon": "3-12个月",
+            "conditions": "外部限制继续收紧、授权或供应替代未按计划完成",
+            "indicator_ids": ["R17", "R19"]
+          },
+          {
+            "scenario_id": "rd-delivery-milestone-delay",
+            "label": "研发或产品交付里程碑延迟",
+            "severity": 0.94,
+            "probability": 0.56,
+            "horizon": "6-18个月",
+            "conditions": "关键工具或组件长期受限且替代方案验证周期超预期",
+            "indicator_ids": ["R08", "R16"]
+          }
+        ]
+      },
+      {
+        "rule_id": "personnel-change-to-technology-delay",
+        "event_pattern": "核心技术人员|关键人员.*(离职|离任|调整|变动)",
+        "steps": [
+          {
+            "scenario_id": "core-team-stability-decline",
+            "label": "核心团队稳定性继续下降",
+            "severity": 0.84,
+            "probability": 0.58,
+            "horizon": "3-12个月",
+            "conditions": "关键岗位补充、知识交接或激励安排未达到预期",
+            "indicator_ids": ["R06", "R22"]
+          },
+          {
+            "scenario_id": "technology-roadmap-delay",
+            "label": "技术路线或研发项目进度受阻",
+            "severity": 0.91,
+            "probability": 0.48,
+            "horizon": "6-18个月",
+            "conditions": "人员流失影响核心模块研发和项目交付连续性",
+            "indicator_ids": ["R07", "R08"]
+          }
+        ]
+      },
+      {
+        "rule_id": "inquiry-to-regulatory-escalation",
+        "event_pattern": "问询|审核问询",
+        "steps": [
+          {
+            "scenario_id": "disclosure-remediation-pressure",
+            "label": "信息披露整改或审核进程承压",
+            "severity": 0.79,
+            "probability": 0.52,
+            "horizon": "1-6个月",
+            "conditions": "回复不充分、补充披露反复或审核事项未及时解决",
+            "indicator_ids": ["R11", "R15"]
+          },
+          {
+            "scenario_id": "regulatory-financing-delay",
+            "label": "监管措施升级或融资进度延迟",
+            "severity": 0.87,
+            "probability": 0.38,
+            "horizon": "3-12个月",
+            "conditions": "整改未完成并出现新增合规问题",
+            "indicator_ids": ["R10", "R16"]
+          }
+        ]
+      },
+      {
+        "rule_id": "litigation-to-governance-loss",
+        "event_pattern": "诉讼|仲裁|劳动争议|判决|裁定",
+        "steps": [
+          {
+            "scenario_id": "litigation-loss-reputation-pressure",
+            "label": "诉讼损失与治理声誉压力扩大",
+            "severity": 0.86,
+            "probability": 0.49,
+            "horizon": "3-12个月",
+            "conditions": "案件败诉、赔偿规模扩大或同类争议继续增加",
+            "indicator_ids": ["R12", "R21"]
+          },
+          {
+            "scenario_id": "cash-outflow-governance-pressure",
+            "label": "现金流出与治理稳定性进一步承压",
+            "severity": 0.92,
+            "probability": 0.34,
+            "horizon": "6-18个月",
+            "conditions": "诉讼成本、赔偿和人员治理问题形成叠加影响",
+            "indicator_ids": ["R16", "R22"]
+          }
+        ]
+      },
+      {
+        "rule_id": "impairment-to-profit-pressure",
+        "event_pattern": "减值|存货跌价|战略备货",
+        "steps": [
+          {
+            "scenario_id": "continued-asset-impairment",
+            "label": "资产减值规模继续扩大",
+            "severity": 0.91,
+            "probability": 0.55,
+            "horizon": "3-12个月",
+            "conditions": "库存周转、产品销售或资产可回收价值未改善",
+            "indicator_ids": ["R14", "R16"]
+          },
+          {
+            "scenario_id": "profit-net-assets-pressure",
+            "label": "利润与净资产进一步承压",
+            "severity": 0.96,
+            "probability": 0.43,
+            "horizon": "6-18个月",
+            "conditions": "连续计提减值且经营现金流改善不及预期",
+            "indicator_ids": ["R13", "R16"]
+          }
+        ]
+      }
+    ]
+  },
+  "risk_indexes": {
+    "model_version": "paper-baseline-cambricon-1.0.0",
+    "relation_weights": {
+      "equity": 0.4,
+      "industry": 0.3,
+      "personnel": 0.2,
+      "concept": 0.1
+    },
+    "experimental_layers": ["supply_chain"],
+    "historical_risk_categories": [
+      "技术风险",
+      "合规风险",
+      "财务融资风险",
+      "外部环境风险",
+      "人员与治理风险"
+    ],
+    "warning_weights": {
+      "entity_association_conservative": 0.5,
+      "historical_risk": 0.5
+    }
+  }
+}
