@@ -51,7 +51,9 @@
 
 ## 上游适配
 
-Node 服务只通过 `GRAPH_API_ORIGIN` 连接 Python/Neo4j 图谱服务，浏览器不直接访问 Neo4j。默认本地地址为 `http://127.0.0.1:8766`。`npm run dev` 会启动仓库内只读寒武纪 SQLite 快照预览；生产部署可把该变量指向同学维护的图谱服务。
+Node 服务只通过 `GRAPH_API_ORIGIN` 连接 Python/Neo4j 图谱服务，浏览器不直接访问 Neo4j或其端口。平台iframe固定使用同源的 `risk-graph-workspace/`，Vite和生产Node服务再把该路径转发至图谱上游。默认本地上游为 `http://127.0.0.1:8766`；生产部署可把 `GRAPH_API_ORIGIN` 指向同学维护的图谱服务。
+
+同源代理只允许工作站首页及 `/api/health`、`/api/companies`、`/api/fee-kbg`、`/api/fee-transmission`、`/api/event-transmission`、`/api/subject-panorama`、`/api/graph` 这些只读路径。禁止将其实现为任意URL开放代理。
 
 图谱上游新增企业后，只要企业节点带 `stock_code` 与 `fee_kbg: true`，覆盖目录即可按股票代码自动识别，无需为每家公司改前端。
 

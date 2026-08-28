@@ -48,7 +48,19 @@ const NARRATIVE_RISK_ANNUAL_TRENDS_PATH = `/${NARRATIVE_RISK_ANNUAL_TRENDS_API_P
 const NARRATIVE_RISK_ANNUAL_METHODOLOGY_PATH = `/${NARRATIVE_RISK_ANNUAL_METHODOLOGY_API_PATH}`
 const NARRATIVE_RISK_ANNUAL_AUDIT_PATH = `/${NARRATIVE_RISK_ANNUAL_AUDIT_API_PATH}`
 const NARRATIVE_RISK_INDUSTRY_TRENDS_PATH = `/${NARRATIVE_RISK_INDUSTRY_TRENDS_API_PATH}`
+const RISK_GRAPH_WORKSPACE_PATH = "/risk-graph-workspace"
+const RISK_GRAPH_WORKSPACE_UPSTREAM_PATHS = new Set([
+  "/",
+  "/api/companies",
+  "/api/event-transmission",
+  "/api/fee-kbg",
+  "/api/fee-transmission",
+  "/api/graph",
+  "/api/health",
+  "/api/subject-panorama",
+])
 const DEFAULT_MAX_BODY_BYTES = 1024 * 1024
+const DEFAULT_GRAPH_WORKSPACE_TIMEOUT_MS = 5_000
 
 const contentTypes: Record<string, string> = {
   ".css": "text/css; charset=utf-8",
@@ -110,6 +122,7 @@ export interface ProductionServerOptions {
   getNarrativeAnnualMethodology?: NarrativeRiskAuditSummaryReader
   getNarrativeAnnualAudit?: NarrativeRiskAuditSummaryReader
   getNarrativeIndustryTrends?: NarrativeRiskAuditSummaryReader
+  graphWorkspaceOrigin?: string
   basePath?: string
   maxBodyBytes?: number
 }
@@ -229,6 +242,78 @@ function readRiskGraphMinWeight(request: IncomingMessage) {
   if (raw === null || raw === "") return 0.5
   const value = Number(raw)
   return Number.isFinite(value) && value >= 0.35 && value <= 0.95 ? value : null
+}
+
+function getGraphWorkspaceUpstreamPath(pathname: string) {
+  const upstreamPath =
+    pathname === RISK_GRAPH_WORKSPACE_PATH ||
+    pathname === `${RISK_GRAPH_WORKSPACE_PATH}/`
+      ? "/"
+      : pathname.startsWith(`${RISK_GRAPH_WORKSPACE_PATH}/`)
+        ? pathname.slice(RISK_GRAPH_WORKSPACE_PATH.length)
+        : null
+  return upstreamPath !== null &&
+    RISK_GRAPH_WORKSPACE_UPSTREAM_PATHS.has(upstreamPath)
+    ? upstreamPath
+    : null
+}
+
+async function handleGraphWorkspaceProxy(
+  request: IncomingMessage,
+  response: ServerResponse,
+  upstreamPath: string,
+  graphWorkspaceOrigin?: string
+) {
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    sendApiError(
+      response,
+      405,
+      "METHOD_NOT_ALLOWED",
+      "图谱工作站仅支持只读访问。",
+      { allow: "GET, HEAD" }
+    )
+    return
+  }
+  if (!graphWorkspaceOrigin) {
+    sendApiError(
+      response,
+      503,
+      "RISK_GRAPH_WORKSPACE_UNAVAILABLE",
+      "风险图谱工作站尚未配置。"
+    )
+    return
+  }
+
+  try {
+    const requestUrl = new URL(request.url ?? "/", "http://127.0.0.1")
+    const origin = new URL(graphWorkspaceOrigin)
+    if (origin.protocol !== "http:" && origin.protocol !== "https:") {
+      throw new TypeError("Graph workspace origin must use HTTP or HTTPS")
+    }
+    const upstreamUrl = new URL(upstreamPath, origin)
+    upstreamUrl.search = requestUrl.search
+    const upstream = await fetch(upstreamUrl, {
+      headers: { accept: request.headers.accept ?? "*/*" },
+      signal: AbortSignal.timeout(DEFAULT_GRAPH_WORKSPACE_TIMEOUT_MS),
+    })
+    const body = Buffer.from(await upstream.arrayBuffer())
+    applySecurityHeaders(response)
+    response.writeHead(upstream.status, {
+      "cache-control": upstream.headers.get("cache-control") ?? "no-store",
+      "content-length": body.byteLength,
+      "content-type":
+        upstream.headers.get("content-type") ?? "application/octet-stream",
+    })
+    response.end(request.method === "HEAD" ? undefined : body)
+  } catch (error) {
+    console.error("Risk graph workspace proxy failed", error)
+    sendApiError(
+      response,
+      502,
+      "RISK_GRAPH_WORKSPACE_UNAVAILABLE",
+      "风险图谱工作站暂时不可用。"
+    )
+  }
 }
 
 async function readJsonBody(
@@ -1066,6 +1151,24 @@ export function createProductionServer(
           request,
           response,
           options.listRiskGraphCompanies
+        )
+        return
+      }
+
+      if (
+        pathname === RISK_GRAPH_WORKSPACE_PATH ||
+        pathname.startsWith(`${RISK_GRAPH_WORKSPACE_PATH}/`)
+      ) {
+        const upstreamPath = getGraphWorkspaceUpstreamPath(pathname)
+        if (upstreamPath === null) {
+          sendStaticNotFound(response)
+          return
+        }
+        await handleGraphWorkspaceProxy(
+          request,
+          response,
+          upstreamPath,
+          options.graphWorkspaceOrigin
         )
         return
       }
