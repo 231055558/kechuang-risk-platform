@@ -13,6 +13,10 @@ import type {
   NarrativeIndustryStatistic,
   NarrativeIndustryTrendResponse,
 } from "@/domain/narrative-risk-v1"
+import {
+  calculateNarrativeAnnualDisplayScores,
+  calculateWeightedNarrativeDisplayScore,
+} from "@/domain/narrative-risk-v1/industry-display-score"
 
 const YEARS = [2021, 2022, 2023, 2024, 2025]
 const METRIC_COLORS: Record<string, string> = {
@@ -61,11 +65,15 @@ function IndustryRangeChart({
   statistics,
   company,
   companyObservations,
+  companies,
+  allObservations,
 }: {
   metric: NarrativeIndustryMethodologyItem
   statistics: NarrativeIndustryStatistic[]
   company: NarrativeIndustryCompany
   companyObservations: NarrativeIndustryObservation[]
+  companies: NarrativeIndustryCompany[]
+  allObservations: NarrativeIndustryObservation[]
 }) {
   const width = 560
   const height = 340
@@ -111,6 +119,18 @@ function IndustryRangeChart({
     companyObservations.map((item) => [item.year, item])
   )
   const segments = selectedSegments(observationMap, x, y)
+  const annualDisplayScores = calculateNarrativeAnnualDisplayScores({
+    company,
+    metricKey: metric.metricKey,
+    companies,
+    observations: allObservations,
+  })
+  const annualDisplayScoreMap = new Map(
+    annualDisplayScores.map((item) => [item.year, item])
+  )
+  const finalDisplayScore = calculateWeightedNarrativeDisplayScore(
+    annualDisplayScores
+  )
 
   return (
     <article className="nr-industry-chart">
@@ -120,7 +140,15 @@ function IndustryRangeChart({
           <h3>{metric.name}</h3>
           <p>{metric.formula}</p>
         </div>
-        <Badge variant="outline">{metric.unit}</Badge>
+        <output
+          className="nr-industry-chart__final-score"
+          aria-label={`${metric.name}行业排名加权风险分${
+            finalDisplayScore === null ? "缺失" : finalDisplayScore.toFixed(1)
+          }`}
+          title="行业排名加权风险分（0—100，越高风险越大）"
+        >
+          {finalDisplayScore === null ? "—" : finalDisplayScore.toFixed(1)}
+        </output>
       </header>
 
       <div className="nr-industry-chart__figure">
@@ -281,13 +309,15 @@ function IndustryRangeChart({
       </p>
 
       <details>
-        <summary>查看年度原始值与行业范围</summary>
+        <summary>查看年度展示分、原始值与行业范围</summary>
         <div className="nr-industry-chart__table-scroll">
           <table>
             <thead>
               <tr>
                 <th>年份</th>
                 <th>{company.companyName}</th>
+                <th>年度展示分</th>
+                <th>权重</th>
                 <th>行业均值</th>
                 <th>行业下限</th>
                 <th>行业上限</th>
@@ -298,6 +328,7 @@ function IndustryRangeChart({
               {YEARS.map((year) => {
                 const statistic = statistics.find((item) => item.year === year)
                 const companyObservation = observationMap.get(year)
+                const annualDisplayScore = annualDisplayScoreMap.get(year)
                 return (
                   <tr key={year}>
                     <th>{year}</th>
@@ -307,6 +338,12 @@ function IndustryRangeChart({
                         ? "（代理）"
                         : ""}
                     </td>
+                    <td>
+                      {annualDisplayScore
+                        ? annualDisplayScore.score.toFixed(1)
+                        : "—"}
+                    </td>
+                    <td>{annualDisplayScore?.weight ?? "—"}</td>
                     <td>{displayValue(statistic?.mean ?? null, metric.metricKey)}</td>
                     <td>{displayValue(statistic?.minimum ?? null, metric.metricKey)}</td>
                     <td>{displayValue(statistic?.maximum ?? null, metric.metricKey)}</td>
@@ -346,7 +383,7 @@ export function NarrativeIndustryTrends({
           <span className="nr-eyebrow">94家企业 · 年报原始指数</span>
           <h2 id="nr-industry-title">行业叙事风险年度分布</h2>
           <p>
-            行业均值、年度最小—最大区间与当前研究对象轨迹同图展示；不使用0—100映射。
+            折线保留原始指数；卡片右上角按企业各年度行业风险排名生成0—100展示分，并以最近年份权重5向前递减加权。
           </p>
         </div>
         <Badge variant={data.sourceMode === "postgres" ? "secondary" : "outline"}>
@@ -385,6 +422,8 @@ export function NarrativeIndustryTrends({
             key={metric.metricKey}
             metric={metric}
             company={selectedCompany}
+            companies={data.companies}
+            allObservations={data.observations}
             statistics={data.industryStatistics.filter(
               (item) =>
                 item.industryGroupId === selectedCompany.industryGroupId &&
