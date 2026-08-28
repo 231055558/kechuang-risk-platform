@@ -1134,6 +1134,19 @@
   line-height: 1.45;
 }
 
+.nr-industry-chart__final-score {
+  flex: 0 0 auto;
+  min-width: 54px;
+  margin: 12px 14px 0 0;
+  color: var(--text-strong);
+  font-size: 30px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  text-align: right;
+}
+
 .nr-industry-chart__figure {
   margin-top: 10px;
   overflow: hidden;
@@ -1217,7 +1230,7 @@
 
 .nr-industry-chart table {
   width: 100%;
-  min-width: 480px;
+  min-width: 600px;
   border-collapse: collapse;
   font-variant-numeric: tabular-nums;
 }

@@ -1,4 +1,4 @@
-import type { ReactNode } from "react"
+import { useEffect, useState, type ReactNode } from "react"
 import { CheckCircle2Icon, ScaleIcon } from "lucide-react"
 
 import {
@@ -9,6 +9,11 @@ import {
 import { LiquidGlassSurface } from "@/components/liquid"
 import { Reveal } from "@/components/motion/workflow-transition"
 import { Badge } from "@/components/ui/badge"
+import {
+  calculateNarrativeCompanyDisplayScore,
+} from "@/domain/narrative-risk-v1/industry-display-score"
+import type { NarrativeIndustryTrendResponse } from "@/domain/narrative-risk-v1"
+import { getNarrativeIndustryTrends } from "@/lib/narrative-risk-api"
 import {
   Select,
   SelectContent,
@@ -32,10 +37,17 @@ type CompareTabProps = {
   assessments: Record<string, RiskAssessment>
 }
 
-function formatDimensionScoreBasis(dimension: RiskAssessmentDimension | null) {
+type ComparisonDimension = RiskAssessmentDimension & {
+  comparisonBasis?: string
+  comparisonDetail?: string
+}
+
+function formatDimensionScoreBasis(dimension: ComparisonDimension | null) {
   if (!dimension || dimension.score === null) {
     return "数据待补充"
   }
+
+  if (dimension.comparisonBasis) return dimension.comparisonBasis
 
   if (dimension.scoreBasis === "technology-auto-score") {
     return "技术自动评分"
@@ -55,6 +67,23 @@ export function CompareTab({
   summaries,
   assessments,
 }: CompareTabProps) {
+  const [narrativeTrends, setNarrativeTrends] =
+    useState<NarrativeIndustryTrendResponse | null>(null)
+
+  useEffect(() => {
+    let active = true
+    getNarrativeIndustryTrends()
+      .then((data) => {
+        if (active) setNarrativeTrends(data)
+      })
+      .catch(() => {
+        if (active) setNarrativeTrends(null)
+      })
+    return () => {
+      active = false
+    }
+  }, [])
+
   const leftCompany = summaries.find((company) => company.id === companyId)
   const rightCompany =
     summaries.find((company) => company.id === compareCompanyId) ??
@@ -85,13 +114,49 @@ export function CompareTab({
     )
   }
 
-  const dimensionRows = leftAssessment.dimensions.map((leftDimension) => ({
-    left: leftDimension,
-    right:
+  const leftNarrativeScore = narrativeTrends
+    ? calculateNarrativeCompanyDisplayScore(
+        narrativeTrends,
+        leftCompany.stockCode
+      )
+    : null
+  const rightNarrativeScore = narrativeTrends
+    ? calculateNarrativeCompanyDisplayScore(
+        narrativeTrends,
+        rightCompany.stockCode
+      )
+    : null
+  const dimensionRows = leftAssessment.dimensions.map((leftDimension) => {
+    const rightDimension =
       rightAssessment.dimensions.find(
         (dimension) => dimension.id === leftDimension.id
-      ) ?? null,
-  }))
+      ) ?? null
+    if (leftDimension.id !== "narrative") {
+      return { left: leftDimension, right: rightDimension }
+    }
+
+    const comparisonBasis = "年度行业排名加权分"
+    const comparisonDetail =
+      "信息模糊性、叙事夸大性、风险披露充分性三项等权"
+    return {
+      left: {
+        ...leftDimension,
+        score: leftNarrativeScore?.score ?? null,
+        assessable: leftNarrativeScore !== null,
+        comparisonBasis,
+        comparisonDetail,
+      },
+      right: rightDimension
+        ? {
+            ...rightDimension,
+            score: rightNarrativeScore?.score ?? null,
+            assessable: rightNarrativeScore !== null,
+            comparisonBasis,
+            comparisonDetail,
+          }
+        : null,
+    }
+  })
   const comparableCount = dimensionRows.filter(
     ({ left, right }) => left.score !== null && right?.score !== null
   ).length
@@ -171,7 +236,7 @@ export function CompareTab({
           <SectionHeader
             title="六维风险对照图"
             tone="blue"
-            description={`横条展示双方在同一方法版本与维度口径下自动形成的风险分值；缺失项不按低风险处理。${leftCompany.name}采用${leftAssessment.scoreBasisLabel}，${rightCompany.name}采用${rightAssessment.scoreBasisLabel}。`}
+            description={`五项客观风险横条展示双方在同一方法版本与维度口径下形成的风险分值；叙事风险复用年度行业排名加权分的三项等权结果，仅用于对照、不计入综合指数。缺失项不按低风险处理。${leftCompany.name}采用${leftAssessment.scoreBasisLabel}，${rightCompany.name}采用${rightAssessment.scoreBasisLabel}。`}
             action={
               <div className="compare-chart-actions">
                 <span className="compare-coverage tabular-number">
@@ -314,10 +379,10 @@ export function CompareTab({
           <div>
             <strong>对比边界</strong>
             <p>
-              当前比较使用同一方法版本 {leftAssessment.methodVersion}
+              客观风险维度使用同一方法版本 {leftAssessment.methodVersion}
               ，评分基础分别为 {leftAssessment.scoreBasisLabel} 与{" "}
               {rightAssessment.scoreBasisLabel}
-              ；综合指数由当前具备有效数据的维度自动形成，缺失项不会按零分参与计算。
+              ；叙事风险使用年度行业排名加权展示分，与客观评分相互独立且不计入综合指数。缺失项不会按零分参与计算。
             </p>
           </div>
         </section>
@@ -458,8 +523,8 @@ function ComparisonRow({
   leftName,
   rightName,
 }: {
-  left: RiskAssessmentDimension
-  right: RiskAssessmentDimension | null
+  left: ComparisonDimension
+  right: ComparisonDimension | null
   leftName: string
   rightName: string
 }) {
@@ -476,8 +541,8 @@ function ComparisonRow({
       : Math.abs(delta) < 5
         ? "差异较小"
         : delta > 0
-          ? `${leftName}辅助分值更高`
-          : `${rightName}辅助分值更高`
+          ? `${leftName}风险分值更高`
+          : `${rightName}风险分值更高`
   const leftBasis = formatDimensionScoreBasis(left)
   const rightBasis = formatDimensionScoreBasis(right)
 
@@ -506,7 +571,9 @@ function ComparisonRow({
       </td>
       <td className="tabular-number">
         {comparable
-          ? `${leftBasis} / ${rightBasis} · ${left.evidenceIds.length} / ${right?.evidenceIds.length ?? 0} 条评分证据`
+          ? left.comparisonDetail && right?.comparisonDetail
+            ? `${leftBasis} / ${rightBasis} · ${left.comparisonDetail}`
+            : `${leftBasis} / ${rightBasis} · ${left.evidenceIds.length} / ${right?.evidenceIds.length ?? 0} 条评分证据`
           : `${leftBasis} / ${rightBasis}；至少一方尚未完成评分证据闭环`}
       </td>
     </tr>
