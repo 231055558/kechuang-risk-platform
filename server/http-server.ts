@@ -25,6 +25,11 @@ const KCR_COMPANY_ASSESSMENT_PATH_PREFIX = `/${KCR_COMPANY_ASSESSMENT_API_PREFIX
 const INDUSTRY_RISK_COMPANIES_PATH = `/${INDUSTRY_RISK_COMPANIES_API_PATH}`
 const INDUSTRY_RISK_COMPANY_PATH_PREFIX = `${INDUSTRY_RISK_COMPANIES_PATH}/`
 const INDUSTRY_RISK_GRAPH_PATH = `/${INDUSTRY_RISK_GRAPH_API_PATH}`
+const RISK_GRAPH_API_PREFIX = "/api/v1/risk-graph"
+const RISK_GRAPH_HEALTH_PATH = `${RISK_GRAPH_API_PREFIX}/health`
+const RISK_GRAPH_COMPANIES_PATH = `${RISK_GRAPH_API_PREFIX}/companies`
+const RISK_GRAPH_FEE_TRANSMISSION_PATH = `${RISK_GRAPH_API_PREFIX}/fee-transmission`
+const RISK_GRAPH_SUBJECT_PANORAMA_PATH = `${RISK_GRAPH_API_PREFIX}/subject-panorama`
 const DEFAULT_MAX_BODY_BYTES = 1024 * 1024
 
 const contentTypes: Record<string, string> = {
@@ -54,6 +59,11 @@ export type KcrAssessmentReader = (
 ) => unknown | Promise<unknown>
 export type IndustryRiskCompanyLister = () => unknown | Promise<unknown>
 export type IndustryRiskAssessmentReader = KcrAssessmentReader
+export type RiskGraphReader = (
+  companyKey: string,
+  view: "fee-transmission" | "subject-panorama",
+  minWeight: number
+) => unknown | Promise<unknown>
 
 export interface ProductionServerOptions {
   staticRoot: string
@@ -64,6 +74,9 @@ export interface ProductionServerOptions {
   listIndustryRiskCompanies?: IndustryRiskCompanyLister
   getIndustryRiskAssessment?: IndustryRiskAssessmentReader
   getIndustryRiskGraph?: IndustryRiskCompanyLister
+  getRiskGraphHealth?: IndustryRiskCompanyLister
+  listRiskGraphCompanies?: IndustryRiskCompanyLister
+  getRiskGraphSnapshot?: RiskGraphReader
   basePath?: string
   maxBodyBytes?: number
 }
@@ -624,6 +637,142 @@ async function handleIndustryRiskAssessment(
   }
 }
 
+function getRiskGraphPublicError(error: unknown) {
+  if (typeof error !== "object" || error === null) return null
+  const candidate = error as HttpErrorShape
+  if (
+    candidate.statusCode !== 503 ||
+    typeof candidate.code !== "string" ||
+    !candidate.code.startsWith("RISK_GRAPH_")
+  ) {
+    return getPublicError(
+      error,
+      "RISK_GRAPH_REQUEST_INVALID",
+      "知识图谱查询无效。"
+    )
+  }
+  return {
+    statusCode: 503,
+    code: candidate.code,
+    message:
+      typeof candidate.message === "string"
+        ? candidate.message
+        : "云端知识图谱数据库暂时不可用。",
+  }
+}
+
+function riskGraphQuery(request: IncomingMessage) {
+  try {
+    const url = new URL(request.url ?? "/", "http://127.0.0.1")
+    return {
+      companyKey: url.searchParams.get("company_key") ?? "",
+      minWeight: Number(url.searchParams.get("min_weight") ?? "0.50"),
+    }
+  } catch {
+    return null
+  }
+}
+
+async function handleRiskGraphDirectory(
+  request: IncomingMessage,
+  response: ServerResponse,
+  reader: IndustryRiskCompanyLister | undefined,
+  unavailableMessage: string
+) {
+  if (request.method !== "GET") {
+    sendApiError(
+      response,
+      405,
+      "METHOD_NOT_ALLOWED",
+      "该接口仅支持 GET 请求。",
+      { allow: "GET" }
+    )
+    return
+  }
+  if (!reader) {
+    sendApiError(response, 503, "RISK_GRAPH_UNAVAILABLE", unavailableMessage)
+    return
+  }
+  try {
+    sendJson(response, 200, await reader())
+  } catch (error) {
+    const publicError = getRiskGraphPublicError(error)
+    if (publicError) {
+      sendApiError(
+        response,
+        publicError.statusCode,
+        publicError.code,
+        publicError.message
+      )
+      return
+    }
+    console.error("Risk graph database query failed", error)
+    sendApiError(
+      response,
+      503,
+      "RISK_GRAPH_DATABASE_UNAVAILABLE",
+      "云端知识图谱数据库暂时不可用。"
+    )
+  }
+}
+
+async function handleRiskGraphSnapshot(
+  request: IncomingMessage,
+  response: ServerResponse,
+  view: "fee-transmission" | "subject-panorama",
+  reader?: RiskGraphReader
+) {
+  if (request.method !== "GET") {
+    sendApiError(
+      response,
+      405,
+      "METHOD_NOT_ALLOWED",
+      "该接口仅支持 GET 请求。",
+      { allow: "GET" }
+    )
+    return
+  }
+  if (!reader) {
+    sendApiError(
+      response,
+      503,
+      "RISK_GRAPH_UNAVAILABLE",
+      "知识图谱快照服务尚未配置。"
+    )
+    return
+  }
+  const query = riskGraphQuery(request)
+  if (!query) {
+    sendApiError(response, 400, "INVALID_URL", "请求 URL 无效。")
+    return
+  }
+  try {
+    sendJson(
+      response,
+      200,
+      await reader(query.companyKey, view, query.minWeight)
+    )
+  } catch (error) {
+    const publicError = getRiskGraphPublicError(error)
+    if (publicError) {
+      sendApiError(
+        response,
+        publicError.statusCode,
+        publicError.code,
+        publicError.message
+      )
+      return
+    }
+    console.error("Risk graph snapshot query failed", error)
+    sendApiError(
+      response,
+      503,
+      "RISK_GRAPH_DATABASE_UNAVAILABLE",
+      "云端知识图谱数据库暂时不可用。"
+    )
+  }
+}
+
 function isPrivateStaticPath(pathname: string) {
   const segments = pathname.split("/").filter(Boolean)
   return (
@@ -805,6 +954,46 @@ export function createProductionServer(
           request,
           response,
           options.getIndustryRiskGraph
+        )
+        return
+      }
+
+      if (pathname === RISK_GRAPH_HEALTH_PATH) {
+        await handleRiskGraphDirectory(
+          request,
+          response,
+          options.getRiskGraphHealth,
+          "云端知识图谱数据库尚未配置。"
+        )
+        return
+      }
+
+      if (pathname === RISK_GRAPH_COMPANIES_PATH) {
+        await handleRiskGraphDirectory(
+          request,
+          response,
+          options.listRiskGraphCompanies,
+          "知识图谱企业目录尚未配置。"
+        )
+        return
+      }
+
+      if (pathname === RISK_GRAPH_FEE_TRANSMISSION_PATH) {
+        await handleRiskGraphSnapshot(
+          request,
+          response,
+          "fee-transmission",
+          options.getRiskGraphSnapshot
+        )
+        return
+      }
+
+      if (pathname === RISK_GRAPH_SUBJECT_PANORAMA_PATH) {
+        await handleRiskGraphSnapshot(
+          request,
+          response,
+          "subject-panorama",
+          options.getRiskGraphSnapshot
         )
         return
       }

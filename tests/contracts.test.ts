@@ -25,7 +25,7 @@ const testDirectory = dirname(fileURLToPath(import.meta.url))
 const projectRoot = join(testDirectory, "..")
 
 function readProjectFile(path: string) {
-  return readFileSync(join(projectRoot, path), "utf8")
+  return readFileSync(join(projectRoot, path), "utf8").replace(/\r\n/g, "\n")
 }
 
 test("glass styles keep the standard backdrop declaration last", () => {
@@ -346,7 +346,9 @@ test("investor strategy and graph integration have no enterprise task workflows"
   assert.match(eventsSource, /section === "investment"/)
   assert.match(eventsSource, /section === "advice"/)
   assert.match(eventsSource, /<GraphIntegrationPanel detail=\{detail\}/)
-  assert.match(eventsSource, /KCR-TEMPORAL-GRAPH-PENDING-v1/)
+  assert.match(eventsSource, /KCR-RISK-GRAPH-POSTGRES-2026\.08-v1/)
+  assert.match(eventsSource, /risk-knowledge-graph\.html/)
+  assert.match(eventsSource, /云端数据库实时读取/)
   assert.doesNotMatch(
     eventsSource,
     /EventRegister|Governance|AutomaticRiskAdvice/
@@ -478,7 +480,10 @@ test("legacy governance entry is absent from the investor overview", () => {
   )
 
   assert.match(overviewSource, /<IndustryRiskReviewPanel/)
-  assert.doesNotMatch(overviewSource, /governance-entry-action|事件清单|责任状态/)
+  assert.doesNotMatch(
+    overviewSource,
+    /governance-entry-action|事件清单|责任状态/
+  )
 })
 
 test("assessment overview leads with top risks and excludes management actions", () => {

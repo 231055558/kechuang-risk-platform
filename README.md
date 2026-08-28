@@ -26,6 +26,34 @@ cd knowledge-graph/backend
 python tools/serve_fee_kbg_preview.py --db ../demo/cambricon_fee_kbg_demo.sqlite --run-id cambricon_fee_kbg_20260826_v1 --port 8766
 ```
 
+## 云端 PostgreSQL 知识图谱服务
+
+知识图谱生产运行链路为：浏览器 → 7878 同源图谱 API → PostgreSQL。浏览器不直接
+连接数据库，本地 SQLite 只负责采集、计算和生成迁移包。接口和存储合同见
+`docs/contracts/risk-graph-api-v1.md`。
+
+从本地主数据库生成不含令牌和付费原始响应的迁移包：
+
+```powershell
+python knowledge-graph/backend/tools/export_cloud_graph_payloads.py `
+  --db D:\codex\risk_crawler_architecture\data\risk_data.sqlite `
+  --output private\risk-graph-payloads-20260828.json
+```
+
+输入云端 PostgreSQL 数据库名和用户，密码在 PowerShell 中安全输入：
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass `
+  -File .\scripts\import-risk-graph-cloud.ps1 `
+  -HostName "数据库地址" -Port "数据库端口" `
+  -Database "数据库名" -User "数据库用户"
+```
+
+生产后端需配置 `RISK_GRAPH_PGHOST`、`RISK_GRAPH_PGPORT`、
+`RISK_GRAPH_PGDATABASE`、`RISK_GRAPH_PGUSER`、`RISK_GRAPH_PGPASSWORD`，然后重新
+执行 `npm run build` 并重启服务。未配置或数据库不可用时图谱 API 明确返回 503，
+不会回退到本地假数据、旧证据星型图或 Neo4j。
+
 ## 数据说明
 
 当前统一快照包含 94 家唯一企业、4,321 条主观测、687 条补充事实、391 条深搜事件和 2,068 条企业×指标覆盖记录。数字芯片设计样本已补充 8,762 条财经新闻证据、天眼查人员/诉讼/处罚/风险/专利/供应商等许可派生数据、国家知识产权局 39 个申请人主体的精确检索口径和 5 条逐件核验法律状态事件，以及 EU Sanctions Map/FSD 对 37 家企业 115 个名称与别名的官方筛查结果；格科微 R21 已按境内核心经营主体补充2名主要人员、35条人员—公司关系及人员/企业风险聚合。付费原始结果仅保存在本地许可目录，不进入公开前端 JSON。重复股票代码按“具体行业库优先”的规则去重。

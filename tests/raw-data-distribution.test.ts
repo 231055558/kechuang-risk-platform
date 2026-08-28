@@ -37,6 +37,15 @@ function digestFile(path: string): Promise<string> {
   })
 }
 
+function digestManifestFile(path: string): Promise<string> | string {
+  if (extname(path).toLowerCase() === ".md") {
+    return createHash("sha256")
+      .update(readFileSync(path, "utf8").replace(/\r\n/g, "\n"))
+      .digest("hex")
+  }
+  return digestFile(path)
+}
+
 test("tracked raw snapshot contains the complete authorized input set", () => {
   assert.equal(existsSync(checksumPath), true)
 
@@ -66,7 +75,7 @@ test("tracked raw snapshot contains the complete authorized input set", () => {
 test("raw snapshot matches its SHA-256 manifest", async () => {
   const entries = readFileSync(checksumPath, "utf8")
     .trim()
-    .split("\n")
+    .split(/\r?\n/)
     .map((line) => {
       const match = line.match(/^([a-f0-9]{64}) {2}(.+)$/)
       assert.ok(match, `invalid checksum line: ${line}`)
@@ -75,11 +84,14 @@ test("raw snapshot matches its SHA-256 manifest", async () => {
 
   const manifestFiles = collectFiles(rawRoot)
     .filter((path) => path !== checksumPath)
-    .map((path) => `./${relative(rawRoot, path)}`)
+    .map((path) => `./${relative(rawRoot, path).replaceAll("\\", "/")}`)
     .sort()
   assert.deepEqual(entries.map((entry) => entry.path).sort(), manifestFiles)
 
   for (const entry of entries) {
-    assert.equal(await digestFile(join(rawRoot, entry.path)), entry.checksum)
+    assert.equal(
+      await digestManifestFile(join(rawRoot, entry.path)),
+      entry.checksum
+    )
   }
 })

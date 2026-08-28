@@ -12,6 +12,7 @@ import {
   getKcrCompanyAssessment,
   scoreKcrAssessment,
 } from "./kcr-assessment-service.ts"
+import { createRiskGraphPostgresService } from "./risk-graph-postgres-service.ts"
 
 function readPort(value: string | undefined) {
   const port = Number(value ?? "5000")
@@ -27,6 +28,7 @@ const staticRoot =
   process.env.STATIC_ROOT ??
   resolve(fileURLToPath(new URL("..", import.meta.url)))
 const basePath = process.env.BASE_PATH ?? ""
+const riskGraphService = createRiskGraphPostgresService()
 
 const server = createProductionServer({
   staticRoot,
@@ -38,6 +40,9 @@ const server = createProductionServer({
   listIndustryRiskCompanies,
   getIndustryRiskAssessment,
   getIndustryRiskGraph: getIndustryRiskKnowledgeGraph,
+  getRiskGraphHealth: riskGraphService.health,
+  listRiskGraphCompanies: riskGraphService.companies,
+  getRiskGraphSnapshot: riskGraphService.snapshot,
 })
 
 server.listen(port, host, () => {
@@ -51,6 +56,10 @@ function shutdown(signal: string) {
       console.error("Failed to close production server", error)
       process.exitCode = 1
     }
+    void riskGraphService.close().catch((closeError: unknown) => {
+      console.error("Failed to close risk graph PostgreSQL pool", closeError)
+      process.exitCode = 1
+    })
   })
 }
 
