@@ -1,5 +1,6 @@
 import assert from "node:assert/strict"
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs"
+import { createServer } from "node:http"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import test from "node:test"
@@ -32,6 +33,7 @@ async function startTestServer(options?: {
   getNarrativeAnnualMethodology?: () => unknown | Promise<unknown>
   getNarrativeAnnualAudit?: () => unknown | Promise<unknown>
   getNarrativeIndustryTrends?: () => unknown | Promise<unknown>
+  graphWorkspaceOrigin?: string
   maxBodyBytes?: number
 }) {
   const staticRoot = mkdtempSync(join(tmpdir(), "risk-platform-server-test-"))
@@ -76,6 +78,7 @@ async function startTestServer(options?: {
     getNarrativeAnnualMethodology: options?.getNarrativeAnnualMethodology,
     getNarrativeAnnualAudit: options?.getNarrativeAnnualAudit,
     getNarrativeIndustryTrends: options?.getNarrativeIndustryTrends,
+    graphWorkspaceOrigin: options?.graphWorkspaceOrigin,
     maxBodyBytes: options?.maxBodyBytes,
   })
 
@@ -404,6 +407,68 @@ test("risk graph API exposes coverage and validates the versioned view query", a
     assert.equal(invalidView.status, 404)
   } finally {
     await testServer.close()
+  }
+})
+
+test("same-origin graph workspace proxy forwards only fixed read paths", async () => {
+  const requests: string[] = []
+  const upstream = createServer((request, response) => {
+    requests.push(request.url ?? "")
+    const isHealth = request.url?.startsWith("/api/health") ?? false
+    const body = isHealth
+      ? JSON.stringify({ ok: true, snapshot_count: 2 })
+      : "<!doctype html><title>graph workspace</title>"
+    response.writeHead(200, {
+      "content-type": isHealth
+        ? "application/json; charset=utf-8"
+        : "text/html; charset=utf-8",
+    })
+    response.end(body)
+  })
+  await new Promise<void>((resolve, reject) => {
+    upstream.once("error", reject)
+    upstream.listen(0, "127.0.0.1", resolve)
+  })
+  const upstreamAddress = upstream.address()
+  assert.ok(upstreamAddress && typeof upstreamAddress !== "string")
+  const testServer = await startTestServer({
+    graphWorkspaceOrigin: `http://127.0.0.1:${upstreamAddress.port}`,
+  })
+
+  try {
+    const workspace = await fetch(
+      `${testServer.baseUrl}/risk-graph-workspace/?stock_code=688256&embedded=1`
+    )
+    assert.equal(workspace.status, 200)
+    assert.equal(workspace.headers.get("x-frame-options"), "SAMEORIGIN")
+    assert.match(await workspace.text(), /graph workspace/)
+
+    const health = await fetch(
+      `${testServer.baseUrl}/risk-graph-workspace/api/health`
+    )
+    assert.equal(health.status, 200)
+    assert.deepEqual(await health.json(), { ok: true, snapshot_count: 2 })
+
+    const blocked = await fetch(
+      `${testServer.baseUrl}/risk-graph-workspace/admin`
+    )
+    assert.equal(blocked.status, 404)
+    assert.doesNotMatch(await blocked.text(), /application shell/)
+
+    const writeAttempt = await fetch(
+      `${testServer.baseUrl}/risk-graph-workspace/api/health`,
+      { method: "POST" }
+    )
+    assert.equal(writeAttempt.status, 405)
+    assert.deepEqual(requests, [
+      "/?stock_code=688256&embedded=1",
+      "/api/health",
+    ])
+  } finally {
+    await testServer.close()
+    await new Promise<void>((resolve, reject) => {
+      upstream.close((error) => (error ? reject(error) : resolve()))
+    })
   }
 })
 

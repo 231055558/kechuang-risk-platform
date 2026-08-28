@@ -59,6 +59,7 @@ const server = createProductionServer({
   getNarrativeAnnualMethodology,
   getNarrativeAnnualAudit,
   getNarrativeIndustryTrends,
+  graphWorkspaceOrigin: process.env.GRAPH_API_ORIGIN,
 })
 
 server.listen(port, host, () => {

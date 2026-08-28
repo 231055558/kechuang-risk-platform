@@ -7,6 +7,7 @@ import { defineConfig } from "vite"
 const projectRoot = __dirname
 const dependencyRoot = realpathSync(path.resolve(projectRoot, "node_modules"))
 const apiPort = process.env.API_PORT ?? "5001"
+const graphPort = process.env.GRAPH_PORT ?? "8766"
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   if (mode === "server") {
@@ -35,6 +36,11 @@ export default defineConfig(({ mode }) => {
       proxy: {
         "/api": {
           target: `http://127.0.0.1:${apiPort}`,
+        },
+        "/risk-graph-workspace": {
+          target: `http://127.0.0.1:${graphPort}`,
+          rewrite: (requestPath) =>
+            requestPath.replace(/^\/risk-graph-workspace/, "") || "/",
         },
       },
     },

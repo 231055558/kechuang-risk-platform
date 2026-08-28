@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import type { CompanyDetail } from "@/types/risk"
 import "@/styles/risk-propagation-graph.css"
 
-const DEFAULT_GRAPH_WORKSPACE_URL = "http://127.0.0.1:8766/"
+const DEFAULT_GRAPH_WORKSPACE_URL = "risk-graph-workspace/"
 
 function stockCodeFromCompanyId(companyId: string) {
   const match = companyId.match(/(?:^|-)\d{6}$/)

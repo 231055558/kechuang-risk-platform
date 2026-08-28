@@ -16,6 +16,7 @@ const teammateWorkspace = readFileSync(
   "utf8"
 )
 const devScript = readFileSync("scripts/dev.mjs", "utf8")
+const viteConfig = readFileSync("vite.config.ts", "utf8")
 const semidriveSnapshot = JSON.parse(
   readFileSync("knowledge-graph/demo/semidrive_fee_kbg_snapshot.json", "utf8")
 ) as {
@@ -46,6 +47,16 @@ test("原版图谱宿主具有加载态和响应式画布", () => {
   assert.match(component, /onLoad=\{\(\) => setLoadedUrl\(workspaceUrl\)\}/)
   assert.match(styles, /teammate-graph-workspace__frame/)
   assert.match(styles, /@media \(max-width: 720px\)/)
+})
+
+test("图谱工作站使用同源代理而不是浏览器直连本地端口", () => {
+  assert.match(
+    component,
+    /DEFAULT_GRAPH_WORKSPACE_URL = "risk-graph-workspace\/"/
+  )
+  assert.doesNotMatch(component, /127\.0\.0\.1:8766/)
+  assert.match(viteConfig, /"\/risk-graph-workspace"/)
+  assert.match(teammateWorkspace, /const api='\.\/api'/)
 })
 
 test("同学原版图谱按股票代码定位且缺失时不回退到其他企业", () => {
