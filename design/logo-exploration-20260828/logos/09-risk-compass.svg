@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" role="img" aria-labelledby="title desc">
+  <title id="title">方案 09 风险罗盘</title><desc id="desc">四向罗盘突出投资决策方向</desc>
+  <g transform="translate(30 27)">
+    <circle cx="82" cy="88" r="73" fill="#F7F2E9" stroke="#24313C" stroke-width="6"/>
+    <circle cx="82" cy="88" r="52" fill="none" stroke="#B9AEA0" stroke-width="2"/>
+    <path d="m82 22 18 56-18 10-18-10Z" fill="#D84942"/><path d="m82 154-18-56 18-10 18 10Z" fill="#24313C"/>
+    <path d="m16 88 56-18 10 18-10 18Z" fill="#D5B364"/><path d="m148 88-56 18-10-18 10-18Z" fill="#607B8D"/>
+    <circle cx="82" cy="88" r="8" fill="#fff" stroke="#24313C" stroke-width="4"/>
+  </g>
+  <g font-family="'Noto Serif CJK SC','Songti SC',serif" fill="#24313C">
+    <text x="224" y="117" font-size="55" font-weight="700" letter-spacing="5">科创锐鉴</text>
+    <text x="230" y="156" font-family="Inter,'Microsoft YaHei',sans-serif" font-size="16" fill="#806F62" letter-spacing="7">研判方向，而非追逐噪声</text>
+  </g>
+</svg>

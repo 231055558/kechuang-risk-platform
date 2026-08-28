@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" role="img" aria-labelledby="title desc">
+  <title id="title">方案 14 算法切片</title><desc id="desc">多层数据切片汇聚成一个清晰结论</desc>
+  <g transform="translate(28 31)">
+    <path d="m16 40 65-31 65 31-65 31Z" fill="#293B8F"/>
+    <path d="m16 75 65-31 65 31-65 31Z" fill="#416BCE" fill-opacity=".92"/>
+    <path d="m16 110 65-31 65 31-65 31Z" fill="#38B9B1" fill-opacity=".9"/>
+    <path d="m16 145 65-31 65 31-65 31Z" fill="#F0BE4E" fill-opacity=".95"/>
+    <path d="M81 9v136" stroke="#fff" stroke-width="4" stroke-dasharray="6 7"/>
+    <circle cx="81" cy="145" r="12" fill="#ED5A6A" stroke="#fff" stroke-width="5"/>
+  </g>
+  <g font-family="Inter,'Microsoft YaHei',sans-serif">
+    <text x="226" y="102" font-size="49" fill="#1A2450" font-weight="800" letter-spacing="3">科创锐鉴</text>
+    <text x="230" y="139" font-size="17" fill="#4A5B7A" letter-spacing="4">数据分层，结论可溯</text>
+    <text x="231" y="168" font-size="13" fill="#38A89F" font-weight="700" letter-spacing="6">AUDITABLE BY DESIGN</text>
+  </g>
+</svg>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" role="img" aria-labelledby="title desc">
+  <title id="title">方案 02 风险雷达</title><desc id="desc">雷达环与风险指针形成锐利的研判符号</desc>
+  <g transform="translate(30 24)" fill="none">
+    <circle cx="88" cy="96" r="76" stroke="#173044" stroke-width="12"/>
+    <circle cx="88" cy="96" r="47" stroke="#93A8B8" stroke-width="2" stroke-dasharray="5 8"/>
+    <path d="M88 20v152M12 96h152" stroke="#CBD7DF" stroke-width="2"/>
+    <path d="m88 96 30-55 19 74Z" fill="#17A789" stroke="none"/>
+    <circle cx="88" cy="96" r="11" fill="#F45B69" stroke="#fff" stroke-width="4"/>
+    <path d="M139 50a66 66 0 0 1 13 24" stroke="#F0B44D" stroke-width="7" stroke-linecap="round"/>
+  </g>
+  <g font-family="Inter, 'Microsoft YaHei', sans-serif">
+    <text x="232" y="94" font-size="25" fill="#17A789" font-weight="700" letter-spacing="3">RISK INTELLIGENCE</text>
+    <text x="230" y="140" font-size="47" fill="#173044" font-weight="780" letter-spacing="3">科创锐鉴</text>
+    <text x="234" y="173" font-size="15" fill="#708495" letter-spacing="5">看见风险的方向</text>
+  </g>
+</svg>

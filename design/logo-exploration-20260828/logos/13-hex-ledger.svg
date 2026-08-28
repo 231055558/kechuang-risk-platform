@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" role="img" aria-labelledby="title desc">
+  <title id="title">方案 13 六域蜂巢</title><desc id="desc">六边形风险域围绕企业核心形成评估蜂巢</desc>
+  <g transform="translate(25 24)">
+    <path d="m88 8 69 40v80l-69 40-69-40V48Z" fill="#142A3C"/>
+    <path d="m88 34 46 27v54l-46 27-46-27V61Z" fill="#F3F7FA"/>
+    <path d="M88 34v108M42 61l92 54M134 61l-92 54" stroke="#C6D4DD" stroke-width="3"/>
+    <circle cx="88" cy="88" r="20" fill="#2E80D4"/>
+    <circle cx="88" cy="34" r="7" fill="#4BC6A7"/><circle cx="134" cy="61" r="7" fill="#F1B94F"/>
+    <circle cx="134" cy="115" r="7" fill="#EF6472"/><circle cx="88" cy="142" r="7" fill="#815BD4"/>
+    <circle cx="42" cy="115" r="7" fill="#2E80D4"/><circle cx="42" cy="61" r="7" fill="#56AEC7"/>
+  </g>
+  <g font-family="Inter,'Microsoft YaHei',sans-serif">
+    <text x="226" y="112" font-size="52" fill="#142A3C" font-weight="800" letter-spacing="2">科创锐鉴</text>
+    <text x="231" y="151" font-size="16" fill="#657989" letter-spacing="4">六域风险 · 一体研判</text>
+  </g>
+</svg>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" role="img" aria-labelledby="title desc">
+  <title id="title">方案 07 网络桥</title><desc id="desc">跨越风险断点的网络拱桥</desc>
+  <g transform="translate(24 25)" fill="none">
+    <path d="M14 149c33-92 111-92 145 0" stroke="#263B55" stroke-width="14"/>
+    <path d="M24 149h125" stroke="#263B55" stroke-width="11"/>
+    <path d="M41 112 61 69l26 32 28-49 27 62" stroke="#35B9A4" stroke-width="7" stroke-linejoin="round"/>
+    <circle cx="41" cy="112" r="10" fill="#263B55" stroke="none"/><circle cx="61" cy="69" r="10" fill="#F3B74B" stroke="none"/>
+    <circle cx="87" cy="101" r="10" fill="#F05D6C" stroke="none"/><circle cx="115" cy="52" r="10" fill="#35B9A4" stroke="none"/>
+    <circle cx="142" cy="114" r="10" fill="#3D83E5" stroke="none"/>
+  </g>
+  <g font-family="Inter,'Microsoft YaHei',sans-serif">
+    <text x="221" y="99" font-size="51" fill="#263B55" font-weight="800">科创锐鉴</text>
+    <text x="224" y="137" font-size="17" fill="#35A993" letter-spacing="4">连接证据 · 穿透风险</text>
+    <path d="M224 157h258" stroke="#D6E0E6" stroke-width="2"/><circle cx="482" cy="157" r="6" fill="#F05D6C"/>
+  </g>
+</svg>

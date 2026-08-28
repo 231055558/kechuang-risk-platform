@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" role="img" aria-labelledby="title desc">
+  <title id="title">方案 06 数据堡垒</title><desc id="desc">模块网格形成稳固的风险数据堡垒</desc>
+  <g transform="translate(33 31)">
+    <path d="M15 24h32V8h32v16h32V8h32v67c0 48-28 82-64 98-36-16-64-50-64-98Z" fill="#162736"/>
+    <rect x="36" y="48" width="22" height="22" fill="#3CD3A7"/><rect x="68" y="48" width="22" height="22" fill="#F0BA4E"/>
+    <rect x="100" y="48" width="22" height="22" fill="#3A84E8"/><rect x="52" y="80" width="22" height="22" fill="#3A84E8"/>
+    <rect x="84" y="80" width="22" height="22" fill="#F05D67"/>
+    <path d="M55 129h48v35H55z" fill="#EDF7F4"/><path d="M79 129v35" stroke="#162736" stroke-width="6"/>
+  </g>
+  <g font-family="Inter,'Microsoft YaHei',sans-serif">
+    <text x="228" y="111" font-size="52" fill="#162736" font-weight="780" letter-spacing="2">科创锐鉴</text>
+    <rect x="232" y="137" width="278" height="29" fill="#162736"/>
+    <text x="246" y="158" font-size="14" fill="#F2F7F5" letter-spacing="4">INSTITUTIONAL RISK OS</text>
+  </g>
+</svg>

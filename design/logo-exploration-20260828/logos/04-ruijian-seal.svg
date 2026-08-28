@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" role="img" aria-labelledby="title desc">
+  <title id="title">方案 04 锐鉴字印</title><desc id="desc">现代方印与鉴字构成东方机构感</desc>
+  <g transform="translate(34 30)">
+    <rect x="4" y="4" width="164" height="164" rx="7" fill="#B83A32"/>
+    <path d="M31 31h47v14H45v31h33v14H45v46h-14zm67 0h39v14h-25v25h25v14h-25v52H98zm-20 45h20v14H78zm0 37h20v14H78z" fill="#FFF8ED"/>
+    <path d="M20 20h132M20 152h132" stroke="#E98571" stroke-width="2"/>
+  </g>
+  <g font-family="'Noto Serif CJK SC','Songti SC',serif">
+    <text x="234" y="115" font-size="55" fill="#201C1A" font-weight="700" letter-spacing="8">科创锐鉴</text>
+    <text x="240" y="157" font-family="Inter,'Microsoft YaHei',sans-serif" font-size="17" fill="#806B62" letter-spacing="8">求真 · 察险 · 明策</text>
+  </g>
+</svg>

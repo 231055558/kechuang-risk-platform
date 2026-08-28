@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" role="img" aria-labelledby="title desc">
+  <title id="title">方案 12 双环校验</title><desc id="desc">客观指标与叙事信息双环交叠并在中心校验</desc>
+  <g transform="translate(28 28)" fill="none">
+    <ellipse cx="64" cy="89" rx="52" ry="68" stroke="#3B67DB" stroke-width="17"/>
+    <ellipse cx="112" cy="89" rx="52" ry="68" stroke="#B256C1" stroke-width="17"/>
+    <path d="m68 89 15 16 29-35" stroke="#F4C44F" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="88" cy="89" r="35" stroke="#182339" stroke-width="4"/>
+  </g>
+  <g font-family="Inter,'Microsoft YaHei',sans-serif">
+    <text x="229" y="109" font-size="52" fill="#182339" font-weight="780" letter-spacing="3">科创锐鉴</text>
+    <text x="233" y="147" font-size="16" fill="#6C7183" letter-spacing="4">客观风险 × 叙事核验</text>
+    <g transform="translate(233 164)"><circle cx="5" cy="5" r="5" fill="#3B67DB"/><path d="M19 5h58" stroke="#3B67DB" stroke-width="3"/><circle cx="93" cy="5" r="5" fill="#B256C1"/><path d="M107 5h58" stroke="#B256C1" stroke-width="3"/></g>
+  </g>
+</svg>

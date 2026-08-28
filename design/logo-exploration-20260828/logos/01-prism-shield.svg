@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" role="img" aria-labelledby="title desc">
+  <title id="title">方案 01 棱镜盾</title><desc id="desc">盾形内部由三条风险分层棱面组成</desc>
+  <g transform="translate(32 28)">
+    <path d="M84 4 154 30v55c0 45-27 78-70 96C41 163 14 130 14 85V30Z" fill="#101827"/>
+    <path d="m84 25 44 16-44 33-44-33Z" fill="#62D4FF"/>
+    <path d="m40 41 44 33v75c-31-16-44-38-44-68Z" fill="#3767E8"/>
+    <path d="m128 41-44 33v75c31-16 44-38 44-68Z" fill="#5CD3AE"/>
+    <path d="m84 74 20 15-20 37-20-37Z" fill="#F6C85F"/>
+  </g>
+  <g font-family="Inter, 'Microsoft YaHei', sans-serif" fill="#101827">
+    <text x="238" y="103" font-size="48" font-weight="750" letter-spacing="2">科创锐鉴</text>
+    <text x="241" y="140" font-size="18" fill="#5E6A7A" letter-spacing="6">风险研判平台</text>
+    <path d="M241 160h246" stroke="#D6DEE9"/><path d="M241 160h88" stroke="#3767E8" stroke-width="4"/>
+  </g>
+</svg>
