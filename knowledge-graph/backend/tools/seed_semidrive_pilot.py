@@ -103,6 +103,38 @@ SOURCES = {
         "url": "https://www.justice.gov/opa/pr/cadence-design-systems-agrees-plead-guilty-and-pay-over-140-million-unlawfully-exporting",
         "notes": "Edge公开搜索结果核验官方公告标题、日期和金额；官网本次访问超时。",
     },
+    "tsmc_earthquake": {
+        "source_type": "合作伙伴官方年报",
+        "institution": "台积电投资者关系网站",
+        "title": "台积电2024年度报告自然灾害与业务连续性风险说明",
+        "publication_date": "2025-04-10",
+        "url": "https://investor.tsmc.com/static/annualReports/2024/english/ebook/files/basic-html/page138.html",
+        "notes": "免费公开年度报告；披露2025年1月地震造成的存货与设备损失。",
+    },
+    "customer_huayang": {
+        "source_type": "企业官网",
+        "institution": "芯驰科技",
+        "title": "再获客户认可！芯驰科技获评华阳通用优秀供应商",
+        "publication_date": "2024-04-02",
+        "url": "https://img.semidrive.com/news/view-NDA5MjM=.html",
+        "notes": "官网确认自2021年战略合作并有多个量产定点项目。",
+    },
+    "customer_desay": {
+        "source_type": "企业官网",
+        "institution": "芯驰科技",
+        "title": "德赛西威与芯驰科技合作升级",
+        "publication_date": "2025-04-27",
+        "url": "https://img.semidrive.com/news/view-NDMzMDM=.html",
+        "notes": "官网确认共同开发新一代智能座舱平台。",
+    },
+    "customer_yanfeng": {
+        "source_type": "企业官网",
+        "institution": "芯驰科技",
+        "title": "芯驰科技与延锋国际求新共赢",
+        "publication_date": "2025-04-14",
+        "url": "https://www.semidrive.com/news/view-NDI1MjE=.html",
+        "notes": "官网确认战略合作和多个座舱解决方案项目。",
+    },
 }
 
 
@@ -117,6 +149,13 @@ PARTNERS = [
     ("宜特科技", "官网供应链验证合作伙伴", 0),
     ("通富微电子股份有限公司", "官网封装测试合作伙伴", 1),
     ("日月光集团", "官网封装测试合作伙伴", 0),
+]
+
+
+CUSTOMERS = [
+    ("惠州市华阳多媒体电子有限公司", "2024-04-02", "战略合作与多个量产定点项目", "customer_huayang"),
+    ("惠州市德赛西威汽车电子股份有限公司", "2025-04-27", "共同开发新一代智能座舱平台", "customer_desay"),
+    ("延锋国际汽车技术有限公司", "2025-04-14", "战略合作与多个座舱解决方案项目", "customer_yanfeng"),
 ]
 
 
@@ -387,6 +426,30 @@ def upsert_people_and_investors(conn: sqlite3.Connection, source_ids: dict[str, 
         upsert_auxiliary_relation(conn, key, item)
 
 
+def upsert_customer_relations(conn: sqlite3.Connection, source_ids: dict[str, int]) -> int:
+    for index, (name, publish_date, relationship, source_key) in enumerate(CUSTOMERS, start=1):
+        key = f"semidrive-customer-{index:02d}"
+        attrs = {
+            "counterparty_name": name,
+            "publish_date": publish_date,
+            "relationship": relationship,
+            "evidence_url": SOURCES[source_key]["url"],
+        }
+        item = {
+            "id": key,
+            "subject_name": COMPANY_NAME,
+            "object_name": name,
+            "relation_type": "has_customer",
+            "needs_review": False,
+            "confidence": 0.95,
+            "source_name": SOURCES[source_key]["title"],
+            "source_id": source_ids[source_key],
+            "attributes_json": json.dumps(attrs, ensure_ascii=False),
+        }
+        upsert_auxiliary_relation(conn, key, item)
+    return len(CUSTOMERS)
+
+
 def upsert_events(conn: sqlite3.Connection, company_id: int, source_ids: dict[str, int]) -> dict[str, int]:
     event_ids: dict[str, int] = {}
     for event in EVENTS:
@@ -500,6 +563,7 @@ def main() -> None:
         company_id = upsert_company(conn)
         supplier_count = upsert_supplier_profiles(conn, company_id, source_ids["partners"])
         upsert_people_and_investors(conn, source_ids)
+        customer_count = upsert_customer_relations(conn, source_ids)
         event_ids = upsert_events(conn, company_id, source_ids)
         argument_count = upsert_arguments(conn, company_id, event_ids, source_ids, accessed_at)
         upsert_indicator_coverage(conn, company_id)
@@ -510,6 +574,7 @@ def main() -> None:
         "stock_code": STOCK_CODE,
         "source_count": len(source_ids),
         "supplier_count": supplier_count,
+        "customer_count": customer_count,
         "event_ids": event_ids,
         "argument_count": argument_count,
         "db": str(args.db),
@@ -518,4 +583,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

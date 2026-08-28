@@ -77,16 +77,48 @@ class Neo4jRiskGraphSync:
                 raise ValueError(f"SQLite graph run not found: {run_id}")
             if run["status"] != "completed":
                 raise ValueError(f"SQLite graph run is not completed: {run_id} ({run['status']})")
-            nodes = conn.execute(
-                """SELECT n.* FROM knowledge_graph_nodes n
-                   JOIN knowledge_graph_snapshot_nodes s ON s.node_key=n.node_key
-                   WHERE s.run_id=? ORDER BY n.node_key""", (run_id,)
-            ).fetchall()
-            edges = conn.execute(
-                """SELECT e.* FROM knowledge_graph_edges e
-                   JOIN knowledge_graph_snapshot_edges s ON s.edge_key=e.edge_key
-                   WHERE s.run_id=? ORDER BY e.edge_key""", (run_id,)
-            ).fetchall()
+            node_snapshot_columns = {
+                str(row[1]) for row in conn.execute("PRAGMA table_info(knowledge_graph_snapshot_nodes)")
+            }
+            edge_snapshot_columns = {
+                str(row[1]) for row in conn.execute("PRAGMA table_info(knowledge_graph_snapshot_edges)")
+            }
+            if "attributes_json" in node_snapshot_columns:
+                nodes = conn.execute(
+                    """SELECT s.node_key,s.node_type,s.canonical_name,s.attributes_json,
+                              s.confidence,s.needs_review,s.review_reason,
+                              n.first_seen_run_id,n.last_seen_run_id,
+                              COALESCE(NULLIF(s.created_at,''),n.created_at) AS created_at,
+                              COALESCE(NULLIF(s.updated_at,''),n.updated_at) AS updated_at
+                       FROM knowledge_graph_snapshot_nodes s
+                       JOIN knowledge_graph_nodes n ON n.node_key=s.node_key
+                       WHERE s.run_id=? ORDER BY s.node_key""",
+                    (run_id,),
+                ).fetchall()
+            else:
+                nodes = conn.execute(
+                    """SELECT n.* FROM knowledge_graph_nodes n
+                       JOIN knowledge_graph_snapshot_nodes s ON s.node_key=n.node_key
+                       WHERE s.run_id=? ORDER BY n.node_key""", (run_id,)
+                ).fetchall()
+            if "attributes_json" in edge_snapshot_columns:
+                edges = conn.execute(
+                    """SELECT s.edge_key,s.subject_key,s.relation_type,s.object_key,s.attributes_json,
+                              s.confidence,s.needs_review,s.review_reason,s.source_id,s.source_evidence_id,
+                              e.first_seen_run_id,e.last_seen_run_id,
+                              COALESCE(NULLIF(s.created_at,''),e.created_at) AS created_at,
+                              COALESCE(NULLIF(s.updated_at,''),e.updated_at) AS updated_at
+                       FROM knowledge_graph_snapshot_edges s
+                       JOIN knowledge_graph_edges e ON e.edge_key=s.edge_key
+                       WHERE s.run_id=? ORDER BY s.edge_key""",
+                    (run_id,),
+                ).fetchall()
+            else:
+                edges = conn.execute(
+                    """SELECT e.* FROM knowledge_graph_edges e
+                       JOIN knowledge_graph_snapshot_edges s ON s.edge_key=e.edge_key
+                       WHERE s.run_id=? ORDER BY e.edge_key""", (run_id,)
+                ).fetchall()
         finally:
             conn.close()
 
@@ -123,22 +155,33 @@ class Neo4jRiskGraphSync:
             "first_seen_run_id": row["first_seen_run_id"], "last_seen_run_id": row["last_seen_run_id"],
             "snapshot_run_id": run_id, "in_snapshot": True, "created_at": row["created_at"], "updated_at": row["updated_at"],
         }
+        snapshot_payload = json.dumps(
+            {"run_id": run_id, **props}, ensure_ascii=False, separators=(",", ":"), default=str,
+        )
+        run_marker = json.dumps({"run_id": run_id}, ensure_ascii=False, separators=(",", ":"))[:-1]
         query = f"""
             MERGE (n:RiskNode {{node_key: $node_key}})
-            WITH n, CASE
-                WHEN n.snapshot_run_ids IS NOT NULL THEN n.snapshot_run_ids
-                WHEN n.snapshot_run_id IS NOT NULL THEN [n.snapshot_run_id]
-                ELSE []
-            END AS previous_memberships
+            WITH n,
+                 CASE
+                     WHEN n.snapshot_run_ids IS NOT NULL THEN n.snapshot_run_ids
+                     WHEN n.snapshot_run_id IS NOT NULL THEN [n.snapshot_run_id]
+                     ELSE []
+                 END AS previous_memberships,
+                 [payload IN coalesce(n.snapshot_payloads, [])
+                  WHERE NOT (payload STARTS WITH $run_marker)] AS other_payloads
             SET n += $props
             SET n.snapshot_run_ids = CASE
                 WHEN $run_id IN previous_memberships THEN previous_memberships
-                ELSE previous_memberships + $run_id
+                ELSE previous_memberships + [$run_id]
             END,
+            n.snapshot_payloads = other_payloads + [$snapshot_payload],
             n.in_snapshot = true
             SET n:{label}
         """
-        session.run(query, node_key=row["node_key"], props=props, run_id=run_id).consume()
+        session.run(
+            query, node_key=row["node_key"], props=props, run_id=run_id,
+            run_marker=run_marker, snapshot_payload=snapshot_payload,
+        ).consume()
 
     def _merge_edge(self, session, row: sqlite3.Row, run_id: str) -> None:
         relation = self.schema["relationship_types"].get(row["relation_type"], "RELATED_TO")
@@ -152,24 +195,33 @@ class Neo4jRiskGraphSync:
             "first_seen_run_id": row["first_seen_run_id"], "last_seen_run_id": row["last_seen_run_id"],
             "snapshot_run_id": run_id, "in_snapshot": True, "created_at": row["created_at"], "updated_at": row["updated_at"],
         }
+        snapshot_payload = json.dumps(
+            {"run_id": run_id, **props}, ensure_ascii=False, separators=(",", ":"), default=str,
+        )
+        run_marker = json.dumps({"run_id": run_id}, ensure_ascii=False, separators=(",", ":"))[:-1]
         query = f"""
             MATCH (s:RiskNode {{node_key: $subject_key}}), (o:RiskNode {{node_key: $object_key}})
             MERGE (s)-[r:{relation} {{edge_key: $edge_key}}]->(o)
-            WITH r, CASE
-                WHEN r.snapshot_run_ids IS NOT NULL THEN r.snapshot_run_ids
-                WHEN r.snapshot_run_id IS NOT NULL THEN [r.snapshot_run_id]
-                ELSE []
-            END AS previous_memberships
+            WITH r,
+                 CASE
+                     WHEN r.snapshot_run_ids IS NOT NULL THEN r.snapshot_run_ids
+                     WHEN r.snapshot_run_id IS NOT NULL THEN [r.snapshot_run_id]
+                     ELSE []
+                 END AS previous_memberships,
+                 [payload IN coalesce(r.snapshot_payloads, [])
+                  WHERE NOT (payload STARTS WITH $run_marker)] AS other_payloads
             SET r += $props
             SET r.snapshot_run_ids = CASE
                 WHEN $run_id IN previous_memberships THEN previous_memberships
-                ELSE previous_memberships + $run_id
+                ELSE previous_memberships + [$run_id]
             END,
+            r.snapshot_payloads = other_payloads + [$snapshot_payload],
             r.in_snapshot = true
         """
         session.run(
             query, subject_key=row["subject_key"], object_key=row["object_key"],
             edge_key=row["edge_key"], props=props, run_id=run_id,
+            run_marker=run_marker, snapshot_payload=snapshot_payload,
         ).consume()
 
     def _mark_not_in_snapshot(self, session, node_keys: list[str], edge_keys: list[str], run_id: str) -> None:
@@ -190,10 +242,15 @@ class Neo4jRiskGraphSync:
                 ELSE []
             END AS memberships
             WHERE $run_id IN memberships AND NOT (n.node_key IN $node_keys)
-            WITH n, [value IN memberships WHERE value <> $run_id] AS remaining
-            SET n.snapshot_run_ids = remaining, n.in_snapshot = size(remaining) > 0
+            WITH n, [value IN memberships WHERE value <> $run_id] AS remaining,
+                 [payload IN coalesce(n.snapshot_payloads, [])
+                  WHERE NOT (payload STARTS WITH $run_marker)] AS remaining_payloads
+            SET n.snapshot_run_ids = remaining,
+                n.snapshot_payloads = remaining_payloads,
+                n.in_snapshot = size(remaining) > 0
             """,
             node_keys=node_keys, run_id=run_id,
+            run_marker=json.dumps({"run_id": run_id}, separators=(",", ":"))[:-1],
         ).consume()
         session.run(
             """
@@ -205,10 +262,15 @@ class Neo4jRiskGraphSync:
                 ELSE []
             END AS memberships
             WHERE $run_id IN memberships AND NOT (r.edge_key IN $edge_keys)
-            WITH r, [value IN memberships WHERE value <> $run_id] AS remaining
-            SET r.snapshot_run_ids = remaining, r.in_snapshot = size(remaining) > 0
+            WITH r, [value IN memberships WHERE value <> $run_id] AS remaining,
+                 [payload IN coalesce(r.snapshot_payloads, [])
+                  WHERE NOT (payload STARTS WITH $run_marker)] AS remaining_payloads
+            SET r.snapshot_run_ids = remaining,
+                r.snapshot_payloads = remaining_payloads,
+                r.in_snapshot = size(remaining) > 0
             """,
             edge_keys=edge_keys, run_id=run_id,
+            run_marker=json.dumps({"run_id": run_id}, separators=(",", ":"))[:-1],
         ).consume()
 
     def _remove_legacy_relation_types(self, session) -> None:

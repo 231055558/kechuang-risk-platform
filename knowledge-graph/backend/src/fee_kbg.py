@@ -2587,7 +2587,16 @@ class CambriconFEEKBGBuilder:
                     int(node.needs_review), node.review_reason, run_id, run_id, now, now,
                 ),
             )
-            conn.execute("INSERT INTO knowledge_graph_snapshot_nodes(run_id,node_key) VALUES (?,?)", (run_id, node.key))
+            conn.execute(
+                """INSERT INTO knowledge_graph_snapshot_nodes(
+                       run_id,node_key,node_type,canonical_name,attributes_json,confidence,
+                       needs_review,review_reason,created_at,updated_at
+                   ) VALUES (?,?,?,?,?,?,?,?,?,?)""",
+                (
+                    run_id, node.key, node.node_type, node.name, _json(node.attributes),
+                    node.confidence, int(node.needs_review), node.review_reason, now, now,
+                ),
+            )
         for edge in self.edges.values():
             conn.execute(
                 """INSERT INTO knowledge_graph_edges(
@@ -2606,7 +2615,18 @@ class CambriconFEEKBGBuilder:
                     edge.source_evidence_id, run_id, run_id, now, now,
                 ),
             )
-            conn.execute("INSERT INTO knowledge_graph_snapshot_edges(run_id,edge_key) VALUES (?,?)", (run_id, edge.key))
+            conn.execute(
+                """INSERT INTO knowledge_graph_snapshot_edges(
+                       run_id,edge_key,subject_key,relation_type,object_key,attributes_json,
+                       confidence,needs_review,review_reason,source_id,source_evidence_id,
+                       created_at,updated_at
+                   ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                (
+                    run_id, edge.key, edge.subject_key, edge.relation_type, edge.object_key,
+                    _json(edge.attributes), edge.confidence, int(edge.needs_review), edge.review_reason,
+                    edge.source_id, edge.source_evidence_id, now, now,
+                ),
+            )
         for issue in self.validation_issues:
             conn.execute(
                 """INSERT INTO knowledge_graph_validation_issues(
