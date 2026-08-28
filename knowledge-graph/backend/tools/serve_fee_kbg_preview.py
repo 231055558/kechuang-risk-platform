@@ -17,7 +17,7 @@ from src.neo4j_sync import load_schema
 from tools.serve_risk_graph_api import GraphReader, _evidence_display_label, handler_factory
 
 
-DEFAULT_WEB_ROOT = Path(r"D:\codex\知识图谱")
+DEFAULT_WEB_ROOT = PROJECT_ROOT.parent / "frontend"
 
 
 class SQLiteFeeReader:

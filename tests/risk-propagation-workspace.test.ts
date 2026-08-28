@@ -59,7 +59,10 @@ test("图谱工作站使用同源代理而不是浏览器直连本地端口", ()
   )
   assert.doesNotMatch(component, /127\.0\.0\.1:8766/)
   assert.match(viteConfig, /"\/risk-graph-workspace"/)
-  assert.match(teammateWorkspace, /const api='\.\/api'/)
+  assert.match(
+    teammateWorkspace,
+    /const api=location\.pathname\.startsWith\('\/knowledge-graph\/'\)\?'\/api\/v1\/risk-graph':'\.\/api'/
+  )
 })
 
 test("同学原版图谱按股票代码定位且缺失时不回退到其他企业", () => {
@@ -77,8 +80,8 @@ test("本地统一图谱服务加载寒武纪与芯驰两个独立快照", () =>
   assert.match(teammateWorkspace, /PRIVATE-SEMIDRIVE/)
 
   assert.equal(semidriveSnapshot.run_id, "semidrive_fee_kbg_20260827_v1")
-  assert.equal(semidriveSnapshot.records.knowledge_graph_nodes.length, 69)
-  assert.equal(semidriveSnapshot.records.knowledge_graph_edges.length, 130)
+  assert.equal(semidriveSnapshot.records.knowledge_graph_nodes.length, 104)
+  assert.equal(semidriveSnapshot.records.knowledge_graph_edges.length, 200)
   const company = semidriveSnapshot.records.knowledge_graph_nodes.find(
     (node) => node.node_type === "company"
   )
