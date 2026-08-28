@@ -25,7 +25,7 @@ const testDirectory = dirname(fileURLToPath(import.meta.url))
 const projectRoot = join(testDirectory, "..")
 
 function readProjectFile(path: string) {
-  return readFileSync(join(projectRoot, path), "utf8")
+  return readFileSync(join(projectRoot, path), "utf8").replace(/\r\n/g, "\n")
 }
 
 test("glass styles keep the standard backdrop declaration last", () => {

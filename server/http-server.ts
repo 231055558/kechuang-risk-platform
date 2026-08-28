@@ -59,6 +59,11 @@ const RISK_GRAPH_WORKSPACE_UPSTREAM_PATHS = new Set([
   "/api/health",
   "/api/subject-panorama",
 ])
+const RISK_GRAPH_POSTGRES_API_PREFIX = "/api/v1/risk-graph"
+const RISK_GRAPH_POSTGRES_HEALTH_PATH = `${RISK_GRAPH_POSTGRES_API_PREFIX}/health`
+const RISK_GRAPH_POSTGRES_COMPANIES_PATH = `${RISK_GRAPH_POSTGRES_API_PREFIX}/companies`
+const RISK_GRAPH_POSTGRES_FEE_TRANSMISSION_PATH = `${RISK_GRAPH_POSTGRES_API_PREFIX}/fee-transmission`
+const RISK_GRAPH_POSTGRES_SUBJECT_PANORAMA_PATH = `${RISK_GRAPH_POSTGRES_API_PREFIX}/subject-panorama`
 const DEFAULT_MAX_BODY_BYTES = 1024 * 1024
 const DEFAULT_GRAPH_WORKSPACE_TIMEOUT_MS = 5_000
 
@@ -102,6 +107,11 @@ export type NarrativeRiskSourceLister = (
   companyKey: string,
   filters: NarrativeRiskSourceFilters
 ) => unknown | Promise<unknown>
+export type RiskGraphPostgresReader = (
+  companyKey: string,
+  view: "fee-transmission" | "subject-panorama",
+  minWeight: number
+) => unknown | Promise<unknown>
 
 export interface ProductionServerOptions {
   staticRoot: string
@@ -123,6 +133,9 @@ export interface ProductionServerOptions {
   getNarrativeAnnualAudit?: NarrativeRiskAuditSummaryReader
   getNarrativeIndustryTrends?: NarrativeRiskAuditSummaryReader
   graphWorkspaceOrigin?: string
+  getRiskGraphHealth?: IndustryRiskCompanyLister
+  listRiskGraphPostgresCompanies?: IndustryRiskCompanyLister
+  getRiskGraphSnapshot?: RiskGraphPostgresReader
   basePath?: string
   maxBodyBytes?: number
 }
@@ -892,6 +905,42 @@ function getNarrativeRiskCompanyRoute(pathname: string) {
   }
 }
 
+function getRiskGraphPublicError(error: unknown) {
+  if (typeof error !== "object" || error === null) return null
+  const candidate = error as HttpErrorShape
+  if (
+    candidate.statusCode !== 503 ||
+    typeof candidate.code !== "string" ||
+    !candidate.code.startsWith("RISK_GRAPH_")
+  ) {
+    return getPublicError(
+      error,
+      "RISK_GRAPH_REQUEST_INVALID",
+      "知识图谱查询无效。"
+    )
+  }
+  return {
+    statusCode: 503,
+    code: candidate.code,
+    message:
+      typeof candidate.message === "string"
+        ? candidate.message
+        : "云端知识图谱数据库暂时不可用。",
+  }
+}
+
+function riskGraphQuery(request: IncomingMessage) {
+  try {
+    const url = new URL(request.url ?? "/", "http://127.0.0.1")
+    return {
+      companyKey: url.searchParams.get("company_key") ?? "",
+      minWeight: Number(url.searchParams.get("min_weight") ?? "0.50"),
+    }
+  } catch {
+    return null
+  }
+}
+
 function getNarrativeSourceFilters(request: IncomingMessage) {
   const url = new URL(request.url ?? "/", "http://127.0.0.1")
   const nullable = (name: string) => {
@@ -919,9 +968,7 @@ async function handleNarrativeRiskRead(
       405,
       "METHOD_NOT_ALLOWED",
       "该接口仅支持 GET 请求。",
-      {
-        allow: "GET",
-      }
+      { allow: "GET" }
     )
     return
   }
@@ -957,6 +1004,106 @@ async function handleNarrativeRiskRead(
       500,
       "NARRATIVE_RISK_FAILED",
       "叙事风险数据暂时不可用。"
+    )
+  }
+}
+
+async function handleRiskGraphDirectory(
+  request: IncomingMessage,
+  response: ServerResponse,
+  reader: IndustryRiskCompanyLister | undefined,
+  unavailableMessage: string
+) {
+  if (request.method !== "GET") {
+    sendApiError(
+      response,
+      405,
+      "METHOD_NOT_ALLOWED",
+      "该接口仅支持 GET 请求。",
+      { allow: "GET" }
+    )
+    return
+  }
+  if (!reader) {
+    sendApiError(response, 503, "RISK_GRAPH_UNAVAILABLE", unavailableMessage)
+    return
+  }
+  try {
+    sendJson(response, 200, await reader())
+  } catch (error) {
+    const publicError = getRiskGraphPublicError(error)
+    if (publicError) {
+      sendApiError(
+        response,
+        publicError.statusCode,
+        publicError.code,
+        publicError.message
+      )
+      return
+    }
+    console.error("Risk graph database query failed", error)
+    sendApiError(
+      response,
+      503,
+      "RISK_GRAPH_DATABASE_UNAVAILABLE",
+      "云端知识图谱数据库暂时不可用。"
+    )
+  }
+}
+
+async function handleRiskGraphSnapshot(
+  request: IncomingMessage,
+  response: ServerResponse,
+  view: "fee-transmission" | "subject-panorama",
+  reader?: RiskGraphPostgresReader
+) {
+  if (request.method !== "GET") {
+    sendApiError(
+      response,
+      405,
+      "METHOD_NOT_ALLOWED",
+      "该接口仅支持 GET 请求。",
+      { allow: "GET" }
+    )
+    return
+  }
+  if (!reader) {
+    sendApiError(
+      response,
+      503,
+      "RISK_GRAPH_UNAVAILABLE",
+      "知识图谱快照服务尚未配置。"
+    )
+    return
+  }
+  const query = riskGraphQuery(request)
+  if (!query) {
+    sendApiError(response, 400, "INVALID_URL", "请求 URL 无效。")
+    return
+  }
+  try {
+    sendJson(
+      response,
+      200,
+      await reader(query.companyKey, view, query.minWeight)
+    )
+  } catch (error) {
+    const publicError = getRiskGraphPublicError(error)
+    if (publicError) {
+      sendApiError(
+        response,
+        publicError.statusCode,
+        publicError.code,
+        publicError.message
+      )
+      return
+    }
+    console.error("Risk graph snapshot query failed", error)
+    sendApiError(
+      response,
+      503,
+      "RISK_GRAPH_DATABASE_UNAVAILABLE",
+      "云端知识图谱数据库暂时不可用。"
     )
   }
 }
@@ -1151,6 +1298,46 @@ export function createProductionServer(
           request,
           response,
           options.listRiskGraphCompanies
+        )
+        return
+      }
+
+      if (pathname === RISK_GRAPH_POSTGRES_HEALTH_PATH) {
+        await handleRiskGraphDirectory(
+          request,
+          response,
+          options.getRiskGraphHealth,
+          "云端知识图谱数据库尚未配置。"
+        )
+        return
+      }
+
+      if (pathname === RISK_GRAPH_POSTGRES_COMPANIES_PATH) {
+        await handleRiskGraphDirectory(
+          request,
+          response,
+          options.listRiskGraphPostgresCompanies,
+          "知识图谱企业目录尚未配置。"
+        )
+        return
+      }
+
+      if (pathname === RISK_GRAPH_POSTGRES_FEE_TRANSMISSION_PATH) {
+        await handleRiskGraphSnapshot(
+          request,
+          response,
+          "fee-transmission",
+          options.getRiskGraphSnapshot
+        )
+        return
+      }
+
+      if (pathname === RISK_GRAPH_POSTGRES_SUBJECT_PANORAMA_PATH) {
+        await handleRiskGraphSnapshot(
+          request,
+          response,
+          "subject-panorama",
+          options.getRiskGraphSnapshot
         )
         return
       }

@@ -9,6 +9,9 @@
   },
   "type": "module",
   "scripts": {
+    "prepare:risk-graph": "node scripts/prepare-risk-graph-public.mjs",
+    "predev": "npm run prepare:risk-graph",
+    "prebuild": "npm run prepare:risk-graph",
     "dev": "node scripts/dev.mjs",
     "dev:web": "vite",
     "dev:api": "node --experimental-strip-types server/production-server.ts",
@@ -29,6 +32,7 @@
     "build:narrative-industry": "PYTHONPATH=private/narrative-risk/annual/python-deps python3 scripts/build-narrative-industry-trends.py",
     "db:import-narrative-industry": "node --experimental-strip-types scripts/import-narrative-industry-trends-postgres.ts",
     "db:import-narrative-annual": "node --experimental-strip-types scripts/import-narrative-annual-trends-postgres.ts",
+    "import:risk-graph-postgres": "node --experimental-strip-types scripts/import-risk-graph-postgres.ts",
     "split:industry-risk-runtime": "node --experimental-strip-types scripts/split-industry-risk-narrative-runtime.ts",
     "import:kcr-workbook": "node --experimental-strip-types scripts/import-kcr-workbook.ts",
     "sanitize:master-sqlite": "python3 scripts/sanitize-master-sqlite.py",
