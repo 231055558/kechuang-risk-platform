@@ -21,6 +21,20 @@ PDF登记、R01-R22计算和图谱快照在同一文件中使用不同表命名�
 
 ## 立即运行演示图谱
 
+同时加载寒武纪与芯驰科技（推荐用于本地平台联调）：
+
+```powershell
+cd knowledge-graph/backend
+python tools/serve_fee_kbg_preview.py `
+  --snapshot cambricon_fee_kbg_20260826_v1=../demo/cambricon_fee_kbg_demo.sqlite `
+  --snapshot semidrive_fee_kbg_20260827_v1=../demo/semidrive_fee_kbg_demo.sqlite `
+  --port 8766
+```
+
+打开 `http://127.0.0.1:8766/` 后可在统一企业选择器中切换两个独立快照。通过平台携带 `stock_code` 打开时，企业选择器会锁定，避免跨企业上下文错位。
+
+也可以分别启动单个快照：
+
 寒武纪：
 
 ```powershell

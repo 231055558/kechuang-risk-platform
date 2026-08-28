@@ -15,6 +15,13 @@ const teammateWorkspace = readFileSync(
   "knowledge-graph/frontend/risk-knowledge-graph.html",
   "utf8"
 )
+const devScript = readFileSync("scripts/dev.mjs", "utf8")
+const semidriveSnapshot = JSON.parse(
+  readFileSync("knowledge-graph/demo/semidrive_fee_kbg_snapshot.json", "utf8")
+) as {
+  run_id: string
+  records: Record<string, Array<Record<string, unknown>>>
+}
 
 test("风险传导页直接挂载同学原版图谱工作站", () => {
   assert.match(eventsTab, /<RiskPropagationGraph detail=\{detail\} \/>/)
@@ -44,6 +51,23 @@ test("原版图谱宿主具有加载态和响应式画布", () => {
 test("同学原版图谱按股票代码定位且缺失时不回退到其他企业", () => {
   assert.match(teammateWorkspace, /get\('stock_code'\)/)
   assert.match(teammateWorkspace, /attributes\?\.stock_code/)
+  assert.match(teammateWorkspace, /company\.disabled=true/)
   assert.match(teammateWorkspace, /当前企业暂无图谱快照/)
   assert.match(teammateWorkspace, /不会复用其他企业的关系/)
+})
+
+test("本地统一图谱服务加载寒武纪与芯驰两个独立快照", () => {
+  assert.match(devScript, /cambricon_fee_kbg_20260826_v1=/)
+  assert.match(devScript, /semidrive_fee_kbg_20260827_v1=/)
+  assert.match(teammateWorkspace, /semidriveChineseText/)
+  assert.match(teammateWorkspace, /PRIVATE-SEMIDRIVE/)
+
+  assert.equal(semidriveSnapshot.run_id, "semidrive_fee_kbg_20260827_v1")
+  assert.equal(semidriveSnapshot.records.knowledge_graph_nodes.length, 69)
+  assert.equal(semidriveSnapshot.records.knowledge_graph_edges.length, 130)
+  const company = semidriveSnapshot.records.knowledge_graph_nodes.find(
+    (node) => node.node_type === "company"
+  )
+  assert.ok(company)
+  assert.match(String(company.attributes_json), /PRIVATE-SEMIDRIVE/)
 })
