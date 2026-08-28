@@ -215,6 +215,77 @@
   text-align: left;
 }
 
+.indicator-analysis__peer-matrix
+  tbody:not(:first-of-type)
+  .indicator-analysis__matrix-group-row
+  th {
+  border-top: 10px solid var(--risk-os-canvas, var(--risk-os-surface-muted));
+}
+
+.indicator-analysis__peer-matrix .indicator-analysis__matrix-group-row th {
+  position: static;
+  min-width: 0;
+  height: auto;
+  padding: 10px 12px;
+  background: color-mix(
+    in srgb,
+    var(--risk-os-accent, #3b82f6) 7%,
+    var(--risk-os-surface-muted)
+  );
+  text-align: left;
+}
+
+.indicator-analysis__matrix-group-row th strong,
+.indicator-analysis__matrix-group-row th small {
+  display: inline;
+}
+
+.indicator-analysis__matrix-group-row th strong {
+  margin-right: 10px;
+  color: var(--risk-os-ink);
+  font-size: 12px;
+}
+
+.indicator-analysis__matrix-group-row th small {
+  color: var(--risk-os-muted);
+  font-weight: 550;
+}
+
+.indicator-analysis__matrix-empty-row td {
+  height: 50px;
+  padding: 10px 12px;
+  background: var(--risk-os-surface-muted);
+  color: var(--risk-os-muted);
+  text-align: left;
+}
+
+.indicator-analysis__peer-matrix
+  tr:not(.indicator-analysis__matrix-group-row)
+  > th:first-child:not([data-missing="true"]) {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--risk-heat-color) 20%, var(--risk-os-surface)) 0%,
+    var(--risk-os-surface) 72%
+  );
+  box-shadow: inset 4px 0 var(--risk-heat-color);
+}
+
+.indicator-analysis__company-name {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.indicator-analysis__company-name i {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--risk-heat-color);
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--risk-heat-color) 16%, transparent);
+}
+
 .indicator-analysis__peer-matrix td:not([data-missing="true"]) {
   background: color-mix(
     in srgb,
@@ -226,7 +297,9 @@
 }
 
 .indicator-analysis__peer-matrix tr[data-active="true"] th:first-child {
-  box-shadow: inset 4px 0 var(--risk-profile-accent, #c73535);
+  box-shadow:
+    inset 4px 0 var(--risk-heat-color),
+    inset 0 0 0 2px var(--risk-os-accent, #3b82f6);
 }
 
 .indicator-analysis__peer-matrix th strong,

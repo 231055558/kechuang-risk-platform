@@ -3,30 +3,40 @@ import type { IndustryRiskCompanySummary } from "@/domain/industry-risk-v1/index
 export function selectPeerRiskContext(
   companies: readonly IndustryRiskCompanySummary[],
   companyId: string,
-  leadingCount = 4,
+  lowestRiskCount = 4,
   neighborRadius = 2
 ) {
-  const ranked = [...companies].sort(
-    (left, right) =>
-      (right.totalRiskScore ?? -1) - (left.totalRiskScore ?? -1) ||
-      left.stockCode.localeCompare(right.stockCode)
-  )
-  const selectedIds = new Set(
-    ranked.slice(0, leadingCount).map((company) => company.companyId)
-  )
+  const ranked = companies
+    .filter((company) => company.totalRiskScore !== null)
+    .sort(
+      (left, right) =>
+        (right.totalRiskScore ?? 0) - (left.totalRiskScore ?? 0) ||
+        left.stockCode.localeCompare(right.stockCode)
+    )
+  const lowestRisk = ranked.slice(-lowestRiskCount).reverse()
+  const lowestRiskIds = new Set(lowestRisk.map((company) => company.companyId))
   const currentIndex = ranked.findIndex(
     (company) => company.companyId === companyId
   )
+  let neighborCandidates: IndustryRiskCompanySummary[] = []
   if (currentIndex >= 0) {
     const start = Math.max(0, currentIndex - neighborRadius)
     const end = Math.min(ranked.length, currentIndex + neighborRadius + 1)
-    ranked
-      .slice(start, end)
-      .forEach((company) => selectedIds.add(company.companyId))
+    neighborCandidates = ranked.slice(start, end)
+  } else {
+    const selectedCompany = companies.find(
+      (company) => company.companyId === companyId
+    )
+    if (selectedCompany) neighborCandidates = [selectedCompany]
   }
+  const neighbors = neighborCandidates.filter(
+    (company) => !lowestRiskIds.has(company.companyId)
+  )
   return {
     ranked,
-    visible: ranked.filter((company) => selectedIds.has(company.companyId)),
+    lowestRisk,
+    neighbors,
+    visible: [...lowestRisk, ...neighbors],
   }
 }
 
