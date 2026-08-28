@@ -46,22 +46,34 @@ function company(index: number): IndustryRiskCompanySummary {
   }
 }
 
-test("peer matrix keeps the leading companies and the selected company's neighbors", () => {
+test("peer matrix separates the lowest-risk companies from unique rank neighbors", () => {
   const companies = Array.from({ length: 12 }, (_, index) => company(index))
   const result = selectPeerRiskContext(companies, "company-9")
   assert.deepEqual(
-    result.visible.map((item) => item.companyId),
-    [
-      "company-0",
-      "company-1",
-      "company-2",
-      "company-3",
-      "company-7",
-      "company-8",
-      "company-9",
-      "company-10",
-      "company-11",
-    ]
+    result.lowestRisk.map((item) => item.companyId),
+    ["company-11", "company-10", "company-9", "company-8"]
+  )
+  assert.deepEqual(
+    result.neighbors.map((item) => item.companyId),
+    ["company-7"]
+  )
+  assert.equal(
+    new Set(result.visible.map((item) => item.companyId)).size,
+    result.visible.length
+  )
+})
+
+test("missing scores are never presented as the lowest-risk companies", () => {
+  const companies = Array.from({ length: 12 }, (_, index) => company(index))
+  companies[11] = { ...companies[11], totalRiskScore: null }
+  const result = selectPeerRiskContext(companies, "company-5")
+  assert.deepEqual(
+    result.lowestRisk.map((item) => item.companyId),
+    ["company-10", "company-9", "company-8", "company-7"]
+  )
+  assert.deepEqual(
+    result.neighbors.map((item) => item.companyId),
+    ["company-3", "company-4", "company-5", "company-6"]
   )
 })
 

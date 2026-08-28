@@ -33,7 +33,11 @@ import {
   fetchIndustryRiskAssessment,
   fetchIndustryRiskCompanies,
 } from "@/lib/industry-risk-api"
-import { riskHeatColor, riskHeatLabel } from "@/lib/risk-heat"
+import {
+  riskHeatColor,
+  riskHeatLabel,
+  riskPercentileFromRank,
+} from "@/lib/risk-heat"
 import "@/styles/indicator-analysis.css"
 
 type AnalysisState =
@@ -109,6 +113,26 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
   const peerRankById = new Map(
     peerContext.ranked.map((company, index) => [company.companyId, index + 1])
   )
+  const peerRiskPercentileById = new Map(
+    peerContext.ranked.map((company, index) => [
+      company.companyId,
+      riskPercentileFromRank(index + 1, peerContext.ranked.length),
+    ])
+  )
+  const peerMatrixGroups = [
+    {
+      id: "lowest-risk",
+      label: "同业风险最低",
+      description: `有效综合分中风险最低的 ${peerContext.lowestRisk.length} 家`,
+      companies: peerContext.lowestRisk,
+    },
+    {
+      id: "rank-neighbors",
+      label: "当前企业邻近排名",
+      description: "当前企业风险排名前后各 2 位；与上组重复的企业已剔除",
+      companies: peerContext.neighbors,
+    },
+  ] as const
 
   return (
     <div className="indicator-analysis page-stack">
@@ -181,8 +205,8 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
             <span className="eyebrow">Cross-company view</span>
             <h3>同业风险分位矩阵</h3>
             <p>
-              展示同业风险前 4 名及当前企业前后各 2
-              个邻位；固定色标不按单个企业重新拉伸，灰色斜纹表示缺失。
+              展示同业风险最低 4 家及当前企业前后各 2
+              个邻位；企业列与指标单元格均使用固定风险分位色标，灰色斜纹表示缺失。
             </p>
           </div>
           <HeatLegend />
@@ -205,43 +229,74 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
                 ))}
               </tr>
             </thead>
-            <tbody>
-              {peerContext.visible.map((company) => (
-                <tr
-                  key={company.companyId}
-                  data-active={company.companyId === companyId}
-                >
-                  <th scope="row">
-                    <strong>{company.companyName}</strong>
-                    <small>
-                      风险第 {peerRankById.get(company.companyId)} 位 ·{" "}
-                      {company.stockCode}
-                    </small>
+            {peerMatrixGroups.map((group) => (
+              <tbody key={group.id} data-peer-group={group.id}>
+                <tr className="indicator-analysis__matrix-group-row">
+                  <th colSpan={weightedMetrics.length + 1} scope="rowgroup">
+                    <strong>{group.label}</strong>
+                    <small>{group.description}</small>
                   </th>
-                  {weightedMetrics.map((metric) => {
-                    const heat = company.indicatorHeat.find(
-                      (item) => item.indicatorId === metric.indicatorId
-                    )
-                    return (
-                      <td
-                        key={metric.indicatorId}
-                        data-missing={heat?.riskPercentile == null}
-                        style={heatStyle(heat?.riskPercentile ?? null)}
-                        title={`${company.companyName} · ${metric.indicatorId} ${metric.label} · ${
-                          heat?.riskPercentile == null
-                            ? "缺失"
-                            : percentFormatter.format(heat.riskPercentile)
-                        } · n=${heat?.sampleSize ?? 0}`}
-                      >
-                        {heat?.riskPercentile == null
-                          ? "—"
-                          : Math.round(heat.riskPercentile * 100)}
-                      </td>
-                    )
-                  })}
                 </tr>
-              ))}
-            </tbody>
+                {group.companies.length === 0 ? (
+                  <tr className="indicator-analysis__matrix-empty-row">
+                    <td colSpan={weightedMetrics.length + 1}>
+                      当前企业及其邻位已在上方最低风险组中，不重复展示。
+                    </td>
+                  </tr>
+                ) : (
+                  group.companies.map((company) => {
+                    const overallPercentile =
+                      peerRiskPercentileById.get(company.companyId) ?? null
+                    const rank = peerRankById.get(company.companyId)
+                    return (
+                      <tr
+                        key={company.companyId}
+                        data-active={company.companyId === companyId}
+                      >
+                        <th
+                          scope="row"
+                          data-missing={overallPercentile === null}
+                          style={heatStyle(overallPercentile)}
+                          title={`${company.companyName} · ${riskHeatLabel(overallPercentile)}`}
+                        >
+                          <span className="indicator-analysis__company-name">
+                            <i aria-hidden="true" />
+                            <strong>{company.companyName}</strong>
+                          </span>
+                          <small>
+                            {rank === undefined
+                              ? "综合风险暂缺"
+                              : `风险排名 ${rank}/${peerContext.ranked.length} · 分位 ${percentFormatter.format(overallPercentile ?? 0)}`}{" "}
+                            · {company.stockCode}
+                          </small>
+                        </th>
+                        {weightedMetrics.map((metric) => {
+                          const heat = company.indicatorHeat.find(
+                            (item) => item.indicatorId === metric.indicatorId
+                          )
+                          return (
+                            <td
+                              key={metric.indicatorId}
+                              data-missing={heat?.riskPercentile == null}
+                              style={heatStyle(heat?.riskPercentile ?? null)}
+                              title={`${company.companyName} · ${metric.indicatorId} ${metric.label} · ${
+                                heat?.riskPercentile == null
+                                  ? "缺失"
+                                  : percentFormatter.format(heat.riskPercentile)
+                              } · n=${heat?.sampleSize ?? 0}`}
+                            >
+                              {heat?.riskPercentile == null
+                                ? "—"
+                                : Math.round(heat.riskPercentile * 100)}
+                            </td>
+                          )
+                        })}
+                      </tr>
+                    )
+                  })
+                )}
+              </tbody>
+            ))}
           </table>
         </div>
       </section>
