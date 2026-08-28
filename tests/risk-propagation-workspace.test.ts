@@ -31,6 +31,7 @@ test("风险传导页直接挂载同学原版图谱工作站", () => {
   assert.match(component, /VITE_GRAPH_WORKSPACE_URL/)
   assert.match(component, /stock_code/)
   assert.match(component, /<iframe/)
+  assert.doesNotMatch(component, /同学原版图谱界面|teammate-graph-workspace__status/)
 })
 
 test("图谱宿主不复制关系并限制 iframe 权限", () => {
@@ -46,6 +47,8 @@ test("原版图谱宿主具有加载态和响应式画布", () => {
   assert.match(component, /正在按证券代码读取图谱快照/)
   assert.match(component, /onLoad=\{\(\) => setLoadedUrl\(workspaceUrl\)\}/)
   assert.match(styles, /teammate-graph-workspace__frame/)
+  assert.match(styles, /risk-os-content:has\(\.teammate-graph-workspace\)/)
+  assert.match(styles, /height: 100dvh/)
   assert.match(styles, /@media \(max-width: 720px\)/)
 })
 
@@ -56,7 +59,10 @@ test("图谱工作站使用同源代理而不是浏览器直连本地端口", ()
   )
   assert.doesNotMatch(component, /127\.0\.0\.1:8766/)
   assert.match(viteConfig, /"\/risk-graph-workspace"/)
-  assert.match(teammateWorkspace, /const api='\.\/api'/)
+  assert.match(
+    teammateWorkspace,
+    /const api=location\.pathname\.startsWith\('\/knowledge-graph\/'\)\?'\/api\/v1\/risk-graph':'\.\/api'/
+  )
 })
 
 test("同学原版图谱按股票代码定位且缺失时不回退到其他企业", () => {
@@ -74,8 +80,8 @@ test("本地统一图谱服务加载寒武纪与芯驰两个独立快照", () =>
   assert.match(teammateWorkspace, /PRIVATE-SEMIDRIVE/)
 
   assert.equal(semidriveSnapshot.run_id, "semidrive_fee_kbg_20260827_v1")
-  assert.equal(semidriveSnapshot.records.knowledge_graph_nodes.length, 69)
-  assert.equal(semidriveSnapshot.records.knowledge_graph_edges.length, 130)
+  assert.equal(semidriveSnapshot.records.knowledge_graph_nodes.length, 104)
+  assert.equal(semidriveSnapshot.records.knowledge_graph_edges.length, 200)
   const company = semidriveSnapshot.records.knowledge_graph_nodes.find(
     (node) => node.node_type === "company"
   )

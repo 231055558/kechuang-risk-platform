@@ -9,8 +9,21 @@
   --risk-os-surface: #ffffff;
   --risk-os-surface-muted: #f8f9fb;
   --risk-os-surface-strong: #eef0f4;
-  --risk-os-sidebar: #17191d;
-  --risk-os-sidebar-raised: #202329;
+  --risk-os-sidebar: #eef0f4;
+  --risk-os-sidebar-raised: #ffffff;
+  --risk-os-sidebar-ink: #1b1e24;
+  --risk-os-sidebar-muted: #6d7581;
+  --risk-os-sidebar-faint: #939aa6;
+  --risk-os-sidebar-border: #d2d7e0;
+  --risk-os-sidebar-control: #f8f9fb;
+  --risk-os-sidebar-hover: #e4e7ed;
+  --risk-os-sidebar-active: #e4e9fb;
+  --risk-os-sidebar-active-border: #8498db;
+  --risk-os-sidebar-active-ink: #2848aa;
+  --risk-os-sidebar-mark: #1b1e24;
+  --risk-os-sidebar-mark-ink: #ffffff;
+  --risk-os-sidebar-live-bg: #ffe9ed;
+  --risk-os-sidebar-live-ink: #a6293d;
   --risk-os-ink: #16181d;
   --risk-os-body: #3f4651;
   --risk-os-muted: #68707d;
@@ -74,6 +87,19 @@
   --risk-os-surface-strong: #252931;
   --risk-os-sidebar: #0c0e11;
   --risk-os-sidebar-raised: #181b21;
+  --risk-os-sidebar-ink: #f7f8fa;
+  --risk-os-sidebar-muted: #99a1ad;
+  --risk-os-sidebar-faint: #737b87;
+  --risk-os-sidebar-border: #2b2f36;
+  --risk-os-sidebar-control: #181b20;
+  --risk-os-sidebar-hover: #202329;
+  --risk-os-sidebar-active: #2c438c;
+  --risk-os-sidebar-active-border: #4b66bc;
+  --risk-os-sidebar-active-ink: #ffffff;
+  --risk-os-sidebar-mark: #f4f6fb;
+  --risk-os-sidebar-mark-ink: #20242b;
+  --risk-os-sidebar-live-bg: #44262c;
+  --risk-os-sidebar-live-ink: #ffb1bd;
   --risk-os-ink: #f2f4f7;
   --risk-os-body: #c6cbd4;
   --risk-os-muted: #929aa7;
@@ -162,7 +188,7 @@ body::after {
   z-index: 40;
   width: 236px;
   background: var(--risk-os-sidebar);
-  border-right: 1px solid #2b2f36;
+  border-right: 1px solid var(--risk-os-sidebar-border);
 }
 
 .risk-os-sidebar {
@@ -171,10 +197,10 @@ body::after {
   height: 100%;
   min-height: 0;
   flex-direction: column;
-  padding: 20px 14px 16px;
+  padding: 20px 14px 76px;
   overflow: hidden;
   background: transparent;
-  color: #f7f8fa;
+  color: var(--risk-os-sidebar-ink);
 }
 
 .risk-os-sidebar .sidebar-brand {
@@ -191,10 +217,10 @@ body::after {
   height: 32px;
   flex: 0 0 32px;
   place-items: center;
-  border: 1px solid #48505d;
+  border: 1px solid var(--risk-os-sidebar-border);
   border-radius: 7px;
-  background: #f4f6fb;
-  color: #20242b;
+  background: var(--risk-os-sidebar-mark);
+  color: var(--risk-os-sidebar-mark-ink);
   box-shadow: none;
 }
 
@@ -204,14 +230,14 @@ body::after {
 }
 
 .risk-os-sidebar .sidebar-brand .text-foreground {
-  color: #ffffff;
+  color: var(--risk-os-sidebar-ink);
   font-size: 14px;
   letter-spacing: -0.01em;
 }
 
 .risk-os-sidebar .sidebar-brand .text-muted-foreground {
   margin-top: 1px;
-  color: #858d99;
+  color: var(--risk-os-sidebar-muted);
   font-size: 10px;
   letter-spacing: 0.05em;
 }
@@ -219,7 +245,7 @@ body::after {
 .risk-os-company-switcher {
   margin-top: 22px;
   padding: 12px;
-  border: 1px solid #323740;
+  border: 1px solid var(--risk-os-sidebar-border);
   border-radius: var(--risk-os-radius);
   background: var(--risk-os-sidebar-raised);
   box-shadow: none !important;
@@ -228,7 +254,7 @@ body::after {
 .risk-os-company-label {
   display: block;
   margin-bottom: 7px;
-  color: #858d99;
+  color: var(--risk-os-sidebar-muted);
   font-size: 10px;
   font-weight: 650;
   letter-spacing: 0.09em;
@@ -238,10 +264,10 @@ body::after {
   width: 100%;
   min-height: 34px;
   padding: 0 8px;
-  border: 1px solid #414751 !important;
+  border: 1px solid var(--risk-os-sidebar-border) !important;
   border-radius: 6px !important;
-  background: #181b20 !important;
-  color: #f5f6f8 !important;
+  background: var(--risk-os-sidebar-control) !important;
+  color: var(--risk-os-sidebar-ink) !important;
   box-shadow: none !important;
   font-size: 12px;
   font-weight: 650;
@@ -270,7 +296,7 @@ body::after {
 
 .risk-os-sidebar .company-search-trigger small {
   flex: 0 0 auto;
-  color: #8d95a1;
+  color: var(--risk-os-sidebar-muted);
   font-size: 9px;
   font-variant-numeric: tabular-nums;
 }
@@ -279,7 +305,7 @@ body::after {
   width: 14px;
   height: 14px;
   flex: 0 0 auto;
-  color: #8d95a1;
+  color: var(--risk-os-sidebar-muted);
 }
 
 .company-search-popover {
@@ -400,20 +426,20 @@ body::after {
 }
 
 .risk-os-sidebar .text-muted-foreground {
-  color: #8d95a1;
+  color: var(--risk-os-sidebar-muted);
 }
 
 .risk-os-sidebar .sidebar-risk-score {
   display: flex;
   align-items: baseline;
   gap: 5px;
-  color: #99a1ad;
+  color: var(--risk-os-sidebar-muted);
   font-size: 9px;
   white-space: nowrap;
 }
 
 .risk-os-sidebar .sidebar-risk-score strong {
-  color: #ffffff;
+  color: var(--risk-os-sidebar-ink);
   font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
@@ -425,7 +451,7 @@ body::after {
   padding-right: 5px;
   overflow: auto;
   scrollbar-width: thin;
-  scrollbar-color: #3b4049 transparent;
+  scrollbar-color: var(--risk-os-sidebar-border) transparent;
 }
 
 .risk-os-sidebar .sidebar-nav {
@@ -440,7 +466,7 @@ body::after {
 
 .risk-os-sidebar .sidebar-group-label {
   padding: 0 9px;
-  color: #676f7b;
+  color: var(--risk-os-sidebar-faint);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -463,7 +489,7 @@ body::after {
   border: 1px solid transparent;
   border-radius: 6px;
   background: transparent;
-  color: #9ba2ad;
+  color: var(--risk-os-sidebar-muted);
   box-shadow: none;
   font-size: 12px;
   text-align: left;
@@ -479,18 +505,18 @@ body::after {
 }
 
 .risk-os-sidebar .sidebar-nav-item:hover {
-  border-color: #353a43;
-  background: #202329;
-  color: #ffffff;
+  border-color: var(--risk-os-sidebar-border);
+  background: var(--risk-os-sidebar-hover);
+  color: var(--risk-os-sidebar-ink);
   transform: none;
 }
 
 .risk-os-sidebar .sidebar-nav-item-active,
 .risk-os-sidebar .sidebar-nav-item-active:hover {
-  border-color: #4b66bc;
-  background: #2c438c;
-  color: #ffffff;
-  box-shadow: inset 3px 0 0 #9db0ff;
+  border-color: var(--risk-os-sidebar-active-border);
+  background: var(--risk-os-sidebar-active);
+  color: var(--risk-os-sidebar-active-ink);
+  box-shadow: inset 3px 0 0 var(--risk-os-sidebar-active-border);
 }
 
 .risk-os-sidebar .sidebar-nav-item::before,
@@ -508,8 +534,8 @@ body::after {
   gap: 3px;
   padding: 0 5px;
   border-radius: 9px;
-  background: #44262c;
-  color: #ffb1bd;
+  background: var(--risk-os-sidebar-live-bg);
+  color: var(--risk-os-sidebar-live-ink);
   font-size: 9px;
   font-weight: 700;
 }
@@ -518,7 +544,7 @@ body::after {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #ff7789;
+  background: var(--risk-os-sidebar-live-ink);
 }
 
 .risk-os-sidebar .sidebar-footnote {
@@ -526,9 +552,69 @@ body::after {
   align-items: center;
   gap: 7px;
   padding: 10px 7px 0;
-  border-top: 1px solid #2a2e35;
-  color: #737b87;
+  border-top: 1px solid var(--risk-os-sidebar-border);
+  color: var(--risk-os-sidebar-faint);
   font-size: 10px;
+}
+
+.risk-os-global-controls-wrap {
+  position: fixed;
+  z-index: 45;
+  bottom: 16px;
+  left: 16px;
+}
+
+.risk-os-global-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px;
+  border: 1px solid var(--risk-os-sidebar-border);
+  border-radius: 9px;
+  background: color-mix(
+    in srgb,
+    var(--risk-os-sidebar-raised) 92%,
+    transparent
+  );
+  box-shadow: 0 12px 30px rgb(15 23 42 / 16%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.risk-os-global-controls [data-slot="button"] {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--risk-os-sidebar-border) !important;
+  border-radius: 6px !important;
+  background: var(--risk-os-sidebar-control) !important;
+  color: var(--risk-os-sidebar-ink) !important;
+  box-shadow: none !important;
+}
+
+.risk-os-global-controls [data-slot="button"]:hover {
+  background: var(--risk-os-sidebar-hover) !important;
+  color: var(--risk-os-sidebar-active-ink) !important;
+  transform: none;
+}
+
+.risk-os-global-controls svg {
+  width: 16px;
+  height: 16px;
+}
+
+.risk-os-global-feedback {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  width: max-content;
+  max-width: min(360px, calc(100vw - 32px));
+  padding: 7px 9px;
+  border: 1px solid var(--risk-os-sidebar-border);
+  border-radius: 7px;
+  background: var(--risk-os-sidebar-raised);
+  box-shadow: var(--risk-os-shadow-overlay);
+  color: var(--risk-os-sidebar-ink);
+  font-size: 11px;
 }
 
 .risk-os-main {
@@ -2530,7 +2616,7 @@ body::after {
 
   .mobile-sidebar-panel {
     width: min(290px, 88vw) !important;
-    border-right: 1px solid #2b2f36;
+    border-right: 1px solid var(--risk-os-sidebar-border);
     background: var(--risk-os-sidebar) !important;
   }
 
@@ -2546,6 +2632,11 @@ body::after {
 
   .risk-os-content {
     padding: 16px 16px 32px;
+  }
+
+  .risk-os-global-controls-wrap {
+    bottom: 12px;
+    left: 12px;
   }
 
   .risk-os-shell .customer-risk-hero {

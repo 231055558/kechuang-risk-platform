@@ -121,12 +121,24 @@ CREATE TABLE IF NOT EXISTS knowledge_graph_edges (
 CREATE INDEX IF NOT EXISTS idx_knowledge_graph_edges_subject ON knowledge_graph_edges(subject_key);
 CREATE INDEX IF NOT EXISTS idx_knowledge_graph_edges_object ON knowledge_graph_edges(object_key);
 CREATE TABLE IF NOT EXISTS knowledge_graph_snapshot_nodes (
-    run_id TEXT NOT NULL, node_key TEXT NOT NULL, PRIMARY KEY (run_id, node_key),
+    run_id TEXT NOT NULL, node_key TEXT NOT NULL,
+    node_type TEXT NOT NULL DEFAULT '', canonical_name TEXT NOT NULL DEFAULT '',
+    attributes_json TEXT NOT NULL DEFAULT '{}', confidence REAL NOT NULL DEFAULT 0,
+    needs_review INTEGER NOT NULL DEFAULT 0, review_reason TEXT NOT NULL DEFAULT '',
+    created_at TEXT NOT NULL DEFAULT '', updated_at TEXT NOT NULL DEFAULT '',
+    PRIMARY KEY (run_id, node_key),
     FOREIGN KEY (run_id) REFERENCES knowledge_graph_runs(run_id) ON DELETE CASCADE,
     FOREIGN KEY (node_key) REFERENCES knowledge_graph_nodes(node_key) ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS knowledge_graph_snapshot_edges (
-    run_id TEXT NOT NULL, edge_key TEXT NOT NULL, PRIMARY KEY (run_id, edge_key),
+    run_id TEXT NOT NULL, edge_key TEXT NOT NULL,
+    subject_key TEXT NOT NULL DEFAULT '', relation_type TEXT NOT NULL DEFAULT '',
+    object_key TEXT NOT NULL DEFAULT '', attributes_json TEXT NOT NULL DEFAULT '{}',
+    confidence REAL NOT NULL DEFAULT 0, needs_review INTEGER NOT NULL DEFAULT 0,
+    review_reason TEXT NOT NULL DEFAULT '', source_id INTEGER NOT NULL DEFAULT 0,
+    source_evidence_id INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL DEFAULT '', updated_at TEXT NOT NULL DEFAULT '',
+    PRIMARY KEY (run_id, edge_key),
     FOREIGN KEY (run_id) REFERENCES knowledge_graph_runs(run_id) ON DELETE CASCADE,
     FOREIGN KEY (edge_key) REFERENCES knowledge_graph_edges(edge_key) ON DELETE CASCADE
 );
@@ -314,6 +326,63 @@ def _display_source_name(value: Any) -> str:
 
 def ensure_master_graph_schema(conn: sqlite3.Connection) -> None:
     conn.executescript(MASTER_GRAPH_SCHEMA)
+    snapshot_columns = {
+        "knowledge_graph_snapshot_nodes": {
+            "node_type": "TEXT NOT NULL DEFAULT ''",
+            "canonical_name": "TEXT NOT NULL DEFAULT ''",
+            "attributes_json": "TEXT NOT NULL DEFAULT '{}'",
+            "confidence": "REAL NOT NULL DEFAULT 0",
+            "needs_review": "INTEGER NOT NULL DEFAULT 0",
+            "review_reason": "TEXT NOT NULL DEFAULT ''",
+            "created_at": "TEXT NOT NULL DEFAULT ''",
+            "updated_at": "TEXT NOT NULL DEFAULT ''",
+        },
+        "knowledge_graph_snapshot_edges": {
+            "subject_key": "TEXT NOT NULL DEFAULT ''",
+            "relation_type": "TEXT NOT NULL DEFAULT ''",
+            "object_key": "TEXT NOT NULL DEFAULT ''",
+            "attributes_json": "TEXT NOT NULL DEFAULT '{}'",
+            "confidence": "REAL NOT NULL DEFAULT 0",
+            "needs_review": "INTEGER NOT NULL DEFAULT 0",
+            "review_reason": "TEXT NOT NULL DEFAULT ''",
+            "source_id": "INTEGER NOT NULL DEFAULT 0",
+            "source_evidence_id": "INTEGER NOT NULL DEFAULT 0",
+            "created_at": "TEXT NOT NULL DEFAULT ''",
+            "updated_at": "TEXT NOT NULL DEFAULT ''",
+        },
+    }
+    for table, columns in snapshot_columns.items():
+        existing = {str(row[1]) for row in conn.execute(f"PRAGMA table_info({table})")}
+        for name, declaration in columns.items():
+            if name not in existing:
+                conn.execute(f"ALTER TABLE {table} ADD COLUMN {name} {declaration}")
+    conn.execute(
+        """UPDATE knowledge_graph_snapshot_nodes AS s SET
+               node_type=(SELECT n.node_type FROM knowledge_graph_nodes n WHERE n.node_key=s.node_key),
+               canonical_name=(SELECT n.canonical_name FROM knowledge_graph_nodes n WHERE n.node_key=s.node_key),
+               attributes_json=(SELECT n.attributes_json FROM knowledge_graph_nodes n WHERE n.node_key=s.node_key),
+               confidence=(SELECT n.confidence FROM knowledge_graph_nodes n WHERE n.node_key=s.node_key),
+               needs_review=(SELECT n.needs_review FROM knowledge_graph_nodes n WHERE n.node_key=s.node_key),
+               review_reason=(SELECT n.review_reason FROM knowledge_graph_nodes n WHERE n.node_key=s.node_key),
+               created_at=(SELECT n.created_at FROM knowledge_graph_nodes n WHERE n.node_key=s.node_key),
+               updated_at=(SELECT n.updated_at FROM knowledge_graph_nodes n WHERE n.node_key=s.node_key)
+           WHERE s.node_type=''"""
+    )
+    conn.execute(
+        """UPDATE knowledge_graph_snapshot_edges AS s SET
+               subject_key=(SELECT e.subject_key FROM knowledge_graph_edges e WHERE e.edge_key=s.edge_key),
+               relation_type=(SELECT e.relation_type FROM knowledge_graph_edges e WHERE e.edge_key=s.edge_key),
+               object_key=(SELECT e.object_key FROM knowledge_graph_edges e WHERE e.edge_key=s.edge_key),
+               attributes_json=(SELECT e.attributes_json FROM knowledge_graph_edges e WHERE e.edge_key=s.edge_key),
+               confidence=(SELECT e.confidence FROM knowledge_graph_edges e WHERE e.edge_key=s.edge_key),
+               needs_review=(SELECT e.needs_review FROM knowledge_graph_edges e WHERE e.edge_key=s.edge_key),
+               review_reason=(SELECT e.review_reason FROM knowledge_graph_edges e WHERE e.edge_key=s.edge_key),
+               source_id=(SELECT e.source_id FROM knowledge_graph_edges e WHERE e.edge_key=s.edge_key),
+               source_evidence_id=(SELECT e.source_evidence_id FROM knowledge_graph_edges e WHERE e.edge_key=s.edge_key),
+               created_at=(SELECT e.created_at FROM knowledge_graph_edges e WHERE e.edge_key=s.edge_key),
+               updated_at=(SELECT e.updated_at FROM knowledge_graph_edges e WHERE e.edge_key=s.edge_key)
+           WHERE s.subject_key=''"""
+    )
     ensure_unified_storage_schema(conn)
     conn.commit()
 
@@ -521,9 +590,11 @@ class R01R22KnowledgeGraphAgent:
     def _persist(self,conn:sqlite3.Connection,run_id:str,nodes:dict[str,GraphNode],edges:dict[str,GraphEdge],issues:list[ValidationIssue])->None:
         now=_now()
         for node in nodes.values():
-            conn.execute("INSERT INTO knowledge_graph_nodes(node_key,node_type,canonical_name,attributes_json,confidence,needs_review,review_reason,first_seen_run_id,last_seen_run_id,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(node_key) DO UPDATE SET node_type=excluded.node_type,canonical_name=excluded.canonical_name,attributes_json=excluded.attributes_json,confidence=excluded.confidence,needs_review=excluded.needs_review,review_reason=excluded.review_reason,last_seen_run_id=excluded.last_seen_run_id,updated_at=excluded.updated_at",(node.key,node.node_type,node.canonical_name,_json(node.attributes),node.confidence,int(node.needs_review),node.review_reason,run_id,run_id,now,now));conn.execute("INSERT OR IGNORE INTO knowledge_graph_snapshot_nodes(run_id,node_key) VALUES (?,?)",(run_id,node.key))
+            conn.execute("INSERT INTO knowledge_graph_nodes(node_key,node_type,canonical_name,attributes_json,confidence,needs_review,review_reason,first_seen_run_id,last_seen_run_id,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(node_key) DO UPDATE SET node_type=excluded.node_type,canonical_name=excluded.canonical_name,attributes_json=excluded.attributes_json,confidence=excluded.confidence,needs_review=excluded.needs_review,review_reason=excluded.review_reason,last_seen_run_id=excluded.last_seen_run_id,updated_at=excluded.updated_at",(node.key,node.node_type,node.canonical_name,_json(node.attributes),node.confidence,int(node.needs_review),node.review_reason,run_id,run_id,now,now))
+            conn.execute("INSERT OR REPLACE INTO knowledge_graph_snapshot_nodes(run_id,node_key,node_type,canonical_name,attributes_json,confidence,needs_review,review_reason,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?)",(run_id,node.key,node.node_type,node.canonical_name,_json(node.attributes),node.confidence,int(node.needs_review),node.review_reason,now,now))
         for edge in edges.values():
-            conn.execute("INSERT INTO knowledge_graph_edges(edge_key,subject_key,relation_type,object_key,attributes_json,confidence,needs_review,review_reason,source_id,source_evidence_id,first_seen_run_id,last_seen_run_id,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(edge_key) DO UPDATE SET attributes_json=excluded.attributes_json,confidence=excluded.confidence,needs_review=excluded.needs_review,review_reason=excluded.review_reason,source_id=excluded.source_id,source_evidence_id=excluded.source_evidence_id,last_seen_run_id=excluded.last_seen_run_id,updated_at=excluded.updated_at",(edge.key,edge.subject_key,edge.relation_type,edge.object_key,_json(edge.attributes),edge.confidence,int(edge.needs_review),edge.review_reason,edge.source_id,edge.source_evidence_id,run_id,run_id,now,now));conn.execute("INSERT OR IGNORE INTO knowledge_graph_snapshot_edges(run_id,edge_key) VALUES (?,?)",(run_id,edge.key))
+            conn.execute("INSERT INTO knowledge_graph_edges(edge_key,subject_key,relation_type,object_key,attributes_json,confidence,needs_review,review_reason,source_id,source_evidence_id,first_seen_run_id,last_seen_run_id,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(edge_key) DO UPDATE SET attributes_json=excluded.attributes_json,confidence=excluded.confidence,needs_review=excluded.needs_review,review_reason=excluded.review_reason,source_id=excluded.source_id,source_evidence_id=excluded.source_evidence_id,last_seen_run_id=excluded.last_seen_run_id,updated_at=excluded.updated_at",(edge.key,edge.subject_key,edge.relation_type,edge.object_key,_json(edge.attributes),edge.confidence,int(edge.needs_review),edge.review_reason,edge.source_id,edge.source_evidence_id,run_id,run_id,now,now))
+            conn.execute("INSERT OR REPLACE INTO knowledge_graph_snapshot_edges(run_id,edge_key,subject_key,relation_type,object_key,attributes_json,confidence,needs_review,review_reason,source_id,source_evidence_id,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",(run_id,edge.key,edge.subject_key,edge.relation_type,edge.object_key,_json(edge.attributes),edge.confidence,int(edge.needs_review),edge.review_reason,edge.source_id,edge.source_evidence_id,now,now))
         for issue in issues:conn.execute("INSERT INTO knowledge_graph_validation_issues(run_id,severity,code,node_key,edge_key,message,payload_json,created_at) VALUES (?,?,?,?,?,?,?,?)",(run_id,issue.severity,issue.code,issue.node_key,issue.edge_key,issue.message,_json(issue.payload),now))
         conn.execute("UPDATE knowledge_graph_runs SET status='completed',finished_at=?,node_count=?,edge_count=?,validation_issue_count=?,review_count=?,updated_at=? WHERE run_id=?",(now,len(nodes),len(edges),len(issues),sum(n.needs_review for n in nodes.values())+sum(e.needs_review for e in edges.values()),now,run_id))
 

@@ -1068,8 +1068,6 @@ function App() {
       onCompanyChange={handleCompanyChange}
       onNavigate={handleNavigationTarget}
       onPreloadView={preloadView}
-      onOpenExports={handleOpenExports}
-      showExports={activeView === "reports"}
       onResetDemo={handleResetDemo}
       onToggleTheme={() => setTheme(theme === "dark" ? "light" : "dark")}
       feedback={feedback}

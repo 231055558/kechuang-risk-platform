@@ -34,6 +34,13 @@ async function startTestServer(options?: {
   getNarrativeAnnualAudit?: () => unknown | Promise<unknown>
   getNarrativeIndustryTrends?: () => unknown | Promise<unknown>
   graphWorkspaceOrigin?: string
+  getRiskGraphHealth?: () => unknown | Promise<unknown>
+  listRiskGraphPostgresCompanies?: () => unknown | Promise<unknown>
+  getRiskGraphSnapshot?: (
+    companyKey: string,
+    view: "fee-transmission" | "subject-panorama",
+    minWeight: number
+  ) => unknown | Promise<unknown>
   maxBodyBytes?: number
 }) {
   const staticRoot = mkdtempSync(join(tmpdir(), "risk-platform-server-test-"))
@@ -79,6 +86,9 @@ async function startTestServer(options?: {
     getNarrativeAnnualAudit: options?.getNarrativeAnnualAudit,
     getNarrativeIndustryTrends: options?.getNarrativeIndustryTrends,
     graphWorkspaceOrigin: options?.graphWorkspaceOrigin,
+    getRiskGraphHealth: options?.getRiskGraphHealth,
+    listRiskGraphPostgresCompanies: options?.listRiskGraphPostgresCompanies,
+    getRiskGraphSnapshot: options?.getRiskGraphSnapshot,
     maxBodyBytes: options?.maxBodyBytes,
   })
 
@@ -100,6 +110,59 @@ async function startTestServer(options?: {
     },
   }
 }
+
+test("risk graph API returns PostgreSQL-backed directory and directed views", async () => {
+  const calls: unknown[] = []
+  const testServer = await startTestServer({
+    getRiskGraphHealth: () => ({
+      ok: true,
+      database: "postgresql",
+      companyCount: 2,
+      snapshotCount: 12,
+    }),
+    listRiskGraphPostgresCompanies: () => ({
+      companies: [{ id: "company:cambricon", label: "寒武纪" }],
+    }),
+    getRiskGraphSnapshot(companyKey, view, minWeight) {
+      calls.push({ companyKey, view, minWeight })
+      return { company_key: companyKey, view, nodes: [], edges: [] }
+    },
+  })
+  try {
+    const health = await fetch(`${testServer.baseUrl}/api/v1/risk-graph/health`)
+    assert.equal(health.status, 200)
+    assert.equal((await health.json()).database, "postgresql")
+
+    const companies = await fetch(
+      `${testServer.baseUrl}/api/v1/risk-graph/companies`
+    )
+    assert.equal(companies.status, 200)
+    assert.equal((await companies.json()).companies.length, 1)
+
+    const transmission = await fetch(
+      `${testServer.baseUrl}/api/v1/risk-graph/fee-transmission?company_key=company%3Acambricon&min_weight=0.75`
+    )
+    assert.equal(transmission.status, 200)
+    const panorama = await fetch(
+      `${testServer.baseUrl}/api/v1/risk-graph/subject-panorama?company_key=company%3Acambricon&min_weight=0.50`
+    )
+    assert.equal(panorama.status, 200)
+    assert.deepEqual(calls, [
+      {
+        companyKey: "company:cambricon",
+        view: "fee-transmission",
+        minWeight: 0.75,
+      },
+      {
+        companyKey: "company:cambricon",
+        view: "subject-panorama",
+        minWeight: 0.5,
+      },
+    ])
+  } finally {
+    await testServer.close()
+  }
+})
 
 test("technology scoring POST forwards parsed JSON and returns the engine result", async () => {
   const received: unknown[] = []

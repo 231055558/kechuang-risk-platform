@@ -20,6 +20,121 @@
   line-height: 1.65;
 }
 
+.graph-integration__stage {
+  min-height: 980px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--risk-os-ink) 14%, transparent);
+  background:
+    radial-gradient(
+      circle at 50% 40%,
+      color-mix(in srgb, #5b77d8 8%, transparent),
+      transparent 34%
+    ),
+    linear-gradient(
+      color-mix(in srgb, var(--risk-os-ink) 4%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--risk-os-ink) 4%, transparent) 1px,
+      transparent 1px
+    ),
+    var(--risk-os-surface);
+  background-size:
+    auto,
+    28px 28px,
+    28px 28px,
+    auto;
+}
+
+.graph-integration__frame {
+  display: block;
+  width: 100%;
+  min-height: 980px;
+  border: 0;
+  background: #07111f;
+}
+
+.graph-integration__toolbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px;
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--risk-os-ink) 10%, transparent);
+}
+
+.graph-integration__empty {
+  display: grid;
+  min-height: 610px;
+  place-items: center;
+  align-content: center;
+  gap: 14px;
+  padding: 40px;
+  text-align: center;
+}
+
+.graph-integration__empty > div:first-child {
+  display: flex;
+  align-items: center;
+  color: #5b77d8;
+}
+
+.graph-integration__empty > div:first-child svg {
+  width: 44px;
+  height: 44px;
+  padding: 10px;
+  border: 1px solid color-mix(in srgb, #5b77d8 38%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, #5b77d8 9%, var(--risk-os-surface));
+}
+
+.graph-integration__empty > div:first-child span {
+  width: 86px;
+  height: 1px;
+  background: #5b77d8;
+}
+
+.graph-integration__empty h3 {
+  margin: 8px 0 0;
+  font-size: 23px;
+}
+
+.graph-integration__empty > p {
+  max-width: 68ch;
+  margin: 0;
+  color: var(--risk-os-muted);
+  line-height: 1.65;
+}
+
+.graph-integration__empty dl {
+  display: grid;
+  width: min(100%, 900px);
+  grid-template-columns: repeat(3, 1fr);
+  margin: 28px 0 0;
+  border: 1px solid color-mix(in srgb, var(--risk-os-ink) 11%, transparent);
+}
+
+.graph-integration__empty dl div {
+  padding: 16px;
+  text-align: left;
+}
+
+.graph-integration__empty dl div + div {
+  border-left: 1px solid color-mix(in srgb, var(--risk-os-ink) 11%, transparent);
+}
+
+.graph-integration__empty dt {
+  color: var(--risk-os-muted);
+  font-size: 11px;
+}
+
+.graph-integration__empty dd {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .investor-decision__dashboard {
   display: grid;
   grid-template-columns: minmax(260px, 0.72fr) minmax(230px, 0.62fr) minmax(

@@ -126,9 +126,22 @@
       "indicators": ["R16", "R17", "R19"],
       "risk_polarity": 0.75,
       "direction": "conditional"
+    },
+    "客户集中度风险披露": {
+      "topic": "客户集中度与商业化回款",
+      "indicators": ["R13", "R16"],
+      "risk_polarity": 0.78,
+      "direction": "adverse"
     }
   },
   "title_rules": [
+    {
+      "pattern": "客户集中度|前五大客户.*(80%|八成)|主要客户.*需求放缓",
+      "topic": "客户集中度与商业化回款",
+      "indicators": ["R13", "R16"],
+      "risk_polarity": 0.78,
+      "direction": "adverse"
+    },
     {
       "pattern": "核心技术人员.*(离职|离任|变动|调整)|高级管理人员变动.*核心技术人员",
       "topic": "关键人员变动",
@@ -394,6 +407,30 @@
     "model_version": "cambricon-conditional-risk-evolution-1.0.0",
     "max_rules_per_event": 1,
     "rules": [
+      {
+        "rule_id": "customer-concentration-to-cashflow-pressure",
+        "event_pattern": "客户集中度|前五大客户|客户拓展",
+        "steps": [
+          {
+            "scenario_id": "major-customer-demand-volatility",
+            "label": "主要客户需求变化导致收入波动扩大",
+            "severity": 0.86,
+            "probability": 0.52,
+            "horizon": "3-12个月",
+            "conditions": "主要客户需求放缓且新客户拓展未达到预期",
+            "indicator_ids": ["R13", "R16"]
+          },
+          {
+            "scenario_id": "receivables-cashflow-pressure",
+            "label": "回款与经营现金流压力进一步上升",
+            "severity": 0.93,
+            "probability": 0.38,
+            "horizon": "6-18个月",
+            "conditions": "收入波动叠加项目回款周期延长",
+            "indicator_ids": ["R16"]
+          }
+        ]
+      },
       {
         "rule_id": "export-control-to-rd-pressure",
         "event_pattern": "实体清单|出口管制|供应链.*(稳定|偏紧|短缺)",

@@ -10,6 +10,8 @@
     "server/kcr-assessment-service.ts",
     "server/production-server.ts",
     "scripts/import-master-sqlite-postgres.ts",
+    "server/risk-graph-postgres-service.ts",
+    "scripts/import-risk-graph-postgres.ts",
     "scripts/import-kcr-workbook.ts",
     "scripts/score-kcr-assessment.ts"
   ]

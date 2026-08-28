@@ -15,6 +15,7 @@ dist.bak
 .tmp_refresh_*
 .playwright-cli
 output
+public/knowledge-graph/risk-knowledge-graph.html
 *.local
 
 # Local credentials

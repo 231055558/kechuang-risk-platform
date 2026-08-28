@@ -1,7 +1,11 @@
 import unittest
 from pathlib import Path
 
-from tools.serve_fee_kbg_preview import MultiSQLiteFeeReader, SQLiteFeeReader
+from tools.serve_fee_kbg_preview import (
+    DEFAULT_WEB_ROOT,
+    MultiSQLiteFeeReader,
+    SQLiteFeeReader,
+)
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -46,12 +50,12 @@ class MultiSnapshotPreviewTests(unittest.TestCase):
         self.assertEqual(
             semidrive["snapshot_run_id"], "semidrive_fee_kbg_20260827_v1"
         )
-        self.assertEqual(len(cambricon["nodes"]), 143)
-        self.assertEqual(len(semidrive["nodes"]), 69)
+        self.assertEqual(len(cambricon["nodes"]), 150)
+        self.assertEqual(len(semidrive["nodes"]), 104)
 
     def test_health_aggregates_snapshot_nodes(self):
         health = self.reader.health()
-        self.assertEqual(health["active_nodes"], 212)
+        self.assertEqual(health["active_nodes"], 254)
         self.assertEqual(health["snapshot_count"], 2)
         self.assertEqual(
             health["snapshot_run_ids"],
@@ -64,6 +68,10 @@ class MultiSnapshotPreviewTests(unittest.TestCase):
     def test_unknown_company_never_falls_back_to_another_snapshot(self):
         with self.assertRaisesRegex(LookupError, "尚无FEE-KBG试点快照"):
             self.reader.fee_kbg("node:missing", 500)
+
+    def test_default_web_root_is_the_tracked_frontend(self):
+        self.assertEqual(DEFAULT_WEB_ROOT, PROJECT_ROOT / "frontend")
+        self.assertTrue((DEFAULT_WEB_ROOT / "risk-knowledge-graph.html").is_file())
 
 
 if __name__ == "__main__":

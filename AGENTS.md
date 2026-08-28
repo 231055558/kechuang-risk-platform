@@ -5,6 +5,7 @@
 - `docs/contracts/investor-risk-workstation-v1.md`
 - `docs/contracts/industry-risk-api-v1.md`
 - `docs/contracts/industry-risk-storage-v1.md`
+- `docs/contracts/risk-graph-api-v1.md`
 - `docs/adr/0001-investor-product-boundary.md`
 
 每次改动必须同时检查：
