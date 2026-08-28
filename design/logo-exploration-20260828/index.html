@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>科创锐鉴 Logo 方向评审</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: Inter, "Microsoft YaHei", system-ui, sans-serif;
+        color: #17202c;
+        background: #edf1f5;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; min-width: 320px; }
+      .shell { width: min(1680px, calc(100% - 40px)); margin: 0 auto; padding: 32px 0 48px; }
+      header { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 24px; padding: 0 2px 22px; border-bottom: 1px solid #c9d1da; }
+      .eyebrow { margin: 0 0 7px; color: #3262c7; font-size: 12px; font-weight: 750; letter-spacing: 0.16em; text-transform: uppercase; }
+      h1 { margin: 0; font-size: 30px; line-height: 1.12; letter-spacing: 0; }
+      header p { max-width: 820px; margin: 9px 0 0; color: #5a6674; font-size: 14px; }
+      .meta { display: grid; grid-template-columns: repeat(2, auto); gap: 6px 18px; margin: 0; font-size: 12px; }
+      .meta dt { color: #7a8591; }
+      .meta dd { margin: 0; font-variant-numeric: tabular-nums; font-weight: 700; }
+      .board { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; padding-top: 18px; }
+      article { min-width: 0; overflow: hidden; border: 1px solid #cbd3dc; border-radius: 8px; background: #fff; }
+      .preview { display: grid; min-height: 176px; place-items: center; padding: 12px; border-bottom: 1px solid #e2e7ec; background: #fbfcfd; }
+      .preview img { display: block; width: 100%; height: auto; max-height: 152px; }
+      .caption { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; align-items: center; gap: 10px; min-height: 62px; padding: 10px 12px; }
+      .number { display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid #c7d0da; border-radius: 6px; color: #344457; font-size: 12px; font-weight: 800; font-variant-numeric: tabular-nums; }
+      h2 { margin: 0; font-size: 14px; line-height: 1.3; letter-spacing: 0; }
+      .tag { margin: 3px 0 0; color: #7a8592; font-size: 10px; line-height: 1.25; }
+      .open { display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid #ccd4dc; border-radius: 6px; color: #375fc0; text-decoration: none; }
+      .open:hover, .open:focus-visible { border-color: #375fc0; outline: 2px solid #dbe6ff; outline-offset: 2px; }
+      footer { display: flex; justify-content: space-between; gap: 16px; margin-top: 20px; padding: 15px 2px 0; border-top: 1px solid #c9d1da; color: #66717e; font-size: 11px; }
+      @media (max-width: 1180px) { .board { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+      @media (max-width: 680px) {
+        .shell { width: min(100% - 24px, 1680px); padding-top: 22px; }
+        header { grid-template-columns: 1fr; align-items: start; }
+        .board { grid-template-columns: 1fr; }
+        .meta { justify-content: start; }
+        footer { flex-direction: column; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <header>
+        <div>
+          <p class="eyebrow">KCR Brand Exploration · Round 01</p>
+          <h1>科创锐鉴 Logo 方向评审</h1>
+          <p>围绕机构研究、风险量化、证据追溯与知识图谱四项核心能力，探索 16 条相互独立的视觉路线。</p>
+        </div>
+        <dl class="meta"><dt>方案</dt><dd>16</dd><dt>格式</dt><dd>SVG</dd><dt>画板</dt><dd>640 × 240</dd><dt>状态</dt><dd>概念筛选</dd></dl>
+      </header>
+      <section class="board" aria-label="十六个 Logo 方向">
+        <article><div class="preview"><img src="logos/01-prism-shield.svg" alt="方案01 棱镜盾" /></div><div class="caption"><span class="number">01</span><div><h2>棱镜盾</h2><p class="tag">可信防护 · 多域风险</p></div><a class="open" href="logos/01-prism-shield.svg" title="打开方案 01">↗</a></div></article>
+        <article><div class="preview"><img src="logos/02-risk-radar.svg" alt="方案02 风险雷达" /></div><div class="caption"><span class="number">02</span><div><h2>风险雷达</h2><p class="tag">监测预警 · 方位判断</p></div><a class="open" href="logos/02-risk-radar.svg" title="打开方案 02">↗</a></div></article>
+        <article><div class="preview"><img src="logos/03-graph-lens.svg" alt="方案03 图谱透镜" /></div><div class="caption"><span class="number">03</span><div><h2>图谱透镜</h2><p class="tag">关系穿透 · 证据发现</p></div><a class="open" href="logos/03-graph-lens.svg" title="打开方案 03">↗</a></div></article>
+        <article><div class="preview"><img src="logos/04-ruijian-seal.svg" alt="方案04 锐鉴字印" /></div><div class="caption"><span class="number">04</span><div><h2>锐鉴字印</h2><p class="tag">东方机构 · 权威研究</p></div><a class="open" href="logos/04-ruijian-seal.svg" title="打开方案 04">↗</a></div></article>
+        <article><div class="preview"><img src="logos/05-risk-beacon.svg" alt="方案05 风险信标" /></div><div class="caption"><span class="number">05</span><div><h2>风险信标</h2><p class="tag">早期信号 · 主动监测</p></div><a class="open" href="logos/05-risk-beacon.svg" title="打开方案 05">↗</a></div></article>
+        <article><div class="preview"><img src="logos/06-data-fortress.svg" alt="方案06 数据堡垒" /></div><div class="caption"><span class="number">06</span><div><h2>数据堡垒</h2><p class="tag">治理边界 · 数据可信</p></div><a class="open" href="logos/06-data-fortress.svg" title="打开方案 06">↗</a></div></article>
+        <article><div class="preview"><img src="logos/07-network-bridge.svg" alt="方案07 网络桥" /></div><div class="caption"><span class="number">07</span><div><h2>网络桥</h2><p class="tag">传导链路 · 关系连接</p></div><a class="open" href="logos/07-network-bridge.svg" title="打开方案 07">↗</a></div></article>
+        <article><div class="preview"><img src="logos/08-quant-matrix.svg" alt="方案08 量化矩阵" /></div><div class="caption"><span class="number">08</span><div><h2>量化矩阵</h2><p class="tag">热力评分 · 数据产品</p></div><a class="open" href="logos/08-quant-matrix.svg" title="打开方案 08">↗</a></div></article>
+        <article><div class="preview"><img src="logos/09-risk-compass.svg" alt="方案09 风险罗盘" /></div><div class="caption"><span class="number">09</span><div><h2>风险罗盘</h2><p class="tag">投资方向 · 决策辅助</p></div><a class="open" href="logos/09-risk-compass.svg" title="打开方案 09">↗</a></div></article>
+        <article><div class="preview"><img src="logos/10-evidence-eye.svg" alt="方案10 证据之眼" /></div><div class="caption"><span class="number">10</span><div><h2>证据之眼</h2><p class="tag">来源核验 · 审计可追</p></div><a class="open" href="logos/10-evidence-eye.svg" title="打开方案 10">↗</a></div></article>
+        <article><div class="preview"><img src="logos/11-risk-stair.svg" alt="方案11 风险阶梯" /></div><div class="caption"><span class="number">11</span><div><h2>风险阶梯</h2><p class="tag">分级分位 · 量化区间</p></div><a class="open" href="logos/11-risk-stair.svg" title="打开方案 11">↗</a></div></article>
+        <article><div class="preview"><img src="logos/12-verified-loop.svg" alt="方案12 双环校验" /></div><div class="caption"><span class="number">12</span><div><h2>双环校验</h2><p class="tag">客观风险 · 叙事分析</p></div><a class="open" href="logos/12-verified-loop.svg" title="打开方案 12">↗</a></div></article>
+        <article><div class="preview"><img src="logos/13-hex-ledger.svg" alt="方案13 六域蜂巢" /></div><div class="caption"><span class="number">13</span><div><h2>六域蜂巢</h2><p class="tag">风险体系 · 企业核心</p></div><a class="open" href="logos/13-hex-ledger.svg" title="打开方案 13">↗</a></div></article>
+        <article><div class="preview"><img src="logos/14-algorithm-slice.svg" alt="方案14 算法切片" /></div><div class="caption"><span class="number">14</span><div><h2>算法切片</h2><p class="tag">计算分层 · 结论可溯</p></div><a class="open" href="logos/14-algorithm-slice.svg" title="打开方案 14">↗</a></div></article>
+        <article><div class="preview"><img src="logos/15-transmission-gate.svg" alt="方案15 传导波门" /></div><div class="caption"><span class="number">15</span><div><h2>传导波门</h2><p class="tag">风险波动 · 关键节点</p></div><a class="open" href="logos/15-transmission-gate.svg" title="打开方案 15">↗</a></div></article>
+        <article><div class="preview"><img src="logos/16-kr-monogram.svg" alt="方案16 KR极简字母标" /></div><div class="caption"><span class="number">16</span><div><h2>KR 极简字母标</h2><p class="tag">产品图标 · 国际表达</p></div><a class="open" href="logos/16-kr-monogram.svg" title="打开方案 16">↗</a></div></article>
+      </section>
+      <footer><span>本轮只比较视觉方向，不代表最终字体、颜色或注册可用性。</span><span>科创锐鉴 · 2026-08-28</span></footer>
+    </main>
+  </body>
+</html>

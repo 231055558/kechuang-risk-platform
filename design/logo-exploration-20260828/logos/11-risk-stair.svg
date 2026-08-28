@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" role="img" aria-labelledby="title desc">
+  <title id="title">方案 11 风险阶梯</title><desc id="desc">四级风险阶梯被一条研判切线贯穿</desc>
+  <g transform="translate(29 34)">
+    <path d="M8 148h37v-34h37V79h37V44h37v104Z" fill="#1C2634"/>
+    <path d="M8 148h37v-34h37V79h37V44h37" fill="none" stroke="#F1C34F" stroke-width="9" stroke-linejoin="miter"/>
+    <path d="M20 50 144 137" stroke="#EF5D6D" stroke-width="8"/>
+    <circle cx="20" cy="50" r="11" fill="#fff" stroke="#EF5D6D" stroke-width="6"/><circle cx="144" cy="137" r="11" fill="#fff" stroke="#EF5D6D" stroke-width="6"/>
+  </g>
+  <g font-family="Inter,'Microsoft YaHei',sans-serif">
+    <text x="225" y="91" font-size="18" fill="#EF5D6D" font-weight="800" letter-spacing="7">RISK SCALE</text>
+    <text x="222" y="139" font-size="51" fill="#1C2634" font-weight="820" letter-spacing="2">科创锐鉴</text>
+    <text x="226" y="174" font-size="15" fill="#687386" letter-spacing="5">从原值到风险分位</text>
+  </g>
+</svg>

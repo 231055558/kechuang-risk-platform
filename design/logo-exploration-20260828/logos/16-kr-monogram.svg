@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" role="img" aria-labelledby="title desc">
+  <title id="title">方案 16 KR 极简字母标</title><desc id="desc">K 与 R 共用一条风险趋势中轴</desc>
+  <g transform="translate(35 34)">
+    <rect width="164" height="164" rx="26" fill="#111B2B"/>
+    <path d="M43 34v96M43 83l42-49M43 83l42 47" fill="none" stroke="#F6F8FB" stroke-width="18" stroke-linecap="square" stroke-linejoin="miter"/>
+    <path d="M99 130V34h22c26 0 34 15 34 29 0 15-9 27-30 29l35 38" fill="none" stroke="#54D1B3" stroke-width="17" stroke-linecap="square" stroke-linejoin="round"/>
+    <path d="M27 145h110" stroke="#F1BF4F" stroke-width="7"/>
+  </g>
+  <g font-family="Inter,'Microsoft YaHei',sans-serif">
+    <text x="238" y="105" font-size="50" fill="#111B2B" font-weight="820" letter-spacing="3">科创锐鉴</text>
+    <text x="242" y="144" font-size="16" fill="#536174" letter-spacing="6">KCR RISK LAB</text>
+    <text x="243" y="171" font-size="13" fill="#41A990" letter-spacing="4">科技企业风险研判</text>
+  </g>
+</svg>

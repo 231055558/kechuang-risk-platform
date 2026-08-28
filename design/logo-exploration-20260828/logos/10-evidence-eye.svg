@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" role="img" aria-labelledby="title desc">
+  <title id="title">方案 10 证据之眼</title><desc id="desc">眼睛轮廓包裹文档与核验勾</desc>
+  <g transform="translate(20 30)">
+    <path d="M8 88c42-58 116-58 158 0-42 58-116 58-158 0Z" fill="#EAF6F4" stroke="#175E60" stroke-width="8"/>
+    <circle cx="87" cy="88" r="42" fill="#175E60"/>
+    <path d="M69 58h29l15 15v50H69Z" fill="#fff"/>
+    <path d="M98 58v16h15" fill="none" stroke="#B9D9D4" stroke-width="4"/>
+    <path d="m78 96 9 9 18-23" fill="none" stroke="#F0B64F" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g font-family="Inter,'Microsoft YaHei',sans-serif">
+    <text x="226" y="102" font-size="50" fill="#175E60" font-weight="800" letter-spacing="3">科创锐鉴</text>
+    <text x="230" y="141" font-size="17" fill="#477778" letter-spacing="4">每个结论都有证据</text>
+    <path d="M230 160h220" stroke="#175E60" stroke-width="3"/><circle cx="466" cy="160" r="8" fill="#F0B64F"/>
+  </g>
+</svg>

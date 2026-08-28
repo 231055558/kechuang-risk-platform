@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" role="img" aria-labelledby="title desc">
+  <title id="title">方案 08 量化矩阵</title><desc id="desc">矩阵方格与风险热力分布形成字母 K</desc>
+  <g transform="translate(34 35)">
+    <rect width="160" height="160" fill="#101622"/>
+    <g fill="#253149"><rect x="15" y="15" width="36" height="36"/><rect x="62" y="15" width="36" height="36"/><rect x="109" y="15" width="36" height="36"/><rect x="15" y="62" width="36" height="36"/><rect x="109" y="62" width="36" height="36"/><rect x="15" y="109" width="36" height="36"/><rect x="62" y="109" width="36" height="36"/><rect x="109" y="109" width="36" height="36"/></g>
+    <rect x="62" y="62" width="36" height="36" fill="#F5C04F"/>
+    <path d="M27 28v104M27 80h36m-36 0 55-52M27 80l58 52" stroke="#55D4C0" stroke-width="10" stroke-linecap="square" stroke-linejoin="round"/>
+  </g>
+  <g font-family="Inter,'Microsoft YaHei',sans-serif">
+    <text x="235" y="105" font-size="49" fill="#101622" font-weight="800" letter-spacing="3">科创锐鉴</text>
+    <text x="239" y="144" font-size="16" fill="#596579" letter-spacing="4">QUANTIFIED RISK SIGNAL</text>
+    <g transform="translate(239 162)"><rect width="44" height="7" fill="#55D4C0"/><rect x="50" width="44" height="7" fill="#F5C04F"/><rect x="100" width="44" height="7" fill="#F06B78"/><rect x="150" width="44" height="7" fill="#596579"/></g>
+  </g>
+</svg>
