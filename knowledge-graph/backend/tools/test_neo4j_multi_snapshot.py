@@ -41,7 +41,8 @@ class Neo4jMultiSnapshotTests(unittest.TestCase):
         self.sync._merge_node(session, row, "run-b")
         query, params = session.calls[0]
         self.assertIn("snapshot_run_ids", query)
-        self.assertIn("previous_memberships + $run_id", query)
+        self.assertIn("previous_memberships + [$run_id]", query)
+        self.assertIn("snapshot_payloads", query)
         self.assertEqual(params["run_id"], "run-b")
 
     def test_prune_removes_only_selected_run_membership(self) -> None:
@@ -56,4 +57,3 @@ class Neo4jMultiSnapshotTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

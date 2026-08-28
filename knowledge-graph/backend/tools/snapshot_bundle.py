@@ -64,19 +64,43 @@ def _fetch_rows(conn: sqlite3.Connection, table: str, run_id: str) -> list[dict[
     elif table in {"knowledge_graph_snapshot_nodes", "knowledge_graph_snapshot_edges"}:
         rows = conn.execute(f"SELECT * FROM {table} WHERE run_id=?", (run_id,)).fetchall()
     elif table == "knowledge_graph_nodes":
-        rows = conn.execute(
-            """SELECT n.* FROM knowledge_graph_snapshot_nodes s
-               JOIN knowledge_graph_nodes n ON n.node_key=s.node_key
-               WHERE s.run_id=? ORDER BY n.node_key""",
-            (run_id,),
-        ).fetchall()
+        snapshot_columns = {str(row[1]) for row in conn.execute("PRAGMA table_info(knowledge_graph_snapshot_nodes)")}
+        if "attributes_json" in snapshot_columns:
+            rows = conn.execute(
+                """SELECT s.node_key,s.node_type,s.canonical_name,s.attributes_json,
+                          s.confidence,s.needs_review,s.review_reason,
+                          n.first_seen_run_id,n.last_seen_run_id,s.created_at,s.updated_at
+                   FROM knowledge_graph_snapshot_nodes s
+                   JOIN knowledge_graph_nodes n ON n.node_key=s.node_key
+                   WHERE s.run_id=? ORDER BY s.node_key""",
+                (run_id,),
+            ).fetchall()
+        else:
+            rows = conn.execute(
+                """SELECT n.* FROM knowledge_graph_snapshot_nodes s
+                   JOIN knowledge_graph_nodes n ON n.node_key=s.node_key
+                   WHERE s.run_id=? ORDER BY n.node_key""",
+                (run_id,),
+            ).fetchall()
     else:
-        rows = conn.execute(
-            """SELECT e.* FROM knowledge_graph_snapshot_edges s
-               JOIN knowledge_graph_edges e ON e.edge_key=s.edge_key
-               WHERE s.run_id=? ORDER BY e.edge_key""",
-            (run_id,),
-        ).fetchall()
+        snapshot_columns = {str(row[1]) for row in conn.execute("PRAGMA table_info(knowledge_graph_snapshot_edges)")}
+        if "attributes_json" in snapshot_columns:
+            rows = conn.execute(
+                """SELECT s.edge_key,s.subject_key,s.relation_type,s.object_key,s.attributes_json,
+                          s.confidence,s.needs_review,s.review_reason,s.source_id,s.source_evidence_id,
+                          e.first_seen_run_id,e.last_seen_run_id,s.created_at,s.updated_at
+                   FROM knowledge_graph_snapshot_edges s
+                   JOIN knowledge_graph_edges e ON e.edge_key=s.edge_key
+                   WHERE s.run_id=? ORDER BY s.edge_key""",
+                (run_id,),
+            ).fetchall()
+        else:
+            rows = conn.execute(
+                """SELECT e.* FROM knowledge_graph_snapshot_edges s
+                   JOIN knowledge_graph_edges e ON e.edge_key=s.edge_key
+                   WHERE s.run_id=? ORDER BY e.edge_key""",
+                (run_id,),
+            ).fetchall()
     return [_sanitize_row(row) for row in rows]
 
 

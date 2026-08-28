@@ -17,7 +17,7 @@ from src.neo4j_sync import load_schema
 from tools.serve_risk_graph_api import GraphReader, _evidence_display_label, handler_factory
 
 
-DEFAULT_WEB_ROOT = PROJECT_ROOT.parent / "frontend"
+DEFAULT_WEB_ROOT = Path(r"D:\codex\知识图谱")
 
 
 class SQLiteFeeReader:
@@ -35,6 +35,10 @@ class SQLiteFeeReader:
     def close(self) -> None:
         return None
 
+    @staticmethod
+    def _has_snapshot_payload(conn: sqlite3.Connection, table: str) -> bool:
+        return "attributes_json" in {str(row[1]) for row in conn.execute(f"PRAGMA table_info({table})")}
+
     def health(self) -> dict:
         with self._connect() as conn:
             run = conn.execute(
@@ -49,12 +53,19 @@ class SQLiteFeeReader:
 
     def companies(self) -> list[dict]:
         with self._connect() as conn:
-            rows = conn.execute(
-                """SELECT n.* FROM knowledge_graph_snapshot_nodes s
-                   JOIN knowledge_graph_nodes n ON n.node_key=s.node_key
-                   WHERE s.run_id=? AND n.node_type='company' ORDER BY n.canonical_name""",
-                (self.run_id,),
-            ).fetchall()
+            if self._has_snapshot_payload(conn, "knowledge_graph_snapshot_nodes"):
+                rows = conn.execute(
+                    """SELECT s.* FROM knowledge_graph_snapshot_nodes s
+                       WHERE s.run_id=? AND s.node_type='company' ORDER BY s.canonical_name""",
+                    (self.run_id,),
+                ).fetchall()
+            else:
+                rows = conn.execute(
+                    """SELECT n.* FROM knowledge_graph_snapshot_nodes s
+                       JOIN knowledge_graph_nodes n ON n.node_key=s.node_key
+                       WHERE s.run_id=? AND n.node_type='company' ORDER BY n.canonical_name""",
+                    (self.run_id,),
+                ).fetchall()
             return [self._node(row) for row in rows]
 
     def fee_kbg(self, company_key: str, limit: int) -> dict:
@@ -67,20 +78,34 @@ class SQLiteFeeReader:
             ).fetchone()
             if not root:
                 raise LookupError("当前企业尚无FEE-KBG试点快照")
-            node_rows = conn.execute(
-                """SELECT n.* FROM knowledge_graph_snapshot_nodes s
-                   JOIN knowledge_graph_nodes n ON n.node_key=s.node_key
-                   WHERE s.run_id=? ORDER BY n.node_type,n.canonical_name LIMIT ?""",
-                (self.run_id, limit),
-            ).fetchall()
+            if self._has_snapshot_payload(conn, "knowledge_graph_snapshot_nodes"):
+                node_rows = conn.execute(
+                    """SELECT s.* FROM knowledge_graph_snapshot_nodes s
+                       WHERE s.run_id=? ORDER BY s.node_type,s.canonical_name LIMIT ?""",
+                    (self.run_id, limit),
+                ).fetchall()
+            else:
+                node_rows = conn.execute(
+                    """SELECT n.* FROM knowledge_graph_snapshot_nodes s
+                       JOIN knowledge_graph_nodes n ON n.node_key=s.node_key
+                       WHERE s.run_id=? ORDER BY n.node_type,n.canonical_name LIMIT ?""",
+                    (self.run_id, limit),
+                ).fetchall()
             nodes = [self._node(row) for row in node_rows]
             node_keys = {node["id"] for node in nodes}
-            edge_rows = conn.execute(
-                """SELECT e.* FROM knowledge_graph_snapshot_edges s
-                   JOIN knowledge_graph_edges e ON e.edge_key=s.edge_key
-                   WHERE s.run_id=? ORDER BY e.relation_type,e.edge_key""",
-                (self.run_id,),
-            ).fetchall()
+            if self._has_snapshot_payload(conn, "knowledge_graph_snapshot_edges"):
+                edge_rows = conn.execute(
+                    """SELECT s.* FROM knowledge_graph_snapshot_edges s
+                       WHERE s.run_id=? ORDER BY s.relation_type,s.edge_key""",
+                    (self.run_id,),
+                ).fetchall()
+            else:
+                edge_rows = conn.execute(
+                    """SELECT e.* FROM knowledge_graph_snapshot_edges s
+                       JOIN knowledge_graph_edges e ON e.edge_key=s.edge_key
+                       WHERE s.run_id=? ORDER BY e.relation_type,e.edge_key""",
+                    (self.run_id,),
+                ).fetchall()
             edges = [self._edge(row) for row in edge_rows if row["subject_key"] in node_keys and row["object_key"] in node_keys]
             warning = next((node for node in nodes if node["type"] == "warning_score"), None)
             attrs = warning["attributes"] if warning else {}

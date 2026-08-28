@@ -341,6 +341,14 @@ CREATE INDEX IF NOT EXISTS idx_knowledge_graph_edges_object ON knowledge_graph_e
 CREATE TABLE IF NOT EXISTS knowledge_graph_snapshot_nodes (
     run_id TEXT NOT NULL,
     node_key TEXT NOT NULL,
+    node_type TEXT NOT NULL DEFAULT '',
+    canonical_name TEXT NOT NULL DEFAULT '',
+    attributes_json TEXT NOT NULL DEFAULT '{}',
+    confidence REAL NOT NULL DEFAULT 0,
+    needs_review INTEGER NOT NULL DEFAULT 0,
+    review_reason TEXT NOT NULL DEFAULT '',
+    created_at TEXT NOT NULL DEFAULT '',
+    updated_at TEXT NOT NULL DEFAULT '',
     PRIMARY KEY (run_id, node_key),
     FOREIGN KEY (run_id) REFERENCES knowledge_graph_runs(run_id) ON DELETE CASCADE,
     FOREIGN KEY (node_key) REFERENCES knowledge_graph_nodes(node_key) ON DELETE CASCADE
@@ -349,6 +357,17 @@ CREATE TABLE IF NOT EXISTS knowledge_graph_snapshot_nodes (
 CREATE TABLE IF NOT EXISTS knowledge_graph_snapshot_edges (
     run_id TEXT NOT NULL,
     edge_key TEXT NOT NULL,
+    subject_key TEXT NOT NULL DEFAULT '',
+    relation_type TEXT NOT NULL DEFAULT '',
+    object_key TEXT NOT NULL DEFAULT '',
+    attributes_json TEXT NOT NULL DEFAULT '{}',
+    confidence REAL NOT NULL DEFAULT 0,
+    needs_review INTEGER NOT NULL DEFAULT 0,
+    review_reason TEXT NOT NULL DEFAULT '',
+    source_id INTEGER NOT NULL DEFAULT 0,
+    source_evidence_id INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL DEFAULT '',
+    updated_at TEXT NOT NULL DEFAULT '',
     PRIMARY KEY (run_id, edge_key),
     FOREIGN KEY (run_id) REFERENCES knowledge_graph_runs(run_id) ON DELETE CASCADE,
     FOREIGN KEY (edge_key) REFERENCES knowledge_graph_edges(edge_key) ON DELETE CASCADE
@@ -473,6 +492,36 @@ def _migrate_schema(conn: sqlite3.Connection) -> None:
         execute("ALTER TABLE pipeline_source_runs ADD COLUMN source_name TEXT NOT NULL DEFAULT ''")
     if "source_type" not in source_columns:
         execute("ALTER TABLE pipeline_source_runs ADD COLUMN source_type TEXT NOT NULL DEFAULT ''")
+    snapshot_columns = {
+        "knowledge_graph_snapshot_nodes": {
+            "node_type": "TEXT NOT NULL DEFAULT ''",
+            "canonical_name": "TEXT NOT NULL DEFAULT ''",
+            "attributes_json": "TEXT NOT NULL DEFAULT '{}'",
+            "confidence": "REAL NOT NULL DEFAULT 0",
+            "needs_review": "INTEGER NOT NULL DEFAULT 0",
+            "review_reason": "TEXT NOT NULL DEFAULT ''",
+            "created_at": "TEXT NOT NULL DEFAULT ''",
+            "updated_at": "TEXT NOT NULL DEFAULT ''",
+        },
+        "knowledge_graph_snapshot_edges": {
+            "subject_key": "TEXT NOT NULL DEFAULT ''",
+            "relation_type": "TEXT NOT NULL DEFAULT ''",
+            "object_key": "TEXT NOT NULL DEFAULT ''",
+            "attributes_json": "TEXT NOT NULL DEFAULT '{}'",
+            "confidence": "REAL NOT NULL DEFAULT 0",
+            "needs_review": "INTEGER NOT NULL DEFAULT 0",
+            "review_reason": "TEXT NOT NULL DEFAULT ''",
+            "source_id": "INTEGER NOT NULL DEFAULT 0",
+            "source_evidence_id": "INTEGER NOT NULL DEFAULT 0",
+            "created_at": "TEXT NOT NULL DEFAULT ''",
+            "updated_at": "TEXT NOT NULL DEFAULT ''",
+        },
+    }
+    for table, migrations in snapshot_columns.items():
+        existing = {row["name"] for row in execute(f"PRAGMA table_info({table})").fetchall()}
+        for column, definition in migrations.items():
+            if column not in existing:
+                execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
 
 
 def _json(value) -> str:

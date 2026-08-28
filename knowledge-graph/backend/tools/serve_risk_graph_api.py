@@ -174,11 +174,13 @@ class GraphReader:
             """
             MATCH (n:RiskNode:Enterprise)
             WHERE n.in_snapshot = true
+              AND any(run IN coalesce(n.snapshot_run_ids, [n.snapshot_run_id])
+                      WHERE run CONTAINS '_fee_kbg_')
             RETURN n
             ORDER BY coalesce(n.attributes_json, ''), n.canonical_name
             """
         )
-        return [self._node(row["n"]) for row in rows]
+        return [self._node(row["n"], str(row["n"].get("snapshot_run_id") or "")) for row in rows]
 
     def graph(
         self,
@@ -213,7 +215,9 @@ class GraphReader:
         root_rows = self._run(
             """
             MATCH (n:RiskNode:Enterprise {node_key: $company_key})
-            WHERE n.in_snapshot = true AND n.attributes_json CONTAINS '"fee_kbg": true'
+            WHERE n.in_snapshot = true
+              AND any(run IN coalesce(n.snapshot_run_ids, [n.snapshot_run_id])
+                      WHERE run CONTAINS '_fee_kbg_')
             RETURN n
             ORDER BY n.snapshot_run_id DESC
             LIMIT 1
@@ -222,8 +226,8 @@ class GraphReader:
         )
         if not root_rows:
             raise LookupError("当前企业尚无FEE-KBG试点快照")
-        root = self._node(root_rows[0]["n"])
-        run_id = root["snapshot_run_id"]
+        run_id = str(root_rows[0]["n"].get("snapshot_run_id") or "")
+        root = self._node(root_rows[0]["n"], run_id)
         node_rows = self._run(
             """
             MATCH (n:RiskNode)
@@ -237,7 +241,7 @@ class GraphReader:
             run_id=run_id,
             limit=limit,
         )
-        nodes = [self._node(row["n"]) for row in node_rows]
+        nodes = [self._node(row["n"], run_id) for row in node_rows]
         node_keys = [node["id"] for node in nodes]
         edge_rows = self._run(
             """
@@ -254,7 +258,7 @@ class GraphReader:
         )
         edges = []
         for row in edge_rows:
-            edge = self._edge(row["rel"])
+            edge = self._edge(row["rel"], run_id)
             edge["source"] = row["source"]["node_key"]
             edge["target"] = row["target"]["node_key"]
             edges.append(edge)
@@ -1139,8 +1143,25 @@ class GraphReader:
             "truncated": False,
         }
 
-    def _node(self, node) -> dict:
+    @staticmethod
+    def _snapshot_props(props: dict, run_id: str) -> dict:
+        if not run_id:
+            return props
+        for raw in props.get("snapshot_payloads") or []:
+            try:
+                payload = json.loads(raw)
+            except (TypeError, json.JSONDecodeError):
+                continue
+            if str(payload.get("run_id") or "") == run_id:
+                merged = dict(props)
+                merged.update({key: value for key, value in payload.items() if key != "run_id"})
+                merged["snapshot_run_id"] = run_id
+                return merged
+        return props
+
+    def _node(self, node, run_id: str = "") -> dict:
         props = dict(node)
+        props = self._snapshot_props(props, run_id)
         try:
             attributes = json.loads(props.get("attributes_json") or "{}")
         except json.JSONDecodeError:
@@ -1171,9 +1192,9 @@ class GraphReader:
             "attributes": attributes,
         }
 
-    @staticmethod
-    def _edge(relation) -> dict:
+    def _edge(self, relation, run_id: str = "") -> dict:
         props = dict(relation)
+        props = self._snapshot_props(props, run_id)
         try:
             attributes = json.loads(props.get("attributes_json") or "{}")
         except json.JSONDecodeError:

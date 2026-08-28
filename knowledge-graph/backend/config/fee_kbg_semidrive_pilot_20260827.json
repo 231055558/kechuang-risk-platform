@@ -118,7 +118,10 @@
       "西门子电子设计自动化": 0.72,
       "想象科技": 0.7,
       "安特瑞斯知识产权公司": 0.68,
-      "宜特科技": 0.62
+      "宜特科技": 0.62,
+      "惠州市华阳多媒体电子有限公司": 0.88,
+      "惠州市德赛西威汽车电子股份有限公司": 0.9,
+      "延锋国际汽车技术有限公司": 0.82
     },
     "equity_weights": {
       "holding_ratio": 0.7,
@@ -139,6 +142,34 @@
       "evidence_confidence": 0.2
     },
     "paths": [
+      {
+        "path_id": "tsmc-earthquake-production-loss-202501-semidrive",
+        "event_owner": {
+          "name": "台积电",
+          "entity_type": "supplier",
+          "confidence": 0.98
+        },
+        "via_subject": {"name": "台积电"},
+        "via_subject_verified": true,
+        "external_event": {
+          "event_date": "2025-01-21",
+          "event_type": "external_supply_disruption_event",
+          "topic": "晶圆代工自然灾害与产能扰动",
+          "title": "台积电披露2025年1月地震造成存货及厂房设备损失",
+          "severity": 0.68,
+          "status": "resolved_with_residual_exposure",
+          "source_url": "https://investor.tsmc.com/static/annualReports/2024/english/ebook/files/basic-html/page138.html",
+          "source_title": "台积电2024年度报告自然灾害与业务连续性风险说明",
+          "source_institution": "台积电投资者关系网站",
+          "evidence_quote": "台积电年度报告披露2025年1月台湾地震造成存货、厂房、机器设备损失，扣除保险后确认约新台币53亿元损失。",
+          "confidence": 0.98,
+          "browser_verified": true
+        },
+        "transmission_channel": "晶圆代工产能与交付连续性",
+        "mechanism": "芯驰官网将台积电列为供应链合作伙伴；晶圆代工厂自然灾害造成的生产损失可能经产能、交期与成本变化影响芯驰的量产交付。",
+        "indicator_ids": ["R16", "R17"],
+        "path_attenuation": 0.86
+      },
       {
         "path_id": "arm-china-governance-20220429-semidrive",
         "event_owner": {
@@ -354,4 +385,3 @@
     }
   }
 }
-
