@@ -440,7 +440,7 @@ function App() {
     overviewDescription:
       "查看94家企业的行业年度区间、均值与单家企业原始叙事指数",
     contextName: "94家行业样本",
-    contextSector: "379份年报 · 2021—2025年窗口",
+    contextSector: "386份年报 · 2021—2025年窗口",
     snapshotAt: "2026-08-27",
   }
   const promotedSignalIdsForCompany = useMemo(
@@ -1114,7 +1114,9 @@ function App() {
                   onPromote={handlePromoteSignal}
                 />
               ) : null}
-              {activeView === "narrative" ? <NarrativeTab /> : null}
+              {activeView === "narrative" ? (
+                <NarrativeTab companyId={companyId} />
+              ) : null}
               {activeView === "reports" ? (
                 <ReportsTab
                   companyId={companyId}

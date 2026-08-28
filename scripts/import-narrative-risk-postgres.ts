@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto"
-import { readFileSync } from "node:fs"
+import { existsSync, readFileSync } from "node:fs"
 import { basename, resolve } from "node:path"
 
 import { Client, type ClientConfig } from "pg"
@@ -25,6 +25,9 @@ interface NarrativePayload {
 const DEFAULT_PAYLOAD =
   "outputs/01a033a3-81ea-7421-a89c-2fa13333c648/narrative-risk-postgres-payload_2026-08-26.json"
 const MIGRATION_PATH = resolve("db/migrations/002_narrative_risk.sql")
+const SANITIZED_RUNTIME_PATH = resolve(
+  "src/data/industry/narrative-risk-runtime.json"
+)
 const MAX_QUERY_PARAMETERS = 60_000
 
 function clientConfig(): ClientConfig {
@@ -227,6 +230,21 @@ const specs = {
     conflict: ["source_key"], jsonColumns: ["raw_row_numbers", "metadata"],
     dateColumns: ["publication_date"],
   },
+  sourceArtifacts: {
+    table: "source_artifacts",
+    columns: [
+      ["artifactId", "artifact_id"], ["sourceKey", "source_key"],
+      ["status", "status"], ["artifactKind", "artifact_kind"],
+      ["canonicalUrl", "canonical_url"], ["finalUrl", "final_url"],
+      ["httpStatus", "http_status"], ["contentType", "content_type"],
+      ["byteSize", "byte_size"], ["contentSha256", "content_sha256"],
+      ["storageKey", "storage_key"], ["visibility", "visibility"],
+      ["publicExcerpt", "public_excerpt"], ["fetchedAt", "fetched_at"],
+      ["errorMessage", "error_message"], ["metadata", "metadata"],
+    ],
+    conflict: ["source_key"], jsonColumns: ["metadata"],
+    timestampColumns: ["fetched_at"],
+  },
   metrics: {
     table: "metrics",
     columns: [
@@ -304,6 +322,37 @@ const specs = {
   },
 } satisfies Record<string, UpsertSpec>
 
+function sanitizedSourceArtifacts() {
+  if (!existsSync(SANITIZED_RUNTIME_PATH)) return []
+  const runtime = JSON.parse(readFileSync(SANITIZED_RUNTIME_PATH, "utf8")) as {
+    sources?: JsonRecord[]
+  }
+  return (runtime.sources ?? [])
+    .filter(
+      (source) =>
+        typeof source.sourceKey === "string" &&
+        typeof source.artifactStatus === "string"
+    )
+    .map((source) => ({
+      artifactId: `runtime:${String(source.sourceKey)}`,
+      sourceKey: source.sourceKey,
+      status: source.artifactStatus,
+      artifactKind: source.artifactKind ?? "metadata-only",
+      canonicalUrl: source.canonicalUrl ?? null,
+      finalUrl: source.finalUrl ?? source.canonicalUrl ?? null,
+      httpStatus: source.httpStatus ?? null,
+      contentType: source.contentType ?? null,
+      byteSize: source.byteSize ?? null,
+      contentSha256: source.contentSha256 ?? null,
+      storageKey: null,
+      visibility: "metadata-only",
+      publicExcerpt: source.publicExcerpt ?? null,
+      fetchedAt: source.fetchedAt ?? null,
+      errorMessage: source.errorMessage ?? null,
+      metadata: { source: "sanitized-runtime" },
+    }))
+}
+
 async function verify(client: Client, payload: NarrativePayload) {
   const runId = String(payload.run.runId)
   const expected = payload.stats
@@ -369,6 +418,7 @@ async function main() {
   const payloadPath = resolve(process.argv[2] ?? DEFAULT_PAYLOAD)
   const raw = readFileSync(payloadPath, "utf8")
   const payload = JSON.parse(raw) as NarrativePayload
+  const sourceArtifacts = sanitizedSourceArtifacts()
   const sha256 = payloadSha256(raw)
   const runId = String(payload.run.runId)
   const client = new Client(clientConfig())
@@ -419,6 +469,7 @@ async function main() {
     await upsertRows(client, payload.scopeCompanies, specs.scopeCompanies)
     await upsertRows(client, payload.assessments, specs.assessments)
     await upsertRows(client, payload.sources, specs.sources)
+    await upsertRows(client, sourceArtifacts, specs.sourceArtifacts)
     await upsertRows(client, payload.metrics, specs.metrics)
     await upsertRows(client, payload.metricSourceLinks, specs.metricSourceLinks)
     await upsertRows(client, payload.coverage, specs.coverage)
@@ -440,6 +491,7 @@ async function main() {
           input: payloadPath,
           runId,
           payloadSha256: sha256,
+          sourceArtifacts: sourceArtifacts.length,
           migration,
           ...verification,
         },

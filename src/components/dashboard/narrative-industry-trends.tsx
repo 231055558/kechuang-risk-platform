@@ -1,4 +1,3 @@
-import { useMemo, useState } from "react"
 import {
   Building2Icon,
   DatabaseIcon,
@@ -261,6 +260,9 @@ function IndustryRangeChart({
               <title>
                 {company.companyName} {point.year}：
                 {displayValue(point.value, metric.metricKey)}
+                {observationMap.get(point.year)?.details.patentProxy === true
+                  ? "（专利申请代理）"
+                  : ""}
               </title>
             </circle>
           ))}
@@ -295,10 +297,16 @@ function IndustryRangeChart({
             <tbody>
               {YEARS.map((year) => {
                 const statistic = statistics.find((item) => item.year === year)
+                const companyObservation = observationMap.get(year)
                 return (
                   <tr key={year}>
                     <th>{year}</th>
-                    <td>{displayValue(observationMap.get(year)?.value ?? null, metric.metricKey)}</td>
+                    <td>
+                      {displayValue(companyObservation?.value ?? null, metric.metricKey)}
+                      {companyObservation?.details.patentProxy === true
+                        ? "（代理）"
+                        : ""}
+                    </td>
                     <td>{displayValue(statistic?.mean ?? null, metric.metricKey)}</td>
                     <td>{displayValue(statistic?.minimum ?? null, metric.metricKey)}</td>
                     <td>{displayValue(statistic?.maximum ?? null, metric.metricKey)}</td>
@@ -316,30 +324,16 @@ function IndustryRangeChart({
 
 export function NarrativeIndustryTrends({
   data,
+  companyId,
 }: {
   data: NarrativeIndustryTrendResponse
+  companyId: string
 }) {
-  const initialCompanyId = data.companies.some(
-    (item) => item.companyId === "star-688256"
-  )
-    ? "star-688256"
-    : data.companies[0]?.companyId
-  const [selectedCompanyId, setSelectedCompanyId] = useState(initialCompanyId)
   const selectedCompany =
-    data.companies.find((item) => item.companyId === selectedCompanyId) ??
+    data.companies.find((item) => item.companyId === companyId) ??
     data.companies[0]
   const selectedGroup = data.industryGroups.find(
     (item) => item.industryGroupId === selectedCompany.industryGroupId
-  )
-  const companiesByGroup = useMemo(
-    () =>
-      data.industryGroups.map((group) => ({
-        group,
-        companies: data.companies
-          .filter((company) => company.industryGroupId === group.industryGroupId)
-          .sort((left, right) => left.companyName.localeCompare(right.companyName, "zh-CN")),
-      })),
-    [data.companies, data.industryGroups]
   )
   const selectedDocuments = data.documents
     .filter((item) => item.companyId === selectedCompany.companyId)
@@ -352,32 +346,16 @@ export function NarrativeIndustryTrends({
           <span className="nr-eyebrow">94家企业 · 年报原始指数</span>
           <h2 id="nr-industry-title">行业叙事风险年度分布</h2>
           <p>
-            行业均值、年度最小—最大区间与选中企业轨迹同图展示；不使用0—100映射。
+            行业均值、年度最小—最大区间与当前研究对象轨迹同图展示；不使用0—100映射。
           </p>
         </div>
         <Badge variant={data.sourceMode === "postgres" ? "secondary" : "outline"}>
-          <DatabaseIcon /> {data.sourceMode === "postgres" ? "数据库实时" : "脱敏快照"}
+          <DatabaseIcon /> 财报语料已归档
         </Badge>
       </header>
 
-      <div className="nr-industry-controls">
-        <label>
-          <span>选择企业</span>
-          <select
-            value={selectedCompany.companyId}
-            onChange={(event) => setSelectedCompanyId(event.target.value)}
-          >
-            {companiesByGroup.map(({ group, companies }) => (
-              <optgroup key={group.industryGroupId} label={group.label}>
-                {companies.map((company) => (
-                  <option key={company.companyId} value={company.companyId}>
-                    {company.companyName} · {company.stockCode}
-                  </option>
-                ))}
-              </optgroup>
-            ))}
-          </select>
-        </label>
+      <div className="nr-industry-company-context" aria-label="当前研究对象">
+        <span>跟随左上角当前研究对象</span>
         <div className="nr-industry-company-summary">
           <Building2Icon />
           <div>
@@ -393,6 +371,13 @@ export function NarrativeIndustryTrends({
         <article><LineChartIcon /><span>有效原始指数</span><strong>{data.audit.calculatedObservationCount}</strong></article>
         <article><DatabaseIcon /><span>夸大性可计算</span><strong>{data.audit.patentObservationCount}</strong></article>
       </div>
+
+      {(data.audit.paidPatentProxyObservationCount ?? 0) > 0 ? (
+        <p className="nr-industry-paid-note" role="note">
+          叙事夸大性中有 {data.audit.paidPatentProxyObservationCount}
+          个企业年度使用第三方境内主体发明申请代理；对应点位和年度值均单独标注，代理范围与限制可在来源中追溯。
+        </p>
+      ) : null}
 
       <div className="nr-industry-chart-grid">
         {data.methodology.map((metric) => (
@@ -415,7 +400,7 @@ export function NarrativeIndustryTrends({
       </div>
 
       <details className="nr-industry-source-ledger">
-        <summary>查看选中企业年报覆盖与来源</summary>
+        <summary>查看当前研究对象年报覆盖与来源</summary>
         <div>
           {selectedDocuments.map((document) => (
             <article key={document.documentId}>

@@ -1,9 +1,11 @@
 import unifiedData from "../src/data/industry/r01-r22-unified.json" with { type: "json" }
 import narrativeRuntimeData from "../src/data/industry/r01-r04-narrative-news.json" with { type: "json" }
 import r08MilestoneEnrichmentData from "../src/data/industry/r08-milestone-enrichment.json" with { type: "json" }
+import r17ExposureEnrichmentData from "../src/data/industry/r17-exposure-enrichment.json" with { type: "json" }
 import r20ControllerEnrichmentData from "../src/data/industry/r20-controller-enrichment.json" with { type: "json" }
 import {
   attachIndustryRiskR08MilestoneEnrichment,
+  attachIndustryRiskR17ExposureEnrichment,
   attachIndustryRiskR20ControllerEnrichment,
   attachIndustryRiskNarrativeRuntime,
   buildIndustryRiskKnowledgeGraph,
@@ -14,19 +16,23 @@ import {
   type IndustryRiskEvent,
   type IndustryRiskNarrativeRuntime,
   type R08MilestoneEnrichment,
+  type R17ExposureEnrichment,
   type R20ControllerEnrichment,
 } from "../src/domain/industry-risk-v1/index.ts"
 import { getIndustryRiskInvestorContract } from "../src/domain/industry-risk-v1/investor-contract.ts"
 
-const dataset = attachIndustryRiskR08MilestoneEnrichment(
-  attachIndustryRiskR20ControllerEnrichment(
-    attachIndustryRiskNarrativeRuntime(
-      unifiedData as IndustryRiskDataset,
-      narrativeRuntimeData as IndustryRiskNarrativeRuntime
+const dataset = attachIndustryRiskR17ExposureEnrichment(
+  attachIndustryRiskR08MilestoneEnrichment(
+    attachIndustryRiskR20ControllerEnrichment(
+      attachIndustryRiskNarrativeRuntime(
+        unifiedData as IndustryRiskDataset,
+        narrativeRuntimeData as IndustryRiskNarrativeRuntime
+      ),
+      r20ControllerEnrichmentData as R20ControllerEnrichment
     ),
-    r20ControllerEnrichmentData as R20ControllerEnrichment
+    r08MilestoneEnrichmentData as R08MilestoneEnrichment
   ),
-  r08MilestoneEnrichmentData as R08MilestoneEnrichment
+  r17ExposureEnrichmentData as R17ExposureEnrichment
 )
 const assessments = scoreIndustryRiskDataset(dataset)
 const knowledgeGraph = buildIndustryRiskKnowledgeGraph(dataset, assessments)
@@ -157,6 +163,7 @@ export function listIndustryRiskCompanies(): IndustryRiskCompanyDirectoryRespons
           .filter((metric) => metric.kind === "weighted")
           .map((metric) => ({
             indicatorId: metric.indicatorId,
+            metricName: metric.metricName,
             riskPercentile: metric.riskPercentile,
             riskScore: metric.riskScore,
             sampleSize: metric.sampleSize,

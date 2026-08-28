@@ -550,7 +550,7 @@ export function NarrativeAnnualTrends({
             variant={trends.sourceMode === "postgres" ? "secondary" : "outline"}
           >
             <DatabaseIcon />{" "}
-            {trends.sourceMode === "postgres" ? "数据库实时" : "脱敏快照"}
+            财报语料已归档
           </Badge>
           <span>数据截至 {trends.asOfDate}</span>
         </div>

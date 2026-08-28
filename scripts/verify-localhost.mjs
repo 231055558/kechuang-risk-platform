@@ -112,7 +112,9 @@ async function verifyNarrativeRisk() {
     !detailResponse.ok ||
     detail?.assessments?.length !== 2 ||
     detail.metrics.some(
-      (metric) => metric.metricClass === "proxy" && metric.scoreEligible
+      (metric) =>
+        ["PDQI", "ITAG", "TONE"].includes(metric.indicatorId) &&
+        metric.scoreEligible
     )
   ) {
     throw new Error("Cambricon narrative scopes or proxy admission are invalid.")
@@ -190,9 +192,9 @@ async function verifyNarrativeRisk() {
     industryTrends?.companies?.length !== 94 ||
     industryTrends?.documents?.length !== 470 ||
     industryTrends?.methodology?.length !== 3 ||
-    industryTrends?.observations?.length !== 1137 ||
+    industryTrends?.observations?.length !== 1158 ||
     industryTrends?.industryStatistics?.length !== 45 ||
-    industryTrends?.audit?.archivedReportCount !== 379 ||
+    industryTrends?.audit?.archivedReportCount !== 386 ||
     industryTrends?.observations?.some(
       (item) => "riskScore" in item || "riskScoreChange" in item
     )
@@ -201,24 +203,26 @@ async function verifyNarrativeRisk() {
   }
 }
 
-async function verifyR17LowRiskFloor() {
-  const floorResponse = await fetch(
+async function verifyR17ExposureRemainsUnscored() {
+  const confirmedResponse = await fetch(
     `${baseUrl}/api/v1/industry-risk/companies/star-688505/assessment`
   )
-  const floorPayload = await floorResponse.json()
-  const floorMetric = floorPayload?.assessment?.metrics?.find(
+  const confirmedPayload = await confirmedResponse.json()
+  const confirmedMetric = confirmedPayload?.assessment?.metrics?.find(
     (item) => item.indicatorId === "R17"
   )
   if (
-    !floorResponse.ok ||
-    floorPayload?.assessment?.methodVersion !== "IRAWC-CRITIC-2026.08-v3" ||
-    floorMetric?.metricName !== "no_identified_external_supplier_floor" ||
-    floorMetric?.rawValue !== 0 ||
-    floorMetric?.riskPercentile !== 0 ||
-    floorMetric?.riskScore !== 25 ||
-    floorMetric?.status !== "scored"
+    !confirmedResponse.ok ||
+    confirmedPayload?.assessment?.methodVersion !== "IRAWC-CRITIC-2026.08-v3" ||
+    confirmedMetric?.metricName !== "verified_external_procurement_disclosure" ||
+    confirmedMetric?.rawValue !== null ||
+    confirmedMetric?.riskPercentile !== null ||
+    confirmedMetric?.riskScore !== null ||
+    confirmedMetric?.status !== "missing" ||
+    !confirmedMetric?.sourceId ||
+    !confirmedMetric?.missingReason?.includes("缺少境外采购金额与总采购金额")
   ) {
-    throw new Error("R17 explicit-zero low-risk floor failed invariant checks.")
+    throw new Error("R17 confirmed exposure was incorrectly converted to a score.")
   }
 
   const missingResponse = await fetch(
@@ -230,11 +234,15 @@ async function verifyR17LowRiskFloor() {
   )
   if (
     !missingResponse.ok ||
+    missingMetric?.metricName !== "verified_external_procurement_disclosure" ||
     missingMetric?.rawValue !== null ||
+    missingMetric?.riskPercentile !== null ||
     missingMetric?.riskScore !== null ||
-    missingMetric?.status !== "missing"
+    missingMetric?.status !== "missing" ||
+    !missingMetric?.sourceId ||
+    !missingMetric?.missingReason?.includes("缺少境外采购金额与总采购金额")
   ) {
-    throw new Error("R17 unknown supplier exposure was incorrectly floored.")
+    throw new Error("R17 confirmed exposure was incorrectly converted to a score.")
   }
 }
 
@@ -257,7 +265,7 @@ try {
   await waitForServices()
   await verifyApi("/api/v1/technology-risk/score")
   await verifyApi("/api/v1/technology-risk/baseline-quantify")
-  await verifyR17LowRiskFloor()
+  await verifyR17ExposureRemainsUnscored()
   await verifyNarrativeRisk()
   console.log(`Localhost verification passed at ${baseUrl}`)
 } catch (error) {

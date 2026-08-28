@@ -86,6 +86,7 @@ function isCompanySummary(value: unknown) {
       (metric) =>
         isRecord(metric) &&
         typeof metric.indicatorId === "string" &&
+        typeof metric.metricName === "string" &&
         (metric.riskPercentile === null ||
           isFiniteNumber(metric.riskPercentile)) &&
         (metric.riskScore === null || isFiniteNumber(metric.riskScore)) &&

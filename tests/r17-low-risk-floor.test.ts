@@ -2,9 +2,12 @@ import assert from "node:assert/strict"
 import test from "node:test"
 
 import unifiedData from "../src/data/industry/r01-r22-unified.json" with { type: "json" }
+import exposureData from "../src/data/industry/r17-exposure-enrichment.json" with { type: "json" }
 import {
+  attachIndustryRiskR17ExposureEnrichment,
   scoreIndustryRiskDataset,
   type IndustryRiskDataset,
+  type R17ExposureEnrichment,
 } from "../src/domain/industry-risk-v1/index.ts"
 
 const assessments = scoreIndustryRiskDataset(
@@ -50,4 +53,29 @@ test("R17 floor is limited to explicit zero evidence in the current dataset", ()
     )
   )
   assert.equal(floorMetrics.length, 1)
+})
+
+test("R17 confirmed overseas procurement remains unscored until amounts exist", () => {
+  const enrichedDataset = attachIndustryRiskR17ExposureEnrichment(
+    unifiedData as IndustryRiskDataset,
+    exposureData as R17ExposureEnrichment
+  )
+  const enrichedAssessments = scoreIndustryRiskDataset(enrichedDataset)
+  const confirmedMetrics = enrichedAssessments.flatMap((assessment) =>
+    assessment.metrics.filter(
+      (metric) =>
+        metric.indicatorId === "R17" &&
+        metric.metricName === "verified_external_procurement_disclosure"
+    )
+  )
+
+  assert.equal(confirmedMetrics.length, 40)
+  for (const metric of confirmedMetrics) {
+    assert.equal(metric.status, "missing")
+    assert.equal(metric.rawValue, null)
+    assert.equal(metric.riskPercentile, null)
+    assert.equal(metric.riskScore, null)
+    assert.ok(metric.sourceId)
+    assert.match(metric.missingReason ?? "", /缺少境外采购金额与总采购金额/)
+  }
 })

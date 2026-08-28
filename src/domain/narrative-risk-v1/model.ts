@@ -396,6 +396,9 @@ export interface NarrativeIndustryTrendResponse extends NarrativeRiskEnvelope {
     calculatedObservationCount: number
     missingObservationCount: number
     patentObservationCount: number
+    paidPatentProxyObservationCount?: number
+    paidApiCallCount?: number
+    paidApiCostYuan?: number
     publicPayloadContainsFullText: boolean
     publicPayloadContainsPrivatePath: boolean
   }

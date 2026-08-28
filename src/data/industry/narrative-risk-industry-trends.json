@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "KCR-NARRATIVE-INDUSTRY-2026.08-v1",
+  "schemaVersion": "KCR-NARRATIVE-RISK-2026.08-v1",
   "dataVersion": "narrative-industry-raw-2026-08-27-v1",
   "asOfDate": "2026-08-27",
   "sourceMode": "snapshot",
@@ -174,6 +174,7 @@
       "peerGroupId": "digital-chip",
       "industryGroupId": "chip-design",
       "includedYears": [
+        2021,
         2022,
         2023,
         2024,
@@ -242,6 +243,7 @@
       "includedYears": [
         2021,
         2022,
+        2023,
         2024,
         2025
       ]
@@ -615,6 +617,10 @@
       "peerGroupId": "analog-chip",
       "industryGroupId": "chip-design",
       "includedYears": [
+        2021,
+        2022,
+        2023,
+        2024,
         2025
       ]
     },
@@ -996,6 +1002,7 @@
       "peerGroupId": "pharma",
       "industryGroupId": "pharma",
       "includedYears": [
+        2021,
         2023,
         2024,
         2025
@@ -2726,15 +2733,26 @@
       "documentId": "industry-annual:star-688259:2021",
       "companyId": "star-688259",
       "year": 2021,
-      "title": "创耀科技2021年年度报告",
-      "officialUrl": null,
-      "publicationDate": null,
-      "archiveStatus": "不适用或未披露",
-      "parseStatus": "未解析",
-      "sha256": null,
-      "byteSize": null,
-      "pageCount": null,
-      "sectionCoverage": {}
+      "title": "2021年年度报告全文",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2022-04-15/688259_20220415_7_sD7iIX9f.pdf",
+      "publicationDate": "2022-04-15",
+      "archiveStatus": "已归档",
+      "sha256": "c9d7ae48305cae886e9723c2be062d30025c6f9ae4c87446be6fcab69801c936",
+      "byteSize": 4038531,
+      "parseStatus": "已解析",
+      "pageCount": 236,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "(一) 主营业务分析",
+          "四、风险因素",
+          "六、公司关于公司未来发展的讨论与分析"
+        ]
+      }
     },
     {
       "documentId": "industry-annual:star-688259:2022",
@@ -3357,15 +3375,26 @@
       "documentId": "industry-annual:star-688385:2023",
       "companyId": "star-688385",
       "year": 2023,
-      "title": "复旦微电2023年年度报告",
-      "officialUrl": null,
-      "publicationDate": null,
-      "archiveStatus": "不适用或未披露",
-      "parseStatus": "未解析",
-      "sha256": null,
-      "byteSize": null,
-      "pageCount": null,
-      "sectionCoverage": {}
+      "title": "2023年年度报告全文",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2024-03-23/688385_20240323_QFT7.pdf",
+      "publicationDate": "2024-03-23",
+      "archiveStatus": "已归档",
+      "sha256": "90e35587267e8172f872036e0d8ad49e2e6ee33a862d2c021843ed672597a631",
+      "byteSize": 4686407,
+      "parseStatus": "已解析",
+      "pageCount": 235,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "二、报告期内公司所从事的主要业务、经营模式、行业情况及研发情况说明",
+          "四、风险因素",
+          "六、公司关于公司未来发展的讨论与分析"
+        ]
+      }
     },
     {
       "documentId": "industry-annual:star-688385:2024",
@@ -6576,54 +6605,98 @@
       "title": "苏州敏芯微电子技术股份有限公司2021年年度报告（修订版）",
       "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2022-05-25/688286_20220525_2_ABu9rvso.pdf",
       "publicationDate": "2022-05-25",
-      "archiveStatus": "归档失败",
-      "parseStatus": "未解析",
-      "sha256": null,
-      "byteSize": null,
-      "pageCount": null,
-      "sectionCoverage": {}
+      "archiveStatus": "已归档",
+      "sha256": "d3108ea1ed38273efdcd4ae4a44b07a314570993cc2a57b3c80a1af3c440b06f",
+      "byteSize": 4321573,
+      "parseStatus": "已解析",
+      "pageCount": 268,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "(一) 主营业务分析",
+          "四、风险因素",
+          "六、公司关于公司未来发展的讨论与分析"
+        ]
+      }
     },
     {
       "documentId": "industry-annual:star-688286:2022",
       "companyId": "star-688286",
       "year": 2022,
-      "title": "敏芯股份2022年年度报告",
-      "officialUrl": null,
-      "publicationDate": null,
-      "archiveStatus": "不适用或未披露",
-      "parseStatus": "未解析",
-      "sha256": null,
-      "byteSize": null,
-      "pageCount": null,
-      "sectionCoverage": {}
+      "title": "苏州敏芯微电子技术股份有限公司2022年年度报告全文",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2023-04-22/688286_20230422_OL2O.pdf",
+      "publicationDate": "2023-04-22",
+      "archiveStatus": "已归档",
+      "sha256": "618b36f1038e784579a01cfcac1c1b4759bdd42e5d9a01ed872ada8c7a7ba5d7",
+      "byteSize": 4044942,
+      "parseStatus": "已解析",
+      "pageCount": 261,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "(一) 主营业务分析",
+          "四、风险因素",
+          "六、公司关于公司未来发展的讨论与分析"
+        ]
+      }
     },
     {
       "documentId": "industry-annual:star-688286:2023",
       "companyId": "star-688286",
       "year": 2023,
-      "title": "敏芯股份2023年年度报告",
-      "officialUrl": null,
-      "publicationDate": null,
-      "archiveStatus": "不适用或未披露",
-      "parseStatus": "未解析",
-      "sha256": null,
-      "byteSize": null,
-      "pageCount": null,
-      "sectionCoverage": {}
+      "title": "苏州敏芯微电子技术股份有限公司2023年年度报告全文",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2024-04-26/688286_20240426_7QU7.pdf",
+      "publicationDate": "2024-04-26",
+      "archiveStatus": "已归档",
+      "sha256": "bb5482ea3f62326cd4940bd2e8d5dc0e7a812e9b8a702cef6c5dec0dc0391b38",
+      "byteSize": 4580073,
+      "parseStatus": "已解析",
+      "pageCount": 271,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "(一) 主营业务分析",
+          "四、风险因素",
+          "六、公司关于公司未来发展的讨论与分析"
+        ]
+      }
     },
     {
       "documentId": "industry-annual:star-688286:2024",
       "companyId": "star-688286",
       "year": 2024,
-      "title": "敏芯股份2024年年度报告",
-      "officialUrl": null,
-      "publicationDate": null,
-      "archiveStatus": "不适用或未披露",
-      "parseStatus": "未解析",
-      "sha256": null,
-      "byteSize": null,
-      "pageCount": null,
-      "sectionCoverage": {}
+      "title": "苏州敏芯微电子技术股份有限公司2024年年度报告全文",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2025-04-26/688286_20250426_OHPZ.pdf",
+      "publicationDate": "2025-04-26",
+      "archiveStatus": "已归档",
+      "sha256": "8f5343d1639a961ca81334e8d98a41223389fc2cd3b147b3750358f205f0e45a",
+      "byteSize": 1543059,
+      "parseStatus": "已解析",
+      "pageCount": 273,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第三节 管理层讨论与分析",
+          "二、报告期内公司所从事的主要业务、经营模式、行业情况及研发情况说明",
+          "四、风险因素",
+          "六、公司关于公司未来发展的讨论与分析"
+        ]
+      }
     },
     {
       "documentId": "industry-annual:star-688286:2025",
@@ -7581,11 +7654,12 @@
         "经营情况讨论与分析": true,
         "公司业务概要": true,
         "风险提示": true,
-        "业绩展望": false,
+        "业绩展望": true,
         "matchedHeadings": [
           "第三节 管理层讨论与分析",
           "二、报告期内公司所从事的主要业务、经营模式、行业情况及研发情况说明",
-          "四、风险因素"
+          "四、风险因素",
+          "六、公司关于公司未来发展的讨论与分析"
         ]
       }
     },
@@ -7605,11 +7679,12 @@
         "经营情况讨论与分析": true,
         "公司业务概要": true,
         "风险提示": true,
-        "业绩展望": false,
+        "业绩展望": true,
         "matchedHeadings": [
           "第三节 管理层讨论与分析",
           "二、报告期内公司所从事的主要业务、经营模式、行业情况及研发情况说明",
-          "四、风险因素"
+          "四、风险因素",
+          "六、公司关于公司未来发展的讨论与分析"
         ]
       }
     },
@@ -7629,11 +7704,12 @@
         "经营情况讨论与分析": true,
         "公司业务概要": true,
         "风险提示": true,
-        "业绩展望": false,
+        "业绩展望": true,
         "matchedHeadings": [
           "第三节 管理层讨论与分析",
           "二、报告期内公司所从事的主要业务、经营模式、行业情况及研发情况说明",
-          "四、风险因素"
+          "四、风险因素",
+          "六、公司关于公司未来发展的讨论与分析"
         ]
       }
     },
@@ -9920,15 +9996,26 @@
       "documentId": "industry-annual:star-688321:2021",
       "companyId": "star-688321",
       "year": 2021,
-      "title": "微芯生物2021年年度报告",
-      "officialUrl": null,
-      "publicationDate": null,
-      "archiveStatus": "不适用或未披露",
-      "parseStatus": "未解析",
-      "sha256": null,
-      "byteSize": null,
-      "pageCount": null,
-      "sectionCoverage": {}
+      "title": "2021年年度报告全文",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2022-03-30/688321_20220330_2_4LLjwc18.pdf",
+      "publicationDate": "2022-03-30",
+      "archiveStatus": "已归档",
+      "sha256": "52352978d8e4adb13a493d11ce492ab2e4b90b4c4ca42455d32e252a37b9f9b8",
+      "byteSize": 4489235,
+      "parseStatus": "已解析",
+      "pageCount": 223,
+      "sectionCoverage": {
+        "经营情况讨论与分析": true,
+        "公司业务概要": true,
+        "风险提示": true,
+        "业绩展望": true,
+        "matchedHeadings": [
+          "第四节 管理层讨论与分析",
+          "二、报告期内公司所从事的主要业务、经营模式、行业情况及研发情况说明",
+          "四、风险因素",
+          "六、公司关于公司未来发展的讨论与分析"
+        ]
+      }
     },
     {
       "documentId": "industry-annual:star-688321:2022",
@@ -11520,11 +11607,13 @@
       "sectionCoverage": {
         "经营情况讨论与分析": true,
         "公司业务概要": true,
-        "风险提示": false,
-        "业绩展望": false,
+        "风险提示": true,
+        "业绩展望": true,
         "matchedHeadings": [
           "第三节 管理层讨论与分析",
-          "二、报告期内公司所从事的主要业务、经营模式、行业情况及研发情况说明"
+          "二、报告期内公司所从事的主要业务、经营模式、行业情况及研发情况说明",
+          "四、风险因素",
+          "六、公司关于公司未来发展的讨论与分析"
         ]
       }
     },
@@ -11874,9 +11963,9 @@
       "documentId": "industry-annual:star-688347:2025",
       "companyId": "star-688347",
       "year": 2025,
-      "title": "2025年年度报告",
-      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-03-27/688347_20260327_AFKI.pdf",
-      "publicationDate": "2026-03-27",
+      "title": "2025年年度报告(修订版)",
+      "officialUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-05-15/688347_20260515_XRZ3.pdf",
+      "publicationDate": "2026-05-15",
       "archiveStatus": "已归档",
       "sha256": "cfa3a9f72f185f97896f3d040bb215cc00688f19f7b23f0fa0c96b705d6b4e04",
       "byteSize": 1383523,
@@ -12047,7 +12136,11 @@
         "innovationOccurrenceCount": 724,
         "innovationEffectiveWordCount": 14671,
         "annualInventionApplications": 48,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -12088,7 +12181,11 @@
         "innovationOccurrenceCount": 775,
         "innovationEffectiveWordCount": 15795,
         "annualInventionApplications": 47,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -12129,7 +12226,11 @@
         "innovationOccurrenceCount": 778,
         "innovationEffectiveWordCount": 17023,
         "annualInventionApplications": 39,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -12170,7 +12271,11 @@
         "innovationOccurrenceCount": 903,
         "innovationEffectiveWordCount": 18009,
         "annualInventionApplications": 39,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -12211,7 +12316,11 @@
         "innovationOccurrenceCount": 927,
         "innovationEffectiveWordCount": 20072,
         "annualInventionApplications": 40,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -12252,7 +12361,11 @@
         "innovationOccurrenceCount": 544,
         "innovationEffectiveWordCount": 10400,
         "annualInventionApplications": 13,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -12293,7 +12406,11 @@
         "innovationOccurrenceCount": 494,
         "innovationEffectiveWordCount": 9695,
         "annualInventionApplications": 14,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -12334,7 +12451,11 @@
         "innovationOccurrenceCount": 526,
         "innovationEffectiveWordCount": 11143,
         "annualInventionApplications": 17,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -12375,7 +12496,11 @@
         "innovationOccurrenceCount": 450,
         "innovationEffectiveWordCount": 10155,
         "annualInventionApplications": 17,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -12416,7 +12541,11 @@
         "innovationOccurrenceCount": 469,
         "innovationEffectiveWordCount": 10252,
         "annualInventionApplications": 30,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -12457,7 +12586,11 @@
         "innovationOccurrenceCount": 483,
         "innovationEffectiveWordCount": 8703,
         "annualInventionApplications": 263,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -12498,7 +12631,11 @@
         "innovationOccurrenceCount": 443,
         "innovationEffectiveWordCount": 8618,
         "annualInventionApplications": 308,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -12539,7 +12676,11 @@
         "innovationOccurrenceCount": 461,
         "innovationEffectiveWordCount": 8959,
         "annualInventionApplications": 375,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -12580,7 +12721,11 @@
         "innovationOccurrenceCount": 537,
         "innovationEffectiveWordCount": 11569,
         "annualInventionApplications": 518,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -12621,7 +12766,11 @@
         "innovationOccurrenceCount": 463,
         "innovationEffectiveWordCount": 9948,
         "annualInventionApplications": 120,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -12662,7 +12811,11 @@
         "innovationOccurrenceCount": 434,
         "innovationEffectiveWordCount": 9881,
         "annualInventionApplications": 139,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -12703,7 +12856,11 @@
         "innovationOccurrenceCount": 503,
         "innovationEffectiveWordCount": 11114,
         "annualInventionApplications": 145,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -12744,7 +12901,11 @@
         "innovationOccurrenceCount": 524,
         "innovationEffectiveWordCount": 11609,
         "annualInventionApplications": 173,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -12785,7 +12946,11 @@
         "innovationOccurrenceCount": 463,
         "innovationEffectiveWordCount": 9252,
         "annualInventionApplications": 63,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -12826,7 +12991,11 @@
         "innovationOccurrenceCount": 488,
         "innovationEffectiveWordCount": 9578,
         "annualInventionApplications": 43,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -12867,7 +13036,11 @@
         "innovationOccurrenceCount": 538,
         "innovationEffectiveWordCount": 9828,
         "annualInventionApplications": 37,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -12908,7 +13081,11 @@
         "innovationOccurrenceCount": 625,
         "innovationEffectiveWordCount": 12257,
         "annualInventionApplications": 51,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -12949,7 +13126,11 @@
         "innovationOccurrenceCount": 614,
         "innovationEffectiveWordCount": 11899,
         "annualInventionApplications": 59,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -12990,7 +13171,11 @@
         "innovationOccurrenceCount": 480,
         "innovationEffectiveWordCount": 9086,
         "annualInventionApplications": 60,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -13031,7 +13216,11 @@
         "innovationOccurrenceCount": 508,
         "innovationEffectiveWordCount": 10194,
         "annualInventionApplications": 15,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -13072,7 +13261,11 @@
         "innovationOccurrenceCount": 532,
         "innovationEffectiveWordCount": 11843,
         "annualInventionApplications": 30,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -13113,7 +13306,11 @@
         "innovationOccurrenceCount": 539,
         "innovationEffectiveWordCount": 11875,
         "annualInventionApplications": 76,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -13154,7 +13351,11 @@
         "innovationOccurrenceCount": 573,
         "innovationEffectiveWordCount": 14262,
         "annualInventionApplications": 98,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -13195,7 +13396,11 @@
         "innovationOccurrenceCount": 546,
         "innovationEffectiveWordCount": 9299,
         "annualInventionApplications": 35,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -13236,7 +13441,11 @@
         "innovationOccurrenceCount": 526,
         "innovationEffectiveWordCount": 8177,
         "annualInventionApplications": 37,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -13277,7 +13486,11 @@
         "innovationOccurrenceCount": 610,
         "innovationEffectiveWordCount": 9608,
         "annualInventionApplications": 50,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -13318,7 +13531,11 @@
         "innovationOccurrenceCount": 647,
         "innovationEffectiveWordCount": 10124,
         "annualInventionApplications": 54,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -13359,7 +13576,11 @@
         "innovationOccurrenceCount": 726,
         "innovationEffectiveWordCount": 11530,
         "annualInventionApplications": 56,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -13400,7 +13621,11 @@
         "innovationOccurrenceCount": 468,
         "innovationEffectiveWordCount": 9324,
         "annualInventionApplications": 2,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -13441,7 +13666,11 @@
         "innovationOccurrenceCount": 395,
         "innovationEffectiveWordCount": 8738,
         "annualInventionApplications": 63,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -13482,7 +13711,11 @@
         "innovationOccurrenceCount": 387,
         "innovationEffectiveWordCount": 9021,
         "annualInventionApplications": 23,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -13523,7 +13756,11 @@
         "innovationOccurrenceCount": 369,
         "innovationEffectiveWordCount": 9491,
         "annualInventionApplications": 18,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -13564,7 +13801,11 @@
         "innovationOccurrenceCount": 383,
         "innovationEffectiveWordCount": 9979,
         "annualInventionApplications": 4,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -13605,7 +13846,11 @@
         "innovationOccurrenceCount": 517,
         "innovationEffectiveWordCount": 12509,
         "annualInventionApplications": 3,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -13646,7 +13891,11 @@
         "innovationOccurrenceCount": 466,
         "innovationEffectiveWordCount": 10927,
         "annualInventionApplications": 3,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -13687,7 +13936,11 @@
         "innovationOccurrenceCount": 460,
         "innovationEffectiveWordCount": 11084,
         "annualInventionApplications": 5,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -13728,7 +13981,11 @@
         "innovationOccurrenceCount": 493,
         "innovationEffectiveWordCount": 11023,
         "annualInventionApplications": 10,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -13769,7 +14026,11 @@
         "innovationOccurrenceCount": 478,
         "innovationEffectiveWordCount": 12960,
         "annualInventionApplications": 6,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -13810,7 +14071,11 @@
         "innovationOccurrenceCount": 440,
         "innovationEffectiveWordCount": 10661,
         "annualInventionApplications": 118,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -13851,7 +14116,11 @@
         "innovationOccurrenceCount": 452,
         "innovationEffectiveWordCount": 11209,
         "annualInventionApplications": 89,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -13892,7 +14161,11 @@
         "innovationOccurrenceCount": 463,
         "innovationEffectiveWordCount": 11937,
         "annualInventionApplications": 81,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -13933,7 +14206,11 @@
         "innovationOccurrenceCount": 567,
         "innovationEffectiveWordCount": 11388,
         "annualInventionApplications": 83,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -13974,7 +14251,11 @@
         "innovationOccurrenceCount": 271,
         "innovationEffectiveWordCount": 8051,
         "annualInventionApplications": 2,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14015,7 +14296,11 @@
         "innovationOccurrenceCount": 269,
         "innovationEffectiveWordCount": 8371,
         "annualInventionApplications": 25,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14056,7 +14341,11 @@
         "innovationOccurrenceCount": 271,
         "innovationEffectiveWordCount": 8729,
         "annualInventionApplications": 10,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14097,7 +14386,11 @@
         "innovationOccurrenceCount": 658,
         "innovationEffectiveWordCount": 13934,
         "annualInventionApplications": 380,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14138,7 +14431,11 @@
         "innovationOccurrenceCount": 699,
         "innovationEffectiveWordCount": 14727,
         "annualInventionApplications": 184,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14179,7 +14476,11 @@
         "innovationOccurrenceCount": 509,
         "innovationEffectiveWordCount": 10306,
         "annualInventionApplications": 113,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14220,7 +14521,11 @@
         "innovationOccurrenceCount": 474,
         "innovationEffectiveWordCount": 9543,
         "annualInventionApplications": 102,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14261,7 +14566,11 @@
         "innovationOccurrenceCount": 481,
         "innovationEffectiveWordCount": 10040,
         "annualInventionApplications": 101,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14274,6 +14583,51 @@
       "documentId": "industry-annual:star-688256:2025",
       "details": {
         "effectiveWordCount": 10040
+      }
+    },
+    {
+      "companyId": "star-688259",
+      "year": 2021,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.032134125,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "industry-annual:star-688259:2021",
+      "details": {
+        "uncertaintyOccurrenceCount": 92,
+        "effectiveWordCount": 2863
+      }
+    },
+    {
+      "companyId": "star-688259",
+      "year": 2021,
+      "metricKey": "innovation_divergence",
+      "value": 2.6697892522,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "industry-annual:star-688259:2021",
+      "details": {
+        "innovationTalkDensity": 56.747705284,
+        "innovationOccurrenceCount": 915,
+        "innovationEffectiveWordCount": 16124,
+        "annualInventionApplications": 3,
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
+      }
+    },
+    {
+      "companyId": "star-688259",
+      "year": 2021,
+      "metricKey": "information_sufficiency",
+      "value": 1.6124,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "industry-annual:star-688259:2021",
+      "details": {
+        "effectiveWordCount": 16124
       }
     },
     {
@@ -14302,7 +14656,11 @@
         "innovationOccurrenceCount": 831,
         "innovationEffectiveWordCount": 16117,
         "annualInventionApplications": 6,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14343,7 +14701,11 @@
         "innovationOccurrenceCount": 781,
         "innovationEffectiveWordCount": 14147,
         "annualInventionApplications": 1,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14384,7 +14746,11 @@
         "innovationOccurrenceCount": 605,
         "innovationEffectiveWordCount": 14165,
         "annualInventionApplications": 9,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14425,7 +14791,11 @@
         "innovationOccurrenceCount": 559,
         "innovationEffectiveWordCount": 14231,
         "annualInventionApplications": 1,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14466,7 +14836,11 @@
         "innovationOccurrenceCount": 530,
         "innovationEffectiveWordCount": 11946,
         "annualInventionApplications": 11,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14507,7 +14881,11 @@
         "innovationOccurrenceCount": 727,
         "innovationEffectiveWordCount": 16418,
         "annualInventionApplications": 18,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14548,7 +14926,11 @@
         "innovationOccurrenceCount": 1040,
         "innovationEffectiveWordCount": 20718,
         "annualInventionApplications": 43,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14589,7 +14971,11 @@
         "innovationOccurrenceCount": 1135,
         "innovationEffectiveWordCount": 24810,
         "annualInventionApplications": 93,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14630,7 +15016,11 @@
         "innovationOccurrenceCount": 1203,
         "innovationEffectiveWordCount": 26067,
         "annualInventionApplications": 117,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14671,7 +15061,11 @@
         "innovationOccurrenceCount": 447,
         "innovationEffectiveWordCount": 9080,
         "annualInventionApplications": 11,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14712,7 +15106,11 @@
         "innovationOccurrenceCount": 439,
         "innovationEffectiveWordCount": 8712,
         "annualInventionApplications": 8,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14753,7 +15151,11 @@
         "innovationOccurrenceCount": 461,
         "innovationEffectiveWordCount": 9563,
         "annualInventionApplications": 10,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14794,7 +15196,11 @@
         "innovationOccurrenceCount": 451,
         "innovationEffectiveWordCount": 10464,
         "annualInventionApplications": 68,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14835,7 +15241,11 @@
         "innovationOccurrenceCount": 460,
         "innovationEffectiveWordCount": 8395,
         "annualInventionApplications": 61,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14876,7 +15286,11 @@
         "innovationOccurrenceCount": 460,
         "innovationEffectiveWordCount": 9325,
         "annualInventionApplications": 106,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14917,7 +15331,11 @@
         "innovationOccurrenceCount": 532,
         "innovationEffectiveWordCount": 11075,
         "annualInventionApplications": 28,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14958,7 +15376,11 @@
         "innovationOccurrenceCount": 599,
         "innovationEffectiveWordCount": 12999,
         "annualInventionApplications": 22,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -14999,7 +15421,11 @@
         "innovationOccurrenceCount": 495,
         "innovationEffectiveWordCount": 11161,
         "annualInventionApplications": 11,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -15040,7 +15466,11 @@
         "innovationOccurrenceCount": 509,
         "innovationEffectiveWordCount": 10782,
         "annualInventionApplications": 9,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -15081,7 +15511,11 @@
         "innovationOccurrenceCount": 510,
         "innovationEffectiveWordCount": 10482,
         "annualInventionApplications": 4,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -15122,7 +15556,11 @@
         "innovationOccurrenceCount": 518,
         "innovationEffectiveWordCount": 10703,
         "annualInventionApplications": 9,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -15163,7 +15601,11 @@
         "innovationOccurrenceCount": 455,
         "innovationEffectiveWordCount": 10315,
         "annualInventionApplications": 47,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -15204,7 +15646,11 @@
         "innovationOccurrenceCount": 469,
         "innovationEffectiveWordCount": 10147,
         "annualInventionApplications": 32,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -15217,6 +15663,51 @@
       "documentId": "industry-annual:star-688385:2022",
       "details": {
         "effectiveWordCount": 10147
+      }
+    },
+    {
+      "companyId": "star-688385",
+      "year": 2023,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.0345098039,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "industry-annual:star-688385:2023",
+      "details": {
+        "uncertaintyOccurrenceCount": 44,
+        "effectiveWordCount": 1275
+      }
+    },
+    {
+      "companyId": "star-688385",
+      "year": 2023,
+      "metricKey": "innovation_divergence",
+      "value": -0.1315005063,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "industry-annual:star-688385:2023",
+      "details": {
+        "innovationTalkDensity": 48.9763933784,
+        "innovationOccurrenceCount": 500,
+        "innovationEffectiveWordCount": 10209,
+        "annualInventionApplications": 56,
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
+      }
+    },
+    {
+      "companyId": "star-688385",
+      "year": 2023,
+      "metricKey": "information_sufficiency",
+      "value": 1.0209,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "industry-annual:star-688385:2023",
+      "details": {
+        "effectiveWordCount": 10209
       }
     },
     {
@@ -15245,7 +15736,11 @@
         "innovationOccurrenceCount": 508,
         "innovationEffectiveWordCount": 10325,
         "annualInventionApplications": 39,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -15286,7 +15781,11 @@
         "innovationOccurrenceCount": 556,
         "innovationEffectiveWordCount": 10859,
         "annualInventionApplications": 40,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -15327,7 +15826,11 @@
         "innovationOccurrenceCount": 434,
         "innovationEffectiveWordCount": 11050,
         "annualInventionApplications": 22,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -15368,7 +15871,11 @@
         "innovationOccurrenceCount": 510,
         "innovationEffectiveWordCount": 11721,
         "annualInventionApplications": 19,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -15409,7 +15916,11 @@
         "innovationOccurrenceCount": 491,
         "innovationEffectiveWordCount": 11267,
         "annualInventionApplications": 20,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -15450,7 +15961,11 @@
         "innovationOccurrenceCount": 464,
         "innovationEffectiveWordCount": 10843,
         "annualInventionApplications": 21,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -15491,7 +16006,11 @@
         "innovationOccurrenceCount": 687,
         "innovationEffectiveWordCount": 13103,
         "annualInventionApplications": 65,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -15532,7 +16051,11 @@
         "innovationOccurrenceCount": 644,
         "innovationEffectiveWordCount": 13158,
         "annualInventionApplications": 76,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -15573,7 +16096,11 @@
         "innovationOccurrenceCount": 634,
         "innovationEffectiveWordCount": 11594,
         "annualInventionApplications": 8,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -15614,7 +16141,11 @@
         "innovationOccurrenceCount": 537,
         "innovationEffectiveWordCount": 10347,
         "annualInventionApplications": 6,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -15655,7 +16186,11 @@
         "innovationOccurrenceCount": 469,
         "innovationEffectiveWordCount": 10708,
         "annualInventionApplications": 4,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -15696,7 +16231,11 @@
         "innovationOccurrenceCount": 545,
         "innovationEffectiveWordCount": 10784,
         "annualInventionApplications": 29,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -15737,7 +16276,11 @@
         "innovationOccurrenceCount": 902,
         "innovationEffectiveWordCount": 20061,
         "annualInventionApplications": 46,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -15778,7 +16321,11 @@
         "innovationOccurrenceCount": 1094,
         "innovationEffectiveWordCount": 23435,
         "annualInventionApplications": 63,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -15819,7 +16366,11 @@
         "innovationOccurrenceCount": 1085,
         "innovationEffectiveWordCount": 22857,
         "annualInventionApplications": 99,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -15860,7 +16411,11 @@
         "innovationOccurrenceCount": 1250,
         "innovationEffectiveWordCount": 24159,
         "annualInventionApplications": 126,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -15901,7 +16456,11 @@
         "innovationOccurrenceCount": 1314,
         "innovationEffectiveWordCount": 26622,
         "annualInventionApplications": 151,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -15942,7 +16501,11 @@
         "innovationOccurrenceCount": 923,
         "innovationEffectiveWordCount": 16870,
         "annualInventionApplications": 45,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -15983,7 +16546,11 @@
         "innovationOccurrenceCount": 765,
         "innovationEffectiveWordCount": 17617,
         "annualInventionApplications": 84,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -16024,7 +16591,11 @@
         "innovationOccurrenceCount": 1143,
         "innovationEffectiveWordCount": 24771,
         "annualInventionApplications": 138,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -16065,7 +16636,11 @@
         "innovationOccurrenceCount": 1025,
         "innovationEffectiveWordCount": 21339,
         "annualInventionApplications": 128,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -16106,7 +16681,11 @@
         "innovationOccurrenceCount": 1077,
         "innovationEffectiveWordCount": 17958,
         "annualInventionApplications": 11,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -16147,7 +16726,11 @@
         "innovationOccurrenceCount": 1240,
         "innovationEffectiveWordCount": 21117,
         "annualInventionApplications": 23,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -16188,7 +16771,11 @@
         "innovationOccurrenceCount": 1291,
         "innovationEffectiveWordCount": 23453,
         "annualInventionApplications": 13,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -16229,7 +16816,11 @@
         "innovationOccurrenceCount": 988,
         "innovationEffectiveWordCount": 19965,
         "annualInventionApplications": 33,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -16270,7 +16861,11 @@
         "innovationOccurrenceCount": 828,
         "innovationEffectiveWordCount": 17069,
         "annualInventionApplications": 7,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -16311,7 +16906,11 @@
         "innovationOccurrenceCount": 473,
         "innovationEffectiveWordCount": 9390,
         "annualInventionApplications": 6,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -16352,7 +16951,11 @@
         "innovationOccurrenceCount": 583,
         "innovationEffectiveWordCount": 13118,
         "annualInventionApplications": 10,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -16393,7 +16996,11 @@
         "innovationOccurrenceCount": 591,
         "innovationEffectiveWordCount": 13581,
         "annualInventionApplications": 19,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -16434,7 +17041,11 @@
         "innovationOccurrenceCount": 425,
         "innovationEffectiveWordCount": 8861,
         "annualInventionApplications": 0,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -16475,7 +17086,11 @@
         "innovationOccurrenceCount": 424,
         "innovationEffectiveWordCount": 8914,
         "annualInventionApplications": 2,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -16516,7 +17131,11 @@
         "innovationOccurrenceCount": 450,
         "innovationEffectiveWordCount": 9678,
         "annualInventionApplications": 8,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -16557,7 +17176,11 @@
         "innovationOccurrenceCount": 513,
         "innovationEffectiveWordCount": 10910,
         "annualInventionApplications": 58,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -16598,7 +17221,11 @@
         "innovationOccurrenceCount": 554,
         "innovationEffectiveWordCount": 11212,
         "annualInventionApplications": 114,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -16639,7 +17266,11 @@
         "innovationOccurrenceCount": 552,
         "innovationEffectiveWordCount": 11778,
         "annualInventionApplications": 125,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -16680,7 +17311,11 @@
         "innovationOccurrenceCount": 628,
         "innovationEffectiveWordCount": 12708,
         "annualInventionApplications": 91,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -16721,7 +17356,11 @@
         "innovationOccurrenceCount": 488,
         "innovationEffectiveWordCount": 8584,
         "annualInventionApplications": 52,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -16762,7 +17401,11 @@
         "innovationOccurrenceCount": 481,
         "innovationEffectiveWordCount": 8824,
         "annualInventionApplications": 156,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -16803,7 +17446,11 @@
         "innovationOccurrenceCount": 423,
         "innovationEffectiveWordCount": 8394,
         "annualInventionApplications": 115,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -16844,7 +17491,11 @@
         "innovationOccurrenceCount": 408,
         "innovationEffectiveWordCount": 7796,
         "annualInventionApplications": 108,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -16885,7 +17536,11 @@
         "innovationOccurrenceCount": 401,
         "innovationEffectiveWordCount": 8398,
         "annualInventionApplications": 174,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -16926,7 +17581,11 @@
         "innovationOccurrenceCount": 665,
         "innovationEffectiveWordCount": 12139,
         "annualInventionApplications": 30,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -16967,7 +17626,11 @@
         "innovationOccurrenceCount": 666,
         "innovationEffectiveWordCount": 12273,
         "annualInventionApplications": 38,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17008,7 +17671,11 @@
         "innovationOccurrenceCount": 669,
         "innovationEffectiveWordCount": 14850,
         "annualInventionApplications": 39,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17049,7 +17716,11 @@
         "innovationOccurrenceCount": 495,
         "innovationEffectiveWordCount": 12416,
         "annualInventionApplications": 111,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17090,7 +17761,11 @@
         "innovationOccurrenceCount": 451,
         "innovationEffectiveWordCount": 11441,
         "annualInventionApplications": 107,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17131,7 +17806,11 @@
         "innovationOccurrenceCount": 436,
         "innovationEffectiveWordCount": 11213,
         "annualInventionApplications": 93,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17172,7 +17851,11 @@
         "innovationOccurrenceCount": 431,
         "innovationEffectiveWordCount": 8618,
         "annualInventionApplications": 28,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17213,7 +17896,11 @@
         "innovationOccurrenceCount": 459,
         "innovationEffectiveWordCount": 9517,
         "annualInventionApplications": 31,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17254,7 +17941,11 @@
         "innovationOccurrenceCount": 570,
         "innovationEffectiveWordCount": 11464,
         "annualInventionApplications": 31,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17295,7 +17986,11 @@
         "innovationOccurrenceCount": 315,
         "innovationEffectiveWordCount": 7999,
         "annualInventionApplications": 145,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17336,7 +18031,11 @@
         "innovationOccurrenceCount": 326,
         "innovationEffectiveWordCount": 8059,
         "annualInventionApplications": 136,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17377,7 +18076,11 @@
         "innovationOccurrenceCount": 339,
         "innovationEffectiveWordCount": 8087,
         "annualInventionApplications": 193,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17418,7 +18121,11 @@
         "innovationOccurrenceCount": 375,
         "innovationEffectiveWordCount": 9260,
         "annualInventionApplications": 225,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17459,7 +18166,11 @@
         "innovationOccurrenceCount": 483,
         "innovationEffectiveWordCount": 12944,
         "annualInventionApplications": 20,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17500,7 +18211,11 @@
         "innovationOccurrenceCount": 589,
         "innovationEffectiveWordCount": 14492,
         "annualInventionApplications": 13,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17541,7 +18256,11 @@
         "innovationOccurrenceCount": 640,
         "innovationEffectiveWordCount": 14844,
         "annualInventionApplications": 43,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17582,7 +18301,11 @@
         "innovationOccurrenceCount": 651,
         "innovationEffectiveWordCount": 14765,
         "annualInventionApplications": 47,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17623,7 +18346,11 @@
         "innovationOccurrenceCount": 771,
         "innovationEffectiveWordCount": 18075,
         "annualInventionApplications": 28,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17664,7 +18391,11 @@
         "innovationOccurrenceCount": 430,
         "innovationEffectiveWordCount": 11933,
         "annualInventionApplications": 771,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17705,7 +18436,11 @@
         "innovationOccurrenceCount": 594,
         "innovationEffectiveWordCount": 12523,
         "annualInventionApplications": 248,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17746,7 +18481,11 @@
         "innovationOccurrenceCount": 640,
         "innovationEffectiveWordCount": 12666,
         "annualInventionApplications": 2,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17787,7 +18526,11 @@
         "innovationOccurrenceCount": 379,
         "innovationEffectiveWordCount": 8949,
         "annualInventionApplications": 44,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17828,7 +18571,11 @@
         "innovationOccurrenceCount": 387,
         "innovationEffectiveWordCount": 8766,
         "annualInventionApplications": 32,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17869,7 +18616,11 @@
         "innovationOccurrenceCount": 401,
         "innovationEffectiveWordCount": 10209,
         "annualInventionApplications": 34,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17910,7 +18661,11 @@
         "innovationOccurrenceCount": 437,
         "innovationEffectiveWordCount": 11839,
         "annualInventionApplications": 90,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17951,7 +18706,11 @@
         "innovationOccurrenceCount": 646,
         "innovationEffectiveWordCount": 13957,
         "annualInventionApplications": 36,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -17992,7 +18751,11 @@
         "innovationOccurrenceCount": 584,
         "innovationEffectiveWordCount": 13978,
         "annualInventionApplications": 39,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -18024,7 +18787,7 @@
       "companyId": "star-688052",
       "year": 2024,
       "metricKey": "innovation_divergence",
-      "value": 0.0044959103,
+      "value": 0.3454224973,
       "status": "已计算",
       "missingReason": null,
       "documentId": "industry-annual:star-688052:2024",
@@ -18032,8 +18795,12 @@
         "innovationTalkDensity": 44.2027714436,
         "innovationOccurrenceCount": 756,
         "innovationEffectiveWordCount": 17103,
-        "annualInventionApplications": 44,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "annualInventionApplications": 31,
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -18065,7 +18832,7 @@
       "companyId": "star-688052",
       "year": 2025,
       "metricKey": "innovation_divergence",
-      "value": -0.2935234481,
+      "value": 0.0872490474,
       "status": "已计算",
       "missingReason": null,
       "documentId": "industry-annual:star-688052:2025",
@@ -18073,8 +18840,12 @@
         "innovationTalkDensity": 43.7379043406,
         "innovationOccurrenceCount": 791,
         "innovationEffectiveWordCount": 18085,
-        "annualInventionApplications": 59,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "annualInventionApplications": 40,
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -18115,7 +18886,11 @@
         "innovationOccurrenceCount": 557,
         "innovationEffectiveWordCount": 10617,
         "annualInventionApplications": 17,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -18156,7 +18931,11 @@
         "innovationOccurrenceCount": 567,
         "innovationEffectiveWordCount": 10218,
         "annualInventionApplications": 13,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -18197,7 +18976,11 @@
         "innovationOccurrenceCount": 615,
         "innovationEffectiveWordCount": 10515,
         "annualInventionApplications": 11,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -18238,7 +19021,11 @@
         "innovationOccurrenceCount": 606,
         "innovationEffectiveWordCount": 10721,
         "annualInventionApplications": 27,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -18279,7 +19066,11 @@
         "innovationOccurrenceCount": 517,
         "innovationEffectiveWordCount": 10853,
         "annualInventionApplications": 5,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -18320,7 +19111,11 @@
         "innovationOccurrenceCount": 481,
         "innovationEffectiveWordCount": 10943,
         "annualInventionApplications": 11,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -18361,7 +19156,11 @@
         "innovationOccurrenceCount": 484,
         "innovationEffectiveWordCount": 11934,
         "annualInventionApplications": 7,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -18402,7 +19201,11 @@
         "innovationOccurrenceCount": 554,
         "innovationEffectiveWordCount": 13431,
         "annualInventionApplications": 8,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -18443,7 +19246,11 @@
         "innovationOccurrenceCount": 562,
         "innovationEffectiveWordCount": 14123,
         "annualInventionApplications": 110,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -18484,7 +19291,11 @@
         "innovationOccurrenceCount": 618,
         "innovationEffectiveWordCount": 14219,
         "annualInventionApplications": 128,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -18525,7 +19336,11 @@
         "innovationOccurrenceCount": 627,
         "innovationEffectiveWordCount": 15113,
         "annualInventionApplications": 179,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -18566,7 +19381,11 @@
         "innovationOccurrenceCount": 633,
         "innovationEffectiveWordCount": 16773,
         "annualInventionApplications": 232,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -18607,7 +19426,11 @@
         "innovationOccurrenceCount": 554,
         "innovationEffectiveWordCount": 12374,
         "annualInventionApplications": 40,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -18648,7 +19471,11 @@
         "innovationOccurrenceCount": 693,
         "innovationEffectiveWordCount": 15546,
         "annualInventionApplications": 67,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -18689,7 +19516,11 @@
         "innovationOccurrenceCount": 858,
         "innovationEffectiveWordCount": 19936,
         "annualInventionApplications": 38,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -18730,7 +19561,11 @@
         "innovationOccurrenceCount": 796,
         "innovationEffectiveWordCount": 19501,
         "annualInventionApplications": 41,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -18771,7 +19606,11 @@
         "innovationOccurrenceCount": 395,
         "innovationEffectiveWordCount": 8430,
         "annualInventionApplications": 43,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -18812,7 +19651,11 @@
         "innovationOccurrenceCount": 356,
         "innovationEffectiveWordCount": 9173,
         "annualInventionApplications": 40,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -18853,7 +19696,11 @@
         "innovationOccurrenceCount": 445,
         "innovationEffectiveWordCount": 11691,
         "annualInventionApplications": 21,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -18894,7 +19741,11 @@
         "innovationOccurrenceCount": 461,
         "innovationEffectiveWordCount": 11857,
         "annualInventionApplications": 19,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -18935,7 +19786,11 @@
         "innovationOccurrenceCount": 447,
         "innovationEffectiveWordCount": 11455,
         "annualInventionApplications": 8,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -18976,7 +19831,11 @@
         "innovationOccurrenceCount": 384,
         "innovationEffectiveWordCount": 8612,
         "annualInventionApplications": 66,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -19017,7 +19876,11 @@
         "innovationOccurrenceCount": 392,
         "innovationEffectiveWordCount": 8898,
         "annualInventionApplications": 25,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -19058,7 +19921,11 @@
         "innovationOccurrenceCount": 431,
         "innovationEffectiveWordCount": 8928,
         "annualInventionApplications": 33,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -19099,7 +19966,11 @@
         "innovationOccurrenceCount": 405,
         "innovationEffectiveWordCount": 10858,
         "annualInventionApplications": 45,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -19140,7 +20011,11 @@
         "innovationOccurrenceCount": 609,
         "innovationEffectiveWordCount": 13166,
         "annualInventionApplications": 56,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -19181,7 +20056,11 @@
         "innovationOccurrenceCount": 637,
         "innovationEffectiveWordCount": 14650,
         "annualInventionApplications": 36,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -19222,7 +20101,11 @@
         "innovationOccurrenceCount": 643,
         "innovationEffectiveWordCount": 14450,
         "annualInventionApplications": 39,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -19263,7 +20146,11 @@
         "innovationOccurrenceCount": 655,
         "innovationEffectiveWordCount": 15475,
         "annualInventionApplications": 70,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -19304,7 +20191,11 @@
         "innovationOccurrenceCount": 516,
         "innovationEffectiveWordCount": 11939,
         "annualInventionApplications": 1,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -19345,7 +20236,11 @@
         "innovationOccurrenceCount": 484,
         "innovationEffectiveWordCount": 12194,
         "annualInventionApplications": 4,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -19386,7 +20281,11 @@
         "innovationOccurrenceCount": 498,
         "innovationEffectiveWordCount": 11694,
         "annualInventionApplications": 2,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -19427,7 +20326,11 @@
         "innovationOccurrenceCount": 545,
         "innovationEffectiveWordCount": 14265,
         "annualInventionApplications": 3,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -19468,7 +20371,11 @@
         "innovationOccurrenceCount": 524,
         "innovationEffectiveWordCount": 13944,
         "annualInventionApplications": 7,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -19481,6 +20388,186 @@
       "documentId": "industry-annual:star-688270:2025",
       "details": {
         "effectiveWordCount": 13944
+      }
+    },
+    {
+      "companyId": "star-688286",
+      "year": 2021,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.021686747,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "industry-annual:star-688286:2021",
+      "details": {
+        "uncertaintyOccurrenceCount": 72,
+        "effectiveWordCount": 3320
+      }
+    },
+    {
+      "companyId": "star-688286",
+      "year": 2021,
+      "metricKey": "innovation_divergence",
+      "value": 0.7013421103,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "industry-annual:star-688286:2021",
+      "details": {
+        "innovationTalkDensity": 51.4278872059,
+        "innovationOccurrenceCount": 859,
+        "innovationEffectiveWordCount": 16703,
+        "annualInventionApplications": 25,
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
+      }
+    },
+    {
+      "companyId": "star-688286",
+      "year": 2021,
+      "metricKey": "information_sufficiency",
+      "value": 1.6703,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "industry-annual:star-688286:2021",
+      "details": {
+        "effectiveWordCount": 16703
+      }
+    },
+    {
+      "companyId": "star-688286",
+      "year": 2022,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.0204545455,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "industry-annual:star-688286:2022",
+      "details": {
+        "uncertaintyOccurrenceCount": 63,
+        "effectiveWordCount": 3080
+      }
+    },
+    {
+      "companyId": "star-688286",
+      "year": 2022,
+      "metricKey": "innovation_divergence",
+      "value": -0.1427242176,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "industry-annual:star-688286:2022",
+      "details": {
+        "innovationTalkDensity": 53.6205676547,
+        "innovationOccurrenceCount": 682,
+        "innovationEffectiveWordCount": 12719,
+        "annualInventionApplications": 62,
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
+      }
+    },
+    {
+      "companyId": "star-688286",
+      "year": 2022,
+      "metricKey": "information_sufficiency",
+      "value": 1.2719,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "industry-annual:star-688286:2022",
+      "details": {
+        "effectiveWordCount": 12719
+      }
+    },
+    {
+      "companyId": "star-688286",
+      "year": 2023,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.0250253635,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "industry-annual:star-688286:2023",
+      "details": {
+        "uncertaintyOccurrenceCount": 74,
+        "effectiveWordCount": 2957
+      }
+    },
+    {
+      "companyId": "star-688286",
+      "year": 2023,
+      "metricKey": "innovation_divergence",
+      "value": 0.3054246582,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "industry-annual:star-688286:2023",
+      "details": {
+        "innovationTalkDensity": 56.0024515437,
+        "innovationOccurrenceCount": 731,
+        "innovationEffectiveWordCount": 13053,
+        "annualInventionApplications": 41,
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
+      }
+    },
+    {
+      "companyId": "star-688286",
+      "year": 2023,
+      "metricKey": "information_sufficiency",
+      "value": 1.3053,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "industry-annual:star-688286:2023",
+      "details": {
+        "effectiveWordCount": 13053
+      }
+    },
+    {
+      "companyId": "star-688286",
+      "year": 2024,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.0249912003,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "industry-annual:star-688286:2024",
+      "details": {
+        "uncertaintyOccurrenceCount": 71,
+        "effectiveWordCount": 2841
+      }
+    },
+    {
+      "companyId": "star-688286",
+      "year": 2024,
+      "metricKey": "innovation_divergence",
+      "value": 0.2172931376,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "industry-annual:star-688286:2024",
+      "details": {
+        "innovationTalkDensity": 54.921875,
+        "innovationOccurrenceCount": 703,
+        "innovationEffectiveWordCount": 12800,
+        "annualInventionApplications": 44,
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
+      }
+    },
+    {
+      "companyId": "star-688286",
+      "year": 2024,
+      "metricKey": "information_sufficiency",
+      "value": 1.28,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "industry-annual:star-688286:2024",
+      "details": {
+        "effectiveWordCount": 12800
       }
     },
     {
@@ -19509,7 +20596,11 @@
         "innovationOccurrenceCount": 724,
         "innovationEffectiveWordCount": 13312,
         "annualInventionApplications": 12,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -19550,7 +20641,11 @@
         "innovationOccurrenceCount": 383,
         "innovationEffectiveWordCount": 9147,
         "annualInventionApplications": 0,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -19591,7 +20686,11 @@
         "innovationOccurrenceCount": 445,
         "innovationEffectiveWordCount": 9265,
         "annualInventionApplications": 0,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -19632,7 +20731,11 @@
         "innovationOccurrenceCount": 447,
         "innovationEffectiveWordCount": 9307,
         "annualInventionApplications": 2,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -19673,7 +20776,11 @@
         "innovationOccurrenceCount": 411,
         "innovationEffectiveWordCount": 9969,
         "annualInventionApplications": 13,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -19714,7 +20821,11 @@
         "innovationOccurrenceCount": 356,
         "innovationEffectiveWordCount": 9018,
         "annualInventionApplications": 64,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -19755,7 +20866,11 @@
         "innovationOccurrenceCount": 363,
         "innovationEffectiveWordCount": 9416,
         "annualInventionApplications": 52,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -19796,7 +20911,11 @@
         "innovationOccurrenceCount": 415,
         "innovationEffectiveWordCount": 9599,
         "annualInventionApplications": 40,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -19837,7 +20956,11 @@
         "innovationOccurrenceCount": 473,
         "innovationEffectiveWordCount": 9314,
         "annualInventionApplications": 28,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -19878,7 +21001,11 @@
         "innovationOccurrenceCount": 478,
         "innovationEffectiveWordCount": 10589,
         "annualInventionApplications": 7,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -19919,7 +21046,11 @@
         "innovationOccurrenceCount": 571,
         "innovationEffectiveWordCount": 12113,
         "annualInventionApplications": 5,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -19960,7 +21091,11 @@
         "innovationOccurrenceCount": 657,
         "innovationEffectiveWordCount": 14181,
         "annualInventionApplications": 40,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20001,7 +21136,11 @@
         "innovationOccurrenceCount": 786,
         "innovationEffectiveWordCount": 16282,
         "annualInventionApplications": 74,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20042,7 +21181,11 @@
         "innovationOccurrenceCount": 756,
         "innovationEffectiveWordCount": 17162,
         "annualInventionApplications": 61,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20083,7 +21226,11 @@
         "innovationOccurrenceCount": 543,
         "innovationEffectiveWordCount": 11242,
         "annualInventionApplications": 6,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20124,7 +21271,11 @@
         "innovationOccurrenceCount": 551,
         "innovationEffectiveWordCount": 10560,
         "annualInventionApplications": 11,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20165,7 +21316,11 @@
         "innovationOccurrenceCount": 553,
         "innovationEffectiveWordCount": 10394,
         "annualInventionApplications": 11,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20206,7 +21361,11 @@
         "innovationOccurrenceCount": 531,
         "innovationEffectiveWordCount": 11220,
         "annualInventionApplications": 10,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20247,7 +21406,11 @@
         "innovationOccurrenceCount": 692,
         "innovationEffectiveWordCount": 15670,
         "annualInventionApplications": 30,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20288,7 +21451,11 @@
         "innovationOccurrenceCount": 845,
         "innovationEffectiveWordCount": 16528,
         "annualInventionApplications": 17,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20329,7 +21496,11 @@
         "innovationOccurrenceCount": 695,
         "innovationEffectiveWordCount": 15332,
         "annualInventionApplications": 11,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20370,7 +21541,11 @@
         "innovationOccurrenceCount": 388,
         "innovationEffectiveWordCount": 10738,
         "annualInventionApplications": 62,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20411,7 +21586,11 @@
         "innovationOccurrenceCount": 504,
         "innovationEffectiveWordCount": 13747,
         "annualInventionApplications": 137,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20452,7 +21631,11 @@
         "innovationOccurrenceCount": 416,
         "innovationEffectiveWordCount": 13533,
         "annualInventionApplications": 245,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20493,7 +21676,11 @@
         "innovationOccurrenceCount": 429,
         "innovationEffectiveWordCount": 8739,
         "annualInventionApplications": 24,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20534,7 +21721,11 @@
         "innovationOccurrenceCount": 421,
         "innovationEffectiveWordCount": 8343,
         "annualInventionApplications": 16,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20575,7 +21766,11 @@
         "innovationOccurrenceCount": 396,
         "innovationEffectiveWordCount": 8558,
         "annualInventionApplications": 18,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20616,7 +21811,11 @@
         "innovationOccurrenceCount": 417,
         "innovationEffectiveWordCount": 8951,
         "annualInventionApplications": 11,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20657,7 +21856,11 @@
         "innovationOccurrenceCount": 417,
         "innovationEffectiveWordCount": 9456,
         "annualInventionApplications": 25,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20698,7 +21901,11 @@
         "innovationOccurrenceCount": 555,
         "innovationEffectiveWordCount": 12323,
         "annualInventionApplications": 21,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20739,7 +21946,11 @@
         "innovationOccurrenceCount": 549,
         "innovationEffectiveWordCount": 12123,
         "annualInventionApplications": 17,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20780,7 +21991,11 @@
         "innovationOccurrenceCount": 562,
         "innovationEffectiveWordCount": 12801,
         "annualInventionApplications": 36,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20799,13 +22014,13 @@
       "companyId": "star-688515",
       "year": 2022,
       "metricKey": "risk_context_ambiguity",
-      "value": 0.0494428969,
+      "value": 0.02593361,
       "status": "已计算",
       "missingReason": null,
       "documentId": "industry-annual:star-688515:2022",
       "details": {
-        "uncertaintyOccurrenceCount": 71,
-        "effectiveWordCount": 1436
+        "uncertaintyOccurrenceCount": 75,
+        "effectiveWordCount": 2892
       }
     },
     {
@@ -20821,7 +22036,11 @@
         "innovationOccurrenceCount": 541,
         "innovationEffectiveWordCount": 10640,
         "annualInventionApplications": 24,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20840,13 +22059,13 @@
       "companyId": "star-688515",
       "year": 2023,
       "metricKey": "risk_context_ambiguity",
-      "value": 0.0379388448,
+      "value": 0.026984127,
       "status": "已计算",
       "missingReason": null,
       "documentId": "industry-annual:star-688515:2023",
       "details": {
-        "uncertaintyOccurrenceCount": 67,
-        "effectiveWordCount": 1766
+        "uncertaintyOccurrenceCount": 68,
+        "effectiveWordCount": 2520
       }
     },
     {
@@ -20862,7 +22081,11 @@
         "innovationOccurrenceCount": 546,
         "innovationEffectiveWordCount": 13693,
         "annualInventionApplications": 46,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20881,13 +22104,13 @@
       "companyId": "star-688515",
       "year": 2024,
       "metricKey": "risk_context_ambiguity",
-      "value": 0.0456245325,
+      "value": 0.0268729642,
       "status": "已计算",
       "missingReason": null,
       "documentId": "industry-annual:star-688515:2024",
       "details": {
-        "uncertaintyOccurrenceCount": 61,
-        "effectiveWordCount": 1337
+        "uncertaintyOccurrenceCount": 66,
+        "effectiveWordCount": 2456
       }
     },
     {
@@ -20903,7 +22126,11 @@
         "innovationOccurrenceCount": 598,
         "innovationEffectiveWordCount": 14662,
         "annualInventionApplications": 18,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20944,7 +22171,11 @@
         "innovationOccurrenceCount": 606,
         "innovationEffectiveWordCount": 14801,
         "annualInventionApplications": 13,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -20985,7 +22216,11 @@
         "innovationOccurrenceCount": 558,
         "innovationEffectiveWordCount": 14522,
         "annualInventionApplications": 25,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -21026,7 +22261,11 @@
         "innovationOccurrenceCount": 540,
         "innovationEffectiveWordCount": 14971,
         "annualInventionApplications": 91,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -21067,7 +22306,11 @@
         "innovationOccurrenceCount": 532,
         "innovationEffectiveWordCount": 14972,
         "annualInventionApplications": 144,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -21108,7 +22351,11 @@
         "innovationOccurrenceCount": 650,
         "innovationEffectiveWordCount": 17234,
         "annualInventionApplications": 127,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -21149,7 +22396,11 @@
         "innovationOccurrenceCount": 689,
         "innovationEffectiveWordCount": 18768,
         "annualInventionApplications": 103,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -21190,7 +22441,11 @@
         "innovationOccurrenceCount": 352,
         "innovationEffectiveWordCount": 6316,
         "annualInventionApplications": 2,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -21231,7 +22486,11 @@
         "innovationOccurrenceCount": 395,
         "innovationEffectiveWordCount": 7210,
         "annualInventionApplications": 2,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -21272,7 +22531,11 @@
         "innovationOccurrenceCount": 423,
         "innovationEffectiveWordCount": 8040,
         "annualInventionApplications": 3,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -21313,7 +22576,11 @@
         "innovationOccurrenceCount": 330,
         "innovationEffectiveWordCount": 7392,
         "annualInventionApplications": 21,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -21354,7 +22621,11 @@
         "innovationOccurrenceCount": 354,
         "innovationEffectiveWordCount": 8723,
         "annualInventionApplications": 18,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -21395,7 +22666,11 @@
         "innovationOccurrenceCount": 380,
         "innovationEffectiveWordCount": 9086,
         "annualInventionApplications": 22,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -21436,7 +22711,11 @@
         "innovationOccurrenceCount": 394,
         "innovationEffectiveWordCount": 9535,
         "annualInventionApplications": 24,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -21477,7 +22756,11 @@
         "innovationOccurrenceCount": 417,
         "innovationEffectiveWordCount": 9639,
         "annualInventionApplications": 26,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -21518,7 +22801,11 @@
         "innovationOccurrenceCount": 596,
         "innovationEffectiveWordCount": 14840,
         "annualInventionApplications": 5,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -21559,7 +22846,11 @@
         "innovationOccurrenceCount": 703,
         "innovationEffectiveWordCount": 16603,
         "annualInventionApplications": 2,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -21600,7 +22891,11 @@
         "innovationOccurrenceCount": 746,
         "innovationEffectiveWordCount": 17981,
         "annualInventionApplications": 7,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -21641,7 +22936,11 @@
         "innovationOccurrenceCount": 563,
         "innovationEffectiveWordCount": 11423,
         "annualInventionApplications": 17,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -21682,7 +22981,11 @@
         "innovationOccurrenceCount": 487,
         "innovationEffectiveWordCount": 10164,
         "annualInventionApplications": 11,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -21723,7 +23026,11 @@
         "innovationOccurrenceCount": 483,
         "innovationEffectiveWordCount": 9758,
         "annualInventionApplications": 20,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -21764,7 +23071,11 @@
         "innovationOccurrenceCount": 469,
         "innovationEffectiveWordCount": 9481,
         "annualInventionApplications": 15,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -21805,7 +23116,11 @@
         "innovationOccurrenceCount": 446,
         "innovationEffectiveWordCount": 9850,
         "annualInventionApplications": 12,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -21846,7 +23161,11 @@
         "innovationOccurrenceCount": 690,
         "innovationEffectiveWordCount": 17973,
         "annualInventionApplications": 16,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -21887,7 +23206,11 @@
         "innovationOccurrenceCount": 510,
         "innovationEffectiveWordCount": 14274,
         "annualInventionApplications": 118,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -21928,7 +23251,11 @@
         "innovationOccurrenceCount": 537,
         "innovationEffectiveWordCount": 13481,
         "annualInventionApplications": 156,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -21969,7 +23296,11 @@
         "innovationOccurrenceCount": 602,
         "innovationEffectiveWordCount": 13882,
         "annualInventionApplications": 205,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22010,7 +23341,11 @@
         "innovationOccurrenceCount": 705,
         "innovationEffectiveWordCount": 14584,
         "annualInventionApplications": 150,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22051,7 +23386,11 @@
         "innovationOccurrenceCount": 810,
         "innovationEffectiveWordCount": 16810,
         "annualInventionApplications": 152,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22092,7 +23431,11 @@
         "innovationOccurrenceCount": 1149,
         "innovationEffectiveWordCount": 19626,
         "annualInventionApplications": 74,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22133,7 +23476,11 @@
         "innovationOccurrenceCount": 1254,
         "innovationEffectiveWordCount": 24902,
         "annualInventionApplications": 129,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22174,7 +23521,11 @@
         "innovationOccurrenceCount": 1318,
         "innovationEffectiveWordCount": 29248,
         "annualInventionApplications": 83,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22215,7 +23566,11 @@
         "innovationOccurrenceCount": 1586,
         "innovationEffectiveWordCount": 39642,
         "annualInventionApplications": 79,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22256,7 +23611,11 @@
         "innovationOccurrenceCount": 1596,
         "innovationEffectiveWordCount": 35190,
         "annualInventionApplications": 69,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22297,7 +23656,11 @@
         "innovationOccurrenceCount": 379,
         "innovationEffectiveWordCount": 8606,
         "annualInventionApplications": 0,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22338,7 +23701,11 @@
         "innovationOccurrenceCount": 444,
         "innovationEffectiveWordCount": 10272,
         "annualInventionApplications": 0,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22379,7 +23746,11 @@
         "innovationOccurrenceCount": 582,
         "innovationEffectiveWordCount": 12441,
         "annualInventionApplications": 2,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22420,7 +23791,11 @@
         "innovationOccurrenceCount": 590,
         "innovationEffectiveWordCount": 13195,
         "annualInventionApplications": 2,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22461,7 +23836,11 @@
         "innovationOccurrenceCount": 482,
         "innovationEffectiveWordCount": 12474,
         "annualInventionApplications": 6,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22502,7 +23881,11 @@
         "innovationOccurrenceCount": 580,
         "innovationEffectiveWordCount": 10943,
         "annualInventionApplications": 2,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22543,7 +23926,11 @@
         "innovationOccurrenceCount": 608,
         "innovationEffectiveWordCount": 11871,
         "annualInventionApplications": 3,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22584,7 +23971,11 @@
         "innovationOccurrenceCount": 660,
         "innovationEffectiveWordCount": 12943,
         "annualInventionApplications": 0,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22625,7 +24016,11 @@
         "innovationOccurrenceCount": 755,
         "innovationEffectiveWordCount": 15037,
         "annualInventionApplications": 6,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22666,7 +24061,11 @@
         "innovationOccurrenceCount": 717,
         "innovationEffectiveWordCount": 15581,
         "annualInventionApplications": 4,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22707,7 +24106,11 @@
         "innovationOccurrenceCount": 588,
         "innovationEffectiveWordCount": 11072,
         "annualInventionApplications": 32,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22748,7 +24151,11 @@
         "innovationOccurrenceCount": 670,
         "innovationEffectiveWordCount": 12504,
         "annualInventionApplications": 59,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22789,7 +24196,11 @@
         "innovationOccurrenceCount": 826,
         "innovationEffectiveWordCount": 18079,
         "annualInventionApplications": 77,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22830,7 +24241,11 @@
         "innovationOccurrenceCount": 767,
         "innovationEffectiveWordCount": 18170,
         "annualInventionApplications": 58,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22871,7 +24286,11 @@
         "innovationOccurrenceCount": 780,
         "innovationEffectiveWordCount": 18635,
         "annualInventionApplications": 113,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22912,7 +24331,11 @@
         "innovationOccurrenceCount": 608,
         "innovationEffectiveWordCount": 12548,
         "annualInventionApplications": 25,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22953,7 +24376,11 @@
         "innovationOccurrenceCount": 531,
         "innovationEffectiveWordCount": 10357,
         "annualInventionApplications": 15,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -22994,7 +24421,11 @@
         "innovationOccurrenceCount": 576,
         "innovationEffectiveWordCount": 10571,
         "annualInventionApplications": 3,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -23035,7 +24466,11 @@
         "innovationOccurrenceCount": 559,
         "innovationEffectiveWordCount": 10207,
         "annualInventionApplications": 0,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -23076,7 +24511,11 @@
         "innovationOccurrenceCount": 602,
         "innovationEffectiveWordCount": 11245,
         "annualInventionApplications": 2,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -23117,7 +24556,11 @@
         "innovationOccurrenceCount": 816,
         "innovationEffectiveWordCount": 12133,
         "annualInventionApplications": 51,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -23158,7 +24601,11 @@
         "innovationOccurrenceCount": 789,
         "innovationEffectiveWordCount": 12048,
         "annualInventionApplications": 81,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -23199,7 +24646,11 @@
         "innovationOccurrenceCount": 636,
         "innovationEffectiveWordCount": 10429,
         "annualInventionApplications": 16,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -23240,7 +24691,11 @@
         "innovationOccurrenceCount": 482,
         "innovationEffectiveWordCount": 8543,
         "annualInventionApplications": 32,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -23274,14 +24729,18 @@
       "metricKey": "innovation_divergence",
       "value": null,
       "status": "缺失",
-      "missingReason": "创新文本密度或当年发明专利申请数缺失",
+      "missingReason": "上市主体、前身、四家境内子公司及公司简称查询均无2025年发明专利申请结果；年报仅披露新增授权数，继续保持缺失。",
       "documentId": "industry-annual:star-688192:2025",
       "details": {
         "innovationTalkDensity": 52.0844496838,
         "innovationOccurrenceCount": 486,
         "innovationEffectiveWordCount": 9331,
         "annualInventionApplications": null,
-        "patentBasis": null
+        "patentBasis": null,
+        "patentProxy": false,
+        "patentProxyConfidence": 0.7,
+        "patentProxyLimitation": "上市主体、前身、四家境内子公司及公司简称查询均无2025年发明专利申请结果；年报仅披露新增授权数，继续保持缺失。",
+        "patentSourceUrl": null
       }
     },
     {
@@ -23322,7 +24781,11 @@
         "innovationOccurrenceCount": 820,
         "innovationEffectiveWordCount": 10763,
         "annualInventionApplications": 30,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -23363,7 +24826,11 @@
         "innovationOccurrenceCount": 947,
         "innovationEffectiveWordCount": 13331,
         "annualInventionApplications": 52,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -23404,7 +24871,11 @@
         "innovationOccurrenceCount": 1135,
         "innovationEffectiveWordCount": 15362,
         "annualInventionApplications": 45,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -23445,7 +24916,11 @@
         "innovationOccurrenceCount": 1098,
         "innovationEffectiveWordCount": 15644,
         "annualInventionApplications": 65,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -23486,7 +24961,11 @@
         "innovationOccurrenceCount": 1049,
         "innovationEffectiveWordCount": 17376,
         "annualInventionApplications": 71,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -23527,7 +25006,11 @@
         "innovationOccurrenceCount": 476,
         "innovationEffectiveWordCount": 11884,
         "annualInventionApplications": 19,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -23568,7 +25051,11 @@
         "innovationOccurrenceCount": 569,
         "innovationEffectiveWordCount": 13571,
         "annualInventionApplications": 10,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -23609,7 +25096,11 @@
         "innovationOccurrenceCount": 456,
         "innovationEffectiveWordCount": 11964,
         "annualInventionApplications": 3,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -23650,7 +25141,11 @@
         "innovationOccurrenceCount": 563,
         "innovationEffectiveWordCount": 13265,
         "annualInventionApplications": 12,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -23691,7 +25186,11 @@
         "innovationOccurrenceCount": 714,
         "innovationEffectiveWordCount": 13992,
         "annualInventionApplications": 15,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -23723,16 +25222,20 @@
       "companyId": "star-688235",
       "year": 2022,
       "metricKey": "innovation_divergence",
-      "value": null,
-      "status": "缺失",
-      "missingReason": "创新文本密度或当年发明专利申请数缺失",
+      "value": 0.5917634527,
+      "status": "已计算",
+      "missingReason": null,
       "documentId": "industry-annual:star-688235:2022",
       "details": {
         "innovationTalkDensity": 33.3362769339,
         "innovationOccurrenceCount": 1510,
         "innovationEffectiveWordCount": 45296,
-        "annualInventionApplications": null,
-        "patentBasis": null
+        "annualInventionApplications": 18,
+        "patentBasis": "天眼数据API 1137境内主要子公司申请日去重代理",
+        "patentProxy": true,
+        "patentProxyConfidence": 0.82,
+        "patentProxyLimitation": "按百济神州五家主要境内子公司逐实体查询并按申请号去重，仅代表天眼数据可检索的境内主体发明申请代理，不含无法匹配的境外主体。",
+        "patentSourceUrl": "https://www.tianyancha.com/data/open/1137"
       }
     },
     {
@@ -23764,16 +25267,20 @@
       "companyId": "star-688235",
       "year": 2023,
       "metricKey": "innovation_divergence",
-      "value": null,
-      "status": "缺失",
-      "missingReason": "创新文本密度或当年发明专利申请数缺失",
+      "value": -0.3517653036,
+      "status": "已计算",
+      "missingReason": null,
       "documentId": "industry-annual:star-688235:2023",
       "details": {
         "innovationTalkDensity": 31.3584791371,
         "innovationOccurrenceCount": 1346,
         "innovationEffectiveWordCount": 42923,
-        "annualInventionApplications": null,
-        "patentBasis": null
+        "annualInventionApplications": 45,
+        "patentBasis": "天眼数据API 1137境内主要子公司申请日去重代理",
+        "patentProxy": true,
+        "patentProxyConfidence": 0.82,
+        "patentProxyLimitation": "按百济神州五家主要境内子公司逐实体查询并按申请号去重，仅代表天眼数据可检索的境内主体发明申请代理，不含无法匹配的境外主体。",
+        "patentSourceUrl": "https://www.tianyancha.com/data/open/1137"
       }
     },
     {
@@ -23805,16 +25312,20 @@
       "companyId": "star-688235",
       "year": 2024,
       "metricKey": "innovation_divergence",
-      "value": null,
-      "status": "缺失",
-      "missingReason": "创新文本密度或当年发明专利申请数缺失",
+      "value": -0.5572029264,
+      "status": "已计算",
+      "missingReason": null,
       "documentId": "industry-annual:star-688235:2024",
       "details": {
         "innovationTalkDensity": 28.7860687374,
         "innovationOccurrenceCount": 1253,
         "innovationEffectiveWordCount": 43528,
-        "annualInventionApplications": null,
-        "patentBasis": null
+        "annualInventionApplications": 51,
+        "patentBasis": "天眼数据API 1137境内主要子公司申请日去重代理",
+        "patentProxy": true,
+        "patentProxyConfidence": 0.82,
+        "patentProxyLimitation": "按百济神州五家主要境内子公司逐实体查询并按申请号去重，仅代表天眼数据可检索的境内主体发明申请代理，不含无法匹配的境外主体。",
+        "patentSourceUrl": "https://www.tianyancha.com/data/open/1137"
       }
     },
     {
@@ -23846,16 +25357,20 @@
       "companyId": "star-688235",
       "year": 2025,
       "metricKey": "innovation_divergence",
-      "value": null,
-      "status": "缺失",
-      "missingReason": "创新文本密度或当年发明专利申请数缺失",
+      "value": 1.748535901,
+      "status": "已计算",
+      "missingReason": null,
       "documentId": "industry-annual:star-688235:2025",
       "details": {
         "innovationTalkDensity": 27.7309176623,
         "innovationOccurrenceCount": 1200,
         "innovationEffectiveWordCount": 43273,
-        "annualInventionApplications": null,
-        "patentBasis": null
+        "annualInventionApplications": 4,
+        "patentBasis": "天眼数据API 1137境内主要子公司申请日去重代理",
+        "patentProxy": true,
+        "patentProxyConfidence": 0.82,
+        "patentProxyLimitation": "按百济神州五家主要境内子公司逐实体查询并按申请号去重，仅代表天眼数据可检索的境内主体发明申请代理，不含无法匹配的境外主体。",
+        "patentSourceUrl": "https://www.tianyancha.com/data/open/1137"
       }
     },
     {
@@ -23896,7 +25411,11 @@
         "innovationOccurrenceCount": 654,
         "innovationEffectiveWordCount": 12572,
         "annualInventionApplications": 8,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -23937,7 +25456,11 @@
         "innovationOccurrenceCount": 634,
         "innovationEffectiveWordCount": 12462,
         "annualInventionApplications": 6,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -23978,7 +25501,11 @@
         "innovationOccurrenceCount": 629,
         "innovationEffectiveWordCount": 13102,
         "annualInventionApplications": 10,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -24019,7 +25546,11 @@
         "innovationOccurrenceCount": 652,
         "innovationEffectiveWordCount": 14435,
         "annualInventionApplications": 6,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -24060,7 +25591,11 @@
         "innovationOccurrenceCount": 1029,
         "innovationEffectiveWordCount": 16787,
         "annualInventionApplications": 25,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -24101,7 +25636,11 @@
         "innovationOccurrenceCount": 1014,
         "innovationEffectiveWordCount": 17297,
         "annualInventionApplications": 43,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -24142,7 +25681,11 @@
         "innovationOccurrenceCount": 973,
         "innovationEffectiveWordCount": 17472,
         "annualInventionApplications": 28,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -24183,7 +25726,11 @@
         "innovationOccurrenceCount": 945,
         "innovationEffectiveWordCount": 17473,
         "annualInventionApplications": 34,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -24224,7 +25771,11 @@
         "innovationOccurrenceCount": 921,
         "innovationEffectiveWordCount": 20166,
         "annualInventionApplications": 36,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -24265,7 +25816,11 @@
         "innovationOccurrenceCount": 773,
         "innovationEffectiveWordCount": 12521,
         "annualInventionApplications": 24,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -24306,7 +25861,11 @@
         "innovationOccurrenceCount": 750,
         "innovationEffectiveWordCount": 12192,
         "annualInventionApplications": 29,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -24347,7 +25906,11 @@
         "innovationOccurrenceCount": 877,
         "innovationEffectiveWordCount": 14147,
         "annualInventionApplications": 96,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -24388,7 +25951,11 @@
         "innovationOccurrenceCount": 909,
         "innovationEffectiveWordCount": 17033,
         "annualInventionApplications": 19,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -24401,6 +25968,51 @@
       "documentId": "industry-annual:star-688302:2025",
       "details": {
         "effectiveWordCount": 17033
+      }
+    },
+    {
+      "companyId": "star-688321",
+      "year": 2021,
+      "metricKey": "risk_context_ambiguity",
+      "value": 0.037368253,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "industry-annual:star-688321:2021",
+      "details": {
+        "uncertaintyOccurrenceCount": 117,
+        "effectiveWordCount": 3131
+      }
+    },
+    {
+      "companyId": "star-688321",
+      "year": 2021,
+      "metricKey": "innovation_divergence",
+      "value": -0.5624251835,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "industry-annual:star-688321:2021",
+      "details": {
+        "innovationTalkDensity": 71.3678328474,
+        "innovationOccurrenceCount": 1175,
+        "innovationEffectiveWordCount": 16464,
+        "annualInventionApplications": 126,
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
+      }
+    },
+    {
+      "companyId": "star-688321",
+      "year": 2021,
+      "metricKey": "information_sufficiency",
+      "value": 1.6464,
+      "status": "已计算",
+      "missingReason": null,
+      "documentId": "industry-annual:star-688321:2021",
+      "details": {
+        "effectiveWordCount": 16464
       }
     },
     {
@@ -24429,7 +26041,11 @@
         "innovationOccurrenceCount": 692,
         "innovationEffectiveWordCount": 12993,
         "annualInventionApplications": 124,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -24470,7 +26086,11 @@
         "innovationOccurrenceCount": 760,
         "innovationEffectiveWordCount": 16361,
         "annualInventionApplications": 81,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -24511,7 +26131,11 @@
         "innovationOccurrenceCount": 710,
         "innovationEffectiveWordCount": 15397,
         "annualInventionApplications": 83,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -24552,7 +26176,11 @@
         "innovationOccurrenceCount": 434,
         "innovationEffectiveWordCount": 10624,
         "annualInventionApplications": 5,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -24593,7 +26221,11 @@
         "innovationOccurrenceCount": 725,
         "innovationEffectiveWordCount": 19969,
         "annualInventionApplications": 4,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -24634,7 +26266,11 @@
         "innovationOccurrenceCount": 586,
         "innovationEffectiveWordCount": 17699,
         "annualInventionApplications": 33,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -24675,7 +26311,11 @@
         "innovationOccurrenceCount": 635,
         "innovationEffectiveWordCount": 17075,
         "annualInventionApplications": 11,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -24716,7 +26356,11 @@
         "innovationOccurrenceCount": 935,
         "innovationEffectiveWordCount": 13978,
         "annualInventionApplications": 39,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -24757,7 +26401,11 @@
         "innovationOccurrenceCount": 941,
         "innovationEffectiveWordCount": 14711,
         "annualInventionApplications": 43,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -24798,7 +26446,11 @@
         "innovationOccurrenceCount": 862,
         "innovationEffectiveWordCount": 14364,
         "annualInventionApplications": 55,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -24839,7 +26491,11 @@
         "innovationOccurrenceCount": 925,
         "innovationEffectiveWordCount": 15801,
         "annualInventionApplications": 85,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -24880,7 +26536,11 @@
         "innovationOccurrenceCount": 1086,
         "innovationEffectiveWordCount": 27035,
         "annualInventionApplications": 48,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -24921,7 +26581,11 @@
         "innovationOccurrenceCount": 1086,
         "innovationEffectiveWordCount": 27154,
         "annualInventionApplications": 59,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -24962,7 +26626,11 @@
         "innovationOccurrenceCount": 1193,
         "innovationEffectiveWordCount": 28942,
         "annualInventionApplications": 54,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25003,7 +26671,11 @@
         "innovationOccurrenceCount": 1282,
         "innovationEffectiveWordCount": 32718,
         "annualInventionApplications": 41,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25044,7 +26716,11 @@
         "innovationOccurrenceCount": 650,
         "innovationEffectiveWordCount": 14262,
         "annualInventionApplications": 25,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25085,7 +26761,11 @@
         "innovationOccurrenceCount": 614,
         "innovationEffectiveWordCount": 13603,
         "annualInventionApplications": 10,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25126,7 +26806,11 @@
         "innovationOccurrenceCount": 640,
         "innovationEffectiveWordCount": 14298,
         "annualInventionApplications": 16,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25167,7 +26851,11 @@
         "innovationOccurrenceCount": 693,
         "innovationEffectiveWordCount": 14280,
         "annualInventionApplications": 16,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25208,7 +26896,11 @@
         "innovationOccurrenceCount": 653,
         "innovationEffectiveWordCount": 13552,
         "annualInventionApplications": 15,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25249,7 +26941,11 @@
         "innovationOccurrenceCount": 988,
         "innovationEffectiveWordCount": 16676,
         "annualInventionApplications": 121,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25290,7 +26986,11 @@
         "innovationOccurrenceCount": 968,
         "innovationEffectiveWordCount": 17195,
         "annualInventionApplications": 109,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25331,7 +27031,11 @@
         "innovationOccurrenceCount": 682,
         "innovationEffectiveWordCount": 12902,
         "annualInventionApplications": 159,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25372,7 +27076,11 @@
         "innovationOccurrenceCount": 759,
         "innovationEffectiveWordCount": 14538,
         "annualInventionApplications": 173,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25413,7 +27121,11 @@
         "innovationOccurrenceCount": 838,
         "innovationEffectiveWordCount": 14580,
         "annualInventionApplications": 54,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25454,7 +27166,11 @@
         "innovationOccurrenceCount": 906,
         "innovationEffectiveWordCount": 15505,
         "annualInventionApplications": 66,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25495,7 +27211,11 @@
         "innovationOccurrenceCount": 1047,
         "innovationEffectiveWordCount": 18648,
         "annualInventionApplications": 63,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25536,7 +27256,11 @@
         "innovationOccurrenceCount": 1131,
         "innovationEffectiveWordCount": 19216,
         "annualInventionApplications": 37,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25577,7 +27301,11 @@
         "innovationOccurrenceCount": 1084,
         "innovationEffectiveWordCount": 17527,
         "annualInventionApplications": 54,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25618,7 +27346,11 @@
         "innovationOccurrenceCount": 1071,
         "innovationEffectiveWordCount": 18380,
         "annualInventionApplications": 20,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25659,7 +27391,11 @@
         "innovationOccurrenceCount": 880,
         "innovationEffectiveWordCount": 18609,
         "annualInventionApplications": 52,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25700,7 +27436,11 @@
         "innovationOccurrenceCount": 835,
         "innovationEffectiveWordCount": 16970,
         "annualInventionApplications": 39,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25741,7 +27481,11 @@
         "innovationOccurrenceCount": 927,
         "innovationEffectiveWordCount": 21065,
         "annualInventionApplications": 28,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25782,7 +27526,11 @@
         "innovationOccurrenceCount": 846,
         "innovationEffectiveWordCount": 21588,
         "annualInventionApplications": 25,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25823,7 +27571,11 @@
         "innovationOccurrenceCount": 719,
         "innovationEffectiveWordCount": 13907,
         "annualInventionApplications": 5,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25864,7 +27616,11 @@
         "innovationOccurrenceCount": 713,
         "innovationEffectiveWordCount": 12926,
         "annualInventionApplications": 8,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25905,7 +27661,11 @@
         "innovationOccurrenceCount": 726,
         "innovationEffectiveWordCount": 12518,
         "annualInventionApplications": 6,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25946,7 +27706,11 @@
         "innovationOccurrenceCount": 726,
         "innovationEffectiveWordCount": 12057,
         "annualInventionApplications": 5,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -25987,7 +27751,11 @@
         "innovationOccurrenceCount": 749,
         "innovationEffectiveWordCount": 12393,
         "annualInventionApplications": 5,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -26028,7 +27796,11 @@
         "innovationOccurrenceCount": 501,
         "innovationEffectiveWordCount": 10823,
         "annualInventionApplications": 10,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -26069,7 +27841,11 @@
         "innovationOccurrenceCount": 478,
         "innovationEffectiveWordCount": 10881,
         "annualInventionApplications": 30,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -26110,7 +27886,11 @@
         "innovationOccurrenceCount": 541,
         "innovationEffectiveWordCount": 12693,
         "annualInventionApplications": 24,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -26151,7 +27931,11 @@
         "innovationOccurrenceCount": 526,
         "innovationEffectiveWordCount": 12885,
         "annualInventionApplications": 54,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -26192,7 +27976,11 @@
         "innovationOccurrenceCount": 511,
         "innovationEffectiveWordCount": 12938,
         "annualInventionApplications": 31,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -26233,7 +28021,11 @@
         "innovationOccurrenceCount": 849,
         "innovationEffectiveWordCount": 16598,
         "annualInventionApplications": 29,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -26274,7 +28066,11 @@
         "innovationOccurrenceCount": 876,
         "innovationEffectiveWordCount": 12861,
         "annualInventionApplications": 48,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -26315,7 +28111,11 @@
         "innovationOccurrenceCount": 833,
         "innovationEffectiveWordCount": 12814,
         "annualInventionApplications": 42,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -26356,7 +28156,11 @@
         "innovationOccurrenceCount": 1154,
         "innovationEffectiveWordCount": 17164,
         "annualInventionApplications": 70,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -26397,7 +28201,11 @@
         "innovationOccurrenceCount": 1373,
         "innovationEffectiveWordCount": 21757,
         "annualInventionApplications": 151,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -26438,7 +28246,11 @@
         "innovationOccurrenceCount": 804,
         "innovationEffectiveWordCount": 12620,
         "annualInventionApplications": 18,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -26479,7 +28291,11 @@
         "innovationOccurrenceCount": 558,
         "innovationEffectiveWordCount": 14640,
         "annualInventionApplications": 4,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -26520,7 +28336,11 @@
         "innovationOccurrenceCount": 657,
         "innovationEffectiveWordCount": 15907,
         "annualInventionApplications": 12,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -26561,7 +28381,11 @@
         "innovationOccurrenceCount": 726,
         "innovationEffectiveWordCount": 18114,
         "annualInventionApplications": 2,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -26602,7 +28426,11 @@
         "innovationOccurrenceCount": 734,
         "innovationEffectiveWordCount": 18284,
         "annualInventionApplications": 18,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -26643,7 +28471,11 @@
         "innovationOccurrenceCount": 702,
         "innovationEffectiveWordCount": 19554,
         "annualInventionApplications": 0,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -26684,7 +28516,11 @@
         "innovationOccurrenceCount": 510,
         "innovationEffectiveWordCount": 11719,
         "annualInventionApplications": 183,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -26725,7 +28561,11 @@
         "innovationOccurrenceCount": 574,
         "innovationEffectiveWordCount": 12983,
         "annualInventionApplications": 197,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -26766,7 +28606,11 @@
         "innovationOccurrenceCount": 590,
         "innovationEffectiveWordCount": 12978,
         "annualInventionApplications": 224,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -26785,13 +28629,13 @@
       "companyId": "star-688012",
       "year": 2024,
       "metricKey": "risk_context_ambiguity",
-      "value": null,
-      "status": "缺失",
-      "missingReason": "未识别到业绩展望或风险提示章节",
+      "value": 0.0241394725,
+      "status": "已计算",
+      "missingReason": null,
       "documentId": "industry-annual:star-688012:2024",
       "details": {
-        "uncertaintyOccurrenceCount": null,
-        "effectiveWordCount": 0
+        "uncertaintyOccurrenceCount": 54,
+        "effectiveWordCount": 2237
       }
     },
     {
@@ -26807,19 +28651,23 @@
         "innovationOccurrenceCount": 497,
         "innovationEffectiveWordCount": 8027,
         "annualInventionApplications": 263,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
       "companyId": "star-688012",
       "year": 2024,
       "metricKey": "information_sufficiency",
-      "value": 0.8027,
+      "value": 0.8948,
       "status": "已计算",
       "missingReason": null,
       "documentId": "industry-annual:star-688012:2024",
       "details": {
-        "effectiveWordCount": 8027
+        "effectiveWordCount": 8948
       }
     },
     {
@@ -26848,7 +28696,11 @@
         "innovationOccurrenceCount": 699,
         "innovationEffectiveWordCount": 14580,
         "annualInventionApplications": 294,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -26889,7 +28741,11 @@
         "innovationOccurrenceCount": 512,
         "innovationEffectiveWordCount": 9833,
         "annualInventionApplications": 34,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -26930,7 +28786,11 @@
         "innovationOccurrenceCount": 516,
         "innovationEffectiveWordCount": 9550,
         "annualInventionApplications": 62,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -26971,7 +28831,11 @@
         "innovationOccurrenceCount": 680,
         "innovationEffectiveWordCount": 11950,
         "annualInventionApplications": 67,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -27012,7 +28876,11 @@
         "innovationOccurrenceCount": 565,
         "innovationEffectiveWordCount": 10783,
         "annualInventionApplications": 74,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -27053,7 +28921,11 @@
         "innovationOccurrenceCount": 469,
         "innovationEffectiveWordCount": 10343,
         "annualInventionApplications": 105,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -27094,7 +28966,11 @@
         "innovationOccurrenceCount": 435,
         "innovationEffectiveWordCount": 11199,
         "annualInventionApplications": 175,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -27135,7 +29011,11 @@
         "innovationOccurrenceCount": 567,
         "innovationEffectiveWordCount": 12188,
         "annualInventionApplications": 183,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -27176,7 +29056,11 @@
         "innovationOccurrenceCount": 636,
         "innovationEffectiveWordCount": 13636,
         "annualInventionApplications": 283,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -27217,7 +29101,11 @@
         "innovationOccurrenceCount": 723,
         "innovationEffectiveWordCount": 15129,
         "annualInventionApplications": 360,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -27249,16 +29137,20 @@
       "companyId": "star-688347",
       "year": 2023,
       "metricKey": "innovation_divergence",
-      "value": null,
-      "status": "缺失",
-      "missingReason": "创新文本密度或当年发明专利申请数缺失",
+      "value": -3.1044693193,
+      "status": "已计算",
+      "missingReason": null,
       "documentId": "industry-annual:star-688347:2023",
       "details": {
         "innovationTalkDensity": 28.5998861696,
         "innovationOccurrenceCount": 201,
         "innovationEffectiveWordCount": 7028,
-        "annualInventionApplications": null,
-        "patentBasis": null
+        "annualInventionApplications": 659,
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -27290,16 +29182,20 @@
       "companyId": "star-688347",
       "year": 2024,
       "metricKey": "innovation_divergence",
-      "value": null,
-      "status": "缺失",
-      "missingReason": "创新文本密度或当年发明专利申请数缺失",
+      "value": -3.1522395414,
+      "status": "已计算",
+      "missingReason": null,
       "documentId": "industry-annual:star-688347:2024",
       "details": {
         "innovationTalkDensity": 27.4756725816,
         "innovationOccurrenceCount": 192,
         "innovationEffectiveWordCount": 6988,
-        "annualInventionApplications": null,
-        "patentBasis": null
+        "annualInventionApplications": 665,
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -27340,7 +29236,11 @@
         "innovationOccurrenceCount": 174,
         "innovationEffectiveWordCount": 6666,
         "annualInventionApplications": 711,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -27381,7 +29281,11 @@
         "innovationOccurrenceCount": 313,
         "innovationEffectiveWordCount": 9511,
         "annualInventionApplications": 662,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -27422,7 +29326,11 @@
         "innovationOccurrenceCount": 275,
         "innovationEffectiveWordCount": 8078,
         "annualInventionApplications": 792,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -27463,7 +29371,11 @@
         "innovationOccurrenceCount": 261,
         "innovationEffectiveWordCount": 7806,
         "annualInventionApplications": 601,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -27504,7 +29416,11 @@
         "innovationOccurrenceCount": 298,
         "innovationEffectiveWordCount": 8213,
         "annualInventionApplications": 614,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -27545,7 +29461,11 @@
         "innovationOccurrenceCount": 284,
         "innovationEffectiveWordCount": 7934,
         "annualInventionApplications": 290,
-        "patentBasis": "年报知识产权表本年新增申请数"
+        "patentBasis": "年报知识产权表本年新增申请数",
+        "patentProxy": false,
+        "patentProxyConfidence": null,
+        "patentProxyLimitation": null,
+        "patentSourceUrl": null
       }
     },
     {
@@ -27566,49 +29486,49 @@
       "industryGroupId": "chip-design",
       "year": 2021,
       "metricKey": "risk_context_ambiguity",
-      "sampleSize": 25,
-      "mean": 0.0273743291,
+      "sampleSize": 27,
+      "mean": 0.0273399666,
       "minimum": 0.0094425277,
       "maximum": 0.042832667,
-      "standardDeviation": 0.0075209713,
+      "standardDeviation": 0.0073763828,
       "domainMinimum": 0.0094425277,
-      "domainMaximum": 0.0494428969
+      "domainMaximum": 0.0473568282
     },
     {
       "industryGroupId": "chip-design",
       "year": 2022,
       "metricKey": "risk_context_ambiguity",
-      "sampleSize": 46,
-      "mean": 0.0285632766,
+      "sampleSize": 47,
+      "mean": 0.0278905528,
       "minimum": 0.0107361963,
-      "maximum": 0.0494428969,
-      "standardDeviation": 0.0074024428,
+      "maximum": 0.0410126582,
+      "standardDeviation": 0.0067415215,
       "domainMinimum": 0.0094425277,
-      "domainMaximum": 0.0494428969
+      "domainMaximum": 0.0473568282
     },
     {
       "industryGroupId": "chip-design",
       "year": 2023,
       "metricKey": "risk_context_ambiguity",
-      "sampleSize": 54,
-      "mean": 0.0283568994,
+      "sampleSize": 56,
+      "mean": 0.028211661,
       "minimum": 0.0098022356,
       "maximum": 0.0440835267,
-      "standardDeviation": 0.007468859,
+      "standardDeviation": 0.007282777,
       "domainMinimum": 0.0094425277,
-      "domainMaximum": 0.0494428969
+      "domainMaximum": 0.0473568282
     },
     {
       "industryGroupId": "chip-design",
       "year": 2024,
       "metricKey": "risk_context_ambiguity",
-      "sampleSize": 57,
-      "mean": 0.0288474414,
+      "sampleSize": 58,
+      "mean": 0.0284576516,
       "minimum": 0.0128737542,
-      "maximum": 0.0456245325,
-      "standardDeviation": 0.0077299745,
+      "maximum": 0.0422234099,
+      "standardDeviation": 0.0073512594,
       "domainMinimum": 0.0094425277,
-      "domainMaximum": 0.0494428969
+      "domainMaximum": 0.0473568282
     },
     {
       "industryGroupId": "chip-design",
@@ -27620,17 +29540,17 @@
       "maximum": 0.0473568282,
       "standardDeviation": 0.0075904636,
       "domainMinimum": 0.0094425277,
-      "domainMaximum": 0.0494428969
+      "domainMaximum": 0.0473568282
     },
     {
       "industryGroupId": "chip-design",
       "year": 2021,
       "metricKey": "innovation_divergence",
-      "sampleSize": 25,
-      "mean": 0.4371463458,
+      "sampleSize": 27,
+      "mean": 0.5296218521,
       "minimum": -2.0669711503,
       "maximum": 3.0960232138,
-      "standardDeviation": 1.1862143223,
+      "standardDeviation": 1.2171796147,
       "domainMinimum": -3.0371339345,
       "domainMaximum": 3.8924368685
     },
@@ -27638,11 +29558,11 @@
       "industryGroupId": "chip-design",
       "year": 2022,
       "metricKey": "innovation_divergence",
-      "sampleSize": 46,
-      "mean": 0.5082437273,
+      "sampleSize": 47,
+      "mean": 0.4943933455,
       "minimum": -1.5417420213,
       "maximum": 3.7582108128,
-      "standardDeviation": 1.2114667745,
+      "standardDeviation": 1.2021852746,
       "domainMinimum": -3.0371339345,
       "domainMaximum": 3.8924368685
     },
@@ -27650,11 +29570,11 @@
       "industryGroupId": "chip-design",
       "year": 2023,
       "metricKey": "innovation_divergence",
-      "sampleSize": 54,
-      "mean": 0.5437919915,
+      "sampleSize": 56,
+      "mean": 0.5274766374,
       "minimum": -1.7743576263,
       "maximum": 3.8924368685,
-      "standardDeviation": 1.3081328116,
+      "standardDeviation": 1.2880172381,
       "domainMinimum": -3.0371339345,
       "domainMaximum": 3.8924368685
     },
@@ -27662,11 +29582,11 @@
       "industryGroupId": "chip-design",
       "year": 2024,
       "metricKey": "innovation_divergence",
-      "sampleSize": 57,
-      "mean": 0.4337663336,
+      "sampleSize": 58,
+      "mean": 0.4359120817,
       "minimum": -1.9696023001,
       "maximum": 2.9228931003,
-      "standardDeviation": 1.1935267596,
+      "standardDeviation": 1.1822463591,
       "domainMinimum": -3.0371339345,
       "domainMaximum": 3.8924368685
     },
@@ -27675,10 +29595,10 @@
       "year": 2025,
       "metricKey": "innovation_divergence",
       "sampleSize": 63,
-      "mean": 0.2300174675,
+      "mean": 0.2360614754,
       "minimum": -3.0371339345,
       "maximum": 3.0027189126,
-      "standardDeviation": 1.2959994942,
+      "standardDeviation": 1.2944307552,
       "domainMinimum": -3.0371339345,
       "domainMaximum": 3.8924368685
     },
@@ -27686,11 +29606,11 @@
       "industryGroupId": "chip-design",
       "year": 2021,
       "metricKey": "information_sufficiency",
-      "sampleSize": 25,
-      "mean": 1.15238,
+      "sampleSize": 27,
+      "mean": 1.1886,
       "minimum": 0.7392,
       "maximum": 2.0061,
-      "standardDeviation": 0.3087604172,
+      "standardDeviation": 0.3236232045,
       "domainMinimum": 0.6316,
       "domainMaximum": 2.6622
     },
@@ -27698,11 +29618,11 @@
       "industryGroupId": "chip-design",
       "year": 2022,
       "metricKey": "information_sufficiency",
-      "sampleSize": 46,
-      "mean": 1.1570804348,
+      "sampleSize": 47,
+      "mean": 1.1595234043,
       "minimum": 0.8051,
       "maximum": 2.3435,
-      "standardDeviation": 0.33498908,
+      "standardDeviation": 0.3318201411,
       "domainMinimum": 0.6316,
       "domainMaximum": 2.6622
     },
@@ -27710,11 +29630,11 @@
       "industryGroupId": "chip-design",
       "year": 2023,
       "metricKey": "information_sufficiency",
-      "sampleSize": 54,
-      "mean": 1.2031981481,
+      "sampleSize": 56,
+      "mean": 1.2017660714,
       "minimum": 0.6316,
       "maximum": 2.3453,
-      "standardDeviation": 0.3516190202,
+      "standardDeviation": 0.3464071476,
       "domainMinimum": 0.6316,
       "domainMaximum": 2.6622
     },
@@ -27722,11 +29642,11 @@
       "industryGroupId": "chip-design",
       "year": 2024,
       "metricKey": "information_sufficiency",
-      "sampleSize": 57,
-      "mean": 1.2691701754,
+      "sampleSize": 58,
+      "mean": 1.2693568966,
       "minimum": 0.721,
       "maximum": 2.481,
-      "standardDeviation": 0.4102760209,
+      "standardDeviation": 0.4067262237,
       "domainMinimum": 0.6316,
       "domainMaximum": 2.6622
     },
@@ -27746,11 +29666,11 @@
       "industryGroupId": "pharma",
       "year": 2021,
       "metricKey": "risk_context_ambiguity",
-      "sampleSize": 16,
-      "mean": 0.030386682,
+      "sampleSize": 17,
+      "mean": 0.0307973626,
       "minimum": 0.01937046,
       "maximum": 0.0444983819,
-      "standardDeviation": 0.0069964973,
+      "standardDeviation": 0.0069835552,
       "domainMinimum": 0.0188618926,
       "domainMaximum": 0.0735932509
     },
@@ -27806,11 +29726,11 @@
       "industryGroupId": "pharma",
       "year": 2021,
       "metricKey": "innovation_divergence",
-      "sampleSize": 16,
-      "mean": 1.1440575508,
-      "minimum": -0.2307593526,
+      "sampleSize": 17,
+      "mean": 1.0436762135,
+      "minimum": -0.5624251835,
       "maximum": 3.8075297254,
-      "standardDeviation": 1.0492151302,
+      "standardDeviation": 1.0942207148,
       "domainMinimum": -1.1848464141,
       "domainMaximum": 4.0211704047
     },
@@ -27818,11 +29738,11 @@
       "industryGroupId": "pharma",
       "year": 2022,
       "metricKey": "innovation_divergence",
-      "sampleSize": 22,
-      "mean": 0.7960660345,
+      "sampleSize": 23,
+      "mean": 0.7871833136,
       "minimum": -0.9287253957,
       "maximum": 3.7892743906,
-      "standardDeviation": 1.1083603481,
+      "standardDeviation": 1.0847981846,
       "domainMinimum": -1.1848464141,
       "domainMaximum": 4.0211704047
     },
@@ -27830,11 +29750,11 @@
       "industryGroupId": "pharma",
       "year": 2023,
       "metricKey": "innovation_divergence",
-      "sampleSize": 23,
-      "mean": 1.0031790295,
+      "sampleSize": 24,
+      "mean": 0.9467230157,
       "minimum": -0.8345366145,
       "maximum": 3.9511055292,
-      "standardDeviation": 1.288170206,
+      "standardDeviation": 1.2897864232,
       "domainMinimum": -1.1848464141,
       "domainMaximum": 4.0211704047
     },
@@ -27842,11 +29762,11 @@
       "industryGroupId": "pharma",
       "year": 2024,
       "metricKey": "innovation_divergence",
-      "sampleSize": 23,
-      "mean": 0.6104692217,
+      "sampleSize": 24,
+      "mean": 0.5618162155,
       "minimum": -1.0887853249,
       "maximum": 4.0211704047,
-      "standardDeviation": 1.1993976748,
+      "standardDeviation": 1.1971042749,
       "domainMinimum": -1.1848464141,
       "domainMaximum": 4.0211704047
     },
@@ -27854,11 +29774,11 @@
       "industryGroupId": "pharma",
       "year": 2025,
       "metricKey": "innovation_divergence",
-      "sampleSize": 23,
-      "mean": 0.7317105912,
+      "sampleSize": 24,
+      "mean": 0.7740783125,
       "minimum": -1.1848464141,
       "maximum": 3.6082273504,
-      "standardDeviation": 1.2631742575,
+      "standardDeviation": 1.2531604189,
       "domainMinimum": -1.1848464141,
       "domainMaximum": 4.0211704047
     },
@@ -27866,11 +29786,11 @@
       "industryGroupId": "pharma",
       "year": 2021,
       "metricKey": "information_sufficiency",
-      "sampleSize": 16,
-      "mean": 1.3597,
+      "sampleSize": 17,
+      "mean": 1.3765647059,
       "minimum": 0.8606,
       "maximum": 1.9626,
-      "standardDeviation": 0.2971054253,
+      "standardDeviation": 0.2960234409,
       "domainMinimum": 0.8543,
       "domainMaximum": 4.5296
     },
@@ -27962,11 +29882,11 @@
       "industryGroupId": "semiconductor-supply-chain",
       "year": 2024,
       "metricKey": "risk_context_ambiguity",
-      "sampleSize": 4,
-      "mean": 0.0359108808,
+      "sampleSize": 5,
+      "mean": 0.0335565992,
       "minimum": 0.0235960359,
       "maximum": 0.0495495495,
-      "standardDeviation": 0.0120519589,
+      "standardDeviation": 0.0117630923,
       "domainMinimum": 0.0151745068,
       "domainMaximum": 0.0522765599
     },
@@ -28010,11 +29930,11 @@
       "industryGroupId": "semiconductor-supply-chain",
       "year": 2023,
       "metricKey": "innovation_divergence",
-      "sampleSize": 4,
-      "mean": -1.488280318,
-      "minimum": -2.8611601842,
+      "sampleSize": 5,
+      "mean": -1.8115181182,
+      "minimum": -3.1044693193,
       "maximum": -0.1607252849,
-      "standardDeviation": 0.9582865988,
+      "standardDeviation": 1.0735833765,
       "domainMinimum": -3.2684478686,
       "domainMaximum": 0.416255476
     },
@@ -28022,11 +29942,11 @@
       "industryGroupId": "semiconductor-supply-chain",
       "year": 2024,
       "metricKey": "innovation_divergence",
-      "sampleSize": 4,
-      "mean": -1.5905527824,
-      "minimum": -2.8030595943,
+      "sampleSize": 5,
+      "mean": -1.9028901342,
+      "minimum": -3.1522395414,
       "maximum": -0.3397280798,
-      "standardDeviation": 0.8799310388,
+      "standardDeviation": 1.004809132,
       "domainMinimum": -3.2684478686,
       "domainMaximum": 0.416255476
     },
@@ -28083,10 +30003,10 @@
       "year": 2024,
       "metricKey": "information_sufficiency",
       "sampleSize": 5,
-      "mean": 0.95294,
+      "mean": 0.97136,
       "minimum": 0.6988,
       "maximum": 1.3636,
-      "standardDeviation": 0.2403518471,
+      "standardDeviation": 0.2314980657,
       "domainMinimum": 0.6666,
       "domainMaximum": 1.5129
     },
@@ -28104,16 +30024,19 @@
     }
   ],
   "audit": {
-    "generatedAt": "2026-08-27T09:05:34.786232+00:00",
+    "generatedAt": "2026-08-27T11:35:40.257183+00:00",
     "targetCompanyCount": 94,
     "targetCompanyYearCount": 470,
-    "archivedReportCount": 379,
-    "parsedReportCount": 379,
+    "archivedReportCount": 386,
+    "parsedReportCount": 386,
     "partialReportCount": 0,
     "failedReportCount": 0,
-    "calculatedObservationCount": 1129,
-    "missingObservationCount": 8,
-    "patentObservationCount": 372,
+    "calculatedObservationCount": 1157,
+    "missingObservationCount": 1,
+    "patentObservationCount": 385,
+    "paidPatentProxyObservationCount": 4,
+    "paidApiCallCount": 42,
+    "paidApiCostYuan": 4.2,
     "publicPayloadContainsFullText": false,
     "publicPayloadContainsPrivatePath": false
   }

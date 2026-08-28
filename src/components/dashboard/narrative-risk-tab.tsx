@@ -6,7 +6,7 @@ import type { NarrativeIndustryTrendResponse } from "@/domain/narrative-risk-v1"
 import { getNarrativeIndustryTrends } from "@/lib/narrative-risk-api"
 import "@/styles/narrative-risk-workspace.css"
 
-export function NarrativeRiskTab() {
+export function NarrativeRiskTab({ companyId }: { companyId: string }) {
   const [trends, setTrends] =
     useState<NarrativeIndustryTrendResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -52,7 +52,7 @@ export function NarrativeRiskTab() {
         </div>
         <div className="nr-hero__meta" aria-label="数据状态">
           <span>数据截至 {trends.asOfDate}</span>
-          <span>方法版本 {trends.dataVersion}</span>
+          <span>年度财报原始指数 · 不合成总分</span>
         </div>
       </header>
 
@@ -62,7 +62,7 @@ export function NarrativeRiskTab() {
         </div>
       ) : null}
 
-      <NarrativeIndustryTrends data={trends} />
+      <NarrativeIndustryTrends data={trends} companyId={companyId} />
     </section>
   )
 }

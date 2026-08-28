@@ -125,11 +125,15 @@ test("industry narrative snapshot exposes raw annual ranges for all 94 companies
   assert.equal(trends.companies.length, 94)
   assert.equal(trends.documents.length, 470)
   assert.equal(trends.methodology.length, 3)
-  assert.equal(trends.observations.length, 1137)
+  assert.equal(trends.observations.length, 1158)
   assert.equal(trends.industryStatistics.length, 45)
-  assert.equal(trends.audit.archivedReportCount, 379)
-  assert.equal(trends.audit.calculatedObservationCount, 1129)
-  assert.equal(trends.audit.patentObservationCount, 372)
+  assert.equal(trends.audit.archivedReportCount, 386)
+  assert.equal(trends.audit.calculatedObservationCount, 1157)
+  assert.equal(trends.audit.patentObservationCount, 385)
+  assert.equal(trends.audit.missingObservationCount, 1)
+  assert.equal(trends.audit.paidPatentProxyObservationCount, 4)
+  assert.equal(trends.audit.paidApiCallCount, 42)
+  assert.equal(trends.audit.paidApiCostYuan, 4.2)
   assert.ok(
     trends.observations.every(
       (item) =>

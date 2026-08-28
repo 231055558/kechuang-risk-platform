@@ -33,6 +33,9 @@ from pypdf import PdfReader
 MANIFEST_PATH = ROOT / "config/narrative-risk-industry-annual-reports.json"
 COMPANY_DATASET_PATH = ROOT / "src/data/industry/r01-r22-unified.json"
 SNAPSHOT_PATH = ROOT / "src/data/industry/narrative-risk-industry-trends.json"
+PATENT_ENRICHMENT_PATH = (
+    ROOT / "src/data/industry/narrative-patent-gap-enrichment.json"
+)
 EXTRACTED_ROOT = PRIVATE_ROOT / "extracted-text"
 DATA_VERSION = "narrative-industry-raw-2026-08-27-v1"
 AS_OF_DATE = "2026-08-27"
@@ -85,6 +88,12 @@ INDUSTRY_GROUPS = [
 for term in common.INNOVATION_TERMS:
     common.jieba.add_word(term)
 
+PATENT_ENRICHMENT = json.loads(PATENT_ENRICHMENT_PATH.read_text(encoding="utf-8"))
+PATENT_ENRICHMENT_INDEX = {
+    (item["companyId"], item["year"]): item
+    for item in PATENT_ENRICHMENT["records"]
+}
+
 
 def industry_group_id(peer_group_id: str) -> str:
     for group in INDUSTRY_GROUPS:
@@ -98,6 +107,18 @@ def normalize_integer(value: str) -> int:
 
 
 def invention_application_count(text: str) -> tuple[int | None, str | None]:
+    table_section = re.search(
+        r"(?:本年|本期)新增.{0,180}?申请数[（(]?(?:个|件|项)?[）)]?.{0,420}?实用新型专利",
+        text,
+        re.S,
+    )
+    if table_section:
+        table_match = re.search(
+            r"发明专利\s*([\d,，]+)", table_section.group(0), re.S
+        )
+        if table_match:
+            return normalize_integer(table_match.group(1)), "年报知识产权表本年新增申请数"
+
     table_patterns = [
         re.compile(
             r"本年新增.{0,180}?申请数[（(]?(?:个|件|项)?[）)]?.{0,180}?"
@@ -185,13 +206,17 @@ def parse_report(report: dict) -> dict:
 
     pdf_path = PRIVATE_ROOT / "reports" / report["companyId"] / f"{report['year']}.pdf"
     try:
-        reader = PdfReader(str(pdf_path))
-        text = common.clean_pdf_text(
-            "\n".join((page.extract_text() or "") for page in reader.pages)
-        )
         text_dir = EXTRACTED_ROOT / report["companyId"]
         text_dir.mkdir(parents=True, exist_ok=True)
-        (text_dir / f"{report['year']}.txt").write_text(text, encoding="utf-8")
+        text_path = text_dir / f"{report['year']}.txt"
+        reader = PdfReader(str(pdf_path))
+        if text_path.exists():
+            text = text_path.read_text(encoding="utf-8")
+        else:
+            text = common.clean_pdf_text(
+                "\n".join((page.extract_text() or "") for page in reader.pages)
+            )
+            text_path.write_text(text, encoding="utf-8")
 
         mdna, mdna_heading = common.main_section(
             text, ["管理层讨论与分析", "经营情况讨论与分析", "董事会报告"]
@@ -213,6 +238,11 @@ def parse_report(report: dict) -> dict:
             mdna or text,
             ["风险因素", "可能面对的风险", "公司面临的风险和应对措施", "主要风险"],
         )
+        if not risk and mdna:
+            risk, risk_heading = common.numbered_subsection(
+                text,
+                ["风险因素", "可能面对的风险", "公司面临的风险和应对措施", "主要风险"],
+            )
         outlook, outlook_heading = common.numbered_subsection(
             mdna or text,
             [
@@ -223,6 +253,17 @@ def parse_report(report: dict) -> dict:
                 "发展战略",
             ],
         )
+        if not outlook and mdna:
+            outlook, outlook_heading = common.numbered_subsection(
+                text,
+                [
+                    "公司关于公司未来发展的讨论与分析",
+                    "公司未来发展的展望",
+                    "未来发展展望",
+                    "经营计划",
+                    "发展战略",
+                ],
+            )
 
         disclosure_text = common.combine_non_overlapping(mdna, risk)
         ambiguity_text = common.combine_non_overlapping(outlook, risk)
@@ -249,6 +290,18 @@ def parse_report(report: dict) -> dict:
             else None
         )
         patents, patent_basis = invention_application_count(text)
+        patent_enrichment = PATENT_ENRICHMENT_INDEX.get(
+            (report["companyId"], report["year"])
+        )
+        patent_proxy = False
+        if (
+            patents is None
+            and patent_enrichment
+            and patent_enrichment.get("annualInventionApplications") is not None
+        ):
+            patents = int(patent_enrichment["annualInventionApplications"])
+            patent_basis = "天眼数据API 1137境内主要子公司申请日去重代理"
+            patent_proxy = True
         divergence = (
             math.log1p(talk) - math.log1p(patents)
             if talk is not None and patents is not None
@@ -272,13 +325,27 @@ def parse_report(report: dict) -> dict:
                 divergence,
                 None
                 if divergence is not None
-                else "创新文本密度或当年发明专利申请数缺失",
+                else (
+                    patent_enrichment.get("limitation")
+                    if patent_enrichment
+                    else "创新文本密度或当年发明专利申请数缺失"
+                ),
                 {
                     "innovationTalkDensity": round(talk, 10) if talk is not None else None,
                     "innovationOccurrenceCount": talk_hits,
                     "innovationEffectiveWordCount": len(innovation_words),
                     "annualInventionApplications": patents,
                     "patentBasis": patent_basis,
+                    "patentProxy": patent_proxy,
+                    "patentProxyConfidence": patent_enrichment.get("confidence")
+                    if patent_enrichment
+                    else None,
+                    "patentProxyLimitation": patent_enrichment.get("limitation")
+                    if patent_enrichment
+                    else None,
+                    "patentSourceUrl": PATENT_ENRICHMENT["sourceUrl"]
+                    if patent_proxy
+                    else None,
                 },
             ),
             observation(
@@ -459,6 +526,13 @@ def main() -> None:
                 item["metricKey"] == "innovation_divergence" and item["value"] is not None
                 for item in observations
             ),
+            "paidPatentProxyObservationCount": sum(
+                item["metricKey"] == "innovation_divergence"
+                and item["details"].get("patentProxy") is True
+                for item in observations
+            ),
+            "paidApiCallCount": PATENT_ENRICHMENT["callCount"],
+            "paidApiCostYuan": PATENT_ENRICHMENT["actualCostYuan"],
             "publicPayloadContainsFullText": False,
             "publicPayloadContainsPrivatePath": False,
         },
