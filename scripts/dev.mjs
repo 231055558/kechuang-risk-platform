@@ -1,9 +1,20 @@
 import { spawn } from "node:child_process"
+import { existsSync } from "node:fs"
 import { resolve } from "node:path"
+import { loadEnvFile } from "node:process"
+
+if (existsSync(".env.local")) {
+  loadEnvFile(".env.local")
+}
 
 const apiPort = process.env.API_PORT ?? "5001"
 const webPort = process.env.PORT ?? "5173"
 const graphPort = process.env.GRAPH_PORT ?? "8766"
+const configuredGraphOrigin = process.env.GRAPH_API_ORIGIN?.replace(/\/+$/, "")
+const graphOrigin =
+  configuredGraphOrigin ?? `http://127.0.0.1:${graphPort}`
+const graphWorkspaceUrl =
+  process.env.VITE_GRAPH_WORKSPACE_URL ?? `${graphOrigin}/`
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm"
 const pythonCommand =
   process.env.PYTHON ?? (process.platform === "win32" ? "python" : "python3")
@@ -19,36 +30,43 @@ const children = [
         HOST: "127.0.0.1",
         PORT: apiPort,
         STATIC_ROOT: process.cwd(),
-        GRAPH_API_ORIGIN: `http://127.0.0.1:${graphPort}`,
+        GRAPH_API_ORIGIN: graphOrigin,
       },
       stdio: "inherit",
     }
   ),
-  spawn(
-    pythonCommand,
-    [
-      "knowledge-graph/backend/tools/serve_fee_kbg_preview.py",
-      "--db",
-      resolve("knowledge-graph/demo/cambricon_fee_kbg_demo.sqlite"),
-      "--run-id",
-      "cambricon_fee_kbg_20260826_v1",
-      "--host",
-      "127.0.0.1",
-      "--port",
-      graphPort,
-    ],
-    {
-      cwd: process.cwd(),
-      env: process.env,
-      stdio: "inherit",
-    }
-  ),
+  ...(configuredGraphOrigin
+    ? []
+    : [
+        spawn(
+          pythonCommand,
+          [
+            "knowledge-graph/backend/tools/serve_fee_kbg_preview.py",
+            "--db",
+            resolve("knowledge-graph/demo/cambricon_fee_kbg_demo.sqlite"),
+            "--run-id",
+            "cambricon_fee_kbg_20260826_v1",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            graphPort,
+          ],
+          {
+            cwd: process.cwd(),
+            env: process.env,
+            stdio: "inherit",
+          }
+        ),
+      ]),
   spawn(
     npmCommand,
     ["run", "dev:web", "--", "--host", "127.0.0.1", "--port", webPort],
     {
       cwd: process.cwd(),
-      env: process.env,
+      env: {
+        ...process.env,
+        VITE_GRAPH_WORKSPACE_URL: graphWorkspaceUrl,
+      },
       stdio: "inherit",
     }
   ),
@@ -93,4 +111,4 @@ process.on("SIGTERM", () => stopChildren("SIGTERM"))
 
 console.log(`Frontend: http://127.0.0.1:${webPort}`)
 console.log(`Local scoring API: http://127.0.0.1:${apiPort}`)
-console.log(`Local audited graph API: http://127.0.0.1:${graphPort}`)
+console.log(`Audited graph API: ${graphOrigin}`)

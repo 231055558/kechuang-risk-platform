@@ -102,6 +102,8 @@ test("localhost development starts the frontend and local scoring API", () => {
   assert.match(viteSource, /process\.env\.API_PORT \?\? "5001"/)
   assert.match(viteSource, /"\/api"[\s\S]*127\.0\.0\.1:\$\{apiPort\}/)
   assert.match(devScript, /"--host", "127\.0\.0\.1"/)
+  assert.match(devScript, /process\.env\.GRAPH_API_ORIGIN/)
+  assert.match(devScript, /configuredGraphOrigin[\s\S]*\? \[\][\s\S]*serve_fee_kbg_preview/)
   assert.match(readme, /http:\/\/127\.0\.0\.1:5173/)
   assert.match(readme, /npm run dev/)
 })
