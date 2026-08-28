@@ -14,7 +14,7 @@ import {
   listIndustryRiskCompanies,
 } from "./industry-risk-service.ts"
 
-const DEFAULT_GRAPH_API_ORIGIN = "http://127.0.0.1:8766"
+const DEFAULT_GRAPH_API_ORIGIN = "http://127.0.0.1:8765"
 const DEFAULT_REQUEST_TIMEOUT_MS = 2_000
 const DEFAULT_MIN_WEIGHT = 0.5
 const PILOT_SNAPSHOT_STOCK_CODES = new Set(["688256"])
