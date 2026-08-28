@@ -244,18 +244,112 @@ class SQLiteFeeReader:
         }
 
 
+class MultiSQLiteFeeReader:
+    """Expose multiple independent SQLite snapshots through one read-only API."""
+
+    def __init__(self, readers: list[SQLiteFeeReader]):
+        if not readers:
+            raise ValueError("至少需要一个图谱快照")
+        self.readers = readers
+        self.company_readers: dict[str, SQLiteFeeReader] = {}
+        for reader in readers:
+            reader.health()
+            for company in reader.companies():
+                company_key = company["id"]
+                if company_key in self.company_readers:
+                    raise ValueError(f"企业节点重复出现在多个快照中：{company_key}")
+                self.company_readers[company_key] = reader
+
+    def close(self) -> None:
+        for reader in self.readers:
+            reader.close()
+
+    def health(self) -> dict:
+        health = [reader.health() for reader in self.readers]
+        run_ids = [str(item["snapshot_run_id"]) for item in health]
+        return {
+            "ok": True,
+            "neo4j": "sqlite-preview-multi-snapshot",
+            "active_nodes": sum(int(item["active_nodes"]) for item in health),
+            "snapshot_run_id": run_ids[0],
+            "snapshot_run_ids": run_ids,
+            "snapshot_count": len(run_ids),
+        }
+
+    def companies(self) -> list[dict]:
+        return sorted(
+            (
+                company
+                for reader in self.readers
+                for company in reader.companies()
+            ),
+            key=lambda company: company["label"],
+        )
+
+    def _reader_for(self, company_key: str) -> SQLiteFeeReader:
+        reader = self.company_readers.get(company_key)
+        if reader is None:
+            raise LookupError("当前企业尚无FEE-KBG试点快照")
+        return reader
+
+    def fee_kbg(self, company_key: str, limit: int) -> dict:
+        return self._reader_for(company_key).fee_kbg(company_key, limit)
+
+    def fee_transmission(
+        self, company_key: str, limit: int, min_weight: float
+    ) -> dict:
+        return self._reader_for(company_key).fee_transmission(
+            company_key, limit, min_weight
+        )
+
+    def subject_panorama(
+        self, company_key: str, limit: int, min_weight: float
+    ) -> dict:
+        return self._reader_for(company_key).subject_panorama(
+            company_key, limit, min_weight
+        )
+
+    def event_transmission(self, company_key: str, limit: int) -> dict:
+        return self._reader_for(company_key).event_transmission(company_key, limit)
+
+    def graph(self, company_key: str, *args, **kwargs):
+        return self._reader_for(company_key).graph(company_key, *args, **kwargs)
+
+    risk_chains = graph
+
+
+def _resolve_db_path(value: str) -> Path:
+    db_path = Path(value)
+    return db_path if db_path.is_absolute() else PROJECT_ROOT / db_path
+
+
+def _snapshot_reader(specification: str) -> SQLiteFeeReader:
+    run_id, separator, db_value = specification.partition("=")
+    if not separator or not run_id or not db_value:
+        raise ValueError("--snapshot 必须使用 RUN_ID=SQLITE_PATH 格式")
+    return SQLiteFeeReader(_resolve_db_path(db_value), run_id)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Serve a read-only SQLite FEE-KBG preview.")
     parser.add_argument("--run-id", default="cambricon_fee_kbg_20260826_v1")
     parser.add_argument("--db", default="data/risk_data.sqlite")
+    parser.add_argument(
+        "--snapshot",
+        action="append",
+        default=[],
+        metavar="RUN_ID=SQLITE_PATH",
+        help="加载一个独立快照；可重复传入以提供多企业预览。",
+    )
     parser.add_argument("--web-root", default=str(DEFAULT_WEB_ROOT))
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8766)
     args = parser.parse_args()
-    db_path = Path(args.db)
-    if not db_path.is_absolute():
-        db_path = PROJECT_ROOT / db_path
-    reader = SQLiteFeeReader(db_path, args.run_id)
+    reader = (
+        MultiSQLiteFeeReader([_snapshot_reader(item) for item in args.snapshot])
+        if args.snapshot
+        else SQLiteFeeReader(_resolve_db_path(args.db), args.run_id)
+    )
     reader.health()
     server = ThreadingHTTPServer((args.host, args.port), handler_factory(reader, Path(args.web_root)))
     print(f"FEE-KBG SQLite 预览已启动：http://{args.host}:{args.port}/", flush=True)

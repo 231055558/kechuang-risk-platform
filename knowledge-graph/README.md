@@ -1,4 +1,4 @@
-# 寒武纪金融事件演化知识图谱
+# 企业金融事件演化知识图谱
 
 本模块是科创风险平台“风险传导”能力的独立实现。它遵守仓库现有投资者产品合同：
 图谱关系由后端快照提供，前端不自行制造因果边或风险传播关系。
@@ -8,7 +8,7 @@
 - `frontend/`：双知识图谱交互页面。
 - `backend/src/`：R01-R22 图谱构建、FEE-KBG、关系权重和条件事件演化。
 - `backend/tools/`：构建、校验、Neo4j 同步、API、脱敏快照和 Edge 可见表格采集工具。
-- `backend/config/`：寒武纪试点规则和 Neo4j Schema。
+- `backend/config/`：寒武纪、芯驰科技试点规则和 Neo4j Schema。
 - `backend/edge_extension/`：只读取当前页面可见表格的 Edge 扩展。
 - `demo/`：无需生产数据库即可运行和修改的脱敏快照。
 
@@ -21,6 +21,22 @@ PDF登记、R01-R22计算和图谱快照在同一文件中使用不同表命名�
 
 ## 立即运行演示图谱
 
+同时加载寒武纪与芯驰科技（推荐用于本地平台联调）：
+
+```powershell
+cd knowledge-graph/backend
+python tools/serve_fee_kbg_preview.py `
+  --snapshot cambricon_fee_kbg_20260826_v1=../demo/cambricon_fee_kbg_demo.sqlite `
+  --snapshot semidrive_fee_kbg_20260827_v1=../demo/semidrive_fee_kbg_demo.sqlite `
+  --port 8766
+```
+
+打开 `http://127.0.0.1:8766/` 后可在统一企业选择器中切换两个独立快照。通过平台携带 `stock_code` 打开时，企业选择器会锁定，避免跨企业上下文错位。
+
+也可以分别启动单个快照：
+
+寒武纪：
+
 ```powershell
 cd knowledge-graph/backend
 python tools/serve_fee_kbg_preview.py `
@@ -30,6 +46,18 @@ python tools/serve_fee_kbg_preview.py `
 ```
 
 打开 `http://127.0.0.1:8766/`。
+
+芯驰科技：
+
+```powershell
+cd knowledge-graph/backend
+python tools/serve_fee_kbg_preview.py `
+  --db ../demo/semidrive_fee_kbg_demo.sqlite `
+  --run-id semidrive_fee_kbg_20260827_v1 `
+  --port 8767
+```
+
+打开 `http://127.0.0.1:8767/`。
 
 ## 将演示快照同步到自己的 Neo4j
 
@@ -58,7 +86,8 @@ Neo4j 定位为可查询、可计算的运行投影，JSON/SQLite 快照和构�
 
 1. 布局、颜色和交互：修改 `frontend/risk-knowledge-graph.html`。
 2. 节点类型和关系名称：修改 `backend/config/neo4j_fee_kbg_schema_20260826.json`。
-3. 事件识别、权重和条件演化：修改 `backend/config/fee_kbg_cambricon_pilot_20260826.json`。
+3. 事件识别、权重和条件演化：修改 `backend/config/fee_kbg_cambricon_pilot_20260826.json`
+   或 `backend/config/fee_kbg_semidrive_pilot_20260827.json`。
 4. 构图算法：修改 `backend/src/fee_kbg.py`。
 5. 演示节点/关系：修改 `demo/cambricon_fee_kbg_snapshot.json`，再用
    `backend/tools/snapshot_bundle.py import` 生成新的演示 SQLite。
@@ -74,6 +103,12 @@ Neo4j 定位为可查询、可计算的运行投影，JSON/SQLite 快照和构�
 cd knowledge-graph/backend
 python tools/run_fee_kbg_pilot.py --run-id cambricon_fee_kbg_20260826_v1
 python tools/verify_fee_kbg_pilot.py --run-id cambricon_fee_kbg_20260826_v1
+python tools/seed_semidrive_pilot.py
+python tools/run_fee_kbg_pilot.py `
+  --run-id semidrive_fee_kbg_20260827_v1 `
+  --stock-code PRIVATE-SEMIDRIVE `
+  --config config/fee_kbg_semidrive_pilot_20260827.json
+python tools/verify_fee_kbg_pilot.py --run-id semidrive_fee_kbg_20260827_v1
 ```
 
 同步到本机 Neo4j：
@@ -82,6 +117,10 @@ python tools/verify_fee_kbg_pilot.py --run-id cambricon_fee_kbg_20260826_v1
 $env:NEO4J_PASSWORD = Read-Host "Neo4j password"
 python tools/sync_neo4j_graph.py `
   --run-id cambricon_fee_kbg_20260826_v1 `
+  --mark-not-in-snapshot `
+  --replace-relation-types
+python tools/sync_neo4j_graph.py `
+  --run-id semidrive_fee_kbg_20260827_v1 `
   --mark-not-in-snapshot `
   --replace-relation-types
 python tools/serve_risk_graph_api.py

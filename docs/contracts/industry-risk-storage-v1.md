@@ -4,17 +4,17 @@
 
 ## 必需实体与字段
 
-| 实体                | 必需字段                                                                                                                                                |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| company             | `id`、`name`、`stockCode`、`peerGroupId`、`chainSegment`                                                                                                |
-| indicator           | `id`、`label`、`dimensionId`、`direction`、`definition`、`formulaDescription`                                                                           |
-| observation         | `id`、`companyId`、`indicatorId`、`metricName`、`periodStart/periodEnd/asOf`、`numericValue/textValue`、`unit`、`sourceId`、`confidence`、`limitations` |
-| source              | `id`、`institution`、`title`、`url`、`publicationDate/accessedAt`、`sourceType`                                                                         |
-| coverage            | `companyId`、`indicatorId`、`status`、`reason`、`recommendedNextSource`                                                                                 |
-| event               | `id`、`companyId`、`eventType`、`date`、`title`、`url`、`relatedIndicatorId`、`confidence`                                                              |
-| narrative corpus    | `companyId`、`reportPeriod`、`reportSection`、`sourceId`、`textLocator`、`extractedText`、`extractorVersion`                                            |
-| narrative annual statistic | `industryGroupId`、`year`、`metricKey`、`sampleSize`、`mean`、`minimum`、`maximum`、`standardDeviation`                                      |
-| temporal graph edge | `sourceEntityId`、`targetEntityId`、`relationType`、`validFrom`、`validTo`、`confidence`、`sourceId`、`extractionVersion`                               |
+| 实体                       | 必需字段                                                                                                                                                |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| company                    | `id`、`name`、`stockCode`、`peerGroupId`、`chainSegment`                                                                                                |
+| indicator                  | `id`、`label`、`dimensionId`、`direction`、`definition`、`formulaDescription`                                                                           |
+| observation                | `id`、`companyId`、`indicatorId`、`metricName`、`periodStart/periodEnd/asOf`、`numericValue/textValue`、`unit`、`sourceId`、`confidence`、`limitations` |
+| source                     | `id`、`institution`、`title`、`url`、`publicationDate/accessedAt`、`sourceType`                                                                         |
+| coverage                   | `companyId`、`indicatorId`、`status`、`reason`、`recommendedNextSource`                                                                                 |
+| event                      | `id`、`companyId`、`eventType`、`date`、`title`、`url`、`relatedIndicatorId`、`confidence`                                                              |
+| narrative corpus           | `companyId`、`reportPeriod`、`reportSection`、`sourceId`、`textLocator`、`extractedText`、`extractorVersion`                                            |
+| narrative annual statistic | `industryGroupId`、`year`、`metricKey`、`sampleSize`、`mean`、`minimum`、`maximum`、`standardDeviation`                                                 |
+| temporal graph edge        | `sourceEntityId`、`targetEntityId`、`relationType`、`validFrom`、`validTo`、`confidence`、`sourceId`、`extractionVersion`                               |
 
 ## 约束
 
@@ -38,3 +38,9 @@ PostgreSQL 迁移 `004`–`006` 已新增财报叙事方法、年度文档、年
 本次没有修改 SQLite 表、列、索引；94家核心快照仍是可复核的发布输入，新增结构只进入PostgreSQL叙事schema与脱敏运行时快照。
 
 本地和服务器导入必须按迁移顺序执行，并以 `dataVersion + companyId + year + metricKey` 保持年度观测唯一。任何代理专利值必须保留 `patentProxy`、来源、置信度与限制；数据库或脱敏快照均不得包含付费原始响应、财报全文或私有文件路径。
+
+## 图谱快照投影
+
+图谱事实层使用 `knowledge_graph_runs`、`knowledge_graph_nodes`、`knowledge_graph_edges`、`knowledge_graph_snapshot_nodes` 和 `knowledge_graph_snapshot_edges`。企业独立快照通过 `run_id` 关联节点与边；缺少快照成员记录的对象不得进入对外图谱。
+
+Neo4j中的 `snapshot_run_id`、`snapshot_run_ids[]` 与 `in_snapshot` 是可重建投影字段，不是新的行业评分数据库字段。同步多企业快照时必须保留共享对象的全部 `snapshot_run_ids[]`；清理单个快照只能移除对应 `run_id`。本次芯驰试点没有修改94家行业SQLite或PostgreSQL表结构。

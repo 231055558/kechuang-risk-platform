@@ -411,7 +411,7 @@ def load_fee_config(path: Path = DEFAULT_CONFIG_PATH) -> dict[str, Any]:
 
 
 class CambriconFEEKBGBuilder:
-    """Build the first evidence-grounded FEE-KBG pilot for stock 688256."""
+    """Build one evidence-grounded company FEE-KBG pilot from a versioned config."""
 
     def __init__(self, db_path: Path, config_path: Path = DEFAULT_CONFIG_PATH):
         self.db_path = Path(db_path)
@@ -518,7 +518,7 @@ class CambriconFEEKBGBuilder:
             "company": company["full_name"],
             "stock_code": company["stock_code"],
             "data_contract": "R01-R22 + FEE-KBG",
-            "scope": "cambricon-pilot-only",
+            "scope": self.config.get("scope", "company-fee-kbg-pilot"),
             "as_of_date": self.as_of.isoformat(),
         }
         conn.execute(
@@ -618,6 +618,7 @@ class CambriconFEEKBGBuilder:
             attrs = {
                 "purchase_ratio": row["purchase_ratio"], "purchase_amount": row["purchase_amount"],
                 "relationship": row["relationship"], "domestic_flag": row["domestic_flag"],
+                "publish_date": row["announcement_date"],
                 "registered_location": row["profile_reg_location"], "city": row["profile_city"],
                 "source_table": "tyc_supplier_profiles",
             }
@@ -737,6 +738,8 @@ class CambriconFEEKBGBuilder:
                 continue
             attrs = _parse_json(item.get("attributes_json"))
             source_ref = f"legacy-entity-relation:{item.get('id', row['source_row_key'])}"
+            review = bool(item.get("needs_review", True))
+            confidence = _clamp(item.get("confidence"), 0.82)
             if attrs.get("股东名称"):
                 name = _normalize_name(attrs.get("股东名称"))
                 if not name or name in {"股东名称", company["full_name"]}:
@@ -749,13 +752,13 @@ class CambriconFEEKBGBuilder:
                     "source_table": "source_auxiliary_rows/entity_relations", "repaired_from": "has_person",
                 }
                 self._add_entity(EntityFact(
-                    key, entity_type, name, repaired, 0.78, True,
-                    "iFinD PDF 股东行由误分类 has_person 修复，待人工确认", source_ref,
+                    key, entity_type, name, repaired, confidence, review,
+                    "股权关系待人工确认" if review else "", source_ref,
                 ))
                 rel_key = _edge_key(company_key, "held_by", key)
                 self._add_entity_relationship(EntityRelationship(
-                    rel_key, company_key, "held_by", key, "equity", repaired, 0.78, True,
-                    "股权关系待人工确认", source_ref,
+                    rel_key, company_key, "held_by", key, "equity", repaired, confidence, review,
+                    "股权关系待人工确认" if review else "", source_ref,
                 ))
                 continue
             person_name = attrs.get("姓名") or attrs.get("受益所有人名称")
@@ -772,17 +775,21 @@ class CambriconFEEKBGBuilder:
                 "source_table": "source_auxiliary_rows/entity_relations", "repaired_from": "has_person",
             }
             self._add_entity(EntityFact(
-                key, "person", name, repaired, 0.82, True,
-                "iFinD PDF 人员关系经字段规则修复，待人工确认", source_ref,
+                key, "person", name, repaired, confidence, review,
+                "人员任职关系待人工确认" if review else "", source_ref,
             ))
             rel_key = _edge_key(company_key, "employs", key)
             self._add_entity_relationship(EntityRelationship(
-                rel_key, company_key, "employs", key, "personnel", repaired, 0.82, True,
-                "人员任职关系待人工确认", source_ref,
+                rel_key, company_key, "employs", key, "personnel", repaired, confidence, review,
+                "人员任职关系待人工确认" if review else "", source_ref,
             ))
 
     def _load_external_entities(self, conn: sqlite3.Connection, company: sqlite3.Row) -> None:
-        type_map = {"监管机构": "regulator", "法院": "court", "仲裁机构": "court", "人员": "person", "企业": "associated_company"}
+        type_map = {
+            "监管机构": "regulator", "法院": "court", "仲裁机构": "court",
+            "人员": "person", "人员群体": "person_group", "企业": "associated_company",
+            "内部因素": "internal_factor",
+        }
         rows = conn.execute(
             "SELECT * FROM external_subject_evidence WHERE company_id=? ORDER BY evidence_id",
             (company["company_id"],),
@@ -1022,7 +1029,11 @@ class CambriconFEEKBGBuilder:
             "SELECT * FROM external_subject_evidence WHERE company_id=? ORDER BY evidence_id",
             (company["company_id"],),
         ).fetchall()
-        external_type_map = {"监管机构": "regulator", "法院": "court", "仲裁机构": "court", "人员": "person", "企业": "associated_company"}
+        external_type_map = {
+            "监管机构": "regulator", "法院": "court", "仲裁机构": "court",
+            "人员": "person", "人员群体": "person_group", "企业": "associated_company",
+            "内部因素": "internal_factor",
+        }
         role_map = {"监管": "regulator", "问询": "inquirer", "处罚": "regulator", "裁判": "adjudicator", "涉及": "participant", "列入实体清单": "listing_authority"}
         relation_map = {"regulator": "regulates_event", "inquirer": "inquires_event", "adjudicator": "adjudicates_event", "participant": "involved_in_event", "listing_authority": "lists_entity_in_event"}
         for row in external_rows:
@@ -1436,6 +1447,15 @@ class CambriconFEEKBGBuilder:
                 scale = ratio / max_ratio[relation.layer] if ratio and max_ratio[relation.layer] else (
                     amount / max_amount[relation.layer] if amount and max_amount[relation.layer] else 0.15
                 )
+                overrides = {
+                    _normalize_name(name): value
+                    for name, value in (config.get("counterparty_overrides") or {}).items()
+                }
+                override = overrides.get(_normalize_name(subject.name))
+                scale_basis = "披露比例或金额归一化"
+                if override is not None:
+                    scale = _clamp(override, scale)
+                    scale_basis = "配置化关键依赖分级；不代表采购占比"
                 recency_score = recency(relation.attributes.get("publish_date"))
                 influence = (
                     float(weights["relationship_scale"]) * scale
@@ -1446,6 +1466,7 @@ class CambriconFEEKBGBuilder:
                 components = {
                     "relationship_scale": scale, "purchase_or_revenue_ratio": ratio,
                     "amount": amount, "recency": recency_score,
+                    "relationship_scale_basis": scale_basis,
                     "evidence_confidence": confidence, "formula_weights": weights,
                 }
             elif relation.layer == "equity":
@@ -1533,7 +1554,7 @@ class CambriconFEEKBGBuilder:
         """Build verified external-event -> subject -> enterprise risk paths.
 
         This layer is intentionally separate from ``self.events``.  Those are
-        Cambricon's own events and belong only to the enterprise-event graph.
+        the target company's own events and belong only to the enterprise-event graph.
         An external panorama path is admitted only when the configured evidence
         names an external event owner and an already-important related subject.
         """
@@ -1589,7 +1610,7 @@ class CambriconFEEKBGBuilder:
             elif owner.key == company_key:
                 self.validation_issues.append({
                     "severity": "error", "code": "external_event_owned_by_target",
-                    "subject_key": path_id, "message": "外部主体图禁止使用寒武纪自身事件",
+                    "subject_key": path_id, "message": "外部主体图禁止使用目标企业自身事件",
                     "payload": {"event_owner": owner_name},
                 })
                 continue

@@ -92,6 +92,14 @@ test("audited snapshot is preferred and internal review candidates are removed",
             label: "中科寒武纪科技股份有限公司",
             attributes: { stock_code: "688256", fee_kbg: true },
           },
+          {
+            id: "node:semidrive",
+            label: "北京芯驰半导体科技股份有限公司",
+            attributes: {
+              stock_code: "PRIVATE-SEMIDRIVE",
+              fee_kbg: true,
+            },
+          },
         ],
       })
     }
@@ -159,6 +167,13 @@ test("audited snapshot is preferred and internal review candidates are removed",
   const service = new RiskGraphService({ fetchImpl })
   const directory = await service.listCompanies()
   assert.equal(directory.availableExternalSubjectCount, 1)
+  assert.equal(directory.sampleSize, 94)
+  assert.equal(
+    directory.companies.some(
+      (company) => company.stockCode === "PRIVATE-SEMIDRIVE"
+    ),
+    false
+  )
 
   const graph = await service.getGraph("star-688256", "enterprise-event", 0.5)
   assert.equal(graph.availability.sourceMode, "audited-snapshot")
