@@ -23,6 +23,7 @@ test("风险传导页直接挂载同学原版图谱工作站", () => {
   assert.match(component, /VITE_GRAPH_WORKSPACE_URL/)
   assert.match(component, /stock_code/)
   assert.match(component, /<iframe/)
+  assert.doesNotMatch(component, /同学原版图谱界面|teammate-graph-workspace__status/)
 })
 
 test("图谱宿主不复制关系并限制 iframe 权限", () => {
@@ -38,6 +39,8 @@ test("原版图谱宿主具有加载态和响应式画布", () => {
   assert.match(component, /正在按证券代码读取图谱快照/)
   assert.match(component, /onLoad=\{\(\) => setLoadedUrl\(workspaceUrl\)\}/)
   assert.match(styles, /teammate-graph-workspace__frame/)
+  assert.match(styles, /risk-os-content:has\(\.teammate-graph-workspace\)/)
+  assert.match(styles, /height: 100dvh/)
   assert.match(styles, /@media \(max-width: 720px\)/)
 })
 

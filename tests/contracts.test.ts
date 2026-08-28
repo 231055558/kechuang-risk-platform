@@ -427,68 +427,36 @@ test("controlled mobile navigation restores focus to its trigger", () => {
 
   assert.match(shellSource, /onCloseAutoFocus=/)
   assert.match(shellSource, /mobileNavButtonRef\.current\?\.focus\(\)/)
-  assert.match(topBarSource, /ref=\{mobileNavButtonRef\}/)
+  assert.match(topBarSource, /buttonRef=\{mobileNavButtonRef\}/)
 })
 
-test("sticky command bar uses continuous collapse with hysteretic compact state", () => {
-  const topBarSource = readProjectFile(
+test("global theme and reset controls stay fixed at the page bottom-left", () => {
+  const controlsSource = readProjectFile(
     "src/components/layout/top-command-bar.tsx"
   )
-  const shellStyles = readProjectFile("src/styles/shell.css")
-  const compactRules =
-    shellStyles.match(/\.top-command-glass-compact\s*\{[\s\S]*?\n\}/g) ?? []
+  const riskOsStyles = readProjectFile("src/styles/risk-os.css")
 
-  assert.match(topBarSource, /const compactStateRef = useRef\(false\)/)
-  assert.match(topBarSource, /const scrollY = window\.scrollY/)
-  assert.match(
-    topBarSource,
-    /const collapseProgress = Math\.min\(Math\.max\(\(scrollY - 4\) \/ 64, 0\), 1\)/
+  assert.match(controlsSource, /切换到浅色模式/)
+  assert.match(controlsSource, /label="恢复初始状态"/)
+  assert.doesNotMatch(
+    controlsSource,
+    /top-command-title|risk-os-command-surface/
   )
   assert.match(
-    topBarSource,
-    /const nextIsCompact = compactStateRef\.current[\s\S]*?\? scrollY > 18[\s\S]*?: scrollY > 34/
+    riskOsStyles,
+    /\.risk-os-global-controls-wrap\s*\{[\s\S]*?bottom:\s*16px;[\s\S]*?left:\s*16px;/
   )
-  ;[
-    "--command-height",
-    "--command-padding-y",
-    "--command-title-size",
-    "--command-description-opacity",
-    "--command-description-shift",
-  ].forEach((property) => {
-    assert.match(topBarSource, new RegExp(`"${property}"`))
-    assert.match(topBarSource, new RegExp(`removeProperty\\("${property}"\\)`))
-  })
-  assert.match(
-    topBarSource,
-    /if \(compactStateRef\.current === nextIsCompact\) \{\s*return\s*\}/
-  )
-  assert.match(topBarSource, /compactStateRef\.current = nextIsCompact/)
-  assert.match(topBarSource, /setIsCompact\(nextIsCompact\)/)
-  assert.ok(compactRules.length > 0)
-  compactRules.forEach((rule) => {
-    assert.doesNotMatch(
-      rule,
-      /(?:^|\n)\s*(?:top|min-height|height|padding|margin)\s*:/
-    )
-  })
 })
 
-test("sticky native command bar keeps a dense blurred glass backdrop", () => {
-  const shellStyles = readProjectFile("src/styles/shell.css")
-  const nativeRule = shellStyles.match(
-    /\.liquid-glass-native\.top-command-glass \{[\s\S]*?\n\}/
-  )?.[0]
-  const compactRule = shellStyles.match(
-    /\.liquid-glass-native\.top-command-glass\.top-command-glass-compact \{[\s\S]*?\n\}/
-  )?.[0]
+test("the shell renders no global page title bar", () => {
+  const shellSource = readProjectFile("src/components/layout/app-shell.tsx")
+  const controlsSource = readProjectFile(
+    "src/components/layout/top-command-bar.tsx"
+  )
 
-  assert.ok(nativeRule)
-  assert.match(nativeRule, /background:/)
-  assert.match(nativeRule, /backdrop-filter: blur\(/)
-  assert.doesNotMatch(nativeRule, /backdrop-filter:\s*none/)
-  assert.ok(compactRule)
-  assert.match(compactRule, /oklch\([^)]*\/ 0\.84\)/)
-  assert.match(compactRule, /backdrop-filter: blur\(24px\)/)
+  assert.doesNotMatch(shellSource, /<TopCommandBar|app-page-title/)
+  assert.match(shellSource, /<GlobalShellControls/)
+  assert.doesNotMatch(controlsSource, /<header|<h1|top-command-title/)
 })
 
 test("legacy governance entry is absent from the investor overview", () => {
@@ -744,14 +712,14 @@ test("the investor workstation defines the shell and major workflow surfaces", (
   assert.match(overviewSource, /近期事件/)
   assert.match(sharedSource, /risk-os-panel-frame/)
   assert.doesNotMatch(sharedSource, /<LiquidGlassSurface/)
-  assert.match(topBarSource, /risk-os-command-surface/)
+  assert.match(topBarSource, /risk-os-global-controls/)
   assert.doesNotMatch(topBarSource, /LiquidGlassSurface/)
   workflowSurfaces.forEach(({ path, pattern }) => {
     assert.match(readProjectFile(path), pattern)
   })
   assert.match(indexStyles, /@import "\.\/styles\/risk-os\.css";/)
   assert.match(riskOsStyles, /\.risk-os-sidebar-surface/)
-  assert.match(riskOsStyles, /\.risk-os-command-surface/)
+  assert.match(riskOsStyles, /\.risk-os-global-controls/)
   assert.match(riskOsStyles, /\.risk-os-shell \.industry-graph-content/)
   assert.match(
     riskOsStyles,

@@ -1,44 +1,46 @@
+.risk-os-content:has(.teammate-graph-workspace) {
+  max-width: none;
+  padding: 0;
+}
+
+.risk-os-content:has(.teammate-graph-workspace) > .content-stack {
+  width: 100%;
+  margin: 0;
+}
+
+.risk-os-content:has(.teammate-graph-workspace) .app-footer {
+  display: none;
+}
+
+.risk-os-content:has(.teammate-graph-workspace) .workflow-transition {
+  min-height: 100dvh;
+}
+
 .teammate-graph-workspace {
-  display: grid;
+  position: relative;
+  display: block;
   min-width: 0;
-  gap: 10px;
-}
-
-.teammate-graph-workspace__status {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  padding: 10px 2px;
-}
-
-.teammate-graph-workspace__status > div {
-  display: flex;
-  align-items: baseline;
-  gap: 9px;
-}
-
-.teammate-graph-workspace__status strong {
-  font-size: 15px;
-}
-
-.teammate-graph-workspace__status span {
-  color: var(--risk-os-muted);
-  font-size: 12px;
+  min-height: 100dvh;
+  overflow: hidden;
+  background: #07111f;
+  isolation: isolate;
 }
 
 .teammate-graph-workspace__frame-shell {
   position: relative;
-  min-height: clamp(780px, calc(100vh - 146px), 1120px);
+  width: 100%;
+  min-height: 100dvh;
+  height: 100dvh;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--risk-os-ink) 16%, transparent);
+  border: 0;
   background: #07111f;
+  box-shadow: inset 0 1px 0 rgb(151 179 207 / 12%);
 }
 
 .teammate-graph-workspace__frame {
   display: block;
   width: 100%;
-  height: clamp(780px, calc(100vh - 146px), 1120px);
+  height: 100%;
   border: 0;
   background: #07111f;
 }
@@ -55,22 +57,35 @@
 }
 
 .teammate-graph-workspace__boundary {
+  position: absolute;
+  z-index: 3;
+  bottom: 12px;
+  left: 16px;
+  max-width: min(760px, calc(100% - 32px));
   margin: 0;
-  color: var(--risk-os-muted);
+  padding: 6px 10px;
+  border: 1px solid rgb(151 179 207 / 14%);
+  border-radius: 7px;
+  background: rgb(7 17 31 / 72%);
+  color: #8199af;
   font-size: 10px;
   line-height: 1.5;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 @media (max-width: 720px) {
-  .teammate-graph-workspace__status,
-  .teammate-graph-workspace__status > div {
-    align-items: flex-start;
-    flex-direction: column;
+  .risk-os-content:has(.teammate-graph-workspace) .workflow-transition,
+  .teammate-graph-workspace,
+  .teammate-graph-workspace__frame-shell {
+    min-height: 100dvh;
+    height: 100dvh;
   }
 
-  .teammate-graph-workspace__frame-shell,
-  .teammate-graph-workspace__frame {
-    min-height: 820px;
-    height: 820px;
+  .teammate-graph-workspace__boundary {
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+    max-width: none;
   }
 }

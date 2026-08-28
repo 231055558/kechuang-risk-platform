@@ -8,7 +8,7 @@ import {
 } from "react"
 
 import { SidebarNav } from "@/components/layout/sidebar-nav"
-import { TopCommandBar } from "@/components/layout/top-command-bar"
+import { GlobalShellControls } from "@/components/layout/top-command-bar"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import {
   getNavigationItem,
@@ -111,8 +111,6 @@ type AppShellProps = {
   onCompanyChange: (companyId: string) => void
   onNavigate: (target: NavigationTarget) => Promise<boolean>
   onPreloadView: (view: TabValue) => void
-  onOpenExports: () => void
-  showExports: boolean
   onResetDemo: () => void
   onToggleTheme: () => void
   feedback: string
@@ -140,8 +138,6 @@ export function AppShell({
   onCompanyChange,
   onNavigate,
   onPreloadView,
-  onOpenExports,
-  showExports,
   onResetDemo,
   onToggleTheme,
   feedback,
@@ -309,36 +305,23 @@ export function AppShell({
         </Sheet>
       )}
 
+      <GlobalShellControls
+        theme={theme}
+        onToggleTheme={onToggleTheme}
+        onResetDemo={handleReset}
+        onOpenMobileNav={() => setMobileNavOpen(true)}
+        mobileNavButtonRef={mobileNavButtonRef}
+        feedback={feedback}
+      />
+
       <main
         id="main-content"
         ref={mainContentRef}
         className="app-main risk-os-main"
         data-view={activeView}
         tabIndex={-1}
-        aria-labelledby="app-page-title"
+        aria-label={activeNav.label}
       >
-        <TopCommandBar
-          group={activeNav.group}
-          title={activeNav.label}
-          description={
-            assessmentSummaryOverride
-              ? assessmentSummaryOverride.overviewDescription
-              : activeNav.description
-          }
-          companyName={assessmentSummaryOverride?.contextName ?? detail.name}
-          companySector={
-            assessmentSummaryOverride?.contextSector ?? detail.sector
-          }
-          snapshotAt={assessmentSummaryOverride?.snapshotAt ?? detail.snapshotAt}
-          theme={theme}
-          onToggleTheme={onToggleTheme}
-          onOpenExports={onOpenExports}
-          showExports={showExports}
-          onResetDemo={handleReset}
-          onOpenMobileNav={() => setMobileNavOpen(true)}
-          mobileNavButtonRef={mobileNavButtonRef}
-          feedback={feedback}
-        />
         <div className="app-content risk-os-content">{children}</div>
       </main>
     </div>

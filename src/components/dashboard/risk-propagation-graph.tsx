@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react"
 
-import { Badge } from "@/components/ui/badge"
 import type { CompanyDetail } from "@/types/risk"
 import "@/styles/risk-propagation-graph.css"
 
@@ -35,15 +34,6 @@ export function RiskPropagationGraph({ detail }: { detail: CompanyDetail }) {
       data-graph-ui="teammate-fee-kbg"
       aria-label={`${detail.name}风险传导图谱`}
     >
-      <div className="teammate-graph-workspace__status">
-        <div>
-          <strong>{detail.name}</strong>
-          <span>金融事件演化知识大图</span>
-        </div>
-        <Badge variant="outline">
-          {isLoading ? "正在连接图谱服务" : "同学原版图谱界面"}
-        </Badge>
-      </div>
       <div className="teammate-graph-workspace__frame-shell">
         {isLoading ? (
           <div className="teammate-graph-workspace__loading" role="status">
