@@ -102,6 +102,9 @@ type AppShellProps = {
     scoreLabel: string
     methodVersion: string
     overviewDescription: string
+    contextName?: string
+    contextSector?: string
+    snapshotAt?: string
   }
   companySummaries: CompanySummary[]
   theme: string
@@ -318,13 +321,15 @@ export function AppShell({
           group={activeNav.group}
           title={activeNav.label}
           description={
-            activeView === "overview" && assessmentSummaryOverride
+            assessmentSummaryOverride
               ? assessmentSummaryOverride.overviewDescription
               : activeNav.description
           }
-          companyName={detail.name}
-          companySector={detail.sector}
-          snapshotAt={detail.snapshotAt}
+          companyName={assessmentSummaryOverride?.contextName ?? detail.name}
+          companySector={
+            assessmentSummaryOverride?.contextSector ?? detail.sector
+          }
+          snapshotAt={assessmentSummaryOverride?.snapshotAt ?? detail.snapshotAt}
           theme={theme}
           onToggleTheme={onToggleTheme}
           onOpenExports={onOpenExports}

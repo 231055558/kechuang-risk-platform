@@ -11,7 +11,7 @@ import {
 } from "./model.ts"
 
 export const INDUSTRY_RISK_MVP_METHOD_VERSION =
-  "IRAWC-CRITIC-2026.08-v2" as const
+  "IRAWC-CRITIC-2026.08-v3" as const
 export const INDUSTRY_RISK_FULL_METHOD_VERSION =
   "IRAWC-FULL-2026.08-v2" as const
 
@@ -533,6 +533,18 @@ interface ResolvedMetricValue {
   sourceIds: string[]
 }
 
+interface R17LowRiskFloorEvidence {
+  sourceId: string
+  sourceIds: string[]
+  evidenceLabel: string
+}
+
+interface R17ConfirmedExposureEvidence {
+  sourceId: string
+  sourceIds: string[]
+  evidenceLabel: string
+}
+
 interface IndustryRiskScoringOptions {
   industryRisk?: number
   alpha?: number
@@ -841,6 +853,77 @@ function resolveMetricValue(
   return null
 }
 
+function resolveR17LowRiskFloorEvidence(
+  dataset: IndustryRiskDataset,
+  companyId: string
+): R17LowRiskFloorEvidence | null {
+  const zeroSupplierObservation = dataset.observations.find(
+    (item) =>
+      item.companyId === companyId &&
+      item.indicatorId === "R17" &&
+      item.numericValue === 0 &&
+      item.confidence >= 0.75 &&
+      [
+        "tyc_paid_supplier_disclosed_count",
+        "verified_external_supplier_count",
+        "verified_overseas_supplier_count",
+        "external_supplier_count",
+        "overseas_supplier_count",
+      ].includes(item.metricName)
+  )
+  if (zeroSupplierObservation) {
+    return {
+      sourceId: zeroSupplierObservation.sourceId,
+      sourceIds:
+        zeroSupplierObservation.sourceIds ?? [zeroSupplierObservation.sourceId],
+      evidenceLabel: "结构化供应商检查明确返回零条记录",
+    }
+  }
+
+  const zeroSupplierDisclosure = dataset.supplementaryObservations?.find(
+    (item) =>
+      item.companyId === companyId &&
+      item.relatedIndicatorId === "R17" &&
+      item.numericValue === 0 &&
+      item.confidence >= 0.8 &&
+      /供应商/.test(item.factName) &&
+      /采购占比|集中度|外部|境外/.test(item.factName) &&
+      item.sourceId !== null
+  )
+  if (!zeroSupplierDisclosure?.sourceId) return null
+  return {
+    sourceId: zeroSupplierDisclosure.sourceId,
+    sourceIds: [zeroSupplierDisclosure.sourceId],
+    evidenceLabel: `${zeroSupplierDisclosure.factName}明确披露为零`,
+  }
+}
+
+function resolveR17ConfirmedExposureEvidence(
+  dataset: IndustryRiskDataset,
+  companyId: string
+): R17ConfirmedExposureEvidence | null {
+  const observation = dataset.observations
+    .filter(
+      (item) =>
+        item.companyId === companyId &&
+        item.indicatorId === "R17" &&
+        item.metricName === "verified_external_procurement_disclosure" &&
+        item.textValue !== null &&
+        item.confidence >= 0.8
+    )
+    .sort((left, right) =>
+      (right.asOfDate ?? right.periodEnd ?? "").localeCompare(
+        left.asOfDate ?? left.periodEnd ?? ""
+      )
+    )[0]
+  if (!observation) return null
+  return {
+    sourceId: observation.sourceId,
+    sourceIds: observation.sourceIds ?? [observation.sourceId],
+    evidenceLabel: observation.textValue ?? "官方材料确认存在境外采购暴露",
+  }
+}
+
 function scoreMetric(
   dataset: IndustryRiskDataset,
   companyId: string,
@@ -851,6 +934,46 @@ function scoreMetric(
   beta: number
 ): IndustryRiskMetricScore {
   const resolved = resolveMetricValue(dataset, companyId, definition)
+  const r17ConfirmedExposure =
+    definition.indicatorId === "R17" && resolved === null
+      ? resolveR17ConfirmedExposureEvidence(dataset, companyId)
+      : null
+  const r17FloorEvidence =
+    definition.indicatorId === "R17" &&
+    resolved === null &&
+    r17ConfirmedExposure === null
+      ? resolveR17LowRiskFloorEvidence(dataset, companyId)
+      : null
+  if (r17FloorEvidence) {
+    const riskPercentile = 0
+    const riskScore = calculateMvpRiskScore(
+      riskPercentile,
+      industryRisk,
+      alpha,
+      beta
+    )
+    return {
+      indicatorId: definition.indicatorId,
+      metricName: "no_identified_external_supplier_floor",
+      comparableGroup: "r17-no-external-supplier-floor",
+      label: definition.label,
+      unit: "家（代理）",
+      rawValue: 0,
+      riskPercentile,
+      riskScore,
+      centeredRiskScore: round(riskScore - 50, 2),
+      sampleSize: 0,
+      sourceId: r17FloorEvidence.sourceId,
+      sourceIds: r17FloorEvidence.sourceIds,
+      status: "scored",
+      direction: definition.direction,
+      kind: definition.kind,
+      dimensionId: definition.dimensionId,
+      formulaTrace: `${r17FloorEvidence.evidenceLabel}，启用低风险保底；r_rel=0；r=100×(${round(alpha)}×${round(industryRisk)}+${round(beta)}×0)=${riskScore}`,
+      limitation: `${definition.limitation.replace(/。$/, "")}；保底分只适用于有明确零值证据的企业。未识别到供应商不等于证明实际进口依赖为零；后续出现境外采购证据时必须撤销并重算。`,
+      missingReason: null,
+    }
+  }
   const sample = resolved
     ? benchmarkCompanyIds
         .map((peerId) => resolveMetricValue(dataset, peerId, definition))
@@ -871,7 +994,11 @@ function scoreMetric(
       : calculateMvpRiskScore(percentile, industryRisk, alpha, beta)
   return {
     indicatorId: definition.indicatorId,
-    metricName: resolved?.metricName ?? definition.metricName,
+    metricName:
+      resolved?.metricName ??
+      (r17ConfirmedExposure
+        ? "verified_external_procurement_disclosure"
+        : definition.metricName),
     comparableGroup:
       resolved?.comparableGroup ??
       definition.metricCandidates[0]?.comparableGroup ??
@@ -883,8 +1010,8 @@ function scoreMetric(
     riskScore,
     centeredRiskScore: riskScore === null ? null : round(riskScore - 50, 2),
     sampleSize: sample.length,
-    sourceId: resolved?.sourceId ?? null,
-    sourceIds: resolved?.sourceIds ?? [],
+    sourceId: resolved?.sourceId ?? r17ConfirmedExposure?.sourceId ?? null,
+    sourceIds: resolved?.sourceIds ?? r17ConfirmedExposure?.sourceIds ?? [],
     status:
       definition.kind === "narrative"
         ? "not-score-ready"
@@ -899,16 +1026,22 @@ function scoreMetric(
         ? resolved
           ? "已取得叙事观察代理值；依据当前会议结论，该值只用于可视化观察，不计算风险分位或 NRI。"
           : "当前没有叙事观察数据；不补零，也不生成叙事风险分。"
-        : riskScore === null
+        : r17ConfirmedExposure
+          ? "官方材料已确认存在境外采购暴露；因缺少境外采购金额与总采购金额，暂不生成正式同业分位和风险分。"
+          : riskScore === null
           ? resolved
             ? `已取得原值，但同口径同业样本仅 ${sample.length} 家，无法形成风险分位。`
             : "当前企业缺少可用数值；不补零，其他指标仍参与基准计算。"
           : `r_rel=${round(percentile ?? 0)}；r=100×(${round(alpha)}×${round(industryRisk)}+${round(beta)}×${round(percentile ?? 0)})=${riskScore}`,
-    limitation: definition.limitation,
+    limitation: r17ConfirmedExposure
+      ? `${definition.limitation.replace(/。$/, "")}；已确认存在境外采购暴露；取得金额分子与分母前不进入正式评分。`
+      : definition.limitation,
     missingReason:
       definition.kind === "narrative"
         ? "新闻与旧叙事代理不进入财报叙事评分。"
-        : riskScore === null
+        : r17ConfirmedExposure
+          ? "已确认境外采购暴露，但缺少境外采购金额与总采购金额，暂不能计算进口依赖度。"
+          : riskScore === null
           ? resolved
             ? `同口径同业样本仅 ${sample.length} 家，暂不能形成风险分位。`
             : "当前企业缺少可用数值。"

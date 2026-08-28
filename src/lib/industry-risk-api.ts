@@ -86,6 +86,7 @@ function isCompanySummary(value: unknown) {
       (metric) =>
         isRecord(metric) &&
         typeof metric.indicatorId === "string" &&
+        typeof metric.metricName === "string" &&
         (metric.riskPercentile === null ||
           isFiniteNumber(metric.riskPercentile)) &&
         (metric.riskScore === null || isFiniteNumber(metric.riskScore)) &&
@@ -115,7 +116,7 @@ function isDirectoryResponse(
     isRecord(value) &&
     value.contractVersion === INDUSTRY_RISK_INVESTOR_CONTRACT_VERSION &&
     value.schemaVersion === "KCR-INDUSTRY-DATA-2026.08-v1" &&
-    value.methodVersion === "IRAWC-CRITIC-2026.08-v2" &&
+    value.methodVersion === "IRAWC-CRITIC-2026.08-v3" &&
     typeof value.dataVersion === "string" &&
     typeof value.reportingPeriod === "string" &&
     typeof value.sectorLabel === "string" &&
@@ -274,7 +275,7 @@ function isAssessmentResponse(
     value.contract.recommendationScope ===
       "risk-research-not-trade-instruction" &&
     value.contract.graphContract === "external-temporal-graph-pending" &&
-    assessment.methodVersion === "IRAWC-CRITIC-2026.08-v2" &&
+    assessment.methodVersion === "IRAWC-CRITIC-2026.08-v3" &&
     typeof assessment.companyId === "string" &&
     typeof assessment.companyName === "string" &&
     typeof assessment.stockCode === "string" &&

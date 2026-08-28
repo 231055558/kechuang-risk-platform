@@ -1,0 +1,379 @@
+{
+  "schemaVersion": "KCR-R17-EXPOSURE-2026.08-v1",
+  "dataVersion": "r17-official-exposure-20260827-v1",
+  "asOfDate": "2026-08-27",
+  "method": "使用Ego对上交所标题和正文全文索引进行94家公司三组关键词全量检索，并与386份已归档年报交叉复核；只准入能够确认公司自身存在境外采购、境外供应商或进口原材料暴露的材料。条件式未来采购、行业背景和境外上市噪声不准入。",
+  "audit": {
+    "targetCompanyCount": 94,
+    "archivedAnnualReportCount": 386,
+    "exchangeFullTextDocumentsScreened": 15000,
+    "exchangeFullTextMatchedCompanyCount": 40,
+    "confirmedExposureCount": 40,
+    "conditionalExposureExcludedCount": 5,
+    "contextOnlyExcludedCount": 1,
+    "explicitZeroCount": 0,
+    "paidApiCallCount": 0
+  },
+  "records": [
+    {
+      "companyId": "star-688008",
+      "stockCode": "688008",
+      "evidenceDate": "2025-04-11",
+      "sourceTitle": "澜起科技关于2025年度开展外汇衍生品交易的公告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2025-04-11/688008_20250411_0OXD.pdf",
+      "excerpt": "鉴于公司和境外供应商及境外客户的交易金额款项通过外币结算，公司开展外汇衍生品交易。",
+      "confidence": 0.9
+    },
+    {
+      "companyId": "star-688018",
+      "stockCode": "688018",
+      "evidenceDate": "2026-03-21",
+      "sourceTitle": "乐鑫科技2025年年度报告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-03-21/688018_20260321_Z56Q.pdf",
+      "excerpt": "公司存在境外采购与销售，相关合同以美元结算；集团资金池可将销售所得美元用于境外美元采购。",
+      "confidence": 0.94
+    },
+    {
+      "companyId": "star-688049",
+      "stockCode": "688049",
+      "evidenceDate": "2026-03-30",
+      "sourceTitle": "炬芯科技2025年年度报告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-03-30/688049_20260330_MYT1.pdf",
+      "excerpt": "公司在募投项目实施期间进行境外采购，并以自有资金、信用证及外汇等方式先行支付相关款项。",
+      "confidence": 0.92
+    },
+    {
+      "companyId": "star-688099",
+      "stockCode": "688099",
+      "evidenceDate": "2025-04-11",
+      "sourceTitle": "晶晨股份2024年年度报告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2025-04-11/688099_20250411_IZOA.pdf",
+      "excerpt": "报告期内公司存在较多境外销售和采购，主要以美元报价和结算，且境外采购和销售金额较大。",
+      "confidence": 0.94
+    },
+    {
+      "companyId": "star-688107",
+      "stockCode": "688107",
+      "evidenceDate": "2026-03-31",
+      "sourceTitle": "安路科技2025年年度报告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-03-31/688107_20260331_NVN5.pdf",
+      "excerpt": "随着业务范围扩大，公司存在部分境外采购及境外销售，并主要通过美元进行采购和销售结算。",
+      "confidence": 0.94
+    },
+    {
+      "companyId": "star-688252",
+      "stockCode": "688252",
+      "evidenceDate": "2026-04-09",
+      "sourceTitle": "天德钰2025年年度报告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-04-09/688252_20260409_54RO.pdf",
+      "excerpt": "报告期内公司存在境外采购及销售，并主要通过美元等外币结算。",
+      "confidence": 0.94
+    },
+    {
+      "companyId": "star-688262",
+      "stockCode": "688262",
+      "evidenceDate": "2021-12-16",
+      "sourceTitle": "国芯科技首次公开发行股票并在科创板上市招股意向书附录",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2021-12-16/688262_20211216_3_feBW19U5.pdf",
+      "excerpt": "公司部分晶圆、封测及IP技术授权供应商系境外企业，主要境外供应商包括晶圆代工厂商台积电。",
+      "confidence": 0.9
+    },
+    {
+      "companyId": "star-688380",
+      "stockCode": "688380",
+      "evidenceDate": "2026-04-03",
+      "sourceTitle": "中微半导关于使用自有资金、承兑汇票支付募投项目款项的公告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-04-03/688380_20260403_5ZXZ.pdf",
+      "excerpt": "募投项目涉及境外采购原材料、设备、软件等业务，需要向境外供应商以外汇等方式支付款项。",
+      "confidence": 0.92
+    },
+    {
+      "companyId": "star-688486",
+      "stockCode": "688486",
+      "evidenceDate": "2026-04-10",
+      "sourceTitle": "龙迅股份2025年年度报告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-04-10/688486_20260410_7T5O.pdf",
+      "excerpt": "公司晶圆制造及封装测试服务境外采购比例高，主要集中在马来西亚、中国台湾；主要境外供应商包括Silterra、联华电子和超丰电子。",
+      "confidence": 0.96
+    },
+    {
+      "companyId": "star-688702",
+      "stockCode": "688702",
+      "evidenceDate": "2026-04-23",
+      "sourceTitle": "盛科通信2025年年度报告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-04-23/688702_20260423_CUEE.pdf",
+      "excerpt": "公司存在部分境外采购及境外销售，并主要通过美元进行相关采购和销售结算。",
+      "confidence": 0.94
+    },
+    {
+      "companyId": "star-688728",
+      "stockCode": "688728",
+      "evidenceDate": "2026-04-28",
+      "sourceTitle": "格科微有限公司2025年年度报告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-04-28/688728_20260428_QB6U.pdf",
+      "excerpt": "格科微电子（香港）有限公司为公司境外采购和销售平台。",
+      "confidence": 0.9
+    },
+    {
+      "companyId": "star-688807",
+      "stockCode": "688807",
+      "evidenceDate": "2026-04-10",
+      "sourceTitle": "优迅股份2025年年度报告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-04-10/688807_20260410_18WJ.pdf",
+      "excerpt": "公司晶圆、EDA软件和测试设备等核心供应商多为境外企业；公司持续降低对境外供应商的依赖，封测供应商已全部位于境内。",
+      "confidence": 0.96
+    },
+    {
+      "companyId": "star-688045",
+      "stockCode": "688045",
+      "evidenceDate": "2022-06-21",
+      "sourceTitle": "必易微关于使用自筹资金支付募投项目款项的公告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2022-06-21/688045_20220621_1_nfFFpGxI.pdf",
+      "excerpt": "公司募投项目中涉及从境外采购材料、设备和软件等业务。",
+      "confidence": 0.88
+    },
+    {
+      "companyId": "star-688052",
+      "stockCode": "688052",
+      "evidenceDate": "2023-10-26",
+      "sourceTitle": "纳芯微使用自有资金支付募投项目部分款项的核查意见",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2023-10-26/688052_20231026_E2FC.pdf",
+      "excerpt": "募投项目涉及从境外采购材料、设备和软件等业务及相关涉税支出。",
+      "confidence": 0.88
+    },
+    {
+      "companyId": "star-688130",
+      "stockCode": "688130",
+      "evidenceDate": "2022-10-29",
+      "sourceTitle": "晶华微使用自有资金、承兑汇票支付募投项目款项的核查意见",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2022-10-29/688130_20221029_8_yIKtvzkz.pdf",
+      "excerpt": "公司募投项目涉及从境外采购材料、设备和软件，通常以外币与境外供应商结算。",
+      "confidence": 0.9
+    },
+    {
+      "companyId": "star-688153",
+      "stockCode": "688153",
+      "evidenceDate": "2025-04-25",
+      "sourceTitle": "唯捷创芯2024年年度报告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2025-04-25/688153_20250425_ST6I.pdf",
+      "excerpt": "公司向主要供应商采购集中度较高，且晶圆供应商主要为境外供应商。",
+      "confidence": 0.94
+    },
+    {
+      "companyId": "star-688173",
+      "stockCode": "688173",
+      "evidenceDate": "2024-10-31",
+      "sourceTitle": "希荻微使用自筹资金支付募投项目部分款项的公告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2024-10-31/688173_20241031_LO0T.pdf",
+      "excerpt": "募投项目实施过程中涉及境外采购，一般以外币与境外供应商结算。",
+      "confidence": 0.9
+    },
+    {
+      "companyId": "star-688209",
+      "stockCode": "688209",
+      "evidenceDate": "2026-04-28",
+      "sourceTitle": "英集芯2025年年度报告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-04-28/688209_20260428_ULLJ.pdf",
+      "excerpt": "公司存在大量境外采购，晶圆主要供应商包括格罗方德、台积电等境外厂商。",
+      "confidence": 0.96
+    },
+    {
+      "companyId": "star-688220",
+      "stockCode": "688220",
+      "evidenceDate": "2026-03-31",
+      "sourceTitle": "翱捷科技2025年年度报告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-03-31/688220_20260331_N2CV.pdf",
+      "excerpt": "公司晶圆采购主要来自境外头部晶圆代工厂，并向境外采购IP或EDA工具等专有技术授权。",
+      "confidence": 0.96
+    },
+    {
+      "companyId": "star-688381",
+      "stockCode": "688381",
+      "evidenceDate": "2026-05-12",
+      "sourceTitle": "帝奥微2025年度持续督导跟踪报告书",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-05-12/688381_20260512_QO7J.pdf",
+      "excerpt": "公司核心原材料晶圆采购主要来自境外供应商。",
+      "confidence": 0.94
+    },
+    {
+      "companyId": "star-688458",
+      "stockCode": "688458",
+      "evidenceDate": "2025-06-05",
+      "sourceTitle": "美芯晟使用自有外汇支付募投项目部分款项的公告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2025-06-05/688458_20250605_3LJ7.pdf",
+      "excerpt": "公司募投项目中涉及境外采购业务，一般以外币与供应商结算。",
+      "confidence": 0.88
+    },
+    {
+      "companyId": "star-688484",
+      "stockCode": "688484",
+      "evidenceDate": "2026-08-18",
+      "sourceTitle": "南芯科技开展远期结售汇等外汇衍生产品业务的核查意见",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-08-18/688484_20260818_T08K.pdf",
+      "excerpt": "公司经营业务活动中存在境外销售和境外采购。",
+      "confidence": 0.92
+    },
+    {
+      "companyId": "star-688512",
+      "stockCode": "688512",
+      "evidenceDate": "2023-05-10",
+      "sourceTitle": "慧智微首次公开发行股票并在科创板上市招股说明书",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2023-05-10/688512_20230510_DO6E.pdf",
+      "excerpt": "报告期内公司存在大量境外销售和境外采购，随着业务扩张，境外采购金额预计进一步增加。",
+      "confidence": 0.94
+    },
+    {
+      "companyId": "star-688515",
+      "stockCode": "688515",
+      "evidenceDate": "2024-09-14",
+      "sourceTitle": "裕太微2024年半年度持续督导跟踪报告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2024-09-14/688515_20240914_7CNR.pdf",
+      "excerpt": "公司存在部分境外采购及境外销售，并主要通过美元进行结算。",
+      "confidence": 0.9
+    },
+    {
+      "companyId": "star-688536",
+      "stockCode": "688536",
+      "evidenceDate": "2026-06-23",
+      "sourceTitle": "思瑞浦开展外汇套期保值业务相关公告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-06-23/688536_20260623_X5LW.pdf",
+      "excerpt": "公司将进口原材料采购合同形成的外汇风险敞口作为套期保值对象。",
+      "confidence": 0.9
+    },
+    {
+      "companyId": "star-688601",
+      "stockCode": "688601",
+      "evidenceDate": "2026-04-23",
+      "sourceTitle": "力芯微2025年年度股东会会议资料",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-04-23/688601_20260423_VCBC.pdf",
+      "excerpt": "公司存在境外采购及境外销售。",
+      "confidence": 0.88
+    },
+    {
+      "companyId": "star-688653",
+      "stockCode": "688653",
+      "evidenceDate": "2026-04-28",
+      "sourceTitle": "康希通信2025年年度报告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-04-28/688653_20260428_AJZ2.pdf",
+      "excerpt": "公司存在境外采购及境外销售，主要以美元进行结算。",
+      "confidence": 0.94
+    },
+    {
+      "companyId": "star-688798",
+      "stockCode": "688798",
+      "evidenceDate": "2026-06-04",
+      "sourceTitle": "艾为电子向特定对象发行股票审核问询函回复",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-06-04/688798_20260604_8X5D.pdf",
+      "excerpt": "公司与境外供应商主要以美元结算，并向EDA工具供应商采购设计工具。",
+      "confidence": 0.92
+    },
+    {
+      "companyId": "star-688062",
+      "stockCode": "688062",
+      "evidenceDate": "2023-04-07",
+      "sourceTitle": "迈威生物2022年年度报告摘要",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2023-04-07/688062_20230407_7DUK.pdf",
+      "excerpt": "公司推进进口原材料国产替代，逐步解决国外进口物料到货难问题。",
+      "confidence": 0.88
+    },
+    {
+      "companyId": "star-688192",
+      "stockCode": "688192",
+      "evidenceDate": "2025-04-30",
+      "sourceTitle": "迪哲医药使用自筹资金支付募投项目款项的核查意见",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2025-04-30/688192_20250430_1SWL.pdf",
+      "excerpt": "公司募投项目涉及境外采购业务，采购过程中会发生相关代扣缴税金支出。",
+      "confidence": 0.9
+    },
+    {
+      "companyId": "star-688247",
+      "stockCode": "688247",
+      "evidenceDate": "2022-10-27",
+      "sourceTitle": "宣泰医药使用自筹资金支付募投项目部分款项的公告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2022-10-27/688247_20221027_8_35OrkQCI.pdf",
+      "excerpt": "公司募投项目涉及境外采购业务，需要以外币与境外供应商结算。",
+      "confidence": 0.9
+    },
+    {
+      "companyId": "star-688321",
+      "stockCode": "688321",
+      "evidenceDate": "2026-03-31",
+      "sourceTitle": "微芯生物使用自有资金、银行承兑汇票支付募投项目款项的公告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-03-31/688321_20260331_IUF3.pdf",
+      "excerpt": "募投项目涉及从境外购置设备、材料、服务，需要向境外供应商以外汇支付款项。",
+      "confidence": 0.92
+    },
+    {
+      "companyId": "star-688382",
+      "stockCode": "688382",
+      "evidenceDate": "2026-04-15",
+      "sourceTitle": "益方生物2025年年度报告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-04-15/688382_20260415_RCVP.pdf",
+      "excerpt": "公司向境外供应商采购的业务主要以美元结算。",
+      "confidence": 0.94
+    },
+    {
+      "companyId": "star-688505",
+      "stockCode": "688505",
+      "evidenceDate": "2023-03-28",
+      "sourceTitle": "复旦张江2022年年度报告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2023-03-28/688505_20230328_JUJX.pdf",
+      "excerpt": "公司受进口原材料供应延期影响，主要产品生产和发货不能按计划完成。",
+      "confidence": 0.96
+    },
+    {
+      "companyId": "star-688347",
+      "stockCode": "688347",
+      "evidenceDate": "2026-03-27",
+      "sourceTitle": "华虹公司2025年年度报告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-03-27/688347_20260327_AFKI.pdf",
+      "excerpt": "公司使用的主要生产设备和原材料有较大部分向境外供应商采购。",
+      "confidence": 0.96
+    },
+    {
+      "companyId": "star-688525",
+      "stockCode": "688525",
+      "evidenceDate": "2026-03-20",
+      "sourceTitle": "佰维存储2025年年度报告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-03-20/688525_20260320_VSO4.pdf",
+      "excerpt": "香港佰维为公司境外采购和销售平台。",
+      "confidence": 0.9
+    },
+    {
+      "companyId": "star-688802",
+      "stockCode": "688802",
+      "evidenceDate": "2026-03-27",
+      "sourceTitle": "沐曦股份2025年年度报告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-03-27/688802_20260327_0HOB.pdf",
+      "excerpt": "公司与部分境外供应商合作，HBM、EDA工具和部分接口IP等采购涉及境外供应链。",
+      "confidence": 0.94
+    },
+    {
+      "companyId": "star-688553",
+      "stockCode": "688553",
+      "evidenceDate": "2026-04-25",
+      "sourceTitle": "汇宇制药2025年年度报告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-04-25/688553_20260425_RR0Z.pdf",
+      "excerpt": "公司研发、生产经营活动包含采购进口原材料，并涉及外币结算。",
+      "confidence": 0.92
+    },
+    {
+      "companyId": "star-688072",
+      "stockCode": "688072",
+      "evidenceDate": "2026-04-28",
+      "sourceTitle": "拓荆科技2025年年度报告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-04-28/688072_20260428_3GJH.pdf",
+      "excerpt": "公司部分零部件仍需要向国外供应商采购。",
+      "confidence": 0.94
+    },
+    {
+      "companyId": "star-688506",
+      "stockCode": "688506",
+      "evidenceDate": "2025-10-01",
+      "sourceTitle": "百利天恒关于使用自筹资金支付募投项目部分款项的公告",
+      "sourceUrl": "https://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2025-10-01/688506_20251001_W1XX.pdf",
+      "excerpt": "公司财务部门按月统计募投项目境外采购涉及的相关款项并办理等额置换。",
+      "confidence": 0.88
+    }
+  ]
+}

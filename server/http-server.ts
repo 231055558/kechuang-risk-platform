@@ -21,6 +21,15 @@ import {
   RISK_GRAPH_VIEWS,
   type RiskGraphView,
 } from "../src/domain/risk-graph-v1/api.ts"
+import {
+  NARRATIVE_RISK_AUDIT_SUMMARY_API_PATH,
+  NARRATIVE_RISK_ANNUAL_AUDIT_API_PATH,
+  NARRATIVE_RISK_ANNUAL_METHODOLOGY_API_PATH,
+  NARRATIVE_RISK_ANNUAL_TRENDS_API_PATH,
+  NARRATIVE_RISK_COMPANIES_API_PATH,
+  NARRATIVE_RISK_INDUSTRY_TRENDS_API_PATH,
+} from "../src/domain/narrative-risk-v1/assessment-api.ts"
+import type { NarrativeRiskSourceFilters } from "./narrative-risk-service.ts"
 
 const TECHNOLOGY_SCORE_PATH = "/api/v1/technology-risk/score"
 const TECHNOLOGY_BASELINE_QUANTIFY_PATH =
@@ -32,6 +41,13 @@ const INDUSTRY_RISK_COMPANY_PATH_PREFIX = `${INDUSTRY_RISK_COMPANIES_PATH}/`
 const INDUSTRY_RISK_GRAPH_PATH = `/${INDUSTRY_RISK_GRAPH_API_PATH}`
 const RISK_GRAPH_COMPANIES_PATH = `/${RISK_GRAPH_COMPANIES_API_PATH}`
 const RISK_GRAPH_COMPANY_PATH_PREFIX = `${RISK_GRAPH_COMPANIES_PATH}/`
+const NARRATIVE_RISK_COMPANIES_PATH = `/${NARRATIVE_RISK_COMPANIES_API_PATH}`
+const NARRATIVE_RISK_COMPANY_PATH_PREFIX = `${NARRATIVE_RISK_COMPANIES_PATH}/`
+const NARRATIVE_RISK_AUDIT_SUMMARY_PATH = `/${NARRATIVE_RISK_AUDIT_SUMMARY_API_PATH}`
+const NARRATIVE_RISK_ANNUAL_TRENDS_PATH = `/${NARRATIVE_RISK_ANNUAL_TRENDS_API_PATH}`
+const NARRATIVE_RISK_ANNUAL_METHODOLOGY_PATH = `/${NARRATIVE_RISK_ANNUAL_METHODOLOGY_API_PATH}`
+const NARRATIVE_RISK_ANNUAL_AUDIT_PATH = `/${NARRATIVE_RISK_ANNUAL_AUDIT_API_PATH}`
+const NARRATIVE_RISK_INDUSTRY_TRENDS_PATH = `/${NARRATIVE_RISK_INDUSTRY_TRENDS_API_PATH}`
 const DEFAULT_MAX_BODY_BYTES = 1024 * 1024
 
 const contentTypes: Record<string, string> = {
@@ -67,6 +83,13 @@ export type RiskGraphReader = (
   view: RiskGraphView,
   minWeight?: number
 ) => unknown | Promise<unknown>
+export type NarrativeRiskCompanyLister = IndustryRiskCompanyLister
+export type NarrativeRiskCompanyReader = KcrAssessmentReader
+export type NarrativeRiskAuditSummaryReader = IndustryRiskCompanyLister
+export type NarrativeRiskSourceLister = (
+  companyKey: string,
+  filters: NarrativeRiskSourceFilters
+) => unknown | Promise<unknown>
 
 export interface ProductionServerOptions {
   staticRoot: string
@@ -79,6 +102,14 @@ export interface ProductionServerOptions {
   getIndustryRiskGraph?: IndustryRiskCompanyLister
   listRiskGraphCompanies?: RiskGraphCompanyLister
   getRiskGraph?: RiskGraphReader
+  listNarrativeRiskCompanies?: NarrativeRiskCompanyLister
+  getNarrativeRiskCompany?: NarrativeRiskCompanyReader
+  listNarrativeRiskSources?: NarrativeRiskSourceLister
+  getNarrativeRiskAuditSummary?: NarrativeRiskAuditSummaryReader
+  getNarrativeAnnualTrends?: NarrativeRiskAuditSummaryReader
+  getNarrativeAnnualMethodology?: NarrativeRiskAuditSummaryReader
+  getNarrativeAnnualAudit?: NarrativeRiskAuditSummaryReader
+  getNarrativeIndustryTrends?: NarrativeRiskAuditSummaryReader
   basePath?: string
   maxBodyBytes?: number
 }
@@ -759,6 +790,92 @@ async function handleRiskGraph(
   }
 }
 
+function getNarrativeRiskCompanyRoute(pathname: string) {
+  if (!pathname.startsWith(NARRATIVE_RISK_COMPANY_PATH_PREFIX)) return null
+  const suffix = pathname.slice(NARRATIVE_RISK_COMPANY_PATH_PREFIX.length)
+  const parts = suffix.split("/")
+  if (!parts[0] || parts.length > 2) return null
+  if (parts.length === 2 && parts[1] !== "sources") return null
+  try {
+    return {
+      companyKey: decodeURIComponent(parts[0]),
+      kind:
+        parts[1] === "sources" ? ("sources" as const) : ("company" as const),
+    }
+  } catch {
+    return null
+  }
+}
+
+function getNarrativeSourceFilters(request: IncomingMessage) {
+  const url = new URL(request.url ?? "/", "http://127.0.0.1")
+  const nullable = (name: string) => {
+    const value = url.searchParams.get(name)?.trim()
+    return value ? value : null
+  }
+  return {
+    scopeId: nullable("scopeId"),
+    channel: nullable("channel"),
+    validationStatus: nullable("validationStatus"),
+    page: Number(url.searchParams.get("page") ?? "1"),
+    pageSize: Number(url.searchParams.get("pageSize") ?? "20"),
+  } satisfies NarrativeRiskSourceFilters
+}
+
+async function handleNarrativeRiskRead(
+  request: IncomingMessage,
+  response: ServerResponse,
+  reader: (() => unknown | Promise<unknown>) | undefined,
+  unavailableMessage: string
+) {
+  if (request.method !== "GET") {
+    sendApiError(
+      response,
+      405,
+      "METHOD_NOT_ALLOWED",
+      "该接口仅支持 GET 请求。",
+      {
+        allow: "GET",
+      }
+    )
+    return
+  }
+  if (!reader) {
+    sendApiError(
+      response,
+      503,
+      "NARRATIVE_RISK_UNAVAILABLE",
+      unavailableMessage
+    )
+    return
+  }
+  try {
+    sendJson(response, 200, await reader())
+  } catch (error) {
+    const publicError = getPublicError(
+      error,
+      "NARRATIVE_RISK_REQUEST_INVALID",
+      "叙事风险查询无效。"
+    )
+    if (publicError) {
+      sendApiError(
+        response,
+        publicError.statusCode,
+        publicError.code,
+        publicError.message
+      )
+      return
+    }
+    console.error("Narrative risk retrieval failed", error)
+    sendApiError(
+      response,
+      500,
+      "NARRATIVE_RISK_FAILED",
+      "叙事风险数据暂时不可用。"
+    )
+  }
+}
+
 function isPrivateStaticPath(pathname: string) {
   const segments = pathname.split("/").filter(Boolean)
   return (
@@ -953,6 +1070,16 @@ export function createProductionServer(
         return
       }
 
+      if (pathname === NARRATIVE_RISK_COMPANIES_PATH) {
+        await handleNarrativeRiskRead(
+          request,
+          response,
+          options.listNarrativeRiskCompanies,
+          "叙事风险企业目录尚未配置。"
+        )
+        return
+      }
+
       const riskGraphRequest = getRiskGraphViewRequest(pathname)
       if (riskGraphRequest !== null) {
         await handleRiskGraph(
@@ -961,6 +1088,85 @@ export function createProductionServer(
           riskGraphRequest.companyId,
           riskGraphRequest.view,
           options.getRiskGraph
+        )
+        return
+      }
+
+      if (pathname === NARRATIVE_RISK_AUDIT_SUMMARY_PATH) {
+        await handleNarrativeRiskRead(
+          request,
+          response,
+          options.getNarrativeRiskAuditSummary,
+          "叙事风险审计摘要尚未配置。"
+        )
+        return
+      }
+
+      if (pathname === NARRATIVE_RISK_ANNUAL_TRENDS_PATH) {
+        await handleNarrativeRiskRead(
+          request,
+          response,
+          options.getNarrativeAnnualTrends,
+          "叙事风险年度趋势尚未配置。"
+        )
+        return
+      }
+
+      if (pathname === NARRATIVE_RISK_ANNUAL_METHODOLOGY_PATH) {
+        await handleNarrativeRiskRead(
+          request,
+          response,
+          options.getNarrativeAnnualMethodology,
+          "叙事风险年度方法说明尚未配置。"
+        )
+        return
+      }
+
+      if (pathname === NARRATIVE_RISK_ANNUAL_AUDIT_PATH) {
+        await handleNarrativeRiskRead(
+          request,
+          response,
+          options.getNarrativeAnnualAudit,
+          "叙事风险年度审计尚未配置。"
+        )
+        return
+      }
+
+      if (pathname === NARRATIVE_RISK_INDUSTRY_TRENDS_PATH) {
+        await handleNarrativeRiskRead(
+          request,
+          response,
+          options.getNarrativeIndustryTrends,
+          "行业叙事风险年度分布尚未配置。"
+        )
+        return
+      }
+
+      const narrativeRiskRoute = getNarrativeRiskCompanyRoute(pathname)
+      if (narrativeRiskRoute?.kind === "sources") {
+        await handleNarrativeRiskRead(
+          request,
+          response,
+          options.listNarrativeRiskSources
+            ? () =>
+                options.listNarrativeRiskSources!(
+                  narrativeRiskRoute.companyKey,
+                  getNarrativeSourceFilters(request)
+                )
+            : undefined,
+          "叙事风险来源台账尚未配置。"
+        )
+        return
+      }
+      if (narrativeRiskRoute?.kind === "company") {
+        await handleNarrativeRiskRead(
+          request,
+          response,
+          options.getNarrativeRiskCompany
+            ? () =>
+                options.getNarrativeRiskCompany!(narrativeRiskRoute.companyKey)
+            : undefined,
+          "叙事风险企业详情尚未配置。"
         )
         return
       }

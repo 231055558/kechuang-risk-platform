@@ -6,6 +6,7 @@ import {
   LandmarkIcon,
   LayoutDashboardIcon,
   LightbulbIcon,
+  MessageSquareWarningIcon,
   RadioTowerIcon,
 } from "lucide-react"
 
@@ -33,6 +34,14 @@ export const navItems: NavItem[] = [
     description: "查看 R05–R22 同业热力、原值、公式、证据与覆盖状态",
     icon: ChartNoAxesCombinedIcon,
     target: { view: "intelligence", researchSection: "metrics" },
+  },
+  {
+    id: "narrative-risk",
+    label: "叙事风险",
+    group: "风险研判",
+    description: "查看年报披露、创新叙事夸大与管理者语调的年度趋势",
+    icon: MessageSquareWarningIcon,
+    target: { view: "narrative" },
   },
   {
     id: "risk-transmission",
@@ -113,6 +122,10 @@ export function resolveActiveNavigationItem(
 
   if (activeView === "realtime") {
     return "realtime-intelligence"
+  }
+
+  if (activeView === "narrative") {
+    return "narrative-risk"
   }
 
   if (activeView === "reports") {

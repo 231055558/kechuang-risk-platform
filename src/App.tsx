@@ -110,6 +110,9 @@ const loadOverviewTab = cachedImport(
 const loadRealtimeTab = cachedImport(
   () => import("@/components/dashboard/realtime-tab")
 )
+const loadNarrativeTab = cachedImport(
+  () => import("@/components/dashboard/narrative-risk-tab")
+)
 const loadReportsTab = cachedImport(
   () => import("@/components/dashboard/risk-reports-tab")
 )
@@ -125,6 +128,7 @@ const loadEventsTab = cachedImport(
 
 type ViewComponentRegistry = {
   overview: typeof import("@/components/dashboard/overview-tab").OverviewTab
+  narrative: typeof import("@/components/dashboard/narrative-risk-tab").NarrativeRiskTab
   realtime: typeof import("@/components/dashboard/realtime-tab").RealtimeTab
   reports: typeof import("@/components/dashboard/risk-reports-tab").RiskReportsTab
   intelligence: typeof import("@/components/dashboard/intelligence-tab").IntelligenceTab
@@ -135,6 +139,9 @@ type ViewComponentRegistry = {
 const VIEW_COMPONENT_LOADERS = {
   overview: cachedImport(() =>
     loadOverviewTab().then((module) => module.OverviewTab)
+  ),
+  narrative: cachedImport(() =>
+    loadNarrativeTab().then((module) => module.NarrativeRiskTab)
   ),
   realtime: cachedImport(() =>
     loadRealtimeTab().then((module) => module.RealtimeTab)
@@ -157,6 +164,11 @@ const VIEW_COMPONENT_LOADERS = {
 
 const LazyOverviewTab = lazy(() =>
   VIEW_COMPONENT_LOADERS.overview().then((component) => ({
+    default: component,
+  }))
+)
+const LazyNarrativeTab = lazy(() =>
+  VIEW_COMPONENT_LOADERS.narrative().then((component) => ({
     default: component,
   }))
 )
@@ -188,6 +200,7 @@ const LazyEventsTab = lazy(() =>
 
 type LazyViewRegistry = {
   overview: typeof LazyOverviewTab
+  narrative: typeof LazyNarrativeTab
   realtime: typeof LazyRealtimeTab
   reports: typeof LazyReportsTab
   intelligence: typeof LazyIntelligenceTab
@@ -197,6 +210,7 @@ type LazyViewRegistry = {
 
 const INITIAL_LAZY_TABS = {
   overview: LazyOverviewTab,
+  narrative: LazyNarrativeTab,
   realtime: LazyRealtimeTab,
   reports: LazyReportsTab,
   intelligence: LazyIntelligenceTab,
@@ -370,6 +384,7 @@ function App() {
   const [viewLoadAttempt, setViewLoadAttempt] = useState(0)
   const {
     overview: OverviewTab,
+    narrative: NarrativeTab,
     realtime: RealtimeTab,
     reports: ReportsTab,
     intelligence: IntelligenceTab,
@@ -417,6 +432,16 @@ function App() {
     scoreLabel: assessment.scoreLabel,
     methodVersion: INDUSTRY_RISK_MVP_METHOD_VERSION,
     overviewDescription: "汇总企业风险结论、同业位置、关键事件与可追溯证据",
+  }
+  const narrativeAssessmentSummary = {
+    label: "行业年度分布",
+    scoreLabel: "原始指数",
+    methodVersion: "行业年报原始指数 · 2026-08-27",
+    overviewDescription:
+      "查看94家企业的行业年度区间、均值与单家企业原始叙事指数",
+    contextName: "94家行业样本",
+    contextSector: "386份年报 · 2021—2025年窗口",
+    snapshotAt: "2026-08-27",
   }
   const promotedSignalIdsForCompany = useMemo(
     () => getPromotedSignalIdsForCompany(promotedSignalIds, detail.id),
@@ -1032,7 +1057,9 @@ function App() {
       detail={detail}
       assessment={assessment}
       assessmentSummaryOverride={
-        activeView === "overview" || activeView === "reports"
+        activeView === "narrative"
+          ? narrativeAssessmentSummary
+          : activeView === "overview" || activeView === "reports"
           ? industryAssessmentSummary
           : undefined
       }
@@ -1086,6 +1113,9 @@ function App() {
                   onCompanyChange={handleRealtimeCompanyChange}
                   onPromote={handlePromoteSignal}
                 />
+              ) : null}
+              {activeView === "narrative" ? (
+                <NarrativeTab companyId={companyId} />
               ) : null}
               {activeView === "reports" ? (
                 <ReportsTab

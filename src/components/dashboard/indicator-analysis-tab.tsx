@@ -366,6 +366,8 @@ function MetricMethodSheet({
   const observations = response.observations.filter(
     (item) => item.indicatorId === metric?.indicatorId
   )
+  const isR17LowRiskFloor =
+    metric?.metricName === "no_identified_external_supplier_floor"
   const sourceIds = new Set(metric?.sourceIds ?? [])
   observations.forEach((item) => {
     sourceIds.add(item.sourceId)
@@ -384,7 +386,11 @@ function MetricMethodSheet({
             <SheetHeader>
               <div className="signal-drawer-badges">
                 <Badge variant="outline">{metric.indicatorId}</Badge>
-                <Badge variant="outline">n={metric.sampleSize}</Badge>
+                <Badge variant="outline">
+                  {isR17LowRiskFloor
+                    ? "明确零值保底"
+                    : `n=${metric.sampleSize}`}
+                </Badge>
                 <Badge variant="outline">
                   {riskHeatLabel(metric.riskPercentile)}
                 </Badge>

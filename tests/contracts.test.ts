@@ -67,8 +67,8 @@ test("glass styles keep the standard backdrop declaration last", () => {
   })
 })
 
-test("navigation exposes the eight approved investor workflows", () => {
-  assert.equal(navItems.length, 8)
+test("navigation exposes the nine approved investor workflows", () => {
+  assert.equal(navItems.length, 9)
   assert.equal(new Set(navItems.map((item) => item.id)).size, navItems.length)
   assert.equal(
     new Set(navItems.map((item) => item.label)).size,
@@ -93,6 +93,12 @@ test("navigation exposes the eight approved investor workflows", () => {
         label: "指标分析",
         group: "风险研判",
         target: { view: "intelligence", researchSection: "metrics" },
+      },
+      {
+        id: "narrative-risk",
+        label: "叙事风险",
+        group: "风险研判",
+        target: { view: "narrative" },
       },
       {
         id: "risk-transmission",
@@ -594,7 +600,7 @@ test("structured research method states the automatic calculation and action bou
   )
 })
 
-test("the eight investor workflows use the approved terminology", () => {
+test("the nine investor workflows use the approved terminology", () => {
   const overviewSource = readProjectFile(
     "src/components/dashboard/industry-risk-review-panel.tsx"
   )

@@ -1,11 +1,17 @@
 import unifiedData from "@/data/industry/r01-r22-unified.json"
+import r08MilestoneEnrichmentData from "@/data/industry/r08-milestone-enrichment.json"
+import r20ControllerEnrichmentData from "@/data/industry/r20-controller-enrichment.json"
 import {
+  attachIndustryRiskR08MilestoneEnrichment,
+  attachIndustryRiskR20ControllerEnrichment,
   scoreIndustryRiskDataset,
   type IndustryRiskCompany,
   type IndustryRiskDataset,
   type IndustryRiskIndicatorId,
   type IndustryRiskObservation,
   type IndustryRiskSource,
+  type R08MilestoneEnrichment,
+  type R20ControllerEnrichment,
 } from "@/domain/industry-risk-v1/index.ts"
 import type {
   CanonicalRiskDimensionId,
@@ -27,7 +33,13 @@ import type {
   TechnologyScoringCompanyState,
 } from "@/types/risk"
 
-const dataset = unifiedData as IndustryRiskDataset
+const dataset = attachIndustryRiskR08MilestoneEnrichment(
+  attachIndustryRiskR20ControllerEnrichment(
+    unifiedData as IndustryRiskDataset,
+    r20ControllerEnrichmentData as R20ControllerEnrichment
+  ),
+  r08MilestoneEnrichmentData as R08MilestoneEnrichment
+)
 const snapshotAt = dataset.metadata.sourceDate || "2026-08-19"
 const fallbackSourceUrl = "https://www.sse.com.cn/"
 
@@ -669,7 +681,7 @@ export const riskIndicators: RiskIndicator[] = dataset.indicators.map(
 
 export const indicatorTaxonomy: IndicatorTaxonomy = {
   sourceFile: "r01-r22-unified.json",
-  methodVersion: "IRAWC-CRITIC-2026.08-v2",
+  methodVersion: "IRAWC-CRITIC-2026.08-v3",
   admissionGovernance: {
     decisionVersion: "R01-R22-ADM-2026.08-v1",
     decisionDate: snapshotAt,
@@ -764,7 +776,7 @@ function buildBaseAssessment(companyId: string): RiskAssessment {
   const totalRiskScore = industryAssessment?.totalRiskScore ?? null
   return {
     methodVersion:
-      industryAssessment?.methodVersion ?? "IRAWC-CRITIC-2026.08-v2",
+      industryAssessment?.methodVersion ?? "IRAWC-CRITIC-2026.08-v3",
     label: "风险辅助研判指数",
     score: totalRiskScore,
     scoreLabel:

@@ -44,7 +44,12 @@ export interface IndustryRiskCompanySummary {
   indicatorHeat: Array<
     Pick<
       IndustryRiskCompanyAssessment["metrics"][number],
-      "indicatorId" | "riskPercentile" | "riskScore" | "sampleSize" | "status"
+      | "indicatorId"
+      | "metricName"
+      | "riskPercentile"
+      | "riskScore"
+      | "sampleSize"
+      | "status"
     >
   >
 }

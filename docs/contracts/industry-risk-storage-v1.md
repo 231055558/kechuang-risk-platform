@@ -13,6 +13,7 @@
 | coverage            | `companyId`、`indicatorId`、`status`、`reason`、`recommendedNextSource`                                                                                 |
 | event               | `id`、`companyId`、`eventType`、`date`、`title`、`url`、`relatedIndicatorId`、`confidence`                                                              |
 | narrative corpus    | `companyId`、`reportPeriod`、`reportSection`、`sourceId`、`textLocator`、`extractedText`、`extractorVersion`                                            |
+| narrative annual statistic | `industryGroupId`、`year`、`metricKey`、`sampleSize`、`mean`、`minimum`、`maximum`、`standardDeviation`                                      |
 | temporal graph edge | `sourceEntityId`、`targetEntityId`、`relationType`、`validFrom`、`validTo`、`confidence`、`sourceId`、`extractionVersion`                               |
 
 ## 约束
@@ -32,4 +33,8 @@
 
 ## 2026-08-27 财报叙事结构变更影响
 
-本次只新增后端派生 DTO 和前端展示合同，没有修改 SQLite 表、列、索引或原始快照。后续接入真实财报语料与评分结果时，必须另行提交数据库迁移，并补齐上述结果唯一键和来源字段。
+PostgreSQL 迁移 `004`–`006` 已新增财报叙事方法、年度文档、年度原始观测、同业年度统计及审计记录。当前发布视图只展示原始年度指数及其行业区间，不将其改写为0–100正式叙事评分，也不进入R05–R22客观总分。
+
+本次没有修改 SQLite 表、列、索引；94家核心快照仍是可复核的发布输入，新增结构只进入PostgreSQL叙事schema与脱敏运行时快照。
+
+本地和服务器导入必须按迁移顺序执行，并以 `dataVersion + companyId + year + metricKey` 保持年度观测唯一。任何代理专利值必须保留 `patentProxy`、来源、置信度与限制；数据库或脱敏快照均不得包含付费原始响应、财报全文或私有文件路径。

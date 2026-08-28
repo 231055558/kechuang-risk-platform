@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "KCR-NARRATIVE-PATENT-GAP-2026.08-v1",
+  "dataVersion": "tyc-patent-gap-2026-08-27-v1",
+  "asOfDate": "2026-08-27",
+  "apiId": 1137,
+  "apiName": "企业专利信息",
+  "unitCostYuan": 0.1,
+  "authorizedCostCapYuan": 5,
+  "callCount": 42,
+  "actualCostYuan": 4.2,
+  "sourceUrl": "https://www.tianyancha.com/data/open/1137",
+  "tokenStored": false,
+  "rawPayloadRedistribution": "private-only",
+  "records": [
+    {
+      "companyId": "star-688235",
+      "year": 2022,
+      "annualInventionApplications": 18,
+      "status": "proxy-calculated",
+      "sourceEntityCount": 5,
+      "deduplicationKey": "application-number",
+      "confidence": 0.82,
+      "limitation": "按百济神州五家主要境内子公司逐实体查询并按申请号去重，仅代表天眼数据可检索的境内主体发明申请代理，不含无法匹配的境外主体。"
+    },
+    {
+      "companyId": "star-688235",
+      "year": 2023,
+      "annualInventionApplications": 45,
+      "status": "proxy-calculated",
+      "sourceEntityCount": 5,
+      "deduplicationKey": "application-number",
+      "confidence": 0.82,
+      "limitation": "按百济神州五家主要境内子公司逐实体查询并按申请号去重，仅代表天眼数据可检索的境内主体发明申请代理，不含无法匹配的境外主体。"
+    },
+    {
+      "companyId": "star-688235",
+      "year": 2024,
+      "annualInventionApplications": 51,
+      "status": "proxy-calculated",
+      "sourceEntityCount": 5,
+      "deduplicationKey": "application-number",
+      "confidence": 0.82,
+      "limitation": "按百济神州五家主要境内子公司逐实体查询并按申请号去重，仅代表天眼数据可检索的境内主体发明申请代理，不含无法匹配的境外主体。"
+    },
+    {
+      "companyId": "star-688235",
+      "year": 2025,
+      "annualInventionApplications": 4,
+      "status": "proxy-calculated",
+      "sourceEntityCount": 5,
+      "deduplicationKey": "application-number",
+      "confidence": 0.82,
+      "limitation": "按百济神州五家主要境内子公司逐实体查询并按申请号去重，仅代表天眼数据可检索的境内主体发明申请代理，不含无法匹配的境外主体。"
+    },
+    {
+      "companyId": "star-688192",
+      "year": 2025,
+      "annualInventionApplications": null,
+      "status": "unavailable",
+      "sourceEntityCount": 7,
+      "deduplicationKey": "application-number",
+      "confidence": 0.7,
+      "limitation": "上市主体、前身、四家境内子公司及公司简称查询均无2025年发明专利申请结果；年报仅披露新增授权数，继续保持缺失。"
+    }
+  ]
+}

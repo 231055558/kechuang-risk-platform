@@ -3,7 +3,7 @@
 状态：**原始版保留审计；运行数据已升级为 2026-08-19 深搜增强版**
 
 > 历史阶段说明：本文件记录37家数字芯片样本的接入过程。当前运行时已经升级为94家统一
-> 数据和 `IRAWC-CRITIC-2026.08-v2`；最新评分口径见 `12-industry-risk-scoring-methods.md`。
+> 数据和 `IRAWC-CRITIC-2026.08-v3`；最新评分口径见 `12-industry-risk-scoring-methods.md`。
 
 ## 样本决策
 

@@ -90,6 +90,162 @@ async function verifyApi(path) {
   }
 }
 
+async function verifyNarrativeRisk() {
+  const directoryResponse = await fetch(
+    `${baseUrl}/api/v1/narrative-risk/companies`
+  )
+  const directory = await directoryResponse.json()
+  if (
+    !directoryResponse.ok ||
+    directory?.counts?.uniqueCompanies !== 7 ||
+    directory?.counts?.scopeCompanyRecords !== 8 ||
+    !["postgres", "snapshot"].includes(directory?.sourceMode)
+  ) {
+    throw new Error("Narrative risk directory did not pass invariant checks.")
+  }
+
+  const detailResponse = await fetch(
+    `${baseUrl}/api/v1/narrative-risk/companies/cambricon`
+  )
+  const detail = await detailResponse.json()
+  if (
+    !detailResponse.ok ||
+    detail?.assessments?.length !== 2 ||
+    detail.metrics.some(
+      (metric) =>
+        ["PDQI", "ITAG", "TONE"].includes(metric.indicatorId) &&
+        metric.scoreEligible
+    )
+  ) {
+    throw new Error("Cambricon narrative scopes or proxy admission are invalid.")
+  }
+
+  const auditResponse = await fetch(
+    `${baseUrl}/api/v1/narrative-risk/audit-summary`
+  )
+  const audit = await auditResponse.json()
+  if (!auditResponse.ok || audit?.counts?.linkedUniqueSources !== 83) {
+    throw new Error("Narrative risk source audit is incomplete.")
+  }
+
+  const annualTrendsResponse = await fetch(
+    `${baseUrl}/api/v1/narrative-risk/annual-trends`
+  )
+  const annualTrends = await annualTrendsResponse.json()
+  const annualMethodologyResponse = await fetch(
+    `${baseUrl}/api/v1/narrative-risk/annual-trends/methodology`
+  )
+  const annualMethodology = await annualMethodologyResponse.json()
+  const annualAuditResponse = await fetch(
+    `${baseUrl}/api/v1/narrative-risk/annual-trends/audit`
+  )
+  const annualAudit = await annualAuditResponse.json()
+  if (
+    !annualTrendsResponse.ok ||
+    !annualMethodologyResponse.ok ||
+    !annualAuditResponse.ok ||
+    annualTrends?.companies?.length !== 5 ||
+    annualTrends?.observations?.length !== 210 ||
+    annualTrends?.observations?.some(
+      (item) =>
+        item.riskScore !== null &&
+        (typeof item.riskScore !== "number" ||
+          item.riskScore < 0 ||
+          item.riskScore > 100)
+    ) ||
+    annualTrends?.observations?.some(
+      (item) => (item.value === null) !== (item.riskScore === null)
+    ) ||
+    annualMethodology?.methodology?.length !== 10 ||
+    annualMethodology?.methodology?.some(
+      (item) =>
+        !item.riskMapping?.formula ||
+        !item.riskMapping?.parameterSource ||
+        !item.riskMapping?.name?.startsWith("当前样本极差") ||
+        !Array.isArray(item.riskMapping?.parameters) ||
+        !item.riskMapping.parameters.some(
+          (parameter) => parameter.name === "样本最小值"
+        ) ||
+        !item.riskMapping.parameters.some(
+          (parameter) => parameter.name === "样本最大值"
+        )
+    ) ||
+    annualMethodology?.methodVersion?.innovationLexiconSize !== 692 ||
+    !annualMethodology?.methodVersion?.peerBenchmarkStatus?.includes(
+      "方案二"
+    ) ||
+    annualAudit?.documents?.length !== 21 ||
+    annualAudit?.audit?.archivedReportCount !== 21 ||
+    annualAudit?.audit?.toneYearCount !== 16
+  ) {
+    throw new Error("Revised narrative annual trends failed invariant checks.")
+  }
+
+
+  const industryTrendsResponse = await fetch(
+    `${baseUrl}/api/v1/narrative-risk/industry-trends`
+  )
+  const industryTrends = await industryTrendsResponse.json()
+  if (
+    !industryTrendsResponse.ok ||
+    industryTrends?.sourceMode !== "postgres" ||
+    industryTrends?.companies?.length !== 94 ||
+    industryTrends?.documents?.length !== 470 ||
+    industryTrends?.methodology?.length !== 3 ||
+    industryTrends?.observations?.length !== 1158 ||
+    industryTrends?.industryStatistics?.length !== 45 ||
+    industryTrends?.audit?.archivedReportCount !== 386 ||
+    industryTrends?.observations?.some(
+      (item) => "riskScore" in item || "riskScoreChange" in item
+    )
+  ) {
+    throw new Error("Industry narrative raw trends failed invariant checks.")
+  }
+}
+
+async function verifyR17ExposureRemainsUnscored() {
+  const confirmedResponse = await fetch(
+    `${baseUrl}/api/v1/industry-risk/companies/star-688505/assessment`
+  )
+  const confirmedPayload = await confirmedResponse.json()
+  const confirmedMetric = confirmedPayload?.assessment?.metrics?.find(
+    (item) => item.indicatorId === "R17"
+  )
+  if (
+    !confirmedResponse.ok ||
+    confirmedPayload?.assessment?.methodVersion !== "IRAWC-CRITIC-2026.08-v3" ||
+    confirmedMetric?.metricName !== "verified_external_procurement_disclosure" ||
+    confirmedMetric?.rawValue !== null ||
+    confirmedMetric?.riskPercentile !== null ||
+    confirmedMetric?.riskScore !== null ||
+    confirmedMetric?.status !== "missing" ||
+    !confirmedMetric?.sourceId ||
+    !confirmedMetric?.missingReason?.includes("缺少境外采购金额与总采购金额")
+  ) {
+    throw new Error("R17 confirmed exposure was incorrectly converted to a score.")
+  }
+
+  const missingResponse = await fetch(
+    `${baseUrl}/api/v1/industry-risk/companies/star-688506/assessment`
+  )
+  const missingPayload = await missingResponse.json()
+  const missingMetric = missingPayload?.assessment?.metrics?.find(
+    (item) => item.indicatorId === "R17"
+  )
+  if (
+    !missingResponse.ok ||
+    missingMetric?.metricName !== "verified_external_procurement_disclosure" ||
+    missingMetric?.rawValue !== null ||
+    missingMetric?.riskPercentile !== null ||
+    missingMetric?.riskScore !== null ||
+    missingMetric?.status !== "missing" ||
+    !missingMetric?.sourceId ||
+    !missingMetric?.missingReason?.includes("缺少境外采购金额与总采购金额")
+  ) {
+    throw new Error("R17 confirmed exposure was incorrectly converted to a score.")
+  }
+}
+
 async function stopDevelopmentServer() {
   if (developmentServer.exitCode !== null) return
 
@@ -109,6 +265,8 @@ try {
   await waitForServices()
   await verifyApi("/api/v1/technology-risk/score")
   await verifyApi("/api/v1/technology-risk/baseline-quantify")
+  await verifyR17ExposureRemainsUnscored()
+  await verifyNarrativeRisk()
   console.log(`Localhost verification passed at ${baseUrl}`)
 } catch (error) {
   console.error(error)

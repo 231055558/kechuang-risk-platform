@@ -1,0 +1,28 @@
+# Mac mini: /opt/homebrew/etc/frp/frpc.toml
+# Keep the real token outside this repository and chmod it to 600.
+serverAddr = "__ALIYUN_PUBLIC_IP_OR_DOMAIN__"
+serverPort = 7000
+user = "kechuang-macmini"
+loginFailExit = false
+
+transport.protocol = "tcp"
+transport.tls.enable = true
+
+auth.method = "token"
+auth.additionalScopes = ["HeartBeats", "NewWorkConns"]
+auth.tokenSource.type = "file"
+auth.tokenSource.file.path = "/Users/mao/.config/frp/kechuang-token"
+
+[[proxies]]
+name = "kechuang-backend"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 5050
+remotePort = 7878
+
+[[proxies]]
+name = "kechuang-postgresql"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 5432
+remotePort = 7879

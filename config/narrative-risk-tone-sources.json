@@ -1,0 +1,30 @@
+{
+  "methodVersion": "narrative-method-revised-2026-08-27-v2",
+  "sourcePlatform": "上证路演中心",
+  "retrievedAt": "2026-08-27",
+  "sources": [
+    { "companyKey": "cambricon", "year": 2021, "activityId": 8616, "activityTitle": "寒武纪2021年度业绩说明会", "targetCompanyId": 173882 },
+    { "companyKey": "cambricon", "year": 2022, "activityId": 13887, "activityTitle": "半导体(一)专场2022年度业绩说明会", "targetCompanyId": 173882 },
+    { "companyKey": "cambricon", "year": 2023, "activityId": 18978, "activityTitle": "2023年度科创板芯片设计专场（二）集体业绩说明会", "targetCompanyId": 173882 },
+    { "companyKey": "cambricon", "year": 2024, "activityId": 33055, "activityTitle": "寒武纪2024年度暨2025年第一季度业绩说明会", "targetCompanyId": 173882 },
+    { "companyKey": "cambricon", "year": 2025, "activityId": 38704, "activityTitle": "寒武纪2025年年度业绩说明会", "targetCompanyId": 173882 },
+    { "companyKey": "hengrui-pharma", "year": 2021, "activityId": 9181, "activityTitle": "恒瑞医药2021年度业绩说明会" },
+    { "companyKey": "hengrui-pharma", "year": 2022, "activityId": 14049, "activityTitle": "恒瑞医药2022年度业绩说明会" },
+    { "companyKey": "hengrui-pharma", "year": 2023, "activityId": 18597, "activityTitle": "恒瑞医药2023年度暨2024年第一季度业绩说明会" },
+    { "companyKey": "hengrui-pharma", "year": 2024, "activityId": 32887, "activityTitle": "恒瑞医药2024年度业绩暨现金分红说明会" },
+    { "companyKey": "hengrui-pharma", "year": 2025, "activityId": 38193, "activityTitle": "恒瑞医药2025年年度业绩暨现金分红说明会" },
+    { "companyKey": "huami-electronics", "year": 2021, "activityId": 8888, "activityTitle": "华微电子2021年度业绩说明会" },
+    { "companyKey": "huami-electronics", "year": 2022, "activityId": 13490, "activityTitle": "华微电子2022年度业绩说明会" },
+    { "companyKey": "huami-electronics", "year": 2023, "activityId": 19341, "activityTitle": "ST华微2023年度业绩说明会" },
+    { "companyKey": "baili-tianheng", "year": 2023, "activityId": 18986, "activityTitle": "2023年度科创板生物制品（二）集体业绩说明会", "targetCompanyId": 264599 },
+    { "companyKey": "baili-tianheng", "year": 2024, "activityId": 32035, "activityTitle": "2024年度科创板创新药行业集体业绩说明会", "targetCompanyId": 264599 },
+    { "companyKey": "baili-tianheng", "year": 2025, "activityId": 38202, "activityTitle": "十五五·科创惠民——科创板企业成果转化与民生赋能之2025年度生物制品行业集体业绩说明会", "targetCompanyId": 264599 }
+  ],
+  "exclusions": [
+    { "companyKey": "huami-electronics", "year": 2024, "reason": "业绩年度为ST，按方法排除" },
+    { "companyKey": "huami-electronics", "year": 2025, "reason": "业绩年度为ST，按方法排除" },
+    { "companyKey": "zuojiang-technology", "year": 2021, "reason": "上证路演中心检索不到该深交所公司年度业绩说明会" },
+    { "companyKey": "zuojiang-technology", "year": 2022, "reason": "上证路演中心检索不到该深交所公司年度业绩说明会" },
+    { "companyKey": "zuojiang-technology", "year": 2023, "reason": "业绩年度为ST，且上证路演中心无该公司年度业绩说明会" }
+  ]
+}
