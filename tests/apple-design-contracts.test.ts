@@ -20,7 +20,11 @@ test("the institutional research desk is the final presentation layer", () => {
     indexStyles,
     /@import "\.\/styles\/apple-design\.css";\s*@import "\.\/styles\/risk-os\.css";/
   )
-  assert.match(riskOsStyles, /--risk-os-sidebar:\s*#17191d/)
+  assert.match(riskOsStyles, /--risk-os-sidebar:\s*#eef0f4/)
+  assert.match(
+    riskOsStyles,
+    /\.dark\s*\{[\s\S]*?--risk-os-sidebar:\s*#0c0e11/
+  )
   assert.match(riskOsStyles, /--risk-os-blue:\s*#3157d5/)
   assert.match(riskOsStyles, /--risk-os-danger:\s*#bd3447/)
   assert.match(riskOsStyles, /"PingFang SC"/)
@@ -53,7 +57,8 @@ test("the shell uses flat institutional surfaces instead of liquid glass", () =>
   assert.match(sidebarSource, /risk-os-sidebar-surface/)
   assert.match(sidebarSource, /机构研究工作站/)
   assert.doesNotMatch(sidebarSource, /LiquidGlassSurface/)
-  assert.match(topBarSource, /risk-os-command-surface/)
+  assert.match(topBarSource, /risk-os-global-controls/)
+  assert.doesNotMatch(topBarSource, /top-command-title|<h1/)
   assert.doesNotMatch(topBarSource, /LiquidGlassSurface/)
   assert.match(sharedSource, /risk-os-panel-frame/)
   assert.doesNotMatch(sharedSource, /<LiquidGlassSurface/)

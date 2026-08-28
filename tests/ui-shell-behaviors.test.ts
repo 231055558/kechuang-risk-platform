@@ -30,17 +30,16 @@ test("browser chrome follows the resolved application theme", () => {
 })
 
 test("the export action is available only on the enterprise-report page", () => {
-  const topBarSource = readProjectFile(
+  const reportsSource = readProjectFile(
+    "src/components/dashboard/risk-reports-tab.tsx"
+  )
+  const controlsSource = readProjectFile(
     "src/components/layout/top-command-bar.tsx"
   )
-  const exportAction = topBarSource.match(
-    /<TopIconAction[\s\S]*?label="导出企业报告"[\s\S]*?\/>/
-  )?.[0]
 
-  assert.ok(exportAction)
-  assert.doesNotMatch(exportAction, /\bhidden\b/)
-  assert.match(exportAction, /className="top-export-action"/)
-  assert.match(topBarSource, /\{showExports \? \(/)
+  assert.match(reportsSource, /导出企业报告/)
+  assert.match(reportsSource, /onOpenExports/)
+  assert.doesNotMatch(controlsSource, /导出企业报告|showExports/)
 })
 
 test("the mobile sidebar keeps its shell stable and scrolls only navigation", () => {
@@ -96,10 +95,6 @@ test("the shell exposes a skip link and a programmatically focusable main landma
   )
   assert.match(shellStyles, /\.skip-link:focus-visible/)
   assert.match(shellStyles, /\.app-main:focus-visible\s*\{[\s\S]*?outline:\s*0/)
-  assert.match(
-    shellStyles,
-    /\.app-main:focus-visible \.top-command-glass[\s\S]*?0 0 0 1px/
-  )
 })
 
 test("the sidebar company selector has an explicit accessible name", () => {
@@ -143,8 +138,8 @@ test("the sidebar keeps only the realtime badge, not a duplicate signal feed", (
     "src/components/layout/top-command-bar.tsx"
   )
 
-  assert.match(shellSource, /group=\{activeNav\.group\}/)
-  assert.match(topBarSource, /className="top-command-context"/)
+  assert.match(shellSource, /aria-label=\{activeNav\.label\}/)
+  assert.match(topBarSource, /risk-os-global-controls/)
   assert.match(
     sidebarSource,
     /item\.id === "realtime-intelligence"\s*\?\s*highPriorityCount/
