@@ -41,7 +41,10 @@
     "typecheck": "tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.node.json --noEmit && tsc -p tsconfig.server.json --noEmit && tsc -p tsconfig.test.json --noEmit",
     "preview": "vite preview",
     "verify:localhost": "node scripts/verify-localhost.mjs",
-    "start": "node --env-file-if-exists=.env.local dist/server/production-server.js"
+    "start": "node --env-file-if-exists=.env.local scripts/start-local-stack.mjs",
+    "start:server": "node --env-file-if-exists=.env.local dist/server/production-server.js",
+    "install:autostart": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-local-autostart.ps1",
+    "uninstall:autostart": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/uninstall-local-autostart.ps1"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.2.9",
