@@ -51,7 +51,7 @@
 
 ## 上游适配
 
-Node 服务只通过 `GRAPH_API_ORIGIN` 连接 Python/Neo4j 图谱服务，浏览器不直接访问 Neo4j。默认本地图谱服务地址为 `http://127.0.0.1:8765`。配置了该变量时，`npm run dev` 直接复用同学维护的图谱服务；未配置时才在 `8766` 启动仓库内只读寒武纪 SQLite 演示快照。
+Node 服务只通过 `GRAPH_API_ORIGIN` 连接只读图谱服务，浏览器不直接访问 Neo4j。默认本地图谱服务地址为 `http://127.0.0.1:8765`。`npm start` 必须自动启动仓库内版本化、多企业、脱敏的 SQLite 图谱快照，普通用户不得依赖 Neo4j Desktop、密码或交互式 PowerShell。Neo4j 仅用于开发者更新、重建、同步和验收图谱；`GRAPH_RUNTIME_MODE=external` 可在该流程中显式连接 Neo4j 图谱 API。
 
 图谱上游新增企业后，只要企业节点带 `stock_code` 与 `fee_kbg: true`，覆盖目录即可按股票代码自动识别，无需为每家公司改前端。
 

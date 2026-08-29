@@ -31,6 +31,10 @@ python tools/serve_fee_kbg_preview.py `
 
 打开 `http://127.0.0.1:8766/`。
 
+主平台日常运行使用 `demo/multi-company-fee-kbg.sqlite`，其中包含寒武纪与芯驰科技
+两个脱敏版本化快照。执行根目录的 `npm start` 时会自动在 `8765` 启动该只读服务，
+无需 Neo4j 或密码；Neo4j 部分只用于修改后的同步和验收。
+
 ## 将演示快照同步到自己的 Neo4j
 
 每位协作者安装并启动自己的 Neo4j Desktop（或兼容的 Neo4j 5.x），然后：
@@ -93,6 +97,7 @@ python tools/serve_risk_graph_api.py
 cd knowledge-graph/backend
 python -m unittest `
   tools.test_fee_kbg `
+  tools.test_serve_fee_kbg_preview `
   tools.test_serve_risk_graph_api `
   tools.test_edge_capture_receiver
 ```

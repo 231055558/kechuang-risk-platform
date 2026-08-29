@@ -244,9 +244,83 @@ class SQLiteFeeReader:
         }
 
 
+class SQLiteMultiSnapshotReader:
+    def __init__(self, db_path: Path, run_ids: list[str]):
+        self.db_path = Path(db_path)
+        self.run_ids = tuple(dict.fromkeys(run_ids))
+        if not self.run_ids:
+            raise ValueError("至少需要一个图谱快照运行编号")
+        self.readers = [SQLiteFeeReader(self.db_path, run_id) for run_id in self.run_ids]
+        self.company_readers: dict[str, SQLiteFeeReader] = {}
+        for reader in self.readers:
+            reader.health()
+            for company in reader.companies():
+                self.company_readers[company["id"]] = reader
+
+    def _reader_for(self, company_key: str) -> SQLiteFeeReader:
+        reader = self.company_readers.get(company_key)
+        if reader is None:
+            raise LookupError("当前企业尚无FEE-KBG试点快照")
+        return reader
+
+    def health(self) -> dict:
+        placeholders = ",".join("?" for _ in self.run_ids)
+        with sqlite3.connect(
+            f"file:{self.db_path.as_posix()}?mode=ro", uri=True
+        ) as conn:
+            active_nodes = conn.execute(
+                f"""SELECT count(DISTINCT node_key)
+                    FROM knowledge_graph_snapshot_nodes
+                    WHERE run_id IN ({placeholders})""",
+                self.run_ids,
+            ).fetchone()[0]
+        return {
+            "ok": True,
+            "neo4j": "sqlite-preview",
+            "active_nodes": active_nodes,
+            "snapshot_run_id": self.run_ids[-1],
+            "snapshot_run_ids": list(self.run_ids),
+        }
+
+    def companies(self) -> list[dict]:
+        companies: dict[str, dict] = {}
+        for reader in self.readers:
+            for company in reader.companies():
+                companies[company["id"]] = company
+        return sorted(companies.values(), key=lambda company: company["label"])
+
+    def fee_kbg(self, company_key: str, limit: int) -> dict:
+        return self._reader_for(company_key).fee_kbg(company_key, limit)
+
+    def graph(self, company_key: str, *args, **kwargs):
+        return self._reader_for(company_key).graph(company_key, *args, **kwargs)
+
+    def risk_chains(self, company_key: str, *args, **kwargs):
+        return self._reader_for(company_key).risk_chains(company_key, *args, **kwargs)
+
+    def fee_transmission(self, company_key: str, *args, **kwargs):
+        return self._reader_for(company_key).fee_transmission(
+            company_key, *args, **kwargs
+        )
+
+    def subject_panorama(self, company_key: str, *args, **kwargs):
+        return self._reader_for(company_key).subject_panorama(
+            company_key, *args, **kwargs
+        )
+
+    def event_transmission(self, company_key: str, *args, **kwargs):
+        return self._reader_for(company_key).event_transmission(
+            company_key, *args, **kwargs
+        )
+
+    def close(self) -> None:
+        for reader in self.readers:
+            reader.close()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Serve a read-only SQLite FEE-KBG preview.")
-    parser.add_argument("--run-id", default="cambricon_fee_kbg_20260826_v1")
+    parser.add_argument("--run-id", action="append", dest="run_ids")
     parser.add_argument("--db", default="data/risk_data.sqlite")
     parser.add_argument("--web-root", default=str(DEFAULT_WEB_ROOT))
     parser.add_argument("--host", default="127.0.0.1")
@@ -255,10 +329,14 @@ def main() -> None:
     db_path = Path(args.db)
     if not db_path.is_absolute():
         db_path = PROJECT_ROOT / db_path
-    reader = SQLiteFeeReader(db_path, args.run_id)
+    run_ids = args.run_ids or ["cambricon_fee_kbg_20260826_v1"]
+    reader = SQLiteMultiSnapshotReader(db_path, run_ids)
     reader.health()
     server = ThreadingHTTPServer((args.host, args.port), handler_factory(reader, Path(args.web_root)))
-    print(f"FEE-KBG SQLite 预览已启动：http://{args.host}:{args.port}/", flush=True)
+    print(
+        f"Bundled FEE-KBG snapshot server listening on http://{args.host}:{args.port}/",
+        flush=True,
+    )
     try:
         server.serve_forever()
     finally:

@@ -1,5 +1,9 @@
 # 可编辑演示快照
 
+`multi-company-fee-kbg.sqlite` 与对应 JSON 是主平台运行时使用的多企业只读快照，
+当前包含寒武纪和芯驰科技，共 244 个去重节点。普通用户通过 `npm start` 自动加载，
+无需 Neo4j。
+
 - `cambricon_fee_kbg_snapshot.json`：可审阅、可版本控制的节点与关系快照。
 - `cambricon_fee_kbg_demo.sqlite`：由同一 JSON 生成，供本地预览 API 直接读取。
 

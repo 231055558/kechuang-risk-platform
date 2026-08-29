@@ -58,29 +58,45 @@ def _sanitize_row(row: sqlite3.Row) -> dict[str, Any]:
     return result
 
 
-def _fetch_rows(conn: sqlite3.Connection, table: str, run_id: str) -> list[dict[str, Any]]:
+def _fetch_rows(
+    conn: sqlite3.Connection, table: str, run_ids: list[str]
+) -> list[dict[str, Any]]:
+    placeholders = ",".join("?" for _ in run_ids)
     if table == "knowledge_graph_runs":
-        rows = conn.execute(f"SELECT * FROM {table} WHERE run_id=?", (run_id,)).fetchall()
+        rows = conn.execute(
+            f"SELECT * FROM {table} WHERE run_id IN ({placeholders}) ORDER BY run_id",
+            run_ids,
+        ).fetchall()
     elif table in {"knowledge_graph_snapshot_nodes", "knowledge_graph_snapshot_edges"}:
-        rows = conn.execute(f"SELECT * FROM {table} WHERE run_id=?", (run_id,)).fetchall()
+        rows = conn.execute(
+            f"SELECT * FROM {table} WHERE run_id IN ({placeholders}) ORDER BY run_id",
+            run_ids,
+        ).fetchall()
     elif table == "knowledge_graph_nodes":
         rows = conn.execute(
-            """SELECT n.* FROM knowledge_graph_snapshot_nodes s
+            f"""SELECT DISTINCT n.* FROM knowledge_graph_snapshot_nodes s
                JOIN knowledge_graph_nodes n ON n.node_key=s.node_key
-               WHERE s.run_id=? ORDER BY n.node_key""",
-            (run_id,),
+               WHERE s.run_id IN ({placeholders}) ORDER BY n.node_key""",
+            run_ids,
         ).fetchall()
     else:
         rows = conn.execute(
-            """SELECT e.* FROM knowledge_graph_snapshot_edges s
+            f"""SELECT DISTINCT e.* FROM knowledge_graph_snapshot_edges s
                JOIN knowledge_graph_edges e ON e.edge_key=s.edge_key
-               WHERE s.run_id=? ORDER BY e.edge_key""",
-            (run_id,),
+               WHERE s.run_id IN ({placeholders}) ORDER BY e.edge_key""",
+            run_ids,
         ).fetchall()
     return [_sanitize_row(row) for row in rows]
 
 
-def export_bundle(source_db: Path, run_id: str, json_out: Path, sqlite_out: Path) -> None:
+def export_bundle(
+    source_db: Path,
+    run_ids: list[str],
+    json_out: Path,
+    sqlite_out: Path,
+) -> None:
+    if not run_ids:
+        raise ValueError("At least one snapshot run ID is required")
     for target in (json_out, sqlite_out):
         if target.exists():
             raise FileExistsError(f"Refusing to overwrite: {target}")
@@ -96,13 +112,16 @@ def export_bundle(source_db: Path, run_id: str, json_out: Path, sqlite_out: Path
         if not schema_row or not schema_row["sql"]:
             raise RuntimeError(f"Missing source table: {table}")
         schemas[table] = schema_row["sql"]
-        records[table] = _fetch_rows(source, table, run_id)
+        records[table] = _fetch_rows(source, table, run_ids)
     source.close()
-    if not records["knowledge_graph_runs"]:
-        raise LookupError(f"Snapshot not found: {run_id}")
+    found_run_ids = {row["run_id"] for row in records["knowledge_graph_runs"]}
+    missing_run_ids = sorted(set(run_ids) - found_run_ids)
+    if missing_run_ids:
+        raise LookupError(f"Snapshots not found: {', '.join(missing_run_ids)}")
     payload = {
         "format": "kechuang-risk-knowledge-graph-snapshot-v1",
-        "run_id": run_id,
+        "run_id": run_ids[-1],
+        "run_ids": run_ids,
         "privacy": "Graph projection only; no credentials, paid raw responses, or source business tables.",
         "schemas": schemas,
         "records": records,
@@ -147,7 +166,7 @@ def main() -> None:
     sub = parser.add_subparsers(dest="command", required=True)
     export = sub.add_parser("export")
     export.add_argument("--source-db", type=Path, required=True)
-    export.add_argument("--run-id", required=True)
+    export.add_argument("--run-id", action="append", required=True)
     export.add_argument("--json-out", type=Path, required=True)
     export.add_argument("--sqlite-out", type=Path, required=True)
     restore = sub.add_parser("import")
