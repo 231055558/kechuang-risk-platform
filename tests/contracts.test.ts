@@ -652,6 +652,9 @@ test("method and comparison controls live in their relevant content regions", ()
   const indicatorSource = readProjectFile(
     "src/components/dashboard/indicator-analysis-tab.tsx"
   )
+  const formulaSource = readProjectFile(
+    "src/components/dashboard/industry-raw-formula.tsx"
+  )
   const compareSource = readProjectFile(
     "src/components/dashboard/compare-tab.tsx"
   )
@@ -670,6 +673,19 @@ test("method and comparison controls live in their relevant content regions", ()
   assert.match(indicatorSource, /metric\.direction === "higher-is-riskier"/)
   assert.match(indicatorSource, /<RiskScoreFormula/)
   assert.match(indicatorSource, /indicator-method-sheet__parameters/)
+  assert.match(formulaSource, /目标指标公式/)
+  assert.match(formulaSource, /当前运行公式/)
+  assert.match(formulaSource, /<math aria-label=/)
+  assert.match(formulaSource, /<mfrac>/)
+  for (let index = 5; index <= 22; index += 1) {
+    const indicatorId = `R${String(index).padStart(2, "0")}`
+    assert.match(formulaSource, new RegExp(`${indicatorId}:\\s*\\{`))
+  }
+  assert.match(indicatorSource, /风险名次 \/ 企业/)
+  assert.match(indicatorSource, /peerMatrixRows\.map/)
+  assert.match(indicatorSource, /setPeerMatrixExpanded\(true\)/)
+  assert.match(indicatorSource, /indicatorRankFromRiskPercentile/)
+  assert.match(indicatorSource, /indicatorRankAssessment/)
   assert.doesNotMatch(indicatorSource, /原始观测/)
   assert.doesNotMatch(topBarSource, /打开方法与模型/)
   assert.match(compareSource, /nameControl=/)
