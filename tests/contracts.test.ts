@@ -660,7 +660,14 @@ test("method and comparison controls live in their relevant content regions", ()
   )
 
   assert.match(indicatorSource, /点击行查看公式与来源/)
-  assert.match(indicatorSource, /title="方法含义与公式解析"/)
+  assert.match(indicatorSource, /title="方法含义、计算链路与影响因素"/)
+  assert.match(indicatorSource, /title="原始指标计算"/)
+  assert.match(indicatorSource, /title="风险分换算"/)
+  assert.match(
+    indicatorSource,
+    /<RawMetricFormula[\s\S]*formula=\{indicator\?\.rawValueFormula\}[\s\S]*<RiskScoreFormula/
+  )
+  assert.match(indicatorSource, /metric\.direction === "higher-is-riskier"/)
   assert.match(indicatorSource, /<RiskScoreFormula/)
   assert.match(indicatorSource, /indicator-method-sheet__parameters/)
   assert.doesNotMatch(indicatorSource, /原始观测/)

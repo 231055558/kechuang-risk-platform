@@ -448,6 +448,88 @@
   line-height: 1.65;
 }
 
+.indicator-method-sheet__stage {
+  padding: 16px 0;
+  border-top: 1px solid var(--analysis-border);
+}
+
+.indicator-method-sheet__stage:first-of-type {
+  padding-top: 4px;
+  border-top: 0;
+}
+
+.indicator-method-sheet__stage > header {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 12px;
+}
+
+.indicator-method-sheet__stage > header > span {
+  padding: 5px 7px;
+  border: 1px solid color-mix(in srgb, var(--risk-os-accent) 36%, transparent);
+  color: var(--risk-os-accent);
+  font-size: 11px;
+  font-weight: 760;
+  text-align: center;
+}
+
+.indicator-method-sheet__stage h4 {
+  margin: 0;
+  color: var(--risk-os-ink);
+  font-size: 14px;
+}
+
+.indicator-method-sheet__stage > header p {
+  margin: 4px 0 0;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.indicator-method-sheet__raw-method {
+  display: grid;
+  gap: 10px;
+}
+
+.indicator-method-sheet__raw-formula {
+  margin: 0;
+  padding: 15px 14px;
+  border-left: 3px solid var(--risk-os-accent, #3b82f6);
+  background: var(--risk-os-surface);
+  color: var(--risk-os-ink) !important;
+  font-family: Georgia, "Times New Roman", "Noto Serif SC", serif;
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1.75 !important;
+  white-space: pre-line;
+}
+
+.indicator-method-sheet__content dl.indicator-method-sheet__raw-factors {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.indicator-method-sheet__raw-factors dd {
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.indicator-method-sheet__notes {
+  margin: 4px 0 14px;
+  padding: 11px 12px;
+  border-left: 2px solid var(--analysis-border);
+}
+
+.indicator-method-sheet__notes > strong {
+  color: var(--risk-os-ink);
+  font-size: 12px;
+}
+
+.indicator-method-sheet__notes p {
+  margin: 4px 0 0;
+  font-size: 11px;
+}
+
 .indicator-method-sheet__formula {
   display: grid;
   gap: 12px;
@@ -548,6 +630,10 @@
 }
 
 @media (max-width: 720px) {
+  .indicator-method-sheet__content dl.indicator-method-sheet__raw-factors {
+    grid-template-columns: 1fr;
+  }
+
   .indicator-analysis__header,
   .indicator-analysis__peer-matrix > header,
   .indicator-analysis__table-section > header,
