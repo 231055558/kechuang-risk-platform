@@ -29,9 +29,19 @@ test("风险传导页直接挂载同学原版图谱工作站", () => {
   assert.doesNotMatch(eventsTab, /GraphIntegrationPanel/)
   assert.match(component, /data-graph-ui="teammate-fee-kbg"/)
   assert.match(component, /VITE_GRAPH_WORKSPACE_URL/)
+  assert.match(component, /VITE_GRAPH_WORKSPACE_REVISION/)
+  assert.match(component, /DEFAULT_GRAPH_WORKSPACE_URL = "risk-graph-workspace\/"/)
+  assert.doesNotMatch(component, /http:\/\/127\.0\.0\.1:876[56]\//)
   assert.match(component, /stock_code/)
+  assert.match(component, /url\.searchParams\.set\("revision"/)
+  assert.match(component, /url\.searchParams\.set\("theme", theme\)/)
+  assert.match(component, /kechuang-risk-graph-theme/)
+  assert.match(component, /contentWindow\?\.postMessage/)
   assert.match(component, /<iframe/)
-  assert.doesNotMatch(component, /同学原版图谱界面|teammate-graph-workspace__status/)
+  assert.doesNotMatch(
+    component,
+    /同学原版图谱界面|teammate-graph-workspace__status/
+  )
 })
 
 test("图谱宿主不复制关系并限制 iframe 权限", () => {
@@ -45,8 +55,10 @@ test("图谱宿主不复制关系并限制 iframe 权限", () => {
 
 test("原版图谱宿主具有加载态和响应式画布", () => {
   assert.match(component, /正在按证券代码读取图谱快照/)
-  assert.match(component, /onLoad=\{\(\) => setLoadedUrl\(workspaceUrl\)\}/)
+  assert.match(component, /setLoadedUrl\(workspaceUrl\)/)
+  assert.match(component, /syncTheme\(\)/)
   assert.match(styles, /teammate-graph-workspace__frame/)
+  assert.match(styles, /background: var\(--background\)/)
   assert.match(styles, /risk-os-content:has\(\.teammate-graph-workspace\)/)
   assert.match(styles, /height: 100dvh/)
   assert.match(styles, /@media \(max-width: 720px\)/)
@@ -87,4 +99,24 @@ test("本地统一图谱服务加载寒武纪与芯驰两个独立快照", () =>
   )
   assert.ok(company)
   assert.match(String(company.attributes_json), /PRIVATE-SEMIDRIVE/)
+})
+
+test("图谱工作站跟随宿主的浅色和深色主题", () => {
+  assert.match(teammateWorkspace, /kechuang-risk-graph-theme/)
+  assert.match(teammateWorkspace, /documentElement\.dataset\.theme/)
+  assert.match(teammateWorkspace, /data-theme="light"/)
+  assert.match(teammateWorkspace, /color-scheme:light/)
+  assert.match(teammateWorkspace, /background-color:#f8fbfe/)
+})
+
+test("图谱节点只移除阴影并在浅色模式使用深色文字", () => {
+  assert.match(teammateWorkspace, /\.sphere-depth\{display:none!important\}/)
+  assert.doesNotMatch(teammateWorkspace, /fill-opacity:1!important/)
+  assert.doesNotMatch(teammateWorkspace, /stroke-opacity:1!important/)
+  assert.doesNotMatch(teammateWorkspace, /\.sphere-glow[^}]*display:none/)
+  assert.doesNotMatch(teammateWorkspace, /\.sphere-highlight[^}]*display:none/)
+  assert.match(
+    teammateWorkspace,
+    /html\[data-theme="light"\] \.node \.label\{fill:#102235\}/
+  )
 })

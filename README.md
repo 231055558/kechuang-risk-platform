@@ -133,10 +133,27 @@ npm run build
 npm start
 ```
 
+`npm start` 会同时启动主平台和仓库内的只读多企业图谱快照。日常查看不需要启动
+Neo4j Desktop、设置 `NEO4J_PASSWORD` 或手动运行 Python 图谱服务。Neo4j 只在更新、
+重建和校验图谱时使用。
+
 浏览器访问：
 
 ```text
 http://127.0.0.1:5000
+```
+
+Windows 本机可以注册登录后自动启动：
+
+```powershell
+npm run install:autostart
+```
+
+注册后，重新登录或开机进入桌面时会在后台准备图谱与主平台。普通用户只需打开
+`http://127.0.0.1:5000/`。移除自动启动任务：
+
+```powershell
+npm run uninstall:autostart
 ```
 
 可以使用 `HOST`、`PORT`、`STATIC_ROOT` 和 `BASE_PATH` 调整本地服务参数。例如：

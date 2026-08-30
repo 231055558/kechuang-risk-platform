@@ -1,4 +1,4 @@
-import type { ReactNode } from "react"
+import { useEffect, useState, type ReactNode } from "react"
 import { CheckCircle2Icon, ScaleIcon } from "lucide-react"
 
 import {
@@ -9,6 +9,9 @@ import {
 import { LiquidGlassSurface } from "@/components/liquid"
 import { Reveal } from "@/components/motion/workflow-transition"
 import { Badge } from "@/components/ui/badge"
+import { calculateNarrativeCompanyDisplayScore } from "@/domain/narrative-risk-v1/industry-display-score"
+import type { NarrativeIndustryTrendResponse } from "@/domain/narrative-risk-v1"
+import { getNarrativeIndustryTrends } from "@/lib/narrative-risk-api"
 import {
   Select,
   SelectContent,
@@ -32,10 +35,38 @@ type CompareTabProps = {
   assessments: Record<string, RiskAssessment>
 }
 
-function formatDimensionScoreBasis(dimension: RiskAssessmentDimension | null) {
+type ComparisonDimension = RiskAssessmentDimension & {
+  comparisonBasis?: string
+  comparisonDetail?: string
+}
+
+const COMPARISON_CHART_TICKS = [0, 20, 40, 60, 80, 100] as const
+const COMPARISON_CHART_WIDTH = 960
+const COMPARISON_CHART_HEIGHT = 420
+const COMPARISON_PLOT = {
+  left: 64,
+  top: 42,
+  width: 872,
+  height: 292,
+} as const
+
+function formatChartScore(score: number) {
+  return score
+    .toFixed(2)
+    .replace(/\.00$/, "")
+    .replace(/(\.\d)0$/, "$1")
+}
+
+function comparisonAxisLabel(label: string) {
+  return label === "财务与融资风险" ? ["财务与融资", "风险"] : [label]
+}
+
+function formatDimensionScoreBasis(dimension: ComparisonDimension | null) {
   if (!dimension || dimension.score === null) {
     return "数据待补充"
   }
+
+  if (dimension.comparisonBasis) return dimension.comparisonBasis
 
   if (dimension.scoreBasis === "technology-auto-score") {
     return "技术自动评分"
@@ -55,6 +86,23 @@ export function CompareTab({
   summaries,
   assessments,
 }: CompareTabProps) {
+  const [narrativeTrends, setNarrativeTrends] =
+    useState<NarrativeIndustryTrendResponse | null>(null)
+
+  useEffect(() => {
+    let active = true
+    getNarrativeIndustryTrends()
+      .then((data) => {
+        if (active) setNarrativeTrends(data)
+      })
+      .catch(() => {
+        if (active) setNarrativeTrends(null)
+      })
+    return () => {
+      active = false
+    }
+  }, [])
+
   const leftCompany = summaries.find((company) => company.id === companyId)
   const rightCompany =
     summaries.find((company) => company.id === compareCompanyId) ??
@@ -85,13 +133,48 @@ export function CompareTab({
     )
   }
 
-  const dimensionRows = leftAssessment.dimensions.map((leftDimension) => ({
-    left: leftDimension,
-    right:
+  const leftNarrativeScore = narrativeTrends
+    ? calculateNarrativeCompanyDisplayScore(
+        narrativeTrends,
+        leftCompany.stockCode
+      )
+    : null
+  const rightNarrativeScore = narrativeTrends
+    ? calculateNarrativeCompanyDisplayScore(
+        narrativeTrends,
+        rightCompany.stockCode
+      )
+    : null
+  const dimensionRows = leftAssessment.dimensions.map((leftDimension) => {
+    const rightDimension =
       rightAssessment.dimensions.find(
         (dimension) => dimension.id === leftDimension.id
-      ) ?? null,
-  }))
+      ) ?? null
+    if (leftDimension.id !== "narrative") {
+      return { left: leftDimension, right: rightDimension }
+    }
+
+    const comparisonBasis = "年度行业排名加权分"
+    const comparisonDetail = "信息模糊性、叙事夸大性、风险披露充分性三项等权"
+    return {
+      left: {
+        ...leftDimension,
+        score: leftNarrativeScore?.score ?? null,
+        assessable: leftNarrativeScore !== null,
+        comparisonBasis,
+        comparisonDetail,
+      },
+      right: rightDimension
+        ? {
+            ...rightDimension,
+            score: rightNarrativeScore?.score ?? null,
+            assessable: rightNarrativeScore !== null,
+            comparisonBasis,
+            comparisonDetail,
+          }
+        : null,
+    }
+  })
   const comparableCount = dimensionRows.filter(
     ({ left, right }) => left.score !== null && right?.score !== null
   ).length
@@ -171,7 +254,7 @@ export function CompareTab({
           <SectionHeader
             title="六维风险对照图"
             tone="blue"
-            description={`横条展示双方在同一方法版本与维度口径下自动形成的风险分值；缺失项不按低风险处理。${leftCompany.name}采用${leftAssessment.scoreBasisLabel}，${rightCompany.name}采用${rightAssessment.scoreBasisLabel}。`}
+            description={`纵轴固定为0–100风险分值，柱越高表示风险越高；五项客观风险使用同一方法版本与维度口径，每个维度的两根相邻柱分别对应两家企业。叙事风险复用年度行业排名加权分，仅用于对照、不计入综合指数；缺失项不画零分柱。${leftCompany.name}采用${leftAssessment.scoreBasisLabel}，${rightCompany.name}采用${rightAssessment.scoreBasisLabel}。`}
             action={
               <div className="compare-chart-actions">
                 <span className="compare-coverage tabular-number">
@@ -200,23 +283,11 @@ export function CompareTab({
                 aria-label={`${leftCompany.name}与${rightCompany.name}六类风险对照图`}
                 aria-describedby="compare-dimension-chart-data"
               >
-                <div aria-hidden="true">
-                  {dimensionRows.map(({ left, right }) => (
-                    <div key={left.id} className="compare-chart-row">
-                      <div className="compare-chart-label">{left.label}</div>
-                      <ChartBar
-                        companyName={leftCompany.name}
-                        score={left.score}
-                        series="left"
-                      />
-                      <ChartBar
-                        companyName={rightCompany.name}
-                        score={right?.score ?? null}
-                        series="right"
-                      />
-                    </div>
-                  ))}
-                </div>
+                <GroupedRiskChart
+                  rows={dimensionRows}
+                  leftName={leftCompany.name}
+                  rightName={rightCompany.name}
+                />
               </div>
               <ul id="compare-dimension-chart-data" className="sr-only">
                 {dimensionRows.map(({ left, right }) => (
@@ -314,10 +385,10 @@ export function CompareTab({
           <div>
             <strong>对比边界</strong>
             <p>
-              当前比较使用同一方法版本 {leftAssessment.methodVersion}
+              客观风险维度使用同一方法版本 {leftAssessment.methodVersion}
               ，评分基础分别为 {leftAssessment.scoreBasisLabel} 与{" "}
               {rightAssessment.scoreBasisLabel}
-              ；综合指数由当前具备有效数据的维度自动形成，缺失项不会按零分参与计算。
+              ；叙事风险使用年度行业排名加权展示分，与客观评分相互独立且不计入综合指数。缺失项不会按零分参与计算。
             </p>
           </div>
         </section>
@@ -422,32 +493,142 @@ function CompanyAssessmentSummary({
   )
 }
 
-function ChartBar({
-  companyName,
-  score,
-  series,
+function GroupedRiskChart({
+  rows,
+  leftName,
+  rightName,
 }: {
-  companyName: string
-  score: number | null
-  series: "left" | "right"
+  rows: Array<{
+    left: ComparisonDimension
+    right: ComparisonDimension | null
+  }>
+  leftName: string
+  rightName: string
 }) {
+  const groupWidth = COMPARISON_PLOT.width / rows.length
+  const barWidth = 34
+  const barGap = 8
+  const baseline = COMPARISON_PLOT.top + COMPARISON_PLOT.height
+
+  const bar = (
+    score: number | null,
+    x: number,
+    series: "left" | "right",
+    key: string
+  ) => {
+    if (score === null) {
+      return (
+        <g key={key} className="compare-coordinate-missing">
+          <line x1={x} x2={x + barWidth} y1={baseline - 2} y2={baseline - 2} />
+          <text x={x + barWidth / 2} y={baseline - 10} textAnchor="middle">
+            —
+          </text>
+        </g>
+      )
+    }
+
+    const boundedScore = Math.max(0, Math.min(100, score))
+    const height = (boundedScore / 100) * COMPARISON_PLOT.height
+    const y = baseline - height
+    return (
+      <g key={key}>
+        <rect
+          className="compare-coordinate-bar"
+          data-series={series}
+          x={x}
+          y={y}
+          width={barWidth}
+          height={height}
+          rx="4"
+        />
+        <text
+          className="compare-coordinate-value tabular-number"
+          x={x + barWidth / 2}
+          y={Math.max(COMPARISON_PLOT.top + 12, y - 8)}
+          textAnchor="middle"
+        >
+          {formatChartScore(score)}
+        </text>
+      </g>
+    )
+  }
+
   return (
-    <div
-      className="compare-bar-track"
-      aria-label={`${companyName}：${score === null ? "数据待补充" : `${score}分`}`}
-    >
-      {score === null ? (
-        <span className="compare-bar-missing">暂无可比分值</span>
-      ) : (
-        <>
-          <span
-            className="compare-bar-fill"
-            data-series={series}
-            style={{ width: `${score}%` }}
-          />
-          <strong className="tabular-number">{score}</strong>
-        </>
-      )}
+    <div className="compare-coordinate-wrap" aria-hidden="true">
+      <svg
+        className="compare-coordinate-chart"
+        viewBox={`0 0 ${COMPARISON_CHART_WIDTH} ${COMPARISON_CHART_HEIGHT}`}
+        focusable="false"
+      >
+        <text className="compare-coordinate-title" x="0" y="14">
+          风险分值（0–100）
+        </text>
+        {COMPARISON_CHART_TICKS.map((tick) => {
+          const y = baseline - (tick / 100) * COMPARISON_PLOT.height
+          return (
+            <g key={tick}>
+              <line
+                className="compare-coordinate-grid"
+                x1={COMPARISON_PLOT.left}
+                x2={COMPARISON_PLOT.left + COMPARISON_PLOT.width}
+                y1={y}
+                y2={y}
+              />
+              <text
+                className="compare-coordinate-tick tabular-number"
+                x={COMPARISON_PLOT.left - 12}
+                y={y + 4}
+                textAnchor="end"
+              >
+                {tick}
+              </text>
+            </g>
+          )
+        })}
+        <line
+          className="compare-coordinate-axis"
+          x1={COMPARISON_PLOT.left}
+          x2={COMPARISON_PLOT.left}
+          y1={COMPARISON_PLOT.top}
+          y2={baseline}
+        />
+        <line
+          className="compare-coordinate-axis"
+          x1={COMPARISON_PLOT.left}
+          x2={COMPARISON_PLOT.left + COMPARISON_PLOT.width}
+          y1={baseline}
+          y2={baseline}
+        />
+        {rows.map(({ left, right }, index) => {
+          const center = COMPARISON_PLOT.left + groupWidth * (index + 0.5)
+          const leftX = center - barGap / 2 - barWidth
+          const rightX = center + barGap / 2
+          const labelLines = comparisonAxisLabel(left.label)
+          return (
+            <g key={left.id}>
+              {bar(left.score, leftX, "left", `${left.id}-left`)}
+              {bar(right?.score ?? null, rightX, "right", `${left.id}-right`)}
+              <text
+                className="compare-coordinate-label"
+                x={center}
+                y={baseline + 28}
+                textAnchor="middle"
+              >
+                {labelLines.map((line, lineIndex) => (
+                  <tspan key={line} x={center} dy={lineIndex === 0 ? 0 : 16}>
+                    {line}
+                  </tspan>
+                ))}
+              </text>
+            </g>
+          )
+        })}
+      </svg>
+      <p className="compare-coordinate-note">
+        <span data-series="left">{leftName}</span>
+        <span data-series="right">{rightName}</span>
+        <small>同组柱并列比较；数值越高表示该维度风险越高。</small>
+      </p>
     </div>
   )
 }
@@ -458,8 +639,8 @@ function ComparisonRow({
   leftName,
   rightName,
 }: {
-  left: RiskAssessmentDimension
-  right: RiskAssessmentDimension | null
+  left: ComparisonDimension
+  right: ComparisonDimension | null
   leftName: string
   rightName: string
 }) {
@@ -476,8 +657,8 @@ function ComparisonRow({
       : Math.abs(delta) < 5
         ? "差异较小"
         : delta > 0
-          ? `${leftName}辅助分值更高`
-          : `${rightName}辅助分值更高`
+          ? `${leftName}风险分值更高`
+          : `${rightName}风险分值更高`
   const leftBasis = formatDimensionScoreBasis(left)
   const rightBasis = formatDimensionScoreBasis(right)
 
@@ -506,7 +687,9 @@ function ComparisonRow({
       </td>
       <td className="tabular-number">
         {comparable
-          ? `${leftBasis} / ${rightBasis} · ${left.evidenceIds.length} / ${right?.evidenceIds.length ?? 0} 条评分证据`
+          ? left.comparisonDetail && right?.comparisonDetail
+            ? `${leftBasis} / ${rightBasis} · ${left.comparisonDetail}`
+            : `${leftBasis} / ${rightBasis} · ${left.evidenceIds.length} / ${right?.evidenceIds.length ?? 0} 条评分证据`
           : `${leftBasis} / ${rightBasis}；至少一方尚未完成评分证据闭环`}
       </td>
     </tr>

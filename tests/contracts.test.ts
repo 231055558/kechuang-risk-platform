@@ -677,6 +677,13 @@ test("method and comparison controls live in their relevant content regions", ()
   assert.match(formulaSource, /当前运行公式/)
   assert.match(formulaSource, /<math aria-label=/)
   assert.match(formulaSource, /<mfrac>/)
+  assert.match(formulaSource, /IMPLEMENTATION_STATUS/)
+  assert.match(formulaSource, /直接实现/)
+  assert.match(formulaSource, /部分实现/)
+  assert.match(formulaSource, /代理实现/)
+  assert.match(formulaSource, /当前运行值 → 风险方向调整 → 同业风险分位 Pᵢ/)
+  assert.doesNotMatch(formulaSource, /<Sub[^>]+\/>\s*<Sub/)
+  assert.doesNotMatch(formulaSource, /<\/Fraction>\s*<Sub/)
   for (let index = 5; index <= 22; index += 1) {
     const indicatorId = `R${String(index).padStart(2, "0")}`
     assert.match(formulaSource, new RegExp(`${indicatorId}:\\s*\\{`))
