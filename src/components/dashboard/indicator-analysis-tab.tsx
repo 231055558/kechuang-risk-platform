@@ -454,11 +454,32 @@ function MetricMethodSheet({
               <SheetDescription>{indicator?.definition}</SheetDescription>
             </SheetHeader>
             <div className="sheet-scroll-content indicator-method-sheet__content">
-              <MethodBlock title="方法含义与公式解析" icon={BookOpenCheckIcon}>
-                <RiskScoreFormula metric={metric} response={response} />
-                <p>{indicator?.rawValueFormula}</p>
-                <p>{metric.limitation}</p>
-                {metric.missingReason ? <p>{metric.missingReason}</p> : null}
+              <MethodBlock
+                title="方法含义、计算链路与影响因素"
+                icon={BookOpenCheckIcon}
+              >
+                <FormulaStage
+                  step="第一步"
+                  title="原始指标计算"
+                  description="由企业披露与证据字段计算原始指标值；这里的变量决定该指标实际衡量什么。"
+                >
+                  <RawMetricFormula
+                    formula={indicator?.rawValueFormula}
+                    metric={metric}
+                  />
+                </FormulaStage>
+                <FormulaStage
+                  step="第二步"
+                  title="风险分换算"
+                  description="将原始值按风险方向转换为同业分位，再与行业风险锚点合成为 0–100 风险分。"
+                >
+                  <RiskScoreFormula metric={metric} response={response} />
+                </FormulaStage>
+                <div className="indicator-method-sheet__notes">
+                  <strong>数据口径与限制</strong>
+                  <p>{metric.limitation}</p>
+                  {metric.missingReason ? <p>{metric.missingReason}</p> : null}
+                </div>
                 <dl>
                   <div>
                     <dt>原值</dt>
@@ -536,6 +557,74 @@ function MethodBlock({
       </h3>
       {children}
     </section>
+  )
+}
+
+function FormulaStage({
+  step,
+  title,
+  description,
+  children,
+}: {
+  step: string
+  title: string
+  description: string
+  children: React.ReactNode
+}) {
+  return (
+    <section className="indicator-method-sheet__stage">
+      <header>
+        <span>{step}</span>
+        <div>
+          <h4>{title}</h4>
+          <p>{description}</p>
+        </div>
+      </header>
+      {children}
+    </section>
+  )
+}
+
+function RawMetricFormula({
+  formula,
+  metric,
+}: {
+  formula?: string
+  metric: IndustryRiskMetricScore
+}) {
+  const directionLabel =
+    metric.direction === "higher-is-riskier"
+      ? "原值越高，风险越高"
+      : "原值越低，风险越高"
+  return (
+    <div className="indicator-method-sheet__raw-method">
+      <p
+        className="indicator-method-sheet__raw-formula"
+        role="math"
+        aria-label={`${metric.label}原始指标公式`}
+      >
+        {formula || "当前指标尚未提供可公开展示的原始计算公式。"}
+      </p>
+      <dl className="indicator-method-sheet__raw-factors">
+        <div>
+          <dt>当前原值</dt>
+          <dd>
+            {formatIndicatorRawValue(metric.rawValue)}
+            {metric.rawValue === null
+              ? null
+              : ` ${indicatorUnitLabel(metric.unit)}`}
+          </dd>
+        </div>
+        <div>
+          <dt>风险方向</dt>
+          <dd>{directionLabel}</dd>
+        </div>
+        <div>
+          <dt>可比样本</dt>
+          <dd>n={metric.sampleSize}</dd>
+        </div>
+      </dl>
+    </div>
   )
 }
 
