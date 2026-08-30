@@ -4,10 +4,13 @@ import {
   ArrowUpIcon,
   BookOpenCheckIcon,
   DatabaseZapIcon,
+  EllipsisIcon,
   ExternalLinkIcon,
   InfoIcon,
+  ListCollapseIcon,
 } from "lucide-react"
 
+import { IndustryRawFormula } from "@/components/dashboard/industry-raw-formula"
 import { IndustryRiskRadar } from "@/components/dashboard/industry-risk-radar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -25,19 +28,18 @@ import type {
 } from "@/domain/industry-risk-v1/index.ts"
 import {
   formatIndicatorRawValue,
+  indicatorRankAssessment,
+  indicatorRankFromRiskPercentile,
   indicatorUnitExplanation,
   indicatorUnitLabel,
+  riskPercentileFromAscendingRank,
   selectPeerRiskContext,
 } from "@/lib/indicator-analysis"
 import {
   fetchIndustryRiskAssessment,
   fetchIndustryRiskCompanies,
 } from "@/lib/industry-risk-api"
-import {
-  riskHeatColor,
-  riskHeatLabel,
-  riskPercentileFromRank,
-} from "@/lib/risk-heat"
+import { riskHeatColor, riskHeatLabel } from "@/lib/risk-heat"
 import "@/styles/indicator-analysis.css"
 
 type AnalysisState =
@@ -59,8 +61,10 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
   const [selectedIndicatorId, setSelectedIndicatorId] = useState<string | null>(
     null
   )
+  const [peerMatrixExpanded, setPeerMatrixExpanded] = useState(false)
 
   useEffect(() => {
+    setPeerMatrixExpanded(false)
     const controller = new AbortController()
     void Promise.all([
       fetchIndustryRiskCompanies({ signal: controller.signal }),
@@ -110,29 +114,12 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
     (company) => company.benchmarkGroupId === selectedCompany?.benchmarkGroupId
   )
   const peerContext = selectPeerRiskContext(peerPool, companyId)
-  const peerRankById = new Map(
-    peerContext.ranked.map((company, index) => [company.companyId, index + 1])
+  const peerMatrixRows = peerMatrixExpanded
+    ? peerContext.expandedRows
+    : peerContext.collapsedRows
+  const hasCollapsedPeerRows = peerContext.collapsedRows.some(
+    (row) => row.kind === "gap"
   )
-  const peerRiskPercentileById = new Map(
-    peerContext.ranked.map((company, index) => [
-      company.companyId,
-      riskPercentileFromRank(index + 1, peerContext.ranked.length),
-    ])
-  )
-  const peerMatrixGroups = [
-    {
-      id: "lowest-risk",
-      label: "同业风险最低",
-      description: `有效综合分中风险最低的 ${peerContext.lowestRisk.length} 家`,
-      companies: peerContext.lowestRisk,
-    },
-    {
-      id: "rank-neighbors",
-      label: "当前企业邻近排名",
-      description: "当前企业风险排名前后各 2 位；与上组重复的企业已剔除",
-      companies: peerContext.neighbors,
-    },
-  ] as const
 
   return (
     <div className="indicator-analysis page-stack">
@@ -205,11 +192,28 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
             <span className="eyebrow">Cross-company view</span>
             <h3>同业风险分位矩阵</h3>
             <p>
-              展示同业风险最低 4 家及当前企业前后各 2
-              个邻位；企业列与指标单元格均使用固定风险分位色标，灰色斜纹表示缺失。
+              按综合风险从低到高排列，第 1 名风险最低；默认保留前 4
+              名、当前企业前后各 2 名和最后 4
+              名，重叠区间自动合并。指标单元格显示该项同业名次与相对表现。
             </p>
           </div>
-          <HeatLegend />
+          <div className="indicator-analysis__matrix-controls">
+            <HeatLegend />
+            {hasCollapsedPeerRows ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPeerMatrixExpanded((value) => !value)}
+              >
+                {peerMatrixExpanded ? (
+                  <ListCollapseIcon aria-hidden="true" />
+                ) : (
+                  <EllipsisIcon aria-hidden="true" />
+                )}
+                {peerMatrixExpanded ? "收起中间企业" : "展开全部企业"}
+              </Button>
+            ) : null}
+          </div>
         </header>
         <div
           className="indicator-analysis__matrix-scroll"
@@ -219,7 +223,7 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
           <table>
             <thead>
               <tr>
-                <th>企业</th>
+                <th>风险名次 / 企业</th>
                 {weightedMetrics.map((metric) => (
                   <th key={metric.indicatorId}>
                     <abbr title={`${metric.indicatorId} · ${metric.label}`}>
@@ -229,74 +233,99 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
                 ))}
               </tr>
             </thead>
-            {peerMatrixGroups.map((group) => (
-              <tbody key={group.id} data-peer-group={group.id}>
-                <tr className="indicator-analysis__matrix-group-row">
-                  <th colSpan={weightedMetrics.length + 1} scope="rowgroup">
-                    <strong>{group.label}</strong>
-                    <small>{group.description}</small>
-                  </th>
-                </tr>
-                {group.companies.length === 0 ? (
-                  <tr className="indicator-analysis__matrix-empty-row">
-                    <td colSpan={weightedMetrics.length + 1}>
-                      当前企业及其邻位已在上方最低风险组中，不重复展示。
-                    </td>
-                  </tr>
-                ) : (
-                  group.companies.map((company) => {
-                    const overallPercentile =
-                      peerRiskPercentileById.get(company.companyId) ?? null
-                    const rank = peerRankById.get(company.companyId)
-                    return (
-                      <tr
-                        key={company.companyId}
-                        data-active={company.companyId === companyId}
-                      >
-                        <th
-                          scope="row"
-                          data-missing={overallPercentile === null}
-                          style={heatStyle(overallPercentile)}
-                          title={`${company.companyName} · ${riskHeatLabel(overallPercentile)}`}
+            <tbody>
+              {peerMatrixRows.map((row) => {
+                if (row.kind === "gap") {
+                  return (
+                    <tr
+                      key={`gap-${row.fromRank}-${row.toRank}`}
+                      className="indicator-analysis__matrix-gap-row"
+                    >
+                      <td colSpan={weightedMetrics.length + 1}>
+                        <button
+                          type="button"
+                          onClick={() => setPeerMatrixExpanded(true)}
+                          aria-label={`展开第 ${row.fromRank} 至 ${row.toRank} 名企业`}
                         >
-                          <span className="indicator-analysis__company-name">
-                            <i aria-hidden="true" />
-                            <strong>{company.companyName}</strong>
+                          <EllipsisIcon aria-hidden="true" />
+                          <span>
+                            第 {row.fromRank}–{row.toRank} 名 · {row.count}{" "}
+                            家企业
                           </span>
-                          <small>
-                            {rank === undefined
-                              ? "综合风险暂缺"
-                              : `风险排名 ${rank}/${peerContext.ranked.length} · 分位 ${percentFormatter.format(overallPercentile ?? 0)}`}{" "}
-                            · {company.stockCode}
-                          </small>
-                        </th>
-                        {weightedMetrics.map((metric) => {
-                          const heat = company.indicatorHeat.find(
-                            (item) => item.indicatorId === metric.indicatorId
-                          )
-                          return (
-                            <td
-                              key={metric.indicatorId}
-                              data-missing={heat?.riskPercentile == null}
-                              style={heatStyle(heat?.riskPercentile ?? null)}
-                              title={`${company.companyName} · ${metric.indicatorId} ${metric.label} · ${
-                                heat?.riskPercentile == null
-                                  ? "缺失"
-                                  : percentFormatter.format(heat.riskPercentile)
-                              } · n=${heat?.sampleSize ?? 0}`}
-                            >
-                              {heat?.riskPercentile == null
-                                ? "—"
-                                : Math.round(heat.riskPercentile * 100)}
-                            </td>
-                          )
-                        })}
-                      </tr>
-                    )
-                  })
-                )}
-              </tbody>
-            ))}
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                }
+                const { company, rank } = row
+                const overallPercentile = riskPercentileFromAscendingRank(
+                  rank,
+                  peerContext.ranked.length
+                )
+                return (
+                  <tr
+                    key={company.companyId}
+                    data-active={company.companyId === companyId}
+                  >
+                    <th
+                      scope="row"
+                      data-missing={overallPercentile === null}
+                      style={heatStyle(overallPercentile)}
+                      title={`${company.companyName} · 综合风险第 ${rank} 名 · ${riskHeatLabel(overallPercentile)}`}
+                    >
+                      <span className="indicator-analysis__company-name">
+                        <strong className="indicator-analysis__company-rank">
+                          {rank}
+                        </strong>
+                        <span>{company.companyName}</span>
+                        {company.companyId === companyId ? (
+                          <Badge variant="outline">当前</Badge>
+                        ) : null}
+                      </span>
+                    </th>
+                    {weightedMetrics.map((metric) => {
+                      const heat = company.indicatorHeat.find(
+                        (item) => item.indicatorId === metric.indicatorId
+                      )
+                      const indicatorRank = indicatorRankFromRiskPercentile(
+                        heat?.riskPercentile ?? null,
+                        heat?.sampleSize ?? 0
+                      )
+                      const rankAssessment = indicatorRankAssessment(
+                        indicatorRank,
+                        heat?.sampleSize ?? 0
+                      )
+                      return (
+                        <td
+                          key={metric.indicatorId}
+                          data-missing={indicatorRank === null}
+                          style={heatStyle(heat?.riskPercentile ?? null)}
+                          title={`${company.companyName} · ${metric.indicatorId} ${metric.label} · ${
+                            indicatorRank === null
+                              ? "缺失"
+                              : `第 ${indicatorRank}/${heat?.sampleSize ?? 0} 名 · ${rankAssessment}`
+                          }`}
+                        >
+                          {indicatorRank === null ? (
+                            "—"
+                          ) : (
+                            <>
+                              <span className="indicator-analysis__indicator-rank">
+                                <strong>{indicatorRank}</strong>
+                                <small>/{heat?.sampleSize ?? 0}</small>
+                              </span>
+                              <small className="indicator-analysis__rank-analysis">
+                                {rankAssessment}
+                              </small>
+                            </>
+                          )}
+                        </td>
+                      )
+                    })}
+                  </tr>
+                )
+              })}
+            </tbody>
           </table>
         </div>
       </section>
@@ -598,13 +627,10 @@ function RawMetricFormula({
       : "原值越低，风险越高"
   return (
     <div className="indicator-method-sheet__raw-method">
-      <p
-        className="indicator-method-sheet__raw-formula"
-        role="math"
-        aria-label={`${metric.label}原始指标公式`}
-      >
-        {formula || "当前指标尚未提供可公开展示的原始计算公式。"}
-      </p>
+      <IndustryRawFormula
+        indicatorId={metric.indicatorId}
+        rawValueFormula={formula}
+      />
       <dl className="indicator-method-sheet__raw-factors">
         <div>
           <dt>当前原值</dt>
