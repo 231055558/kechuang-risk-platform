@@ -644,7 +644,7 @@ test("workflow content starts with meaningful controls instead of empty page hea
     assert.doesNotMatch(source, /snapshot-label/)
   })
   assert.doesNotMatch(sidebarSource, /快照 \{detail\.snapshotAt\}/)
-  assert.match(sidebarSource, /方法版本 · \{assessment\.methodVersion\}/)
+  assert.doesNotMatch(sidebarSource, /方法版本/)
   assert.doesNotMatch(topBarSource, /SNAPSHOT|当前企业|会话更新/)
 })
 
@@ -690,7 +690,7 @@ test("method and comparison controls live in their relevant content regions", ()
   }
   assert.match(indicatorSource, /风险名次 \/ 企业/)
   assert.match(indicatorSource, /peerMatrixRows\.map/)
-  assert.match(indicatorSource, /setPeerMatrixExpanded\(true\)/)
+  assert.match(indicatorSource, /setExpandedPeerMatrixCompanyId\(companyId\)/)
   assert.match(indicatorSource, /indicatorRankFromRiskPercentile/)
   assert.match(indicatorSource, /indicatorRankAssessment/)
   assert.doesNotMatch(indicatorSource, /原始观测/)

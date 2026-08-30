@@ -61,10 +61,11 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
   const [selectedIndicatorId, setSelectedIndicatorId] = useState<string | null>(
     null
   )
-  const [peerMatrixExpanded, setPeerMatrixExpanded] = useState(false)
+  const [expandedPeerMatrixCompanyId, setExpandedPeerMatrixCompanyId] =
+    useState<string | null>(null)
+  const peerMatrixExpanded = expandedPeerMatrixCompanyId === companyId
 
   useEffect(() => {
-    setPeerMatrixExpanded(false)
     const controller = new AbortController()
     void Promise.all([
       fetchIndustryRiskCompanies({ signal: controller.signal }),
@@ -125,7 +126,6 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
     <div className="indicator-analysis page-stack">
       <header className="indicator-analysis__header">
         <div>
-          <span className="eyebrow">Objective indicator analytics</span>
           <h2>{response.company.shortName}指标分析</h2>
           <p>
             R05–R22
@@ -136,8 +136,6 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
           <Badge variant="outline">
             {response.assessment.benchmarkGroupLabel}
           </Badge>
-          <span>方法 {response.assessment.methodVersion}</span>
-          <span>截至 {response.provenance.sourceDate}</span>
         </div>
       </header>
 
@@ -145,7 +143,6 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
         <article className="indicator-analysis__radar">
           <header>
             <div>
-              <span className="eyebrow">Risk structure</span>
               <h3>五域客观风险雷达</h3>
             </div>
             <Badge variant="outline">
@@ -158,7 +155,6 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
         <article className="indicator-analysis__heat-strip">
           <header>
             <div>
-              <span className="eyebrow">Peer percentile heat</span>
               <h3>本企业指标热力</h3>
             </div>
             <HeatLegend />
@@ -189,7 +185,6 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
       <section className="indicator-analysis__peer-matrix">
         <header>
           <div>
-            <span className="eyebrow">Cross-company view</span>
             <h3>同业风险分位矩阵</h3>
             <p>
               按综合风险从低到高排列，第 1 名风险最低；默认保留前 4
@@ -203,7 +198,11 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setPeerMatrixExpanded((value) => !value)}
+                onClick={() =>
+                  setExpandedPeerMatrixCompanyId((value) =>
+                    value === companyId ? null : companyId
+                  )
+                }
               >
                 {peerMatrixExpanded ? (
                   <ListCollapseIcon aria-hidden="true" />
@@ -244,7 +243,9 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
                       <td colSpan={weightedMetrics.length + 1}>
                         <button
                           type="button"
-                          onClick={() => setPeerMatrixExpanded(true)}
+                          onClick={() =>
+                            setExpandedPeerMatrixCompanyId(companyId)
+                          }
                           aria-label={`展开第 ${row.fromRank} 至 ${row.toRank} 名企业`}
                         >
                           <EllipsisIcon aria-hidden="true" />
@@ -333,7 +334,6 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
       <section className="indicator-analysis__table-section">
         <header>
           <div>
-            <span className="eyebrow">Metric ledger</span>
             <h3>指标明细与同业评分</h3>
           </div>
           <Badge variant="outline">点击行查看公式与来源</Badge>

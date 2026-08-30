@@ -138,7 +138,6 @@ export function IndustryRiskReviewPanel({
       <Reveal>
         <header className="investor-overview__header">
           <div>
-            <span className="eyebrow">Investor risk monitor</span>
             <h2 id="industry-risk-title">
               {summary?.companyName ?? "当前企业"}风险总览
             </h2>
@@ -210,7 +209,6 @@ function RiskOverviewContent({
         <section className="investor-overview__events">
           <header>
             <div>
-              <span className="eyebrow">Recent events</span>
               <h3>近期事件</h3>
             </div>
             <Button
@@ -253,7 +251,6 @@ function RiskOverviewContent({
         <aside className="investor-overview__next">
           <ShieldCheckIcon aria-hidden="true" />
           <div>
-            <span className="eyebrow">Research next</span>
             <h3>继续核对指标依据</h3>
             <p>
               查看 R05–R22

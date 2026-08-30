@@ -188,7 +188,6 @@ function InvestmentResearchContent({
     <div className="investor-decision page-stack">
       <header className="investor-decision__header">
         <div>
-          <span className="eyebrow">Investment risk review</span>
           <h2>{response.company.shortName}投资研判</h2>
           <p>
             从风险位置、主要驱动、数据置信度和压力条件形成研究结论；不输出未经确认的买入、卖出或收益预测。
@@ -311,7 +310,6 @@ function InvestmentResearchContent({
           <section className="investor-perspective__execution">
             <header>
               <div>
-                <span className="eyebrow">Decision execution plan</span>
                 <h4>研判执行方案</h4>
               </div>
               <p>每一步同时回答研判问题、操作边界和证据要求。</p>
@@ -422,7 +420,6 @@ function RiskResponseContent({
     <div className="risk-response page-stack">
       <header className="investor-decision__header">
         <div>
-          <span className="eyebrow">Investor risk response</span>
           <h2>{response.company.shortName}风险应对</h2>
           <p>
             将高风险指标转化为企业内部可执行的整改动作，并明确产出物、验证标准和实施阶段。
@@ -465,7 +462,6 @@ function RiskResponseContent({
       <section className="risk-response__signals">
         <header>
           <div>
-            <span className="eyebrow">Early warning monitor</span>
             <h3>关键风险信号</h3>
           </div>
           <p>P75 以上标记为已触发，P60–P75 为临界观察。</p>

@@ -49,6 +49,8 @@
 
 内部字段 `needs_review`、`review_reason`、`candidate`、内部校验结果不得进入对外 DTO。未通过审核的节点和与其相连的边必须在服务端过滤。
 
+`fee-transmission` 展示视图允许由后端生成 `risk_category_impacts_company` 收束边：其来源只能是已返回的二级风险指标及其一级风险类别关系，必须标记 `chain_projection=true`、记录支撑指标数量，并禁止前端自行补画。辅助预警分节点和 `has_warning_score` 边不进入该传导视图。
+
 ## 上游适配
 
 Node 服务只通过 `GRAPH_API_ORIGIN` 连接只读图谱服务，浏览器不直接访问 Neo4j或其端口。平台iframe固定使用同源的 `risk-graph-workspace/`，Vite和生产Node服务再把该路径转发至图谱上游。默认本地上游为 `http://127.0.0.1:8766`；`GRAPH_RUNTIME_MODE=bundled` 自动启动寒武纪与芯驰两个独立版本化快照，`external` 模式则复用显式配置的外部服务。普通用户无需 Neo4j Desktop 或密码。

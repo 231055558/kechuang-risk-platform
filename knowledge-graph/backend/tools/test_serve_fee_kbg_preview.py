@@ -65,6 +65,28 @@ class MultiSnapshotPreviewTests(unittest.TestCase):
             ],
         )
 
+    def test_fee_transmission_ends_at_company_through_risk_categories(self):
+        companies = self.reader.companies()
+        for company in companies:
+            graph = self.reader.fee_transmission(company["id"], 500, 0.5)
+            self.assertNotIn(
+                "warning_score", {node["type"] for node in graph["nodes"]}
+            )
+            company_edges = [
+                edge
+                for edge in graph["edges"]
+                if edge["source"] == graph["company_key"]
+                or edge["target"] == graph["company_key"]
+            ]
+            self.assertGreater(len(company_edges), 0)
+            self.assertEqual(
+                {edge["relation_code"] for edge in company_edges},
+                {"risk_category_impacts_company"},
+            )
+            self.assertTrue(
+                all(edge["target"] == graph["company_key"] for edge in company_edges)
+            )
+
     def test_unknown_company_never_falls_back_to_another_snapshot(self):
         with self.assertRaisesRegex(LookupError, "尚无FEE-KBG试点快照"):
             self.reader.fee_kbg("node:missing", 500)

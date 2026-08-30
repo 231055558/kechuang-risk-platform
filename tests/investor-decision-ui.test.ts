@@ -75,3 +75,12 @@ test("研判执行与三阶段整改使用可扫描的大字号行动版式", ()
   )
   assert.match(styles, /\.risk-response__timeline h3\s*\{[^}]*font-size: 22px/s)
 })
+
+test("投资研判移除装饰性英文标签但保留新版重点布局", () => {
+  assert.doesNotMatch(
+    eventsSource,
+    /Investment risk review|Decision execution plan|Investor risk response|Early warning monitor/
+  )
+  assert.match(eventsSource, /className="investor-perspective__action-copy"/)
+  assert.match(eventsSource, /data-response-stage=\{stage\.id\}/)
+})
