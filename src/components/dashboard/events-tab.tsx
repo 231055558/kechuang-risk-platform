@@ -202,7 +202,10 @@ function InvestmentResearchContent({
         </div>
       </header>
 
-      <section className="investor-decision__compact-overview" aria-label="共同风险基线">
+      <section
+        className="investor-decision__compact-overview"
+        aria-label="共同风险基线"
+      >
         <article>
           <GaugeIcon aria-hidden="true" />
           <span>综合风险</span>
@@ -226,7 +229,8 @@ function InvestmentResearchContent({
           <span>证据覆盖</span>
           <strong>{coveragePercent}%</strong>
           <small>
-            {response.assessment.weightedScoredIndicatorCount}/18 项已评分 · {events.length} 条近期事件
+            {response.assessment.weightedScoredIndicatorCount}/18 项已评分 ·{" "}
+            {events.length} 条近期事件
           </small>
         </article>
         <article>
@@ -242,7 +246,10 @@ function InvestmentResearchContent({
       </section>
 
       <section className="investor-perspective">
-        <nav className="investor-perspective__selector" aria-label="选择研判视角">
+        <nav
+          className="investor-perspective__selector"
+          aria-label="选择研判视角"
+        >
           {(
             [
               {
@@ -328,7 +335,7 @@ function InvestmentResearchContent({
                   </div>
                   <p className="investor-perspective__action-copy">
                     <strong>执行动作</strong>
-                    {step.action}
+                    <span>{step.action}</span>
                   </p>
                   <dl>
                     <div>
@@ -365,14 +372,13 @@ function RiskResponseContent({
 }) {
   const signals = buildInvestorRiskSignals(response.assessment)
   const topSignals = signals.slice(0, 5)
-  const enterpriseActions = buildEnterpriseRiskActions(
-    response.assessment,
-    18
-  )
+  const enterpriseActions = buildEnterpriseRiskActions(response.assessment, 18)
   const triggeredCount = signals.filter(
     (signal) => signal.status === "triggered"
   ).length
-  const watchCount = signals.filter((signal) => signal.status === "watch").length
+  const watchCount = signals.filter(
+    (signal) => signal.status === "watch"
+  ).length
   const peerPosition = calculateInvestorPeerPosition(
     directory,
     response.company.id
@@ -380,8 +386,7 @@ function RiskResponseContent({
   const coveragePercent = Math.round(
     response.assessment.weightedDataCoverage * 100
   )
-  const missingCount =
-    18 - response.assessment.weightedScoredIndicatorCount
+  const missingCount = 18 - response.assessment.weightedScoredIndicatorCount
   const stages = [
     {
       id: "01",
@@ -466,7 +471,11 @@ function RiskResponseContent({
           <p>P75 以上标记为已触发，P60–P75 为临界观察。</p>
         </header>
         {topSignals.length ? (
-          <div className="risk-response__signal-table-wrap" role="region" tabIndex={0}>
+          <div
+            className="risk-response__signal-table-wrap"
+            role="region"
+            tabIndex={0}
+          >
             <table>
               <thead>
                 <tr>
@@ -490,7 +499,8 @@ function RiskResponseContent({
                     <td>{signal.riskScore.toFixed(2)}</td>
                     <td>P{Math.round(signal.riskPercentile * 100)}</td>
                     <td>
-                      {signal.thresholdLabel} · n={signal.sampleSize} · {signal.sourceCount}
+                      {signal.thresholdLabel} · n={signal.sampleSize} ·{" "}
+                      {signal.sourceCount}
                       条评分来源
                     </td>
                   </tr>
@@ -509,7 +519,7 @@ function RiskResponseContent({
             (action) => action.horizon === stage.horizon
           )
           return (
-            <article key={stage.id}>
+            <article key={stage.id} data-response-stage={stage.id}>
               <header>
                 <span>{stage.id}</span>
                 <div>
@@ -529,7 +539,10 @@ function RiskResponseContent({
                         </small>
                       </header>
                       <h4>{action.title}</h4>
-                      <p>{action.action}</p>
+                      <div className="risk-response__action-copy">
+                        <strong>整改动作</strong>
+                        <p>{action.action}</p>
+                      </div>
                       <dl>
                         <div>
                           <dt>产出物</dt>
@@ -553,10 +566,7 @@ function RiskResponseContent({
         })}
       </section>
 
-      <BoundaryNote
-        sourceDate={response.provenance.sourceDate}
-        enterprise
-      />
+      <BoundaryNote sourceDate={response.provenance.sourceDate} enterprise />
     </div>
   )
 }
