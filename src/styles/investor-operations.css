@@ -45,7 +45,10 @@
 
 .investor-decision__dashboard {
   display: grid;
-  grid-template-columns: minmax(270px, 0.8fr) minmax(380px, 1.15fr) minmax(260px, 0.78fr);
+  grid-template-columns: minmax(270px, 0.8fr) minmax(380px, 1.15fr) minmax(
+      260px,
+      0.78fr
+    );
   gap: 12px;
 }
 
@@ -311,7 +314,11 @@
 
 .investor-perspective__selector button[data-active="true"] {
   border-color: var(--risk-os-accent);
-  background: color-mix(in srgb, var(--risk-os-accent) 7%, var(--risk-os-surface));
+  background: color-mix(
+    in srgb,
+    var(--risk-os-accent) 7%,
+    var(--risk-os-surface)
+  );
 }
 
 .investor-perspective__selector svg {
@@ -449,14 +456,14 @@
 }
 
 .investor-perspective__execution {
-  margin-top: 12px;
-  padding-top: 18px;
+  margin-top: 22px;
+  padding-top: 26px;
   border-top: 1px solid var(--risk-os-border);
 }
 
 .investor-perspective__execution > header {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
 }
@@ -464,121 +471,167 @@
 .investor-perspective__execution h4 {
   margin: 5px 0 0;
   color: var(--risk-os-ink);
-  font-size: 16px;
+  font-size: 21px;
 }
 
 .investor-perspective__execution > header p {
+  max-width: 440px;
   margin: 0;
   color: var(--risk-os-muted);
-  font-size: 9px;
+  font-size: 12px;
+  line-height: 1.55;
+  text-align: right;
 }
 
 .investor-perspective__execution > div {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 12px;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-top: 18px;
 }
 
 .investor-perspective__execution article {
-  position: relative;
+  display: grid;
   min-width: 0;
-  padding: 17px;
+  grid-template-columns: 64px minmax(220px, 0.82fr) minmax(0, 1.5fr);
+  grid-template-rows: auto auto auto;
+  gap: 12px 18px;
+  padding: 24px;
   border: 1px solid var(--risk-os-border);
-  border-left: 3px solid var(--risk-os-accent);
-  border-radius: 8px;
-  background: var(--risk-os-surface-muted);
+  border-left: 4px solid var(--risk-os-accent);
+  border-radius: 10px;
+  background: var(--risk-os-surface);
 }
 
 .investor-perspective__execution article > span {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  color: color-mix(in srgb, var(--risk-os-muted) 55%, transparent);
-  font-size: 20px;
-  font-weight: 750;
+  grid-row: 1 / span 3;
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--risk-os-accent) 35%, transparent);
+  background: color-mix(in srgb, var(--risk-os-accent) 8%, transparent);
+  color: var(--risk-os-accent);
+  font-size: 25px;
+  font-weight: 780;
+  font-variant-numeric: tabular-nums;
 }
 
 .investor-perspective__execution h5 {
-  max-width: calc(100% - 34px);
+  grid-column: 2 / -1;
   margin: 0;
   color: var(--risk-os-ink);
-  font-size: 13px;
+  font-size: 18px;
+  line-height: 1.35;
 }
 
 .investor-perspective__guidance {
   display: grid;
-  gap: 7px;
-  margin-top: 10px;
+  grid-column: 2;
+  grid-row: 2 / span 2;
+  align-content: start;
+  gap: 10px;
 }
 
 .investor-perspective__guidance > div {
   display: grid;
-  grid-template-columns: 16px 54px minmax(0, 1fr);
+  grid-template-columns: 20px minmax(0, 1fr);
   align-items: start;
-  gap: 6px;
-  padding: 8px;
+  gap: 4px 8px;
+  padding: 12px;
   border: 1px solid var(--risk-os-border);
-  border-radius: 6px;
-  background: var(--risk-os-surface);
+  border-radius: 7px;
+  background: var(--risk-os-surface-muted);
+}
+
+.investor-perspective__guidance > div:first-child {
+  border-color: color-mix(
+    in srgb,
+    var(--risk-os-accent) 30%,
+    var(--risk-os-border)
+  );
+  background: color-mix(
+    in srgb,
+    var(--risk-os-accent) 6%,
+    var(--risk-os-surface)
+  );
 }
 
 .investor-perspective__guidance svg {
-  width: 14px;
+  width: 17px;
   color: var(--risk-os-accent);
 }
 
 .investor-perspective__guidance strong,
 .investor-perspective__action-copy strong {
   color: var(--risk-os-ink);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .investor-perspective__guidance p {
+  grid-column: 1 / -1;
   margin: 0;
   color: var(--risk-os-muted);
-  font-size: 9px;
-  line-height: 1.5;
-}
-
-.investor-perspective__execution article > p {
-  margin: 8px 0 0;
-  color: var(--risk-os-muted);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.55;
 }
 
 .investor-perspective__action-copy {
-  display: grid;
-  grid-template-columns: 58px minmax(0, 1fr);
-  gap: 8px;
+  grid-column: 3;
+  grid-row: 2;
+  margin: 0;
+  padding: 13px 14px;
+  border-left: 3px solid var(--risk-os-accent);
+  background: var(--risk-os-surface-muted);
+}
+
+.investor-perspective__action-copy strong,
+.investor-perspective__action-copy span {
+  display: block;
+}
+
+.investor-perspective__action-copy strong {
+  margin-bottom: 5px;
+  color: var(--risk-os-accent);
+}
+
+.investor-perspective__action-copy span {
+  color: var(--risk-os-ink);
+  font-size: 13px;
+  font-weight: 620;
+  line-height: 1.6;
 }
 
 .investor-perspective__execution dl {
   display: grid;
-  gap: 6px;
-  margin: 11px 0 0;
+  grid-column: 3;
+  grid-row: 3;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
 }
 
 .investor-perspective__execution dl > div {
-  display: grid;
-  grid-template-columns: 58px minmax(0, 1fr);
-  gap: 8px;
+  padding: 11px 12px;
+  border: 1px solid var(--risk-os-border);
+  background: var(--risk-os-surface-muted);
 }
 
 .investor-perspective__execution :where(dt, dd) {
   margin: 0;
-  font-size: 9px;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 .investor-perspective__execution dt {
   color: var(--risk-os-accent);
+  font-size: 10px;
   font-weight: 700;
 }
 
 .investor-perspective__execution dd {
+  margin-top: 5px;
   color: var(--risk-os-muted);
+  font-size: 11px;
 }
 
 .investor-decision__scenario-section,
@@ -762,12 +815,19 @@
 
 .risk-response__summary {
   display: grid;
+  min-width: 0;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 9px;
 }
 
+.risk-response > *,
+.investor-decision__header > div {
+  min-width: 0;
+}
+
 .risk-response__summary > article {
   display: grid;
+  min-width: 0;
   grid-template-columns: auto 1fr;
   gap: 4px 10px;
   padding: 15px;
@@ -790,6 +850,7 @@
 .risk-response__summary :where(span, small) {
   color: var(--risk-os-muted);
   font-size: 9px;
+  overflow-wrap: anywhere;
 }
 
 .risk-response__summary strong {
@@ -851,22 +912,28 @@
 
 .risk-response__timeline {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 11px;
+  grid-template-columns: 1fr;
+  gap: 16px;
 }
 
 .risk-response__timeline > article {
+  display: grid;
   min-width: 0;
-  padding: 19px;
-  border-top: 3px solid #4787d8;
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 22px;
+  padding: 24px;
+  border: 1px solid var(--risk-os-border);
+  border-left: 5px solid #dc5a50;
+  border-radius: 10px;
+  background: var(--risk-os-surface);
 }
 
 .risk-response__timeline > article:nth-child(2) {
-  border-top-color: #2a9d78;
+  border-left-color: #d08b1e;
 }
 
 .risk-response__timeline > article:nth-child(3) {
-  border-top-color: #dc5a50;
+  border-left-color: #2a9d78;
 }
 
 .risk-response__timeline article > header {
@@ -877,18 +944,25 @@
 }
 
 .risk-response__action-plan article > header {
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: 56px minmax(0, 1fr);
+  align-content: start;
+  padding-right: 20px;
+  border-right: 1px solid var(--risk-os-border);
 }
 
 .risk-response__action-list {
   display: grid;
-  gap: 10px;
-  margin-top: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
 }
 
 .risk-response__action-list > section {
-  padding-top: 12px;
-  border-top: 1px solid var(--risk-os-border);
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid var(--risk-os-border);
+  border-radius: 8px;
+  background: var(--risk-os-surface-muted);
 }
 
 .risk-response__action-list section > header {
@@ -900,60 +974,91 @@
 
 .risk-response__action-list section > header span {
   color: var(--risk-os-accent);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 750;
 }
 
 .risk-response__action-list section > header small {
   margin: 0;
   color: var(--risk-os-muted);
-  font-size: 8px;
+  font-size: 10px;
 }
 
 .risk-response__action-list h4 {
-  margin: 7px 0 0;
+  margin: 9px 0 0;
   color: var(--risk-os-ink);
-  font-size: 11px;
-  line-height: 1.4;
+  font-size: 15px;
+  line-height: 1.45;
 }
 
-.risk-response__action-list > section > p {
-  margin: 6px 0 0;
-  color: var(--risk-os-muted);
-  font-size: 9px;
-  line-height: 1.5;
+.risk-response__action-copy {
+  margin-top: 10px;
+  padding: 10px 11px;
+  border-left: 3px solid var(--risk-os-accent);
+  background: var(--risk-os-surface);
+}
+
+.risk-response__action-copy strong {
+  display: block;
+  color: var(--risk-os-accent);
+  font-size: 10px;
+}
+
+.risk-response__action-copy p {
+  margin: 5px 0 0;
+  color: var(--risk-os-ink);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.6;
 }
 
 .risk-response__action-list dl {
   display: grid;
-  gap: 5px;
-  margin: 8px 0 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 10px 0 0;
 }
 
 .risk-response__action-list dl > div {
-  display: grid;
-  grid-template-columns: 48px minmax(0, 1fr);
-  gap: 7px;
+  padding: 9px 10px;
+  border: 1px solid var(--risk-os-border);
+  background: var(--risk-os-surface);
 }
 
 .risk-response__action-list :where(dt, dd) {
   margin: 0;
-  font-size: 8px;
-  line-height: 1.45;
+  line-height: 1.5;
 }
 
 .risk-response__action-list dt {
   color: var(--risk-os-accent);
+  font-size: 10px;
+  font-weight: 700;
 }
 
 .risk-response__action-list dd {
+  margin-top: 4px;
   color: var(--risk-os-muted);
+  font-size: 11px;
 }
 
 .risk-response__timeline article > header > span {
-  color: color-mix(in srgb, var(--risk-os-muted) 70%, transparent);
-  font-size: 18px;
-  font-weight: 750;
+  display: grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  color: #c94842;
+  font-size: 24px;
+  font-weight: 780;
+  font-variant-numeric: tabular-nums;
+}
+
+.risk-response__timeline article:nth-child(2) > header > span {
+  color: #a66d0d;
+}
+
+.risk-response__timeline article:nth-child(3) > header > span {
+  color: #168b68;
 }
 
 .risk-response__timeline article > header svg {
@@ -965,20 +1070,21 @@
   display: block;
   margin-bottom: 4px;
   color: var(--risk-os-accent);
-  font-size: 8px;
+  font-size: 11px;
+  font-weight: 720;
 }
 
 .risk-response__timeline h3 {
   margin: 0;
   color: var(--risk-os-ink);
-  font-size: 14px;
+  font-size: 22px;
 }
 
 .risk-response__timeline header p {
-  margin: 5px 0 0;
+  margin: 7px 0 0;
   color: var(--risk-os-muted);
-  font-size: 10px;
-  line-height: 1.5;
+  font-size: 12px;
+  line-height: 1.6;
 }
 
 .risk-response__timeline ol {
@@ -1006,7 +1112,7 @@
 .risk-response__empty {
   margin: 18px 0 0;
   color: var(--risk-os-muted);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 @media (max-width: 1180px) {
@@ -1023,6 +1129,33 @@
   .investor-decision__compact-overview,
   .risk-response__summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .investor-perspective__execution article {
+    grid-template-columns: 56px minmax(0, 1fr);
+  }
+
+  .investor-perspective__execution h5,
+  .investor-perspective__guidance,
+  .investor-perspective__action-copy,
+  .investor-perspective__execution dl {
+    grid-column: 2;
+  }
+
+  .investor-perspective__guidance {
+    grid-row: 2;
+  }
+
+  .investor-perspective__action-copy {
+    grid-row: 3;
+  }
+
+  .investor-perspective__execution dl {
+    grid-row: 4;
+  }
+
+  .risk-response__timeline > article {
+    grid-template-columns: 180px minmax(0, 1fr);
   }
 }
 
@@ -1051,6 +1184,50 @@
   .risk-response__summary,
   .risk-response__timeline {
     grid-template-columns: 1fr;
+  }
+
+  .investor-perspective__execution > header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .investor-perspective__execution > header p {
+    text-align: left;
+  }
+
+  .investor-perspective__execution article {
+    display: block;
+    padding: 18px;
+  }
+
+  .investor-perspective__execution article > span {
+    width: 44px;
+    height: 44px;
+    font-size: 21px;
+  }
+
+  .investor-perspective__execution h5,
+  .investor-perspective__guidance,
+  .investor-perspective__action-copy,
+  .investor-perspective__execution dl {
+    margin-top: 12px;
+  }
+
+  .investor-perspective__execution dl,
+  .risk-response__action-list,
+  .risk-response__action-list dl {
+    grid-template-columns: 1fr;
+  }
+
+  .risk-response__timeline > article {
+    grid-template-columns: 1fr;
+    padding: 18px;
+  }
+
+  .risk-response__action-plan article > header {
+    padding: 0 0 16px;
+    border-right: 0;
+    border-bottom: 1px solid var(--risk-os-border);
   }
 
   .investor-decision__peer-card {
