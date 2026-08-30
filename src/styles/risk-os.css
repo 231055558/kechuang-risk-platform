@@ -547,16 +547,6 @@ body::after {
   background: var(--risk-os-sidebar-live-ink);
 }
 
-.risk-os-sidebar .sidebar-footnote {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 10px 7px 0;
-  border-top: 1px solid var(--risk-os-sidebar-border);
-  color: var(--risk-os-sidebar-faint);
-  font-size: 10px;
-}
-
 .risk-os-global-controls-wrap {
   position: fixed;
   z-index: 45;

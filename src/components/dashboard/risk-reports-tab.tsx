@@ -251,7 +251,6 @@ function RiskReportContent({
           <GlassPanel className="risk-report-section" variant="floating">
             <header>
               <div>
-                <span className="eyebrow">本期重点</span>
                 <h3>优先关注的风险指标</h3>
               </div>
               <Badge variant="outline">按影响程度排序</Badge>
@@ -286,7 +285,6 @@ function RiskReportContent({
           <GlassPanel className="risk-report-section" variant="floating">
             <header>
               <div>
-                <span className="eyebrow">最新动态</span>
                 <h3>近期风险事件</h3>
               </div>
               <Button
@@ -337,7 +335,6 @@ function RiskReportContent({
         >
           <header>
             <div>
-              <span className="eyebrow">可追溯材料</span>
               <h3>数据库已收录的报告与正式来源</h3>
             </div>
             <Badge variant="outline">{response.sources.length} 条来源</Badge>

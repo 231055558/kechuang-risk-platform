@@ -38,11 +38,11 @@ test("application shell no longer depends on the KCR V3 runtime result", () => {
 
   assert.match(app, /企业风险基准/)
   assert.match(app, /汇总企业风险结论、同业位置、关键事件与可追溯证据/)
-  assert.match(app, /INDUSTRY_RISK_MVP_METHOD_VERSION/)
+  assert.doesNotMatch(app, /INDUSTRY_RISK_MVP_METHOD_VERSION/)
   assert.doesNotMatch(app, /kcrAssessmentResponse/)
   assert.doesNotMatch(app, /printKcrAssessmentReport/)
   assert.doesNotMatch(app, /KcrMethodSheet/)
-  assert.match(sidebar, /assessmentSummaryOverride\.methodVersion/)
+  assert.doesNotMatch(sidebar, /方法版本/)
 })
 
 test("legacy KCR workflow stays isolated and testable for historical replay", () => {

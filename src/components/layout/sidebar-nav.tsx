@@ -1,4 +1,4 @@
-import { DatabaseZapIcon, ShieldCheckIcon } from "lucide-react"
+import { ShieldCheckIcon } from "lucide-react"
 import { useRef, useState } from "react"
 
 import { CompanySearchSelect } from "@/components/layout/company-search-select"
@@ -20,7 +20,6 @@ type SidebarNavProps = {
   assessmentSummaryOverride?: {
     label: string
     scoreLabel: string
-    methodVersion: string
   }
   companySummaries: CompanySummary[]
   companyId: string
@@ -88,15 +87,6 @@ export function SidebarNav({
           onPreloadView={onPreloadView}
           signals={signals}
         />
-
-        <div className="sidebar-footnote">
-          <DatabaseZapIcon className="size-4" />
-          {assessmentSummaryOverride ? (
-            <span>方法版本 · {assessmentSummaryOverride.methodVersion}</span>
-          ) : (
-            <span>方法版本 · {assessment.methodVersion}</span>
-          )}
-        </div>
       </aside>
     </div>
   )

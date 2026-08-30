@@ -331,17 +331,6 @@
   background: var(--danger);
 }
 
-.sidebar-footnote {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  margin-top: auto;
-  padding: 13px 18px;
-  border-top: 1px solid var(--border);
-  color: var(--text-soft);
-  font-size: 11px;
-}
-
 .top-command-glass {
   position: sticky !important;
   top: 14px;
@@ -892,15 +881,6 @@
   margin: 0;
   border: 0;
   border-radius: 0 !important;
-}
-
-.app-footer {
-  margin-top: 18px;
-  padding: 18px 4px 4px;
-  border-top: 1px solid var(--border);
-  color: var(--text-soft);
-  font-size: 11px;
-  line-height: 1.6;
 }
 
 @keyframes feedback-arrive {

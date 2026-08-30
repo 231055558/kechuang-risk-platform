@@ -188,7 +188,6 @@ function InvestmentResearchContent({
     <div className="investor-decision page-stack">
       <header className="investor-decision__header">
         <div>
-          <span className="eyebrow">Investment risk review</span>
           <h2>{response.company.shortName}投资研判</h2>
           <p>
             从风险位置、主要驱动、数据置信度和压力条件形成研究结论；不输出未经确认的买入、卖出或收益预测。
@@ -202,7 +201,10 @@ function InvestmentResearchContent({
         </div>
       </header>
 
-      <section className="investor-decision__compact-overview" aria-label="共同风险基线">
+      <section
+        className="investor-decision__compact-overview"
+        aria-label="共同风险基线"
+      >
         <article>
           <GaugeIcon aria-hidden="true" />
           <span>综合风险</span>
@@ -226,7 +228,8 @@ function InvestmentResearchContent({
           <span>证据覆盖</span>
           <strong>{coveragePercent}%</strong>
           <small>
-            {response.assessment.weightedScoredIndicatorCount}/18 项已评分 · {events.length} 条近期事件
+            {response.assessment.weightedScoredIndicatorCount}/18 项已评分 ·{" "}
+            {events.length} 条近期事件
           </small>
         </article>
         <article>
@@ -242,7 +245,10 @@ function InvestmentResearchContent({
       </section>
 
       <section className="investor-perspective">
-        <nav className="investor-perspective__selector" aria-label="选择研判视角">
+        <nav
+          className="investor-perspective__selector"
+          aria-label="选择研判视角"
+        >
           {(
             [
               {
@@ -304,7 +310,6 @@ function InvestmentResearchContent({
           <section className="investor-perspective__execution">
             <header>
               <div>
-                <span className="eyebrow">Decision execution plan</span>
                 <h4>研判执行方案</h4>
               </div>
               <p>每一步同时回答研判问题、操作边界和证据要求。</p>
@@ -365,14 +370,13 @@ function RiskResponseContent({
 }) {
   const signals = buildInvestorRiskSignals(response.assessment)
   const topSignals = signals.slice(0, 5)
-  const enterpriseActions = buildEnterpriseRiskActions(
-    response.assessment,
-    18
-  )
+  const enterpriseActions = buildEnterpriseRiskActions(response.assessment, 18)
   const triggeredCount = signals.filter(
     (signal) => signal.status === "triggered"
   ).length
-  const watchCount = signals.filter((signal) => signal.status === "watch").length
+  const watchCount = signals.filter(
+    (signal) => signal.status === "watch"
+  ).length
   const peerPosition = calculateInvestorPeerPosition(
     directory,
     response.company.id
@@ -380,8 +384,7 @@ function RiskResponseContent({
   const coveragePercent = Math.round(
     response.assessment.weightedDataCoverage * 100
   )
-  const missingCount =
-    18 - response.assessment.weightedScoredIndicatorCount
+  const missingCount = 18 - response.assessment.weightedScoredIndicatorCount
   const stages = [
     {
       id: "01",
@@ -417,7 +420,6 @@ function RiskResponseContent({
     <div className="risk-response page-stack">
       <header className="investor-decision__header">
         <div>
-          <span className="eyebrow">Investor risk response</span>
           <h2>{response.company.shortName}风险应对</h2>
           <p>
             将高风险指标转化为企业内部可执行的整改动作，并明确产出物、验证标准和实施阶段。
@@ -460,13 +462,16 @@ function RiskResponseContent({
       <section className="risk-response__signals">
         <header>
           <div>
-            <span className="eyebrow">Early warning monitor</span>
             <h3>关键风险信号</h3>
           </div>
           <p>P75 以上标记为已触发，P60–P75 为临界观察。</p>
         </header>
         {topSignals.length ? (
-          <div className="risk-response__signal-table-wrap" role="region" tabIndex={0}>
+          <div
+            className="risk-response__signal-table-wrap"
+            role="region"
+            tabIndex={0}
+          >
             <table>
               <thead>
                 <tr>
@@ -490,7 +495,8 @@ function RiskResponseContent({
                     <td>{signal.riskScore.toFixed(2)}</td>
                     <td>P{Math.round(signal.riskPercentile * 100)}</td>
                     <td>
-                      {signal.thresholdLabel} · n={signal.sampleSize} · {signal.sourceCount}
+                      {signal.thresholdLabel} · n={signal.sampleSize} ·{" "}
+                      {signal.sourceCount}
                       条评分来源
                     </td>
                   </tr>
@@ -553,10 +559,7 @@ function RiskResponseContent({
         })}
       </section>
 
-      <BoundaryNote
-        sourceDate={response.provenance.sourceDate}
-        enterprise
-      />
+      <BoundaryNote sourceDate={response.provenance.sourceDate} enterprise />
     </div>
   )
 }

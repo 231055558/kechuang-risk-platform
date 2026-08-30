@@ -127,7 +127,7 @@ export function CompareTab({
       <div className="page-stack">
         <EmptyState
           title="对比评估尚未就绪"
-          description="至少一方缺少当前方法版本的风险评估数据，请先完成评估数据核验。"
+          description="至少一方缺少当前口径的风险评估数据，请先完成评估数据核验。"
         />
       </div>
     )
@@ -254,7 +254,7 @@ export function CompareTab({
           <SectionHeader
             title="六维风险对照图"
             tone="blue"
-            description={`纵轴固定为0–100风险分值，柱越高表示风险越高；五项客观风险使用同一方法版本与维度口径，每个维度的两根相邻柱分别对应两家企业。叙事风险复用年度行业排名加权分，仅用于对照、不计入综合指数；缺失项不画零分柱。${leftCompany.name}采用${leftAssessment.scoreBasisLabel}，${rightCompany.name}采用${rightAssessment.scoreBasisLabel}。`}
+            description={`纵轴固定为0–100风险分值，柱越高表示风险越高；五项客观风险使用统一方法口径，每个维度的两根相邻柱分别对应两家企业。叙事风险复用年度行业排名加权分，仅用于对照、不计入综合指数；缺失项不画零分柱。${leftCompany.name}采用${leftAssessment.scoreBasisLabel}，${rightCompany.name}采用${rightAssessment.scoreBasisLabel}。`}
             action={
               <div className="compare-chart-actions">
                 <span className="compare-coverage tabular-number">
@@ -385,8 +385,8 @@ export function CompareTab({
           <div>
             <strong>对比边界</strong>
             <p>
-              客观风险维度使用同一方法版本 {leftAssessment.methodVersion}
-              ，评分基础分别为 {leftAssessment.scoreBasisLabel} 与{" "}
+              客观风险维度使用统一方法口径，评分基础分别为{" "}
+              {leftAssessment.scoreBasisLabel} 与{" "}
               {rightAssessment.scoreBasisLabel}
               ；叙事风险使用年度行业排名加权展示分，与客观评分相互独立且不计入综合指数。缺失项不会按零分参与计算。
             </p>

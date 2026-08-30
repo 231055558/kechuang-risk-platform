@@ -161,7 +161,6 @@ export function RealtimeTab({
     <div className="risk-news page-stack">
       <header className="risk-news__header">
         <div>
-          <span className="eyebrow">Risk intelligence</span>
           <h2>风险资讯</h2>
           <p>
             新闻、公告、诉讼与监管信息按风险重要度排布。资讯用于投资者阅读和来源核验，不参与财报叙事评分。

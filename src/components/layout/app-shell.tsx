@@ -100,7 +100,6 @@ type AppShellProps = {
   assessmentSummaryOverride?: {
     label: string
     scoreLabel: string
-    methodVersion: string
     overviewDescription: string
     contextName?: string
     contextSector?: string

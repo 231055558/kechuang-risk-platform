@@ -76,7 +76,6 @@ import {
 import { quantifyTechnologyBaseline } from "@/lib/technology-baseline-api"
 import { scoreTechnologyRisk } from "@/lib/technology-scoring-api"
 import { cn } from "@/lib/utils"
-import { INDUSTRY_RISK_MVP_METHOD_VERSION } from "@/domain/industry-risk-v1/scoring-engine.ts"
 import type { NavigationTarget } from "@/types/nav"
 import type {
   EventStatus,
@@ -430,13 +429,11 @@ function App() {
   const industryAssessmentSummary = {
     label: "企业风险基准",
     scoreLabel: assessment.scoreLabel,
-    methodVersion: INDUSTRY_RISK_MVP_METHOD_VERSION,
     overviewDescription: "汇总企业风险结论、同业位置、关键事件与可追溯证据",
   }
   const narrativeAssessmentSummary = {
     label: "行业年度分布",
     scoreLabel: "原始指数",
-    methodVersion: "行业年报原始指数 · 2026-08-27",
     overviewDescription:
       "查看94家企业的行业年度区间、均值与单家企业原始叙事指数",
     contextName: "94家行业样本",
@@ -1060,8 +1057,8 @@ function App() {
         activeView === "narrative"
           ? narrativeAssessmentSummary
           : activeView === "overview" || activeView === "reports"
-          ? industryAssessmentSummary
-          : undefined
+            ? industryAssessmentSummary
+            : undefined
       }
       companySummaries={runtimeCompanySummaries}
       theme={theme}
@@ -1182,10 +1179,6 @@ function App() {
             </WorkflowTransition>
           </Suspense>
         </ViewLoadErrorBoundary>
-
-        <footer className="app-footer">
-          基于公开信息与统一风险规则自动计算，用于投资风险识别、同业比较与证据核验。
-        </footer>
       </div>
 
       <MethodSheet

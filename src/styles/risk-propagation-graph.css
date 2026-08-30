@@ -8,10 +8,6 @@
   margin: 0;
 }
 
-.risk-os-content:has(.teammate-graph-workspace) .app-footer {
-  display: none;
-}
-
 .risk-os-content:has(.teammate-graph-workspace) .workflow-transition {
   min-height: 100dvh;
 }
@@ -56,36 +52,11 @@
   font-size: 13px;
 }
 
-.teammate-graph-workspace__boundary {
-  position: absolute;
-  z-index: 3;
-  bottom: 12px;
-  left: 16px;
-  max-width: min(760px, calc(100% - 32px));
-  margin: 0;
-  padding: 6px 10px;
-  border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
-  border-radius: 7px;
-  background: color-mix(in srgb, var(--background) 78%, transparent);
-  color: var(--muted-foreground);
-  font-size: 10px;
-  line-height: 1.5;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
 @media (max-width: 720px) {
   .risk-os-content:has(.teammate-graph-workspace) .workflow-transition,
   .teammate-graph-workspace,
   .teammate-graph-workspace__frame-shell {
     min-height: 100dvh;
     height: 100dvh;
-  }
-
-  .teammate-graph-workspace__boundary {
-    right: 10px;
-    bottom: 10px;
-    left: 10px;
-    max-width: none;
   }
 }

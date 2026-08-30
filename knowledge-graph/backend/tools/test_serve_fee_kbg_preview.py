@@ -47,6 +47,23 @@ class MultiSnapshotPreviewTests(unittest.TestCase):
         self.assertGreater(len(cambricon["nodes"]), 0)
         self.assertGreater(len(semidrive["nodes"]), 0)
 
+        for graph in (cambricon, semidrive):
+            self.assertNotIn("warning_score", {node["type"] for node in graph["nodes"]})
+            company_edges = [
+                edge
+                for edge in graph["edges"]
+                if edge["source"] == graph["company_key"]
+                or edge["target"] == graph["company_key"]
+            ]
+            self.assertGreater(len(company_edges), 0)
+            self.assertEqual(
+                {edge["relation_code"] for edge in company_edges},
+                {"risk_category_impacts_company"},
+            )
+            self.assertTrue(
+                all(edge["target"] == graph["company_key"] for edge in company_edges)
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

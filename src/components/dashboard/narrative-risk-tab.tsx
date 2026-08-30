@@ -7,8 +7,9 @@ import { getNarrativeIndustryTrends } from "@/lib/narrative-risk-api"
 import "@/styles/narrative-risk-workspace.css"
 
 export function NarrativeRiskTab({ companyId }: { companyId: string }) {
-  const [trends, setTrends] =
-    useState<NarrativeIndustryTrendResponse | null>(null)
+  const [trends, setTrends] = useState<NarrativeIndustryTrendResponse | null>(
+    null
+  )
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -44,15 +45,10 @@ export function NarrativeRiskTab({ companyId }: { companyId: string }) {
     <section className="nr-workspace" aria-labelledby="narrative-risk-title">
       <header className="nr-hero">
         <div>
-          <span className="nr-eyebrow">新版年度叙事风险工作台</span>
           <h1 id="narrative-risk-title">叙事风险</h1>
           <p>
             统计94家企业年报中的原始叙事指数，以行业年度范围定位单家企业；不额外合成总分。
           </p>
-        </div>
-        <div className="nr-hero__meta" aria-label="数据状态">
-          <span>数据截至 {trends.asOfDate}</span>
-          <span>年度财报原始指数 · 不合成总分</span>
         </div>
       </header>
 

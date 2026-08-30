@@ -45,7 +45,9 @@ function selectedSegments(
   x: (year: number) => number,
   y: (value: number) => number
 ) {
-  const segments: Array<Array<{ x: number; y: number; year: number; value: number }>> = []
+  const segments: Array<
+    Array<{ x: number; y: number; year: number; value: number }>
+  > = []
   let current: Array<{ x: number; y: number; year: number; value: number }> = []
   for (const year of YEARS) {
     const value = observations.get(year)?.value
@@ -95,7 +97,8 @@ function IndustryRangeChart({
   const x = (year: number) =>
     margin.left + ((year - YEARS[0]) / (YEARS.at(-1)! - YEARS[0])) * innerWidth
   const y = (value: number) =>
-    margin.top + ((plotMaximum - value) / (plotMaximum - plotMinimum)) * innerHeight
+    margin.top +
+    ((plotMaximum - value) / (plotMaximum - plotMinimum)) * innerHeight
   const ticks = Array.from(
     { length: 5 },
     (_, index) => maximum - ((maximum - minimum) * index) / 4
@@ -128,15 +131,13 @@ function IndustryRangeChart({
   const annualDisplayScoreMap = new Map(
     annualDisplayScores.map((item) => [item.year, item])
   )
-  const finalDisplayScore = calculateWeightedNarrativeDisplayScore(
-    annualDisplayScores
-  )
+  const finalDisplayScore =
+    calculateWeightedNarrativeDisplayScore(annualDisplayScores)
 
   return (
     <article className="nr-industry-chart">
       <header>
         <div>
-          <span className="nr-eyebrow">原始指数 · 全行业年度范围</span>
           <h3>{metric.name}</h3>
           <p>{metric.formula}</p>
         </div>
@@ -158,7 +159,8 @@ function IndustryRangeChart({
           aria-labelledby={`industry-${metric.metricKey}-title industry-${metric.metricKey}-description`}
         >
           <title id={`industry-${metric.metricKey}-title`}>
-            {company.companyName}{metric.name}年度行业分布
+            {company.companyName}
+            {metric.name}年度行业分布
           </title>
           <desc id={`industry-${metric.metricKey}-description`}>
             行业均值、行业年度最小至最大区间，以及{company.companyName}
@@ -256,9 +258,11 @@ function IndustryRangeChart({
               fill={color}
             >
               <title>
-                {item.year} 行业均值：{displayValue(item.mean, metric.metricKey)}；
-                范围 {displayValue(item.minimum, metric.metricKey)}–
-                {displayValue(item.maximum, metric.metricKey)}；n={item.sampleSize}
+                {item.year} 行业均值：
+                {displayValue(item.mean, metric.metricKey)}； 范围{" "}
+                {displayValue(item.minimum, metric.metricKey)}–
+                {displayValue(item.maximum, metric.metricKey)}；n=
+                {item.sampleSize}
               </title>
             </circle>
           ))}
@@ -298,9 +302,18 @@ function IndustryRangeChart({
       </div>
 
       <div className="nr-industry-chart__legend">
-        <span><i style={{ background: color }} />行业均值</span>
-        <span><i className="is-band" style={{ background: color }} />行业最小—最大区间</span>
-        <span><i className="is-company" />{company.companyName}</span>
+        <span>
+          <i style={{ background: color }} />
+          行业均值
+        </span>
+        <span>
+          <i className="is-band" style={{ background: color }} />
+          行业最小—最大区间
+        </span>
+        <span>
+          <i className="is-company" />
+          {company.companyName}
+        </span>
       </div>
 
       <p className="nr-industry-chart__domain">
@@ -333,7 +346,10 @@ function IndustryRangeChart({
                   <tr key={year}>
                     <th>{year}</th>
                     <td>
-                      {displayValue(companyObservation?.value ?? null, metric.metricKey)}
+                      {displayValue(
+                        companyObservation?.value ?? null,
+                        metric.metricKey
+                      )}
                       {companyObservation?.details.patentProxy === true
                         ? "（代理）"
                         : ""}
@@ -344,9 +360,21 @@ function IndustryRangeChart({
                         : "—"}
                     </td>
                     <td>{annualDisplayScore?.weight ?? "—"}</td>
-                    <td>{displayValue(statistic?.mean ?? null, metric.metricKey)}</td>
-                    <td>{displayValue(statistic?.minimum ?? null, metric.metricKey)}</td>
-                    <td>{displayValue(statistic?.maximum ?? null, metric.metricKey)}</td>
+                    <td>
+                      {displayValue(statistic?.mean ?? null, metric.metricKey)}
+                    </td>
+                    <td>
+                      {displayValue(
+                        statistic?.minimum ?? null,
+                        metric.metricKey
+                      )}
+                    </td>
+                    <td>
+                      {displayValue(
+                        statistic?.maximum ?? null,
+                        metric.metricKey
+                      )}
+                    </td>
                     <td>n={statistic?.sampleSize ?? 0}</td>
                   </tr>
                 )
@@ -377,16 +405,20 @@ export function NarrativeIndustryTrends({
     .sort((left, right) => left.year - right.year)
 
   return (
-    <section className="nr-industry-workspace" aria-labelledby="nr-industry-title">
+    <section
+      className="nr-industry-workspace"
+      aria-labelledby="nr-industry-title"
+    >
       <header className="nr-industry-heading">
         <div>
-          <span className="nr-eyebrow">94家企业 · 年报原始指数</span>
           <h2 id="nr-industry-title">行业叙事风险年度分布</h2>
           <p>
             折线保留原始指数；卡片右上角按企业各年度行业风险排名生成0—100展示分，并以最近年份权重5向前递减加权。
           </p>
         </div>
-        <Badge variant={data.sourceMode === "postgres" ? "secondary" : "outline"}>
+        <Badge
+          variant={data.sourceMode === "postgres" ? "secondary" : "outline"}
+        >
           <DatabaseIcon /> 财报语料已归档
         </Badge>
       </header>
@@ -397,16 +429,35 @@ export function NarrativeIndustryTrends({
           <Building2Icon />
           <div>
             <strong>{selectedCompany.companyName}</strong>
-            <span>{selectedGroup?.label} · {selectedCompany.includedYears.length}个年度</span>
+            <span>
+              {selectedGroup?.label} · {selectedCompany.includedYears.length}
+              个年度
+            </span>
           </div>
         </div>
       </div>
 
       <div className="nr-industry-audit">
-        <article><Building2Icon /><span>行业企业</span><strong>{data.audit.targetCompanyCount}</strong></article>
-        <article><FileCheck2Icon /><span>已归档年报</span><strong>{data.audit.archivedReportCount}</strong></article>
-        <article><LineChartIcon /><span>有效原始指数</span><strong>{data.audit.calculatedObservationCount}</strong></article>
-        <article><DatabaseIcon /><span>夸大性可计算</span><strong>{data.audit.patentObservationCount}</strong></article>
+        <article>
+          <Building2Icon />
+          <span>行业企业</span>
+          <strong>{data.audit.targetCompanyCount}</strong>
+        </article>
+        <article>
+          <FileCheck2Icon />
+          <span>已归档年报</span>
+          <strong>{data.audit.archivedReportCount}</strong>
+        </article>
+        <article>
+          <LineChartIcon />
+          <span>有效原始指数</span>
+          <strong>{data.audit.calculatedObservationCount}</strong>
+        </article>
+        <article>
+          <DatabaseIcon />
+          <span>夸大性可计算</span>
+          <strong>{data.audit.patentObservationCount}</strong>
+        </article>
       </div>
 
       {(data.audit.paidPatentProxyObservationCount ?? 0) > 0 ? (
@@ -446,7 +497,9 @@ export function NarrativeIndustryTrends({
               <span>{document.year}</span>
               <strong>{document.parseStatus}</strong>
               {document.officialUrl ? (
-                <a href={document.officialUrl} target="_blank" rel="noreferrer">上交所原始年报</a>
+                <a href={document.officialUrl} target="_blank" rel="noreferrer">
+                  上交所原始年报
+                </a>
               ) : (
                 <small>{document.archiveStatus}</small>
               )}

@@ -323,6 +323,7 @@ class GraphReader:
         event_argument_edges = [
             edge for edge in all_edges
             if edge["relation_code"] in event_argument_relations
+            and company_key not in {edge["source"], edge["target"]}
             and (
                 (edge["target"] in visible_events and edge["source"] in selected_subjects | {company_key})
                 or (edge["source"] in visible_events and edge["target"] in selected_subjects | {company_key})
@@ -385,29 +386,53 @@ class GraphReader:
             if edge["relation_code"] == "belongs_to_risk_category" and edge["source"] in indicator_keys
         ]
         category_keys = {edge["target"] for edge in category_edges}
+        category_company_edges = []
+        for category_key in sorted(category_keys):
+            supporting_edges = [
+                edge for edge in category_edges if edge["target"] == category_key
+            ]
+            confidences = [
+                float(edge["confidence"])
+                for edge in supporting_edges
+                if edge.get("confidence") is not None
+            ]
+            edge_id = f"projection:risk-category-company:{category_key}:{company_key}"
+            category_company_edges.append({
+                "id": edge_id,
+                "source": category_key,
+                "target": company_key,
+                "relation": "汇总至企业主体",
+                "relation_code": "risk_category_impacts_company",
+                "confidence": max(confidences) if confidences else None,
+                "needs_review": False,
+                "attributes": {
+                    "chain_projection": True,
+                    "projection_basis": "一级风险类别汇总已验证的二级风险指标",
+                    "supporting_indicator_count": len(supporting_edges),
+                },
+            })
         evidence_edges = [
             edge for edge in all_edges
             if edge["relation_code"] == "supports_event" and edge["target"] in visible_events
         ]
         evidence_keys = {edge["source"] for edge in evidence_edges}
-        warning_edges = [
-            edge for edge in all_edges
-            if edge["relation_code"] == "has_warning_score" and edge["source"] == company_key
-        ]
-        warning_keys = {edge["target"] for edge in warning_edges}
 
         selected_keys = {
             company_key, *selected_subjects, *visible_events, *topic_keys, *indicator_keys,
-            *category_keys, *evidence_keys, *warning_keys, *scenario_keys,
+            *category_keys, *evidence_keys, *scenario_keys,
         }
         selected_edges = [
-            *entity_relation_edges, *impact_edges, *event_argument_edges,
-            *event_company_edges, *forward_evolution_edges, *topic_edges,
+            *impact_edges, *event_argument_edges,
+            *forward_evolution_edges, *topic_edges,
             *topic_indicator_edges, *scenario_indicator_edges, *category_edges,
-            *evidence_edges, *warning_edges,
+            *category_company_edges, *evidence_edges,
         ]
         selected_nodes = [nodes_by_id[key] for key in selected_keys if key in nodes_by_id]
         for node in selected_nodes:
+            if node["id"] in category_keys:
+                node["attributes"]["supporting_indicator_count"] = sum(
+                    edge["target"] == node["id"] for edge in category_edges
+                )
             if node["id"] in subject_weights:
                 node["attributes"]["transmission_weight"] = subject_weights[node["id"]]
             if node["id"] in visible_events:
@@ -1192,6 +1217,15 @@ def handler_factory(reader: GraphReader, web_root: Path):
     class RiskGraphHandler(SimpleHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, directory=str(web_root), **kwargs)
+
+        def end_headers(self) -> None:
+            # The graph UI is edited independently from the React shell. Prevent
+            # embedded frames from keeping an outdated HTML document after a
+            # local rebuild or service restart.
+            self.send_header("Cache-Control", "no-store, max-age=0")
+            self.send_header("Pragma", "no-cache")
+            self.send_header("Expires", "0")
+            super().end_headers()
 
         def log_message(self, fmt: str, *args) -> None:
             print(f"[{self.log_date_time_string()}] {self.address_string()} {fmt % args}")

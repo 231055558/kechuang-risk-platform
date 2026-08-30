@@ -37,12 +37,15 @@
     var(--apple-material-control)
   );
   --apple-edge:
-    inset 0 1px 0 color-mix(in oklch, var(--glass-specular-hot) 82%, transparent),
+    inset 0 1px 0
+      color-mix(in oklch, var(--glass-specular-hot) 82%, transparent),
     inset 0 -1px 0 color-mix(in oklch, var(--glass-rim-outer) 42%, transparent),
     0 0 0 1px color-mix(in oklch, var(--glass-rim-outer) 42%, transparent);
   --apple-edge-reading:
-    inset 0 1px 0 color-mix(in oklch, var(--glass-specular-hot) 72%, transparent),
-    inset 1px 0 0 color-mix(in oklch, var(--glass-specular-cool) 28%, transparent),
+    inset 0 1px 0
+      color-mix(in oklch, var(--glass-specular-hot) 72%, transparent),
+    inset 1px 0 0
+      color-mix(in oklch, var(--glass-specular-cool) 28%, transparent),
     inset 0 -1px 0 color-mix(in oklch, var(--glass-rim-outer) 46%, transparent),
     0 0 0 1px color-mix(in oklch, var(--reading-border) 68%, transparent);
   --apple-shadow-shell:
@@ -257,10 +260,6 @@ body::before {
     0 5px 16px color-mix(in oklch, var(--brand) 8%, transparent);
 }
 
-.sidebar-footnote {
-  border-color: color-mix(in oklch, var(--reading-separator) 86%, transparent);
-}
-
 /* Continuous command bar compression */
 
 .top-command-glass {
@@ -328,11 +327,7 @@ body::before {
 
 .top-command-description {
   opacity: var(--command-description-opacity, 1);
-  transform: translate3d(
-    0,
-    var(--command-description-shift, 0),
-    0
-  );
+  transform: translate3d(0, var(--command-description-shift, 0), 0);
 }
 
 .top-command-glass-compact .top-command-description {
@@ -697,7 +692,11 @@ body::before {
   background:
     linear-gradient(
       138deg,
-      color-mix(in oklch, var(--research-accent, var(--accent-violet)) 14%, transparent),
+      color-mix(
+        in oklch,
+        var(--research-accent, var(--accent-violet)) 14%,
+        transparent
+      ),
       transparent 42% 78%,
       color-mix(in oklch, var(--ambient-cyan) 12%, transparent)
     ),
@@ -735,7 +734,11 @@ body::before {
   background:
     linear-gradient(
       138deg,
-      color-mix(in oklch, var(--research-accent, var(--accent-violet)) 19%, transparent),
+      color-mix(
+        in oklch,
+        var(--research-accent, var(--accent-violet)) 19%,
+        transparent
+      ),
       transparent 46%
     ),
     color-mix(
