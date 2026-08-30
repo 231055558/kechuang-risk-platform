@@ -1,24 +1,37 @@
-import { useGSAP } from "@gsap/react"
-import gsap from "gsap"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import {
-  ArrowRightIcon,
-  BinocularsIcon,
-  CircleAlertIcon,
-  Clock3Icon,
-  FileSignatureIcon,
+  ActivityIcon,
+  Building2Icon,
+  ChartNoAxesCombinedIcon,
   DatabaseZapIcon,
+  GaugeIcon,
   LandmarkIcon,
   SearchCheckIcon,
   ShieldCheckIcon,
+  SlidersHorizontalIcon,
+  TargetIcon,
+  UserRoundIcon,
 } from "lucide-react"
 
 import { RiskPropagationGraph } from "@/components/dashboard/risk-propagation-graph"
-import { usePrefersReducedMotion } from "@/components/motion/workflow-transition"
 import { Badge } from "@/components/ui/badge"
-import type { IndustryRiskAssessmentApiResponse } from "@/domain/industry-risk-v1/index.ts"
-import { fetchIndustryRiskAssessment } from "@/lib/industry-risk-api"
-import { riskHeatColor } from "@/lib/risk-heat"
+import type {
+  IndustryRiskAssessmentApiResponse,
+  IndustryRiskCompanyDirectoryResponse,
+} from "@/domain/industry-risk-v1/index.ts"
+import {
+  fetchIndustryRiskAssessment,
+  fetchIndustryRiskCompanies,
+} from "@/lib/industry-risk-api"
+import {
+  buildInvestorRiskSignals,
+  buildInvestmentPerspective,
+  calculateInvestorPeerPosition,
+  deriveInvestorResearchReadiness,
+  type InvestmentPerspectiveId,
+  type InvestorRiskSignal,
+} from "@/lib/investor-decision"
+import { buildEnterpriseRiskActions } from "@/lib/enterprise-risk-actions"
 import type {
   CommonPlaybookItem,
   CompanyDetail,
@@ -41,7 +54,11 @@ type EventsTabProps = {
 
 type AssessmentState =
   | { status: "loading" }
-  | { status: "success"; value: IndustryRiskAssessmentApiResponse }
+  | {
+      status: "success"
+      response: IndustryRiskAssessmentApiResponse
+      directory: IndustryRiskCompanyDirectoryResponse
+    }
   | { status: "error"; message: string }
 
 export function EventsTab({ detail, events, section }: EventsTabProps) {
@@ -71,8 +88,13 @@ function InvestorDecisionPanel({
 
   useEffect(() => {
     const controller = new AbortController()
-    void fetchIndustryRiskAssessment(detail.id, { signal: controller.signal })
-      .then((value) => setState({ status: "success", value }))
+    void Promise.all([
+      fetchIndustryRiskAssessment(detail.id, { signal: controller.signal }),
+      fetchIndustryRiskCompanies({ signal: controller.signal }),
+    ])
+      .then(([response, directory]) =>
+        setState({ status: "success", response, directory })
+      )
       .catch((error: unknown) => {
         if (controller.signal.aborted) return
         setState({
@@ -88,7 +110,7 @@ function InvestorDecisionPanel({
 
   if (
     state.status === "loading" ||
-    (state.status === "success" && state.value.company.id !== detail.id)
+    (state.status === "success" && state.response.company.id !== detail.id)
   ) {
     return <DecisionState text="正在读取风险分、证据覆盖和触发条件…" />
   }
@@ -98,235 +120,298 @@ function InvestorDecisionPanel({
 
   return mode === "research" ? (
     <InvestmentResearchContent
-      detail={detail}
       events={events}
-      response={state.value}
+      response={state.response}
+      directory={state.directory}
     />
   ) : (
-    <RiskResponseContent detail={detail} response={state.value} />
+    <RiskResponseContent
+      response={state.response}
+      directory={state.directory}
+    />
   )
 }
 
+function scoreText(value: number | null) {
+  return value === null ? "—" : value.toFixed(2)
+}
+
+function signedText(value: number | null) {
+  if (value === null) return "—"
+  return `${value >= 0 ? "+" : ""}${value.toFixed(2)}`
+}
+
 function InvestmentResearchContent({
-  detail,
   events,
   response,
+  directory,
 }: {
-  detail: CompanyDetail
   events: RiskEvent[]
   response: IndustryRiskAssessmentApiResponse
+  directory: IndustryRiskCompanyDirectoryResponse
 }) {
-  const investment = detail.investmentView
-  const rootRef = useRef<HTMLDivElement>(null)
-  const prefersReducedMotion = usePrefersReducedMotion()
-  const topMetrics = useMemo(
-    () =>
-      response.assessment.metrics
-        .filter(
-          (metric) => metric.kind === "weighted" && metric.riskScore !== null
-        )
-        .sort((left, right) => (right.riskScore ?? 0) - (left.riskScore ?? 0))
-        .slice(0, 5),
-    [response.assessment.metrics]
+  const [perspective, setPerspective] =
+    useState<InvestmentPerspectiveId>("institution")
+  const signals = useMemo(
+    () => buildInvestorRiskSignals(response.assessment),
+    [response.assessment]
   )
-  const motionKey = `${response.company.id}:${response.assessment.methodVersion}:investment`
-
-  useGSAP(
-    () => {
-      const root = rootRef.current
-      if (!root) return
-      const bars = root.querySelectorAll<HTMLElement>("[data-investor-bar]")
-      if (prefersReducedMotion) {
-        gsap.set(bars, { clearProps: "transform" })
-        return
-      }
-      gsap.fromTo(
-        bars,
-        { scaleX: 0, transformOrigin: "left center" },
-        {
-          scaleX: 1,
-          duration: 0.72,
-          stagger: 0.075,
-          ease: "power3.out",
-          clearProps: "transform",
-        }
-      )
-    },
-    {
-      scope: rootRef,
-      dependencies: [motionKey, prefersReducedMotion],
-      revertOnUpdate: true,
-    }
+  const topSignals = signals.slice(0, 4)
+  const peerPosition = useMemo(
+    () => calculateInvestorPeerPosition(directory, response.company.id),
+    [directory, response.company.id]
+  )
+  const readiness = useMemo(
+    () => deriveInvestorResearchReadiness(response.assessment),
+    [response.assessment]
+  )
+  const perspectiveContent = useMemo(
+    () => buildInvestmentPerspective(response.assessment, perspective),
+    [perspective, response.assessment]
+  )
+  const coveragePercent = Math.round(
+    response.assessment.weightedDataCoverage * 100
+  )
+  const combinedExecutionSteps = perspectiveContent.executionSteps.map(
+    (step, index) => ({
+      ...step,
+      decisionQuestion:
+        perspectiveContent.requiredChecks[index] ??
+        `综合前述证据，最终回答“${perspectiveContent.question}”。`,
+      operatingConstraint:
+        perspectiveContent.operatingConstraints[index] ??
+        "只有前述材料、产出物和验证结果形成闭环后，才可形成最终结论。",
+    })
   )
 
   return (
-    <div
-      ref={rootRef}
-      className="investor-decision page-stack"
-      data-motion-key={motionKey}
-    >
+    <div className="investor-decision page-stack">
       <header className="investor-decision__header">
         <div>
           <span className="eyebrow">Investment risk review</span>
           <h2>{response.company.shortName}投资研判</h2>
           <p>
-            依据风险位置、证据充分度和触发条件组织研究判断；不输出未经金融组确认的买入、卖出或收益预测。
+            从风险位置、主要驱动、数据置信度和压力条件形成研究结论；不输出未经确认的买入、卖出或收益预测。
           </p>
         </div>
-        <Badge variant="outline">风险研究辅助</Badge>
+        <div className="investor-decision__header-status">
+          <span>研究状态</span>
+          <Badge variant="outline" data-readiness={readiness.key}>
+            {readiness.label}
+          </Badge>
+        </div>
       </header>
 
-      <section className="investor-decision__dashboard">
-        <article className="investor-decision__score">
-          <span>综合风险指数</span>
-          <strong>{response.assessment.totalRiskScore ?? "—"}</strong>
-          <p>
-            {investment?.summary ??
-              "当前风险结论需结合原始来源和正式披露核对。"}
-          </p>
-          <div>
-            <span
-              style={{ width: `${response.assessment.totalRiskScore ?? 0}%` }}
-              data-investor-bar
-            />
-          </div>
+      <section className="investor-decision__compact-overview" aria-label="共同风险基线">
+        <article>
+          <GaugeIcon aria-hidden="true" />
+          <span>综合风险</span>
+          <strong>{scoreText(response.assessment.totalRiskScore)}</strong>
+          <small>
+            {peerPosition.riskPercentile === null
+              ? "分位待补充"
+              : `行业 P${peerPosition.riskPercentile} · 排名 ${peerPosition.rank}/${peerPosition.sampleSize}`}
+          </small>
         </article>
+        <article>
+          <ChartNoAxesCombinedIcon aria-hidden="true" />
+          <span>同业参照</span>
+          <strong>{signedText(peerPosition.deltaFromMean)}</strong>
+          <small>
+            相对均值 · 低风险四分位 {scoreText(peerPosition.lowerRiskQuartile)}
+          </small>
+        </article>
+        <article>
+          <TargetIcon aria-hidden="true" />
+          <span>证据覆盖</span>
+          <strong>{coveragePercent}%</strong>
+          <small>
+            {response.assessment.weightedScoredIndicatorCount}/18 项已评分 · {events.length} 条近期事件
+          </small>
+        </article>
+        <article>
+          <SlidersHorizontalIcon aria-hidden="true" />
+          <span>首要风险</span>
+          <strong>{topSignals[0]?.indicatorId ?? "—"}</strong>
+          <small>
+            {topSignals[0]
+              ? `${topSignals[0].label} · 同业 P${Math.round(topSignals[0].riskPercentile * 100)}`
+              : "暂无可排序风险驱动"}
+          </small>
+        </article>
+      </section>
 
-        <article className="investor-decision__coverage">
-          <div
-            style={
+      <section className="investor-perspective">
+        <nav className="investor-perspective__selector" aria-label="选择研判视角">
+          {(
+            [
               {
-                "--coverage": `${Math.round(response.assessment.weightedDataCoverage * 100)}%`,
-              } as React.CSSProperties
-            }
-          >
-            <strong>
-              {Math.round(response.assessment.weightedDataCoverage * 100)}%
-            </strong>
-            <span>指标覆盖</span>
-          </div>
-          <dl>
-            <div>
-              <dt>已评分</dt>
-              <dd>{response.assessment.weightedScoredIndicatorCount}/18</dd>
-            </div>
-            <div>
-              <dt>近期事件</dt>
-              <dd>{events.length}</dd>
-            </div>
-            <div>
-              <dt>同业样本</dt>
-              <dd>{response.assessment.benchmarkSampleSize}</dd>
-            </div>
-          </dl>
-        </article>
-
-        <article className="investor-decision__drivers">
-          <header>
-            <span>主要风险驱动</span>
-            <small>同业分位着色</small>
-          </header>
-          <ol>
-            {topMetrics.map((metric) => (
-              <li
-                key={metric.indicatorId}
-                style={
-                  {
-                    "--driver-color": riskHeatColor(metric.riskPercentile),
-                  } as React.CSSProperties
-                }
+                id: "institution",
+                label: "投资机构 · 决策",
+                question: "是否具备投委会条件",
+                icon: LandmarkIcon,
+              },
+              {
+                id: "individual",
+                label: "个人投资者 · 持仓",
+                question: "风险是否超出承受能力",
+                icon: UserRoundIcon,
+              },
+              {
+                id: "bank",
+                label: "银行 · 授信",
+                question: "是否具备授信审查条件",
+                icon: Building2Icon,
+              },
+            ] as const
+          ).map((item) => {
+            const Icon = item.icon
+            return (
+              <button
+                key={item.id}
+                type="button"
+                data-active={perspective === item.id}
+                onClick={() => setPerspective(item.id)}
               >
-                <div>
-                  <span>{metric.indicatorId}</span>
-                  <strong>{metric.label}</strong>
-                  <b>{metric.riskScore}</b>
-                </div>
-                <i>
-                  <span
-                    data-investor-bar
-                    style={{ width: `${metric.riskScore ?? 0}%` }}
-                  />
-                </i>
-              </li>
+                <Icon aria-hidden="true" />
+                <span>{item.label}</span>
+                <small>{item.question}</small>
+              </button>
+            )
+          })}
+        </nav>
+
+        <article className="investor-perspective__content">
+          <header>
+            <div>
+              <span className="eyebrow">{perspectiveContent.question}</span>
+              <h3>{perspectiveContent.headline}</h3>
+              <p>{perspectiveContent.summary}</p>
+            </div>
+            <Badge variant="outline">{perspectiveContent.label}</Badge>
+          </header>
+
+          <dl className="investor-perspective__facts">
+            {perspectiveContent.facts.map((fact) => (
+              <div key={fact.label}>
+                <dt>{fact.label}</dt>
+                <dd>{fact.value}</dd>
+                <small>{fact.detail}</small>
+              </div>
             ))}
-          </ol>
+          </dl>
+
+          <section className="investor-perspective__execution">
+            <header>
+              <div>
+                <span className="eyebrow">Decision execution plan</span>
+                <h4>研判执行方案</h4>
+              </div>
+              <p>每一步同时回答研判问题、操作边界和证据要求。</p>
+            </header>
+            <div>
+              {combinedExecutionSteps.map((step, index) => (
+                <article key={step.title}>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <h5>{step.title}</h5>
+                  <div className="investor-perspective__guidance">
+                    <div>
+                      <SearchCheckIcon aria-hidden="true" />
+                      <strong>必须回答</strong>
+                      <p>{step.decisionQuestion}</p>
+                    </div>
+                    <div>
+                      <SlidersHorizontalIcon aria-hidden="true" />
+                      <strong>操作边界</strong>
+                      <p>{step.operatingConstraint}</p>
+                    </div>
+                  </div>
+                  <p className="investor-perspective__action-copy">
+                    <strong>执行动作</strong>
+                    {step.action}
+                  </p>
+                  <dl>
+                    <div>
+                      <dt>所需材料</dt>
+                      <dd>{step.requiredMaterial}</dd>
+                    </div>
+                    <div>
+                      <dt>产出物</dt>
+                      <dd>{step.deliverable}</dd>
+                    </div>
+                    <div>
+                      <dt>验证方式</dt>
+                      <dd>{step.verification}</dd>
+                    </div>
+                  </dl>
+                </article>
+              ))}
+            </div>
+          </section>
         </article>
       </section>
 
-      <section className="investor-decision__constraints">
-        <DecisionList
-          icon={SearchCheckIcon}
-          title="投资前核验"
-          items={[
-            ...(investment?.preInvestmentChecks ?? []),
-            ...(investment?.dueDiligenceFocus ?? []),
-          ]}
-        />
-        <DecisionList
-          icon={LandmarkIcon}
-          title="估值与决策约束"
-          items={investment?.valuationConstraints ?? []}
-        />
-        <DecisionList
-          icon={BinocularsIcon}
-          title="持有期监测"
-          items={investment?.postInvestmentMonitoring ?? []}
-        />
-        <DecisionList
-          icon={CircleAlertIcon}
-          title="重新评估触发"
-          items={investment?.stopLossTriggers ?? []}
-          danger
-        />
-      </section>
-
-      <BoundaryNote />
+      <BoundaryNote sourceDate={response.provenance.sourceDate} />
     </div>
   )
 }
 
 function RiskResponseContent({
-  detail,
   response,
+  directory,
 }: {
-  detail: CompanyDetail
   response: IndustryRiskAssessmentApiResponse
+  directory: IndustryRiskCompanyDirectoryResponse
 }) {
-  const investment = detail.investmentView
+  const signals = buildInvestorRiskSignals(response.assessment)
+  const topSignals = signals.slice(0, 5)
+  const enterpriseActions = buildEnterpriseRiskActions(
+    response.assessment,
+    18
+  )
+  const triggeredCount = signals.filter(
+    (signal) => signal.status === "triggered"
+  ).length
+  const watchCount = signals.filter((signal) => signal.status === "watch").length
+  const peerPosition = calculateInvestorPeerPosition(
+    directory,
+    response.company.id
+  )
+  const coveragePercent = Math.round(
+    response.assessment.weightedDataCoverage * 100
+  )
+  const missingCount =
+    18 - response.assessment.weightedScoredIndicatorCount
   const stages = [
     {
       id: "01",
-      icon: SearchCheckIcon,
-      title: "投资前核验",
-      description:
-        "在决策前补齐关键事实和原始材料，避免以缺失值形成虚假确定性。",
-      items: [
-        ...(investment?.preInvestmentChecks ?? []),
-        ...(investment?.dueDiligenceFocus ?? []),
-      ],
+      horizon: "0–3个月" as const,
+      title: "立即整改",
+      description: "先关闭处罚、诉讼、出口限制和现金流等已暴露风险。",
     },
     {
       id: "02",
-      icon: FileSignatureIcon,
-      title: "合同与交易保护",
-      description: "把关键风险转化为交割前提、信息权利、陈述保证或分阶段安排。",
-      items: investment?.valuationConstraints ?? [],
+      horizon: "3–12个月" as const,
+      title: "中期整改",
+      description: "把供应链、研发、融资和人员风险纳入稳定运营机制。",
     },
     {
       id: "03",
-      icon: Clock3Icon,
-      title: "持有期监测",
-      description: "围绕高风险指标、正式披露和事件变化设置连续观察点。",
-      items: investment?.postInvestmentMonitoring ?? [],
-    },
-    {
-      id: "04",
-      icon: CircleAlertIcon,
-      title: "重新评估与退出条件",
-      description: "触发条件出现时重新核验风险承受边界，并评估降低敞口或退出。",
-      items: investment?.stopLossTriggers ?? [],
+      horizon: "12个月以上" as const,
+      title: "长期复评",
+      description: "通过治理、控制权和长期能力建设验证风险是否持续下降。",
     },
   ]
+  const displayedActionCount = stages.reduce(
+    (total, stage) =>
+      total +
+      Math.min(
+        5,
+        enterpriseActions.filter((action) => action.horizon === stage.horizon)
+          .length
+      ),
+    0
+  )
 
   return (
     <div className="risk-response page-stack">
@@ -335,37 +420,132 @@ function RiskResponseContent({
           <span className="eyebrow">Investor risk response</span>
           <h2>{response.company.shortName}风险应对</h2>
           <p>
-            以投资者可执行的核验、保护、监测和重新评估为主线；不包含企业内部责任部门、截止日期或工单状态。
+            将高风险指标转化为企业内部可执行的整改动作，并明确产出物、验证标准和实施阶段。
           </p>
         </div>
-        <Badge variant="outline">全生命周期风险控制</Badge>
+        <Badge variant="outline">企业风险消减建议</Badge>
       </header>
 
-      <section className="risk-response__timeline">
+      <section className="risk-response__summary" aria-label="风险监测摘要">
+        <article>
+          <GaugeIcon aria-hidden="true" />
+          <span>当前风险</span>
+          <strong>{scoreText(response.assessment.totalRiskScore)}</strong>
+          <small>
+            {peerPosition.riskPercentile === null
+              ? "同业分位待补充"
+              : `同业 P${peerPosition.riskPercentile}`}
+          </small>
+        </article>
+        <article data-tone={triggeredCount > 0 ? "danger" : "normal"}>
+          <ActivityIcon aria-hidden="true" />
+          <span>预警信号</span>
+          <strong>{triggeredCount}</strong>
+          <small>{watchCount} 项临界观察</small>
+        </article>
+        <article>
+          <TargetIcon aria-hidden="true" />
+          <span>数据覆盖</span>
+          <strong>{coveragePercent}%</strong>
+          <small>{missingCount} 项客观指标缺失</small>
+        </article>
+        <article>
+          <SlidersHorizontalIcon aria-hidden="true" />
+          <span>整改建议</span>
+          <strong>{displayedActionCount}</strong>
+          <small>本页优先展示 · 均由指标触发</small>
+        </article>
+      </section>
+
+      <section className="risk-response__signals">
+        <header>
+          <div>
+            <span className="eyebrow">Early warning monitor</span>
+            <h3>关键风险信号</h3>
+          </div>
+          <p>P75 以上标记为已触发，P60–P75 为临界观察。</p>
+        </header>
+        {topSignals.length ? (
+          <div className="risk-response__signal-table-wrap" role="region" tabIndex={0}>
+            <table>
+              <thead>
+                <tr>
+                  <th>风险信号</th>
+                  <th>监测状态</th>
+                  <th>风险分</th>
+                  <th>同业分位</th>
+                  <th>触发口径与证据</th>
+                </tr>
+              </thead>
+              <tbody>
+                {topSignals.map((signal) => (
+                  <tr key={signal.indicatorId}>
+                    <th scope="row">
+                      <span>{signal.indicatorId}</span>
+                      <strong>{signal.label}</strong>
+                    </th>
+                    <td>
+                      <RiskSignalStatusBadge signal={signal} />
+                    </td>
+                    <td>{signal.riskScore.toFixed(2)}</td>
+                    <td>P{Math.round(signal.riskPercentile * 100)}</td>
+                    <td>
+                      {signal.thresholdLabel} · n={signal.sampleSize} · {signal.sourceCount}
+                      条评分来源
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="risk-response__empty">当前没有可监测的正式风险分位。</p>
+        )}
+      </section>
+
+      <section className="risk-response__timeline risk-response__action-plan">
         {stages.map((stage) => {
-          const Icon = stage.icon
+          const actions = enterpriseActions.filter(
+            (action) => action.horizon === stage.horizon
+          )
           return (
             <article key={stage.id}>
               <header>
                 <span>{stage.id}</span>
-                <Icon aria-hidden="true" />
                 <div>
+                  <small>{stage.horizon}</small>
                   <h3>{stage.title}</h3>
                   <p>{stage.description}</p>
                 </div>
               </header>
-              {stage.items.length ? (
-                <ol>
-                  {stage.items.map((item) => (
-                    <li key={item}>
-                      <ArrowRightIcon aria-hidden="true" />
-                      {item}
-                    </li>
+              {actions.length ? (
+                <div className="risk-response__action-list">
+                  {actions.slice(0, 5).map((action) => (
+                    <section key={action.indicatorId}>
+                      <header>
+                        <span>{action.indicatorId}</span>
+                        <small>
+                          同业 P{Math.round(action.riskPercentile * 100)}
+                        </small>
+                      </header>
+                      <h4>{action.title}</h4>
+                      <p>{action.action}</p>
+                      <dl>
+                        <div>
+                          <dt>产出物</dt>
+                          <dd>{action.deliverable}</dd>
+                        </div>
+                        <div>
+                          <dt>验证标准</dt>
+                          <dd>{action.validation}</dd>
+                        </div>
+                      </dl>
+                    </section>
                   ))}
-                </ol>
+                </div>
               ) : (
                 <p className="risk-response__empty">
-                  当前没有已确认的阶段性条件。
+                  当前高风险指标未生成该阶段建议。
                 </p>
               )}
             </article>
@@ -373,53 +553,38 @@ function RiskResponseContent({
         })}
       </section>
 
-      <BoundaryNote />
+      <BoundaryNote
+        sourceDate={response.provenance.sourceDate}
+        enterprise
+      />
     </div>
   )
 }
 
-function DecisionList({
-  icon: Icon,
-  title,
-  items,
-  danger = false,
-}: {
-  icon: typeof SearchCheckIcon
-  title: string
-  items: string[]
-  danger?: boolean
-}) {
+function RiskSignalStatusBadge({ signal }: { signal: InvestorRiskSignal }) {
   return (
-    <article data-danger={danger}>
-      <header>
-        <Icon aria-hidden="true" />
-        <h3>{title}</h3>
-        <Badge variant="outline">{items.length}</Badge>
-      </header>
-      {items.length ? (
-        <ol>
-          {items.slice(0, 6).map((item, index) => (
-            <li key={item}>
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <p>{item}</p>
-            </li>
-          ))}
-        </ol>
-      ) : (
-        <p>当前暂无已确认条件。</p>
-      )}
-    </article>
+    <Badge variant="outline" data-signal-status={signal.status}>
+      {signal.statusLabel}
+    </Badge>
   )
 }
 
-function BoundaryNote() {
+function BoundaryNote({
+  sourceDate,
+  enterprise = false,
+}: {
+  sourceDate: string
+  enterprise?: boolean
+}) {
   return (
     <section className="investor-decision__boundary">
       <ShieldCheckIcon aria-hidden="true" />
       <div>
         <strong>使用边界</strong>
         <p>
-          本页基于公开信息和当前评分方法形成风险研究辅助，不构成证券投资建议、收益承诺或监管认定。
+          {enterprise
+            ? `数据截至 ${sourceDate}。本页建议由公开信息和现有风险指标生成，供企业风险自查和整改设计参考；不构成监管认定、合规鉴证、信用评级或审计意见。`
+            : `数据截至 ${sourceDate}。本页从不同使用者角度组织同一风险证据，不构成证券投资建议、收益承诺、授信审批或监管认定。`}
         </p>
       </div>
     </section>

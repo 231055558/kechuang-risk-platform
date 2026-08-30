@@ -254,7 +254,7 @@ export function CompareTab({
           <SectionHeader
             title="六维风险对照图"
             tone="blue"
-            description={`纵轴固定为0–100风险分值，柱越高表示风险越高；每个维度的两根相邻柱分别对应两家企业。叙事风险复用年度行业排名加权分，仅用于对照、不计入综合指数；缺失项不画零分柱。${leftCompany.name}采用${leftAssessment.scoreBasisLabel}，${rightCompany.name}采用${rightAssessment.scoreBasisLabel}。`}
+            description={`纵轴固定为0–100风险分值，柱越高表示风险越高；五项客观风险使用同一方法版本与维度口径，每个维度的两根相邻柱分别对应两家企业。叙事风险复用年度行业排名加权分，仅用于对照、不计入综合指数；缺失项不画零分柱。${leftCompany.name}采用${leftAssessment.scoreBasisLabel}，${rightCompany.name}采用${rightAssessment.scoreBasisLabel}。`}
             action={
               <div className="compare-chart-actions">
                 <span className="compare-coverage tabular-number">

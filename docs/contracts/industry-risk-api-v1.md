@@ -35,6 +35,8 @@
 
 投资者页面和其新 DTO 禁止出现：`owner`、`dueDate`、`taskStatus`、`pendingAction`、`responsibleDepartment`。新闻和事件的关联只表示研究关联，不表示已进入评分。
 
+投资研判的机构、个人和银行视角，以及企业风险应对建议，均由同一 assessment 响应派生：只能使用已校验的风险分、同业分位、缺失原因、来源数量和事件，不新增无法追溯的结论字段。企业降险建议属于展示层规则，不写回 observation 或评分结果。
+
 ## 财报叙事结构
 
 `assessment.financialReportNarrativeRisk` 使用方法版本 `KCR-FINANCIAL-NARRATIVE-2026.08-v1`，固定包含三个维度：
