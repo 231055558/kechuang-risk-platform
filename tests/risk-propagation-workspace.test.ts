@@ -17,6 +17,10 @@ const teammateWorkspace = readFileSync(
 )
 const devScript = readFileSync("scripts/dev.mjs", "utf8")
 const viteConfig = readFileSync("vite.config.ts", "utf8")
+const graphBackend = readFileSync(
+  "knowledge-graph/backend/tools/serve_risk_graph_api.py",
+  "utf8"
+)
 const semidriveSnapshot = JSON.parse(
   readFileSync("knowledge-graph/demo/semidrive_fee_kbg_snapshot.json", "utf8")
 ) as {
@@ -30,10 +34,11 @@ test("风险传导页直接挂载同学原版图谱工作站", () => {
   assert.match(component, /data-graph-ui="teammate-fee-kbg"/)
   assert.match(component, /VITE_GRAPH_WORKSPACE_URL/)
   assert.match(component, /VITE_GRAPH_WORKSPACE_REVISION/)
+  assert.match(component, /GRAPH_WORKSPACE_UI_REVISION/)
   assert.match(component, /DEFAULT_GRAPH_WORKSPACE_URL = "risk-graph-workspace\/"/)
   assert.doesNotMatch(component, /http:\/\/127\.0\.0\.1:876[56]\//)
   assert.match(component, /stock_code/)
-  assert.match(component, /url\.searchParams\.set\("revision"/)
+  assert.match(component, /url\.searchParams\.set\(\s*"revision"/)
   assert.match(component, /url\.searchParams\.set\("theme", theme\)/)
   assert.match(component, /kechuang-risk-graph-theme/)
   assert.match(component, /contentWindow\?\.postMessage/)
@@ -45,7 +50,7 @@ test("风险传导页直接挂载同学原版图谱工作站", () => {
 })
 
 test("图谱宿主不复制关系并限制 iframe 权限", () => {
-  assert.match(component, /不复用其他企业数据/)
+  assert.doesNotMatch(component, /teammate-graph-workspace__boundary/)
   assert.match(
     component,
     /sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"/
@@ -54,7 +59,7 @@ test("图谱宿主不复制关系并限制 iframe 权限", () => {
 })
 
 test("原版图谱宿主具有加载态和响应式画布", () => {
-  assert.match(component, /正在按证券代码读取图谱快照/)
+  assert.match(component, /正在加载风险传导图谱/)
   assert.match(component, /setLoadedUrl\(workspaceUrl\)/)
   assert.match(component, /syncTheme\(\)/)
   assert.match(styles, /teammate-graph-workspace__frame/)
@@ -119,4 +124,32 @@ test("图谱节点只移除阴影并在浅色模式使用深色文字", () => {
     teammateWorkspace,
     /html\[data-theme="light"\] \.node \.label\{fill:#102235\}/
   )
+})
+
+test("风险传导使用收束后的高密度图谱交互", () => {
+  assert.match(teammateWorkspace, /n\.type==='warning_score'\)return false/)
+  assert.match(teammateWorkspace, /risk_category_impacts_company/)
+  assert.match(teammateWorkspace, /node-hover-tag/)
+  assert.match(teammateWorkspace, /class="graph-boundary"/)
+  assert.match(teammateWorkspace, /function graphFrame/)
+  assert.match(teammateWorkspace, /function clampViewport/)
+  assert.match(teammateWorkspace, /setAttribute\('class','tag-layer'\)/)
+  assert.match(teammateWorkspace, /事件重点：/)
+  assert.doesNotMatch(teammateWorkspace, /快照：/)
+  assert.match(teammateWorkspace, /@media\(max-width:1180px\)/)
+  assert.match(teammateWorkspace, /grid-template-rows:minmax\(0,1fr\) 170px/)
+  assert.match(
+    teammateWorkspace,
+    /<input id="impactThreshold" type="hidden" value="0\.50">/
+  )
+  assert.match(teammateWorkspace, /<input id="typeFilter" type="hidden"/)
+  assert.match(teammateWorkspace, /<input id="search" type="hidden"/)
+})
+
+test("图谱后端按一级风险类别汇总到企业且保留多快照兼容", () => {
+  assert.match(graphBackend, /risk_category_impacts_company/)
+  assert.doesNotMatch(graphBackend, /warning_edges\s*=\s*\[/)
+  assert.match(graphBackend, /snapshot_run_ids/)
+  assert.match(graphBackend, /snapshot_payloads/)
+  assert.match(graphBackend, /Cache-Control/)
 })

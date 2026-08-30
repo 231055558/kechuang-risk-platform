@@ -5,6 +5,7 @@ import type { CompanyDetail } from "@/types/risk"
 import "@/styles/risk-propagation-graph.css"
 
 const DEFAULT_GRAPH_WORKSPACE_URL = "risk-graph-workspace/"
+const GRAPH_WORKSPACE_UI_REVISION = "graph-ux-cleanup-20260830-v1"
 
 function stockCodeFromCompanyId(companyId: string) {
   const match = companyId.match(/(?:^|-)\d{6}$/)
@@ -21,9 +22,12 @@ function teammateWorkspaceUrl(companyId: string, theme: GraphTheme) {
   url.searchParams.set("stock_code", stockCodeFromCompanyId(companyId))
   url.searchParams.set("embedded", "1")
   url.searchParams.set("theme", theme)
-  if (configuredRevision) {
-    url.searchParams.set("revision", configuredRevision)
-  }
+  url.searchParams.set(
+    "revision",
+    configuredRevision
+      ? `${configuredRevision}-${GRAPH_WORKSPACE_UI_REVISION}`
+      : GRAPH_WORKSPACE_UI_REVISION
+  )
   return url.toString()
 }
 
@@ -72,7 +76,7 @@ export function RiskPropagationGraph({ detail }: { detail: CompanyDetail }) {
       <div className="teammate-graph-workspace__frame-shell">
         {isLoading ? (
           <div className="teammate-graph-workspace__loading" role="status">
-            正在按证券代码读取图谱快照…
+            正在加载风险传导图谱…
           </div>
         ) : null}
         <iframe
@@ -89,9 +93,6 @@ export function RiskPropagationGraph({ detail }: { detail: CompanyDetail }) {
           }}
         />
       </div>
-      <p className="teammate-graph-workspace__boundary">
-        图谱节点、关系与条件演化均由独立图谱服务提供；当前企业没有关系快照时，不复用其他企业数据。
-      </p>
     </section>
   )
 }

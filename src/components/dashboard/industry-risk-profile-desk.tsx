@@ -237,7 +237,6 @@ export function IndustryRiskProfileDesk({
         aria-label="财报叙事风险结构"
       >
         <div>
-          <span className="eyebrow">Financial narrative</span>
           <strong>财报叙事风险</strong>
           <small>财报语料接入后独立计算；新闻资讯不参与评分</small>
         </div>
@@ -257,7 +256,6 @@ export function IndustryRiskProfileDesk({
         <article className="risk-profile-desk__score">
           <div className="risk-profile-desk__section-heading">
             <div>
-              <span className="eyebrow">Risk position</span>
               <h3>综合风险指数</h3>
             </div>
             <Badge variant="outline">0–100</Badge>
@@ -315,7 +313,6 @@ export function IndustryRiskProfileDesk({
         <article className="risk-profile-desk__radar">
           <div className="risk-profile-desk__section-heading">
             <div>
-              <span className="eyebrow">Risk structure</span>
               <h3>五大风险领域</h3>
             </div>
             <Badge variant="outline">R05–R22</Badge>
@@ -330,7 +327,6 @@ export function IndustryRiskProfileDesk({
         <section className="risk-profile-desk__drivers">
           <div className="risk-profile-desk__section-heading">
             <div>
-              <span className="eyebrow">Top drivers</span>
               <h3>Top 3 风险驱动</h3>
             </div>
             <span>按单项风险分排序</span>

@@ -32,6 +32,10 @@ import type {
   TabValue,
   TechnologyScoringCompanyState,
 } from "@/types/risk"
+import {
+  deduplicatePublicEvents,
+  toPublicEventCopy,
+} from "@/lib/public-event-copy"
 
 const dataset = attachIndustryRiskR08MilestoneEnrichment(
   attachIndustryRiskR20ControllerEnrichment(
@@ -239,7 +243,9 @@ function rawEventsForCompany(company: IndustryRiskCompany): RawEvent[] {
         kind: "litigation" as const,
       })),
   ]
-  return events.sort((left, right) => right.date.localeCompare(left.date))
+  return deduplicatePublicEvents(events).sort((left, right) =>
+    right.date.localeCompare(left.date)
+  )
 }
 
 function eventSeverity(event: RawEvent): "high" | "medium" | "watch" {
@@ -332,30 +338,33 @@ function buildSourceEvidence(company: IndustryRiskCompany) {
 }
 
 function buildEventEvidence(events: RawEvent[]) {
-  return events.map((event): EvidenceItem => ({
-    id: evidenceIdForEvent(event.id),
-    type: event.eventType,
-    title: event.title,
-    sourceName: event.sourceName,
-    sourceUrl: event.url,
-    publishedAt: event.date,
-    capturedAt: snapshotAt,
-    summary: event.notes || `${event.eventType}结构化事件。`,
-    sourceReliability: event.url.includes("sse.com.cn")
-      ? "exchange"
-      : event.kind === "screening"
-        ? "official"
-        : "media",
-    recommendedUse: "用于事件核验、风险传导和持续跟踪。",
-    indicatorIds: [event.indicatorId],
-    relatedRiskDimension: [
-      dimensionByIndicator.get(event.indicatorId)?.label ?? "外部风险",
-    ],
-    relatedStage: ["上市运营"],
-    confidence: event.confidence,
-    supportStrength: event.confidence >= 0.85 ? "direct" : "background",
-    supportRationale: "由统一事件表映射到 R01–R22 指标。",
-  }))
+  return events.map((event): EvidenceItem => {
+    const publicCopy = toPublicEventCopy(event)
+    return {
+      id: evidenceIdForEvent(event.id),
+      type: event.eventType,
+      title: event.title,
+      sourceName: event.sourceName,
+      sourceUrl: event.url,
+      publishedAt: event.date,
+      capturedAt: snapshotAt,
+      summary: publicCopy.summary,
+      sourceReliability: event.url.includes("sse.com.cn")
+        ? "exchange"
+        : event.kind === "screening"
+          ? "official"
+          : "media",
+      recommendedUse: "用于事件核验、风险传导和持续跟踪。",
+      indicatorIds: [event.indicatorId],
+      relatedRiskDimension: [
+        dimensionByIndicator.get(event.indicatorId)?.label ?? "外部风险",
+      ],
+      relatedStage: ["上市运营"],
+      confidence: event.confidence,
+      supportStrength: event.confidence >= 0.85 ? "direct" : "background",
+      supportRationale: "由统一事件表映射到 R01–R22 指标。",
+    }
+  })
 }
 
 function latestByIndicator(companyId: string) {
@@ -557,26 +566,30 @@ function buildCompanyDetail(company: IndustryRiskCompany): CompanyDetail {
     },
     comparisonNote: "仅与同一同业组、同一报告期和同一指标口径的企业比较。",
     evidence,
-    events: events.map((event) => ({
-      id: event.id,
-      companyId: company.id,
-      riskType:
-        dimensionByIndicator.get(event.indicatorId)?.label ?? "外部风险",
-      severity: eventSeverity(event),
-      status: "pending",
-      sourceType: event.sourceName,
-      stage: "持续监测",
-      description: event.title,
-      evidenceIds: [evidenceIdForEvent(event.id)],
-      indicatorIds: [event.indicatorId],
-      sourceName: event.sourceName,
-      sourceUrl: event.url,
-      sourcePublishedAt: event.date,
-      investmentImpact: eventSeverity(event) === "high" ? "high" : "medium",
-      aiSummary: event.notes || event.eventType,
-      recommendedAction: recommendationForIndicator(event.indicatorId),
-      identifiedAt: event.date,
-    })),
+    events: events.map((event) => {
+      const publicCopy = toPublicEventCopy(event)
+      return {
+        id: event.id,
+        companyId: company.id,
+        riskType:
+          dimensionByIndicator.get(event.indicatorId)?.label ?? "外部风险",
+        severity: eventSeverity(event),
+        status: "pending",
+        sourceType: event.sourceName,
+        stage: "持续监测",
+        description: event.title,
+        evidenceIds: [evidenceIdForEvent(event.id)],
+        indicatorIds: [event.indicatorId],
+        sourceName: event.sourceName,
+        sourceUrl: event.url,
+        sourcePublishedAt: event.date,
+        investmentImpact:
+          eventSeverity(event) === "high" ? "high" : "medium",
+        aiSummary: publicCopy.summary,
+        recommendedAction: recommendationForIndicator(event.indicatorId),
+        identifiedAt: event.date,
+      }
+    }),
     transmissionGraph: {
       keyInsight: leadEvent
         ? `${leadEvent.eventType}可能通过经营、合规或供应链环节影响企业。`
@@ -994,6 +1007,7 @@ const realtimeSignals: RealTimeSignal[] = dataset.companies.flatMap((company) =>
   rawEventsForCompany(company).map((event) => {
     const severity = eventSeverity(event)
     const dimension = dimensionByIndicator.get(event.indicatorId)
+    const publicCopy = toPublicEventCopy(event)
     const category: RealTimeSignal["category"] =
       event.kind === "screening"
         ? "监管政策"
@@ -1011,8 +1025,8 @@ const realtimeSignals: RealTimeSignal[] = dataset.companies.flatMap((company) =>
       category,
       severity,
       title: event.title,
-      summary: event.notes || event.eventType,
-      keyFacts: [event.eventType, event.notes || "等待后续正式披露"],
+      summary: publicCopy.summary,
+      keyFacts: publicCopy.keyFacts,
       historicalContext: `该事件按 ${event.date} 的公开材料归档。`,
       aiInsight: `关联 ${event.indicatorId} ${indicatorById.get(event.indicatorId)?.label ?? ""}。`,
       potentialImpact: `${dimension?.label ?? "风险"}可能发生变化。`,
