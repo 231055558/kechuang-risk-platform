@@ -12,7 +12,7 @@ import {
   deriveInvestorResearchReadiness,
 } from "../src/lib/investor-decision.ts"
 
-test("投资研判同业位置使用风险由高到低排名且不混淆分数与分位", () => {
+test("投资研判同业位置使用低风险第1名且不混淆分数与分位", () => {
   const directory = listIndustryRiskCompanies()
   const position = calculateInvestorPeerPosition(directory, "star-688256")
 
@@ -22,6 +22,8 @@ test("投资研判同业位置使用风险由高到低排名且不混淆分数�
   assert.ok(position.riskPercentile !== null)
   assert.ok(position.peerMean !== null)
   assert.ok(position.lowerRiskQuartile !== null)
+  assert.equal(position.rank, 4)
+  assert.equal(position.riskPercentile, 5)
   assert.notEqual(position.score, position.riskPercentile)
 })
 

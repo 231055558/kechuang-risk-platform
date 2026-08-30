@@ -103,8 +103,8 @@ export function calculateInvestorPeerPosition(
     )
     .sort(
       (left, right) =>
-        (right.totalRiskScore ?? -Infinity) -
-        (left.totalRiskScore ?? -Infinity)
+        (left.totalRiskScore ?? Infinity) - (right.totalRiskScore ?? Infinity) ||
+        left.stockCode.localeCompare(right.stockCode)
     )
   const values = peers.flatMap((company) =>
     company.totalRiskScore === null ? [] : [company.totalRiskScore]
@@ -129,7 +129,7 @@ export function calculateInvestorPeerPosition(
   }
 
   const riskPercentile =
-    values.length < 2 ? null : ((values.length - rank) / (values.length - 1)) * 100
+    values.length < 2 ? null : ((rank - 1) / (values.length - 1)) * 100
   return {
     score,
     rank,

@@ -557,6 +557,48 @@
   font-size: 12px;
 }
 
+.indicator-method-sheet__formula-relation {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 3px 9px;
+  padding: 11px 12px;
+  border: 1px solid var(--analysis-border);
+  background: var(--risk-os-surface-muted);
+}
+
+.indicator-method-sheet__formula-relation > span {
+  grid-row: 1 / span 3;
+  align-self: start;
+  padding: 3px 6px;
+  border: 1px solid currentColor;
+  color: var(--risk-os-accent);
+  font-size: 9px;
+  font-weight: 760;
+}
+
+.indicator-method-sheet__formula-relation > strong {
+  color: var(--risk-os-ink);
+  font-size: 12px;
+}
+
+.indicator-method-sheet__formula-relation p,
+.indicator-method-sheet__formula-relation small {
+  margin: 0;
+  color: var(--risk-os-muted);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.indicator-method-sheet__formula-relation[data-implementation="direct"]
+  > span {
+  color: #168b78;
+}
+
+.indicator-method-sheet__formula-relation[data-implementation="proxy"]
+  > span {
+  color: #b36d14;
+}
+
 .indicator-method-sheet__content dl.indicator-method-sheet__symbol-key {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }

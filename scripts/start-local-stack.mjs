@@ -46,7 +46,9 @@ if (graphRuntimeMode === "bundled") {
     (snapshot) => !existsSync(snapshot.dbPath)
   )
   if (missingSnapshot) {
-    throw new Error(`Bundled graph snapshot not found: ${missingSnapshot.dbPath}`)
+    throw new Error(
+      `Bundled graph snapshot not found: ${missingSnapshot.dbPath}`
+    )
   }
 }
 
@@ -65,7 +67,7 @@ function hasRequiredSnapshots(health) {
   if (!health?.ok) return false
   if (graphRuntimeMode === "external") return true
   return (
-    health.neo4j === "sqlite-preview" &&
+    String(health.neo4j).startsWith("sqlite-preview") &&
     graphSnapshots.every((snapshot) =>
       health.snapshot_run_ids?.includes(snapshot.runId)
     )

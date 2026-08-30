@@ -19,6 +19,7 @@ test("production start owns the bundled graph and platform lifecycle", () => {
   assert.match(launcher, /serve_fee_kbg_preview\.py/)
   assert.match(launcher, /args\.push\("--snapshot"/)
   assert.match(launcher, /snapshot_run_ids/)
+  assert.match(launcher, /startsWith\("sqlite-preview"\)/)
   assert.match(launcher, /dist\/server\/production-server\.js/)
   assert.doesNotMatch(launcher, /NEO4J_PASSWORD/)
 })
