@@ -6,49 +6,6 @@ type FormulaSpec = {
   terms: Array<{ symbol: string; meaning: string }>
 }
 
-type ImplementationStatus = "direct" | "partial" | "proxy"
-
-const IMPLEMENTATION_STATUS: Partial<
-  Record<IndustryRiskMetricScore["indicatorId"], ImplementationStatus>
-> = {
-  R05: "proxy",
-  R06: "proxy",
-  R07: "partial",
-  R08: "proxy",
-  R09: "proxy",
-  R10: "partial",
-  R11: "partial",
-  R12: "partial",
-  R13: "direct",
-  R14: "partial",
-  R15: "partial",
-  R16: "partial",
-  R17: "proxy",
-  R18: "direct",
-  R19: "partial",
-  R20: "partial",
-  R21: "proxy",
-  R22: "proxy",
-}
-
-const IMPLEMENTATION_COPY: Record<
-  ImplementationStatus,
-  { label: string; description: string }
-> = {
-  direct: {
-    label: "直接实现",
-    description: "当前运行公式与目标定义一致，使用现有可比报告期数据直接计算。",
-  },
-  partial: {
-    label: "部分实现",
-    description: "当前数据只覆盖目标公式中的可计算部分；未覆盖因素保持缺失或写入限制说明。",
-  },
-  proxy: {
-    label: "代理实现",
-    description: "当前使用可观测代理形成同业比较，不替代目标指标定义，也不能解释为目标公式已经完整落地。",
-  },
-}
-
 function Equation({
   label,
   children,
@@ -754,26 +711,11 @@ export function IndustryRawFormula({
       </p>
     )
   }
-  const implementation = IMPLEMENTATION_STATUS[indicatorId] ?? "partial"
-  const implementationCopy = IMPLEMENTATION_COPY[implementation]
   return (
     <div className="indicator-method-sheet__formula-presentation">
       <div className="indicator-method-sheet__formula-lane">
-        <strong>目标指标公式</strong>
-        {spec.target}
-      </div>
-      <div className="indicator-method-sheet__formula-lane" data-runtime="true">
-        <strong>当前运行公式</strong>
+        <strong>指标计算公式</strong>
         {spec.runtime}
-      </div>
-      <div
-        className="indicator-method-sheet__formula-relation"
-        data-implementation={implementation}
-      >
-        <span>两者关系</span>
-        <strong>{implementationCopy.label}</strong>
-        <p>{implementationCopy.description}</p>
-        <small>当前运行值 → 风险方向调整 → 同业风险分位 Pᵢ → 单指标风险分 Rᵢ</small>
       </div>
       <dl className="indicator-method-sheet__symbol-key">
         {spec.terms.map((term) => (

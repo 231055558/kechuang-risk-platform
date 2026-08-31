@@ -263,6 +263,19 @@
   font-weight: 680;
 }
 
+.indicator-analysis__peer-matrix td[data-demo-imputed="true"] {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent 0 8px,
+    color-mix(in srgb, white 12%, transparent) 8px 10px
+  );
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, white 32%, transparent);
+}
+
+.indicator-analysis__matrix-controls [data-demo-imputation="true"] {
+  border-style: dashed;
+}
+
 .indicator-analysis__peer-matrix tr[data-active="true"] th:first-child {
   box-shadow:
     inset 4px 0 var(--risk-heat-color),
@@ -325,6 +338,12 @@
 
 .indicator-analysis__indicator-rank strong {
   font-size: 15px;
+}
+
+.indicator-analysis__indicator-rank i {
+  font-size: 10px;
+  font-style: normal;
+  opacity: 0.82;
 }
 
 .indicator-analysis__indicator-rank small,
