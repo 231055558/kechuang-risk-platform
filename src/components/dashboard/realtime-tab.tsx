@@ -40,8 +40,12 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { getCompanyName, getCustomerVisibleIndicators } from "@/lib/data-r01"
-import { formatSourceDateTime, formatSourceListTime } from "@/lib/date-format"
+import { formatSourceDateTime, formatSourceEventTime } from "@/lib/date-format"
 import { getCanonicalRiskDimensionLabels } from "@/lib/risk-dimensions"
+import {
+  getRiskNewsDisplaySourceName,
+  getRiskNewsDisplayTitle,
+} from "@/lib/risk-news-display"
 import type {
   CompanyDetail,
   RealTimeDataSet,
@@ -92,6 +96,9 @@ export function RealtimeTab({
     "all"
   )
   const [query, setQuery] = useState("")
+  const [sortMode, setSortMode] = useState<"importance" | "time">(
+    "importance"
+  )
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
   const [cardOrigin, setCardOrigin] = useState<CardOrigin | null>(null)
   const deferredQuery = useDeferredValue(query)
@@ -132,10 +139,13 @@ export function RealtimeTab({
       .filter((signal) => {
         if (!normalizedQuery) return true
         return [
-          signal.title,
+          getRiskNewsDisplayTitle(
+            signal.title,
+            signal.companyIds.map(getCompanyName).join("、")
+          ),
           signal.summary,
           signal.historicalContext,
-          signal.sourceName,
+          getRiskNewsDisplaySourceName(signal.sourceName),
           ...signal.keyFacts,
           ...signal.companyIds.map(getCompanyName),
         ]
@@ -143,12 +153,19 @@ export function RealtimeTab({
           .toLocaleLowerCase("zh-CN")
           .includes(normalizedQuery)
       })
-      .sort(
-        (left, right) =>
+      .sort((left, right) => {
+        if (sortMode === "time") {
+          return (
+            right.publishedAt.localeCompare(left.publishedAt) ||
+            importance[right.severity] - importance[left.severity]
+          )
+        }
+        return (
           importance[right.severity] - importance[left.severity] ||
           right.publishedAt.localeCompare(left.publishedAt)
-      )
-  }, [category, data.signals, deferredQuery, detail.id, scope])
+        )
+      })
+  }, [category, data.signals, deferredQuery, detail.id, scope, sortMode])
 
   const visibleSignals = filteredSignals.slice(0, visibleCount)
   const selectedIndicatorNames = selectedSignal
@@ -163,7 +180,7 @@ export function RealtimeTab({
         <div>
           <h2>风险资讯</h2>
           <p>
-            新闻、公告、诉讼与监管信息按风险重要度排布。资讯用于投资者阅读和来源核验，不参与财报叙事评分。
+            新闻、公告、诉讼与监管信息支持按风险重要度或发生时间排布。资讯用于投资者阅读和来源核验，不参与财报叙事评分。
           </p>
         </div>
         <div>
@@ -230,10 +247,27 @@ export function RealtimeTab({
             </SelectGroup>
           </SelectContent>
         </Select>
+        <Select
+          value={sortMode}
+          onValueChange={(value) => {
+            setSortMode(value as "importance" | "time")
+            setVisibleCount(PAGE_SIZE)
+          }}
+        >
+          <SelectTrigger aria-label="排序方式">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="importance">按风险重要度</SelectItem>
+              <SelectItem value="time">按发生时间</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </section>
 
       {visibleSignals.length ? (
-        <section className="risk-news__grid" aria-label="风险资讯卡片">
+        <section className="risk-news__grid" aria-label="风险资讯列表">
           {visibleSignals.map((signal) => (
             <NewsCard
               key={signal.id}
@@ -310,19 +344,21 @@ function NewsCard({
   onOpen: (trigger: HTMLButtonElement) => void
 }) {
   const dimensions = getCanonicalRiskDimensionLabels(signal.riskDimensionIds)
+  const displayTitle = getRiskNewsDisplayTitle(
+    signal.title,
+    signal.companyIds.map(getCompanyName).join("、")
+  )
+  const displaySourceName = getRiskNewsDisplaySourceName(signal.sourceName)
   return (
     <button
       type="button"
       className="risk-news__card"
       data-importance={signal.severity}
       onClick={(event) => onOpen(event.currentTarget)}
-      aria-label={`查看${signal.title}`}
+      aria-label={`查看${displayTitle}`}
     >
       <div className="risk-news__card-meta">
-        <time dateTime={signal.publishedAt}>
-          {formatSourceListTime(signal.publishedAt)}
-        </time>
-        <span>{signal.sourceName}</span>
+        <span>{displaySourceName}</span>
         <SeverityBadge severity={signal.severity} />
       </div>
       <div className="risk-news__card-tags">
@@ -333,15 +369,13 @@ function NewsCard({
           </Badge>
         ))}
       </div>
-      <h3>{signal.title}</h3>
+      <h3>
+        <time dateTime={signal.publishedAt}>
+          {formatSourceEventTime(signal.publishedAt)}
+        </time>
+        <span>{displayTitle}</span>
+      </h3>
       <p>{signal.summary}</p>
-      {signal.severity === "high" && signal.keyFacts.length ? (
-        <ul>
-          {signal.keyFacts.slice(0, 2).map((fact) => (
-            <li key={fact}>{fact}</li>
-          ))}
-        </ul>
-      ) : null}
       <footer>
         <span>{signal.companyIds.map(getCompanyName).join("、")}</span>
         <ExternalLinkIcon aria-hidden="true" />
@@ -367,6 +401,15 @@ function RiskNewsDialog({
 }) {
   const cardRef = useRef<HTMLDivElement>(null)
   const prefersReducedMotion = usePrefersReducedMotion()
+  const displayTitle = signal
+    ? getRiskNewsDisplayTitle(
+        signal.title,
+        signal.companyIds.map(getCompanyName).join("、")
+      )
+    : ""
+  const displaySourceName = signal
+    ? getRiskNewsDisplaySourceName(signal.sourceName)
+    : ""
 
   useGSAP(
     () => {
@@ -458,9 +501,9 @@ function RiskNewsDialog({
                   )
                 )}
               </div>
-              <DialogTitle>{signal.title}</DialogTitle>
+              <DialogTitle>{displayTitle}</DialogTitle>
               <DialogDescription>
-                {formatSourceDateTime(signal.publishedAt)} · {signal.sourceName}
+                {formatSourceDateTime(signal.publishedAt)} · {displaySourceName}
               </DialogDescription>
             </DialogHeader>
             <div className="risk-news__modal-content">

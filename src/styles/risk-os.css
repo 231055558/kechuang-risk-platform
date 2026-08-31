@@ -224,6 +224,16 @@ body::after {
   box-shadow: none;
 }
 
+:root:not(.dark) .risk-os-sidebar .sidebar-brand-mark {
+  border: 0;
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgb(37 99 235 / 8%);
+}
+
+:root:not(.dark) .risk-os-sidebar .sidebar-brand-logo {
+  border-radius: 6px;
+}
+
 .risk-os-sidebar .sidebar-brand-mark svg {
   width: 17px;
   height: 17px;

@@ -3,6 +3,7 @@ import test from "node:test"
 
 import {
   formatSourceDateTime,
+  formatSourceEventTime,
   formatSourceListTime,
   formatSourceSidebarTime,
   isDateOnly,
@@ -12,6 +13,7 @@ import {
 test("date-only source disclosures never invent a midnight publication time", () => {
   assert.equal(isDateOnly("2026-04-24"), true)
   assert.equal(formatSourceListTime("2026-04-24"), "仅披露日期")
+  assert.equal(formatSourceEventTime("2026-04-24"), "2026-04-24")
   assert.doesNotMatch(formatSourceDateTime("2026-04-24"), /00:00/)
   assert.doesNotMatch(formatSourceSidebarTime("2026-04-24"), /00:00/)
 })
@@ -21,6 +23,7 @@ test("timestamped source disclosures retain their clock time", () => {
 
   assert.equal(isDateOnly(value), false)
   assert.match(formatSourceDateTime(value), /10:30/)
+  assert.equal(formatSourceEventTime(value), "2026-07-02 10:30")
   assert.equal(formatSourceListTime(value), "10:30")
   assert.equal(formatSourceSidebarTime(value), "10:30")
 })

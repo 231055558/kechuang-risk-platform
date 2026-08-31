@@ -24,6 +24,16 @@ const dateTimeFormatter = new Intl.DateTimeFormat("zh-CN", {
   timeZone: sourceTimeZone,
 })
 
+const eventDateTimeFormatter = new Intl.DateTimeFormat("zh-CN", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+  timeZone: sourceTimeZone,
+})
+
 const timeFormatter = new Intl.DateTimeFormat("zh-CN", {
   hour: "2-digit",
   minute: "2-digit",
@@ -62,6 +72,12 @@ export function formatSourceListTime(value: string) {
 
   const date = parseSourceDate(value)
   return date ? timeFormatter.format(date) : value
+}
+
+export function formatSourceEventTime(value: string) {
+  if (isDateOnly(value)) return value
+  const date = parseSourceDate(value)
+  return date ? eventDateTimeFormatter.format(date).replaceAll("/", "-") : value
 }
 
 export function formatSourceSidebarTime(value: string) {

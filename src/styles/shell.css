@@ -117,15 +117,23 @@
   height: 38px;
   flex: 0 0 38px;
   place-items: center;
+  padding: 2px;
+  overflow: hidden;
   border-radius: 15px;
   border: 1px solid color-mix(in oklch, var(--glass-border) 82%, transparent);
-  background:
-    linear-gradient(145deg, oklch(1 0 0 / 0.58), transparent 58%),
-    color-mix(in oklch, var(--brand-soft) 54%, transparent);
+  background: #fff;
   box-shadow:
     var(--glass-highlight),
     0 8px 20px oklch(0.42 0.1 250 / 0.1);
   color: var(--brand-strong);
+}
+
+.sidebar-brand-logo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 11px;
+  object-fit: cover;
 }
 
 .sidebar-company-glass {
