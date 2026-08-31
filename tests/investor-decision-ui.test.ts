@@ -86,3 +86,14 @@ test("投资研判移除装饰性英文标签但保留新版重点布局", () =>
   assert.match(eventsSource, /className="investor-perspective__action-copy"/)
   assert.match(eventsSource, /data-response-stage=\{stage\.id\}/)
 })
+
+test("投资研判与风险应对在浅色模式使用柔和的近白层次", () => {
+  assert.match(
+    styles,
+    /:root:not\(\.dark\) \.risk-os-main:has\(\.investor-decision\),[\s\S]*background: #fafbfd;/
+  )
+  assert.match(
+    styles,
+    /:root:not\(\.dark\) :is\(\.investor-decision, \.risk-response\)\s*\{[^}]*--risk-os-surface-muted: #fcfdff;[^}]*--risk-os-surface-strong: #f7f9fc;[^}]*--risk-os-border: #e7ebf1;/s
+  )
+})

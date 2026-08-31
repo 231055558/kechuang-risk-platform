@@ -127,6 +127,12 @@ test("图谱节点只移除阴影并在浅色模式使用深色文字", () => {
 })
 
 test("风险传导使用收束后的高密度图谱交互", () => {
+  assert.match(teammateWorkspace, /企业自身事件影响全景图/)
+  assert.match(teammateWorkspace, /外部主体事件风险传导图/)
+  assert.doesNotMatch(
+    teammateWorkspace,
+    /企业主体风险事件传导图谱|外部主体影响全景图谱/
+  )
   assert.match(teammateWorkspace, /n\.type==='warning_score'\)return false/)
   assert.match(teammateWorkspace, /risk_category_impacts_company/)
   assert.match(teammateWorkspace, /node-hover-tag/)

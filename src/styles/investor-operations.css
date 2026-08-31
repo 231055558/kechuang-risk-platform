@@ -1,3 +1,20 @@
+.risk-os-main:has(.investor-decision),
+.risk-os-main:has(.risk-response) {
+  transition: background-color 160ms ease;
+}
+
+:root:not(.dark) .risk-os-main:has(.investor-decision),
+:root:not(.dark) .risk-os-main:has(.risk-response) {
+  background: #fafbfd;
+}
+
+:root:not(.dark) :is(.investor-decision, .risk-response) {
+  --risk-os-surface-muted: #fcfdff;
+  --risk-os-surface-strong: #f7f9fc;
+  --risk-os-border: #e7ebf1;
+  --risk-os-border-strong: #d8dee8;
+}
+
 .investor-decision__header {
   display: flex;
   align-items: flex-start;
