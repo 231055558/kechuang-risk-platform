@@ -1,4 +1,3 @@
-import { ShieldCheckIcon } from "lucide-react"
 import { useRef, useState } from "react"
 
 import { CompanySearchSelect } from "@/components/layout/company-search-select"
@@ -46,7 +45,11 @@ export function SidebarNav({
       <aside className="sidebar-shell risk-os-sidebar" aria-label="主导航">
         <div className="sidebar-brand">
           <div className="sidebar-brand-mark">
-            <ShieldCheckIcon className="size-5" />
+            <img
+              src="./brand/kechuang-risk-logo.png"
+              alt=""
+              className="sidebar-brand-logo"
+            />
           </div>
           <div>
             <div className="text-base font-semibold tracking-tight text-foreground">

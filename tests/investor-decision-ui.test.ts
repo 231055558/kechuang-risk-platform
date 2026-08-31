@@ -12,7 +12,8 @@ const styles = readFileSync(
 )
 
 test("投资研判呈现机构、个人和银行三类实际决策问题", () => {
-  assert.match(eventsSource, /同业参照/)
+  assert.doesNotMatch(eventsSource, /investor-decision__compact-overview/)
+  assert.doesNotMatch(eventsSource, /共同风险基线|同业参照/)
   assert.match(eventsSource, /投资机构 · 决策/)
   assert.match(eventsSource, /个人投资者 · 持仓/)
   assert.match(eventsSource, /银行 · 授信/)
@@ -22,6 +23,7 @@ test("投资研判呈现机构、个人和银行三类实际决策问题", () =>
   assert.match(eventsSource, /执行动作/)
   assert.match(eventsSource, /所需材料/)
   assert.match(eventsSource, /验证方式/)
+  assert.match(eventsSource, /investor-perspective__facts/)
   assert.doesNotMatch(eventsSource, /建议买入|建议卖出|预期收益/)
 })
 

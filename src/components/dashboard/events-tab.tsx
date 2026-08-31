@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react"
 import {
   ActivityIcon,
   Building2Icon,
-  ChartNoAxesCombinedIcon,
   DatabaseZapIcon,
   GaugeIcon,
   LandmarkIcon,
@@ -61,27 +60,21 @@ type AssessmentState =
     }
   | { status: "error"; message: string }
 
-export function EventsTab({ detail, events, section }: EventsTabProps) {
+export function EventsTab({ detail, section }: EventsTabProps) {
   if (section === "investment") {
-    return (
-      <InvestorDecisionPanel detail={detail} events={events} mode="research" />
-    )
+    return <InvestorDecisionPanel detail={detail} mode="research" />
   }
   if (section === "advice") {
-    return (
-      <InvestorDecisionPanel detail={detail} events={events} mode="response" />
-    )
+    return <InvestorDecisionPanel detail={detail} mode="response" />
   }
   return <RiskPropagationGraph detail={detail} />
 }
 
 function InvestorDecisionPanel({
   detail,
-  events,
   mode,
 }: {
   detail: CompanyDetail
-  events: RiskEvent[]
   mode: "research" | "response"
 }) {
   const [state, setState] = useState<AssessmentState>({ status: "loading" })
@@ -119,11 +112,7 @@ function InvestorDecisionPanel({
   }
 
   return mode === "research" ? (
-    <InvestmentResearchContent
-      events={events}
-      response={state.response}
-      directory={state.directory}
-    />
+    <InvestmentResearchContent response={state.response} />
   ) : (
     <RiskResponseContent
       response={state.response}
@@ -136,31 +125,13 @@ function scoreText(value: number | null) {
   return value === null ? "—" : value.toFixed(2)
 }
 
-function signedText(value: number | null) {
-  if (value === null) return "—"
-  return `${value >= 0 ? "+" : ""}${value.toFixed(2)}`
-}
-
 function InvestmentResearchContent({
-  events,
   response,
-  directory,
 }: {
-  events: RiskEvent[]
   response: IndustryRiskAssessmentApiResponse
-  directory: IndustryRiskCompanyDirectoryResponse
 }) {
   const [perspective, setPerspective] =
     useState<InvestmentPerspectiveId>("institution")
-  const signals = useMemo(
-    () => buildInvestorRiskSignals(response.assessment),
-    [response.assessment]
-  )
-  const topSignals = signals.slice(0, 4)
-  const peerPosition = useMemo(
-    () => calculateInvestorPeerPosition(directory, response.company.id),
-    [directory, response.company.id]
-  )
   const readiness = useMemo(
     () => deriveInvestorResearchReadiness(response.assessment),
     [response.assessment]
@@ -168,9 +139,6 @@ function InvestmentResearchContent({
   const perspectiveContent = useMemo(
     () => buildInvestmentPerspective(response.assessment, perspective),
     [perspective, response.assessment]
-  )
-  const coveragePercent = Math.round(
-    response.assessment.weightedDataCoverage * 100
   )
   const combinedExecutionSteps = perspectiveContent.executionSteps.map(
     (step, index) => ({
@@ -200,49 +168,6 @@ function InvestmentResearchContent({
           </Badge>
         </div>
       </header>
-
-      <section
-        className="investor-decision__compact-overview"
-        aria-label="共同风险基线"
-      >
-        <article>
-          <GaugeIcon aria-hidden="true" />
-          <span>综合风险</span>
-          <strong>{scoreText(response.assessment.totalRiskScore)}</strong>
-          <small>
-            {peerPosition.riskPercentile === null
-              ? "分位待补充"
-              : `行业 P${peerPosition.riskPercentile} · 排名 ${peerPosition.rank}/${peerPosition.sampleSize}`}
-          </small>
-        </article>
-        <article>
-          <ChartNoAxesCombinedIcon aria-hidden="true" />
-          <span>同业参照</span>
-          <strong>{signedText(peerPosition.deltaFromMean)}</strong>
-          <small>
-            相对均值 · 低风险四分位 {scoreText(peerPosition.lowerRiskQuartile)}
-          </small>
-        </article>
-        <article>
-          <TargetIcon aria-hidden="true" />
-          <span>证据覆盖</span>
-          <strong>{coveragePercent}%</strong>
-          <small>
-            {response.assessment.weightedScoredIndicatorCount}/18 项已评分 ·{" "}
-            {events.length} 条近期事件
-          </small>
-        </article>
-        <article>
-          <SlidersHorizontalIcon aria-hidden="true" />
-          <span>首要风险</span>
-          <strong>{topSignals[0]?.indicatorId ?? "—"}</strong>
-          <small>
-            {topSignals[0]
-              ? `${topSignals[0].label} · 同业 P${Math.round(topSignals[0].riskPercentile * 100)}`
-              : "暂无可排序风险驱动"}
-          </small>
-        </article>
-      </section>
 
       <section className="investor-perspective">
         <nav

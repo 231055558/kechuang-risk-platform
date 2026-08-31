@@ -52,44 +52,6 @@
   gap: 12px;
 }
 
-.investor-decision__compact-overview {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.investor-decision__compact-overview > article {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 2px 9px;
-  min-width: 0;
-  padding: 11px 13px;
-  border: 1px solid var(--risk-os-border);
-  border-radius: 9px;
-  background: var(--risk-os-surface);
-}
-
-.investor-decision__compact-overview svg {
-  grid-row: 1 / span 3;
-  width: 17px;
-  color: var(--risk-os-accent);
-}
-
-.investor-decision__compact-overview span,
-.investor-decision__compact-overview small {
-  overflow: hidden;
-  color: var(--risk-os-muted);
-  font-size: 8px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.investor-decision__compact-overview strong {
-  color: var(--risk-os-ink);
-  font-size: 17px;
-  font-variant-numeric: tabular-nums;
-}
-
 .investor-decision__dashboard > article,
 .investor-decision__scenario-section,
 .investor-decision__constraints,
@@ -1126,7 +1088,6 @@
 
   .investor-decision__constraints,
   .investor-perspective__selector,
-  .investor-decision__compact-overview,
   .risk-response__summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
