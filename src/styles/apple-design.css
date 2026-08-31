@@ -180,11 +180,7 @@ body::before {
 
 .sidebar-brand-mark {
   border-radius: 12px;
-  background: color-mix(
-    in oklch,
-    var(--brand-soft) 62%,
-    var(--apple-material-control)
-  );
+  background: #fff;
   box-shadow: var(--apple-edge-reading);
 }
 

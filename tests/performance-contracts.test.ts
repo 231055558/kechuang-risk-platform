@@ -134,8 +134,10 @@ test("risk-news cards collapse to one column within the mobile viewport", () => 
   )
   assert.match(
     mobileStyles,
-    /\.risk-news__card,[\s\S]*?grid-column:\s*1 \/ -1;/
+    /\.risk-news__card,[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\);/
   )
+  assert.match(mobileStyles, /grid-template-areas:/)
+  assert.match(mobileStyles, /min-height:\s*0;/)
 })
 
 test("enterprise research highlights stay inside the lazy research route", () => {

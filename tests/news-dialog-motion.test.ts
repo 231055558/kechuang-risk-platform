@@ -30,11 +30,27 @@ test("news dialog animation honors reduced motion and GSAP cleanup", () => {
   assert.match(source, /revertOnUpdate: true/)
 })
 
-test("news card typography and density follow information importance", () => {
-  assert.match(styles, /data-importance="high"\][\s\S]*?font-size: clamp\(23px/)
+test("news cards use a consistent high-density research list", () => {
+  assert.match(styles, /\.risk-news__grid\s*\{[^}]*grid-template-columns: minmax\(0, 1fr\)/s)
+  assert.match(styles, /\.risk-news__card\s*\{[^}]*min-height: 0/s)
   assert.match(
     styles,
-    /data-importance="medium"\][\s\S]*?font-size: clamp\(17px/
+    /\.risk-news__card\s*\{[^}]*grid-template-areas:[^}]*"meta tags"[^}]*"footer footer"/s
   )
-  assert.match(styles, /data-importance="watch"\]:nth-child/)
+  assert.match(
+    styles,
+    /data-importance="high"\] h3\s*\{[^}]*font-size: 16px/s
+  )
+  assert.doesNotMatch(styles, /data-importance="watch"\]:nth-child/)
+  assert.doesNotMatch(source, /signal\.keyFacts\.slice\(0, 2\)/)
+})
+
+test("news titles expose event dates and users can switch sort order", () => {
+  assert.match(source, /useState<"importance" \| "time">/)
+  assert.match(source, /aria-label="排序方式"/)
+  assert.match(source, /按风险重要度/)
+  assert.match(source, /按发生时间/)
+  assert.match(source, /sortMode === "time"/)
+  assert.match(source, /formatSourceEventTime\(signal\.publishedAt\)/)
+  assert.match(styles, /\.risk-news__card h3 time\s*\{/)
 })

@@ -62,6 +62,6 @@ test("risk-news dates use the shared zh-CN formatters and semantic time elements
 
   assert.match(realtimeSource, /from "@\/lib\/date-format"/)
   assert.match(realtimeSource, /formatSourceDateTime\(signal\.publishedAt\)/)
-  assert.match(realtimeSource, /formatSourceListTime\(signal\.publishedAt\)/)
+  assert.match(realtimeSource, /formatSourceEventTime\(signal\.publishedAt\)/)
   assert.match(realtimeSource, /dateTime=\{signal\.publishedAt\}/)
 })

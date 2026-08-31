@@ -127,14 +127,32 @@ test("图谱节点只移除阴影并在浅色模式使用深色文字", () => {
 })
 
 test("风险传导使用收束后的高密度图谱交互", () => {
+  assert.match(teammateWorkspace, /企业自身事件影响全景图/)
+  assert.match(teammateWorkspace, /外部主体事件风险传导图/)
+  assert.doesNotMatch(
+    teammateWorkspace,
+    /企业主体风险事件传导图谱|外部主体影响全景图谱/
+  )
   assert.match(teammateWorkspace, /n\.type==='warning_score'\)return false/)
   assert.match(teammateWorkspace, /risk_category_impacts_company/)
   assert.match(teammateWorkspace, /node-hover-tag/)
   assert.match(teammateWorkspace, /class="graph-boundary"/)
+  assert.match(teammateWorkspace, /\.graph-boundary\{display:none\}/)
+  assert.match(
+    teammateWorkspace,
+    /graph-wrap:not\(\.panorama-view\) \.lane-label\{transform:translateY\(-102px\)\}/
+  )
+  assert.match(teammateWorkspace, /minY:-980/)
   assert.match(teammateWorkspace, /function graphFrame/)
   assert.match(teammateWorkspace, /function clampViewport/)
   assert.match(teammateWorkspace, /setAttribute\('class','tag-layer'\)/)
   assert.match(teammateWorkspace, /事件重点：/)
+  assert.match(teammateWorkspace, /titleY=74,titleStep=38,copyStep=32/)
+  assert.match(teammateWorkspace, /copyY=76\+title\.length\*titleStep/)
+  assert.match(
+    teammateWorkspace,
+    /metaY=copyY\+\(copy\.length-1\)\*copyStep\+36/
+  )
   assert.doesNotMatch(teammateWorkspace, /快照：/)
   assert.match(teammateWorkspace, /@media\(max-width:1180px\)/)
   assert.match(teammateWorkspace, /grid-template-rows:minmax\(0,1fr\) 170px/)
