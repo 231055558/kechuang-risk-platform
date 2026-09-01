@@ -4,6 +4,7 @@
 
 - `GET /api/v1/industry-risk/companies`
 - `GET /api/v1/industry-risk/companies/{companyId}/assessment`
+- `POST /api/v1/industry-risk/companies/{companyId}/ai-guidance`
 - `GET /api/v1/industry-risk/graph`（旧证据图端点，产品页不再默认使用）
 - `GET /api/v1/narrative-risk/industry-trends`（94家年报原始叙事指数与行业范围）
 
@@ -36,6 +37,22 @@
 投资者页面和其新 DTO 禁止出现：`owner`、`dueDate`、`taskStatus`、`pendingAction`、`responsibleDepartment`。新闻和事件的关联只表示研究关联，不表示已进入评分。
 
 投资研判的机构、个人和银行视角，以及企业风险应对建议，均由同一 assessment 响应派生：只能使用已校验的风险分、同业分位、缺失原因、来源数量和事件，不新增无法追溯的结论字段。企业降险建议属于展示层规则，不写回 observation 或评分结果。
+
+## AI增强建议响应
+
+`POST /api/v1/industry-risk/companies/{companyId}/ai-guidance` 只接受 `institution`、`individual`、`bank`、`enterprise-response` 四种视角。浏览器只提交视角，后端必须按 `companyId` 自行读取权威 assessment，禁止接受前端提交的风险分、分位或事件作为模型依据。
+
+响应使用 `KCR-AI-GUIDANCE-2026.09-v1`，`provider` 必须明确标识为 `openai` 或 `deepseek`。每条建议必须返回服务端装配的 `evidence[]`，包括指标编号、标签、正式评分/缺失状态、风险分、同业风险分位、来源数量和缺失原因。模型只生成摘要、理由、补充动作和人工验证方法；指标引用必须由服务端白名单复核，不能由模型生成来源、分数或缺失状态。
+
+AI链路必须满足：
+
+- 使用结构化输出并在服务端再次运行时校验；
+- 模型请求不保存为可续接会话；OpenAI 与 DeepSeek 使用各自独立的服务端 API Key，禁止跨 provider 自动复用；
+- 自定义 Responses API 代理必须使用可验证的 HTTPS；只允许本机回环地址在开发环境使用明文 HTTP，禁止跳过证书校验；
+- 不发送 `narrativeNews`、新闻正文、付费原始响应、风险图谱或用户个人资产信息；
+- 不改变 `IndustryRiskAssessmentApiResponse`，不写回 observation、coverage、评分或图谱；
+- 模型不可用、超时或输出越界时返回明确错误，原规则研判和风险应对继续可用；
+- 禁止输出买入、卖出、目标价、收益预测、仓位、授信额度、利率、审批结论、责任人、截止日期、任务状态或工单。
 
 ## 财报叙事结构
 

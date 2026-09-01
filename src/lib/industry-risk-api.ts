@@ -1,8 +1,13 @@
 import {
+  INDUSTRY_RISK_AI_GUIDANCE_PERSPECTIVES,
+  INDUSTRY_RISK_AI_GUIDANCE_VERSION,
   INDUSTRY_RISK_INVESTOR_CONTRACT_VERSION,
   INDUSTRY_RISK_COMPANIES_API_PATH,
   INDUSTRY_RISK_GRAPH_API_PATH,
+  getIndustryRiskCompanyAiGuidanceApiPath,
   getIndustryRiskCompanyAssessmentApiPath,
+  type IndustryRiskAiGuidancePerspective,
+  type IndustryRiskAiGuidanceResponse,
   type IndustryRiskAssessmentApiResponse,
   type IndustryRiskCompanyDirectoryResponse,
   type IndustryRiskKnowledgeGraph,
@@ -368,6 +373,86 @@ function isAssessmentResponse(
   )
 }
 
+const industryRiskAiGuidancePerspectives = new Set<string>(
+  INDUSTRY_RISK_AI_GUIDANCE_PERSPECTIVES
+)
+
+function isAiGuidanceEvidence(value: unknown) {
+  if (
+    !isRecord(value) ||
+    typeof value.indicatorId !== "string" ||
+    !/^R(0[5-9]|1[0-9]|2[0-2])$/.test(value.indicatorId) ||
+    typeof value.label !== "string" ||
+    (value.status !== "scored" && value.status !== "missing") ||
+    (value.riskScore !== null &&
+      (!isFiniteNumber(value.riskScore) ||
+        Number(value.riskScore) < 0 ||
+        Number(value.riskScore) > 100)) ||
+    (value.riskPercentile !== null &&
+      (!isFiniteNumber(value.riskPercentile) ||
+        Number(value.riskPercentile) < 0 ||
+        Number(value.riskPercentile) > 1)) ||
+    !Number.isInteger(value.sourceCount) ||
+    Number(value.sourceCount) < 0 ||
+    (value.missingReason !== null && typeof value.missingReason !== "string")
+  ) {
+    return false
+  }
+  return value.status === "scored"
+    ? value.riskScore !== null &&
+        value.riskPercentile !== null &&
+        value.missingReason === null
+    : value.riskScore === null &&
+        value.riskPercentile === null &&
+        typeof value.missingReason === "string" &&
+        value.missingReason.length > 0
+}
+
+function isAiGuidanceResponse(
+  value: unknown
+): value is IndustryRiskAiGuidanceResponse {
+  return (
+    isRecord(value) &&
+    value.contractVersion === INDUSTRY_RISK_INVESTOR_CONTRACT_VERSION &&
+    value.guidanceVersion === INDUSTRY_RISK_AI_GUIDANCE_VERSION &&
+    value.assessmentMethodVersion === "IRAWC-CRITIC-2026.08-v3" &&
+    isRecord(value.company) &&
+    typeof value.company.id === "string" &&
+    typeof value.company.shortName === "string" &&
+    typeof value.company.stockCode === "string" &&
+    typeof value.perspective === "string" &&
+    industryRiskAiGuidancePerspectives.has(value.perspective) &&
+    (value.provider === "openai" || value.provider === "deepseek") &&
+    typeof value.model === "string" &&
+    value.model.length > 0 &&
+    typeof value.generatedAt === "string" &&
+    Number.isFinite(Date.parse(value.generatedAt)) &&
+    typeof value.sourceDate === "string" &&
+    typeof value.summary === "string" &&
+    value.summary.length >= 20 &&
+    Array.isArray(value.recommendations) &&
+    value.recommendations.length >= 1 &&
+    value.recommendations.length <= 3 &&
+    value.recommendations.every(
+      (recommendation) =>
+        isRecord(recommendation) &&
+        typeof recommendation.title === "string" &&
+        typeof recommendation.rationale === "string" &&
+        typeof recommendation.action === "string" &&
+        typeof recommendation.verification === "string" &&
+        Array.isArray(recommendation.evidence) &&
+        recommendation.evidence.length >= 1 &&
+        recommendation.evidence.length <= 3 &&
+        recommendation.evidence.every(isAiGuidanceEvidence)
+    ) &&
+    Array.isArray(value.limitations) &&
+    value.limitations.length >= 1 &&
+    value.limitations.every(
+      (limitation) => typeof limitation === "string" && limitation.length > 0
+    )
+  )
+}
+
 const graphNodeKinds = new Set([
   "company",
   "category",
@@ -453,12 +538,21 @@ function isKnowledgeGraph(value: unknown): value is IndustryRiskKnowledgeGraph {
 
 async function fetchPayload(
   path: string,
-  options: { fetch?: typeof globalThis.fetch; signal?: AbortSignal }
+  options: {
+    fetch?: typeof globalThis.fetch
+    signal?: AbortSignal
+    method?: "GET" | "POST"
+    body?: string
+  }
 ) {
   const fetchImpl = options.fetch ?? globalThis.fetch
   const response = await fetchImpl(path, {
-    method: "GET",
-    headers: { accept: "application/json" },
+    method: options.method ?? "GET",
+    headers: {
+      accept: "application/json",
+      ...(options.body ? { "content-type": "application/json" } : {}),
+    },
+    body: options.body,
     signal: options.signal,
   })
   let payload: unknown = null
@@ -511,6 +605,33 @@ export async function fetchIndustryRiskAssessment(
     throw new IndustryRiskApiError(
       "行业风险评估响应格式不正确。",
       "INDUSTRY_RISK_RESPONSE_INVALID",
+      status
+    )
+  }
+  return payload
+}
+
+export async function fetchIndustryRiskAiGuidance(
+  companyId: string,
+  perspective: IndustryRiskAiGuidancePerspective,
+  options: { fetch?: typeof globalThis.fetch; signal?: AbortSignal } = {}
+) {
+  const { payload, status } = await fetchPayload(
+    getIndustryRiskCompanyAiGuidanceApiPath(companyId),
+    {
+      ...options,
+      method: "POST",
+      body: JSON.stringify({ perspective }),
+    }
+  )
+  if (
+    !isAiGuidanceResponse(payload) ||
+    payload.company.id !== companyId ||
+    payload.perspective !== perspective
+  ) {
+    throw new IndustryRiskApiError(
+      "AI增强建议响应格式不正确。",
+      "AI_GUIDANCE_RESPONSE_INVALID",
       status
     )
   }

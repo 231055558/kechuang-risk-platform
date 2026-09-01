@@ -7,6 +7,7 @@
   },
   "include": [
     "server/http-server.ts",
+    "server/industry-risk-ai-guidance-service.ts",
     "server/kcr-assessment-service.ts",
     "server/production-server.ts",
     "scripts/import-master-sqlite-postgres.ts",

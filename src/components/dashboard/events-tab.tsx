@@ -13,6 +13,7 @@ import {
 } from "lucide-react"
 
 import { RiskPropagationGraph } from "@/components/dashboard/risk-propagation-graph"
+import { AiRiskGuidancePanel } from "@/components/dashboard/ai-risk-guidance-panel"
 import { Badge } from "@/components/ui/badge"
 import type {
   IndustryRiskAssessmentApiResponse,
@@ -266,6 +267,12 @@ function InvestmentResearchContent({
         </article>
       </section>
 
+      <AiRiskGuidancePanel
+        key={`${response.company.id}-${perspective}`}
+        companyId={response.company.id}
+        perspective={perspective}
+      />
+
       <BoundaryNote sourceDate={response.provenance.sourceDate} />
     </div>
   )
@@ -466,6 +473,12 @@ function RiskResponseContent({
           )
         })}
       </section>
+
+      <AiRiskGuidancePanel
+        key={`${response.company.id}-enterprise-response`}
+        companyId={response.company.id}
+        perspective="enterprise-response"
+      />
 
       <BoundaryNote sourceDate={response.provenance.sourceDate} enterprise />
     </div>

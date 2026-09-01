@@ -13,8 +13,10 @@ import {
   KCR_COMPANY_ASSESSMENT_API_PREFIX,
 } from "../src/domain/kcr-v1/assessment-api.ts"
 import {
+  INDUSTRY_RISK_AI_GUIDANCE_PERSPECTIVES,
   INDUSTRY_RISK_COMPANIES_API_PATH,
   INDUSTRY_RISK_GRAPH_API_PATH,
+  type IndustryRiskAiGuidancePerspective,
 } from "../src/domain/industry-risk-v1/assessment-api.ts"
 import {
   RISK_GRAPH_COMPANIES_API_PATH,
@@ -94,6 +96,10 @@ export type KcrAssessmentReader = (
 ) => unknown | Promise<unknown>
 export type IndustryRiskCompanyLister = () => unknown | Promise<unknown>
 export type IndustryRiskAssessmentReader = KcrAssessmentReader
+export type IndustryRiskAiGuidanceGenerator = (
+  companyId: string,
+  perspective: IndustryRiskAiGuidancePerspective
+) => unknown | Promise<unknown>
 export type RiskGraphCompanyLister = IndustryRiskCompanyLister
 export type RiskGraphReader = (
   companyId: string,
@@ -121,6 +127,7 @@ export interface ProductionServerOptions {
   getKcrAssessment?: KcrAssessmentReader
   listIndustryRiskCompanies?: IndustryRiskCompanyLister
   getIndustryRiskAssessment?: IndustryRiskAssessmentReader
+  generateIndustryRiskAiGuidance?: IndustryRiskAiGuidanceGenerator
   getIndustryRiskGraph?: IndustryRiskCompanyLister
   listRiskGraphCompanies?: RiskGraphCompanyLister
   getRiskGraph?: RiskGraphReader
@@ -398,6 +405,47 @@ function getPublicError(
         ? candidate.message
         : fallbackMessage,
   }
+}
+
+const aiGuidancePublicErrors = {
+  AI_GUIDANCE_UNAVAILABLE: {
+    statusCode: 503,
+    message: "AI增强建议尚未配置；规则研判与风险应对仍可正常使用。",
+  },
+  AI_GUIDANCE_CONFIGURATION_INVALID: {
+    statusCode: 503,
+    message: "AI增强建议服务配置无效；规则研判与风险应对仍可正常使用。",
+  },
+  AI_GUIDANCE_TIMEOUT: {
+    statusCode: 504,
+    message: "AI增强建议生成超时，请稍后重试。",
+  },
+  AI_GUIDANCE_UPSTREAM_FAILED: {
+    statusCode: 502,
+    message: "AI增强建议上游服务暂时不可用。",
+  },
+  AI_GUIDANCE_RESPONSE_INVALID: {
+    statusCode: 502,
+    message: "AI增强建议未通过证据约束校验。",
+  },
+} as const
+
+function getAiGuidancePublicError(error: unknown) {
+  if (typeof error !== "object" || error === null) return null
+  const candidate = error as HttpErrorShape
+  if (
+    typeof candidate.code !== "string" ||
+    !(candidate.code in aiGuidancePublicErrors)
+  ) {
+    return null
+  }
+  const safe =
+    aiGuidancePublicErrors[
+      candidate.code as keyof typeof aiGuidancePublicErrors
+    ]
+  return candidate.statusCode === safe.statusCode
+    ? { code: candidate.code, ...safe }
+    : null
 }
 
 async function handleTechnologyScore(
@@ -704,6 +752,27 @@ function getIndustryRiskCompanyId(pathname: string) {
   }
 }
 
+function getIndustryRiskAiGuidanceCompanyId(pathname: string) {
+  if (
+    !pathname.startsWith(INDUSTRY_RISK_COMPANY_PATH_PREFIX) ||
+    !pathname.endsWith("/ai-guidance")
+  ) {
+    return null
+  }
+
+  const encodedCompanyId = pathname.slice(
+    INDUSTRY_RISK_COMPANY_PATH_PREFIX.length,
+    -"/ai-guidance".length
+  )
+  if (!encodedCompanyId || encodedCompanyId.includes("/")) return null
+
+  try {
+    return decodeURIComponent(encodedCompanyId)
+  } catch {
+    return null
+  }
+}
+
 async function handleIndustryRiskCompanyDirectory(
   request: IncomingMessage,
   response: ServerResponse,
@@ -790,6 +859,97 @@ async function handleIndustryRiskAssessment(
       "INDUSTRY_RISK_FAILED",
       "行业风险评估暂时不可用。"
     )
+  }
+}
+
+async function handleIndustryRiskAiGuidance(
+  request: IncomingMessage,
+  response: ServerResponse,
+  companyId: string,
+  options: {
+    generateIndustryRiskAiGuidance?: IndustryRiskAiGuidanceGenerator
+    maxBodyBytes: number
+  }
+) {
+  if (request.method !== "POST") {
+    sendApiError(
+      response,
+      405,
+      "METHOD_NOT_ALLOWED",
+      "该接口仅支持 POST 请求。",
+      { allow: "POST" }
+    )
+    return
+  }
+  if (!options.generateIndustryRiskAiGuidance) {
+    sendApiError(
+      response,
+      503,
+      "AI_GUIDANCE_UNAVAILABLE",
+      "AI增强建议尚未配置；规则研判与风险应对仍可正常使用。"
+    )
+    return
+  }
+
+  const body = await readJsonBody(request, options.maxBodyBytes)
+  if (body.kind === "too-large") {
+    sendApiError(
+      response,
+      413,
+      "PAYLOAD_TOO_LARGE",
+      `请求体不能超过 ${options.maxBodyBytes} 字节。`
+    )
+    return
+  }
+  if (body.kind === "invalid") {
+    sendApiError(response, 400, "INVALID_JSON", "请求体必须是有效的 JSON。")
+    return
+  }
+  if (
+    typeof body.value !== "object" ||
+    body.value === null ||
+    Array.isArray(body.value) ||
+    !("perspective" in body.value) ||
+    !INDUSTRY_RISK_AI_GUIDANCE_PERSPECTIVES.includes(
+      body.value.perspective as IndustryRiskAiGuidancePerspective
+    )
+  ) {
+    sendApiError(
+      response,
+      400,
+      "AI_GUIDANCE_REQUEST_INVALID",
+      "AI增强建议视角无效。"
+    )
+    return
+  }
+
+  try {
+    sendJson(
+      response,
+      200,
+      await options.generateIndustryRiskAiGuidance(
+        companyId,
+        body.value.perspective as IndustryRiskAiGuidancePerspective
+      )
+    )
+  } catch (error) {
+    const publicError =
+      getPublicError(
+        error,
+        "AI_GUIDANCE_REQUEST_INVALID",
+        "AI增强建议请求无效。"
+      ) ?? getAiGuidancePublicError(error)
+    if (publicError) {
+      sendApiError(
+        response,
+        publicError.statusCode,
+        publicError.code,
+        publicError.message
+      )
+      return
+    }
+    console.error("Industry risk AI guidance failed", error)
+    sendApiError(response, 502, "AI_GUIDANCE_FAILED", "AI增强建议暂时不可用。")
   }
 }
 
@@ -1468,6 +1628,22 @@ export function createProductionServer(
           response,
           industryRiskCompanyId,
           options.getIndustryRiskAssessment
+        )
+        return
+      }
+
+      const industryRiskAiGuidanceCompanyId =
+        getIndustryRiskAiGuidanceCompanyId(pathname)
+      if (industryRiskAiGuidanceCompanyId !== null) {
+        await handleIndustryRiskAiGuidance(
+          request,
+          response,
+          industryRiskAiGuidanceCompanyId,
+          {
+            generateIndustryRiskAiGuidance:
+              options.generateIndustryRiskAiGuidance,
+            maxBodyBytes,
+          }
         )
         return
       }

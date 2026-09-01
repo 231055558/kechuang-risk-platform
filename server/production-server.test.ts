@@ -15,6 +15,10 @@ async function startTestServer(options?: {
   getKcrAssessment?: (companyId: string) => unknown | Promise<unknown>
   listIndustryRiskCompanies?: () => unknown | Promise<unknown>
   getIndustryRiskAssessment?: (companyId: string) => unknown | Promise<unknown>
+  generateIndustryRiskAiGuidance?: (
+    companyId: string,
+    perspective: "institution" | "individual" | "bank" | "enterprise-response"
+  ) => unknown | Promise<unknown>
   getIndustryRiskGraph?: () => unknown | Promise<unknown>
   listRiskGraphCompanies?: () => unknown | Promise<unknown>
   getRiskGraph?: (
@@ -74,6 +78,7 @@ async function startTestServer(options?: {
     getKcrAssessment: options?.getKcrAssessment,
     listIndustryRiskCompanies: options?.listIndustryRiskCompanies,
     getIndustryRiskAssessment: options?.getIndustryRiskAssessment,
+    generateIndustryRiskAiGuidance: options?.generateIndustryRiskAiGuidance,
     getIndustryRiskGraph: options?.getIndustryRiskGraph,
     listRiskGraphCompanies: options?.listRiskGraphCompanies,
     getRiskGraph: options?.getRiskGraph,
@@ -407,6 +412,87 @@ test("industry risk API returns safe 404 and method errors", async () => {
     )
     assert.equal(wrongMethod.status, 405)
     assert.equal(wrongMethod.headers.get("allow"), "GET")
+  } finally {
+    await testServer.close()
+  }
+})
+
+test("industry risk AI guidance accepts only a server-grounded perspective request", async () => {
+  const received: unknown[] = []
+  const testServer = await startTestServer({
+    generateIndustryRiskAiGuidance(companyId, perspective) {
+      received.push({ companyId, perspective })
+      return {
+        guidanceVersion: "KCR-AI-GUIDANCE-2026.09-v1",
+        company: { id: companyId },
+        perspective,
+      }
+    },
+  })
+
+  try {
+    const response = await fetch(
+      `${testServer.baseUrl}/api/v1/industry-risk/companies/star-688256/ai-guidance`,
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ perspective: "institution" }),
+      }
+    )
+    assert.equal(response.status, 200)
+    assert.deepEqual(received, [
+      { companyId: "star-688256", perspective: "institution" },
+    ])
+
+    const invalid = await fetch(
+      `${testServer.baseUrl}/api/v1/industry-risk/companies/star-688256/ai-guidance`,
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          perspective: "trade",
+          riskScore: 0,
+        }),
+      }
+    )
+    assert.equal(invalid.status, 400)
+
+    const wrongMethod = await fetch(
+      `${testServer.baseUrl}/api/v1/industry-risk/companies/star-688256/ai-guidance`
+    )
+    assert.equal(wrongMethod.status, 405)
+    assert.equal(wrongMethod.headers.get("allow"), "POST")
+  } finally {
+    await testServer.close()
+  }
+})
+
+test("industry risk AI guidance preserves only whitelisted upstream errors", async () => {
+  const testServer = await startTestServer({
+    generateIndustryRiskAiGuidance() {
+      throw Object.assign(new Error("private upstream detail"), {
+        code: "AI_GUIDANCE_UPSTREAM_FAILED",
+        statusCode: 502,
+      })
+    },
+  })
+
+  try {
+    const response = await fetch(
+      `${testServer.baseUrl}/api/v1/industry-risk/companies/star-688256/ai-guidance`,
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ perspective: "institution" }),
+      }
+    )
+    assert.equal(response.status, 502)
+    assert.deepEqual(await response.json(), {
+      error: {
+        code: "AI_GUIDANCE_UPSTREAM_FAILED",
+        message: "AI增强建议上游服务暂时不可用。",
+      },
+    })
   } finally {
     await testServer.close()
   }

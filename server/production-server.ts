@@ -8,6 +8,7 @@ import {
   getIndustryRiskKnowledgeGraph,
   listIndustryRiskCompanies,
 } from "./industry-risk-service.ts"
+import { createIndustryRiskAiGuidanceService } from "./industry-risk-ai-guidance-service.ts"
 import {
   getKcrCompanyAssessment,
   scoreKcrAssessment,
@@ -40,6 +41,7 @@ const staticRoot =
   resolve(fileURLToPath(new URL("..", import.meta.url)))
 const basePath = process.env.BASE_PATH ?? ""
 const riskGraphPostgresService = createRiskGraphPostgresService()
+const generateIndustryRiskAiGuidance = createIndustryRiskAiGuidanceService()
 
 const server = createProductionServer({
   staticRoot,
@@ -50,6 +52,7 @@ const server = createProductionServer({
   getKcrAssessment: getKcrCompanyAssessment,
   listIndustryRiskCompanies,
   getIndustryRiskAssessment,
+  generateIndustryRiskAiGuidance,
   getIndustryRiskGraph: getIndustryRiskKnowledgeGraph,
   listRiskGraphCompanies,
   getRiskGraph,

@@ -1,7 +1,15 @@
 import { spawn } from "node:child_process"
 import { existsSync } from "node:fs"
 import path from "node:path"
+import { loadEnvFile } from "node:process"
 import { setTimeout as delay } from "node:timers/promises"
+
+if (existsSync(".env")) {
+  loadEnvFile(".env")
+}
+if (existsSync(".env.local")) {
+  loadEnvFile(".env.local")
+}
 
 const projectRoot = process.cwd()
 const graphOrigin = (

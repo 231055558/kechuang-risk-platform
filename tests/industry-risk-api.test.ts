@@ -8,6 +8,7 @@ import {
 } from "../server/industry-risk-service.ts"
 import {
   IndustryRiskApiError,
+  fetchIndustryRiskAiGuidance,
   fetchIndustryRiskAssessment,
   fetchIndustryRiskCompanies,
   fetchIndustryRiskKnowledgeGraph,
@@ -114,5 +115,77 @@ test("industry risk client exposes safe API errors", async () => {
       error instanceof IndustryRiskApiError &&
       error.status === 404 &&
       error.message === "样本中没有该企业。"
+  )
+})
+
+test("industry risk client posts the AI perspective and validates grounded evidence", async () => {
+  let requestInit: RequestInit | undefined
+  const response = await fetchIndustryRiskAiGuidance(
+    "star-688256",
+    "enterprise-response",
+    {
+      fetch: async (input, init) => {
+        assert.equal(
+          String(input),
+          "api/v1/industry-risk/companies/star-688256/ai-guidance"
+        )
+        requestInit = init
+        return jsonResponse({
+          contractVersion: "KCR-INVESTOR-RISK-2026.08-v1",
+          guidanceVersion: "KCR-AI-GUIDANCE-2026.09-v1",
+          assessmentMethodVersion: "IRAWC-CRITIC-2026.08-v3",
+          company: {
+            id: "star-688256",
+            shortName: "寒武纪",
+            stockCode: "688256",
+          },
+          perspective: "enterprise-response",
+          provider: "deepseek",
+          model: "test-model",
+          generatedAt: "2026-09-01T08:00:00.000Z",
+          sourceDate: "2026-08-26",
+          summary:
+            "当前应先核验高分位外部约束，再将影响落实到具体产品和供应链整改证据。",
+          recommendations: [
+            {
+              title: "核验出口限制影响",
+              rationale: "该指标处于较高同业风险分位，需要进一步核对。",
+              action: "建立产品、供应商和受限主体的逐项映射并形成验证记录。",
+              verification: "所有判断均能够回到正式来源并对应具体产品范围。",
+              evidence: [
+                {
+                  indicatorId: "R19",
+                  label: "出口管制与制裁暴露度",
+                  status: "scored",
+                  riskScore: 73.02,
+                  riskPercentile: 0.9603,
+                  sourceCount: 2,
+                  missingReason: null,
+                },
+              ],
+            },
+          ],
+          limitations: ["AI内容不修改风险分、同业分位或缺失状态。"],
+        })
+      },
+    }
+  )
+
+  assert.equal(requestInit?.method, "POST")
+  assert.deepEqual(JSON.parse(String(requestInit?.body)), {
+    perspective: "enterprise-response",
+  })
+  assert.equal(response.recommendations[0].evidence[0].indicatorId, "R19")
+  assert.equal(response.provider, "deepseek")
+
+  const malformed = structuredClone(response)
+  malformed.recommendations[0].evidence[0].riskPercentile = null
+  await assert.rejects(
+    fetchIndustryRiskAiGuidance("star-688256", "enterprise-response", {
+      fetch: async () => jsonResponse(malformed),
+    }),
+    (error: unknown) =>
+      error instanceof IndustryRiskApiError &&
+      error.code === "AI_GUIDANCE_RESPONSE_INVALID"
   )
 })

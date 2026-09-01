@@ -12,8 +12,10 @@ const installer = readFileSync("scripts/install-local-autostart.ps1", "utf8")
 test("production start owns the bundled graph and platform lifecycle", () => {
   assert.equal(
     packageJson.scripts.start,
-    "node --env-file-if-exists=.env.local scripts/start-local-stack.mjs"
+    "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/start-local-stack.mjs"
   )
+  assert.match(launcher, /loadEnvFile\("\.env"\)/)
+  assert.match(launcher, /loadEnvFile\("\.env\.local"\)/)
   assert.match(launcher, /cambricon_fee_kbg_demo\.sqlite/)
   assert.match(launcher, /semidrive_fee_kbg_demo\.sqlite/)
   assert.match(launcher, /serve_fee_kbg_preview\.py/)

@@ -3,6 +3,9 @@ import { existsSync } from "node:fs"
 import { resolve } from "node:path"
 import { loadEnvFile } from "node:process"
 
+if (existsSync(".env")) {
+  loadEnvFile(".env")
+}
 if (existsSync(".env.local")) {
   loadEnvFile(".env.local")
 }
@@ -11,8 +14,7 @@ const apiPort = process.env.API_PORT ?? "5001"
 const webPort = process.env.PORT ?? "5173"
 const graphPort = process.env.GRAPH_PORT ?? "8766"
 const configuredGraphOrigin = process.env.GRAPH_API_ORIGIN?.replace(/\/+$/, "")
-const graphOrigin =
-  configuredGraphOrigin ?? `http://127.0.0.1:${graphPort}`
+const graphOrigin = configuredGraphOrigin ?? `http://127.0.0.1:${graphPort}`
 const graphWorkspaceUrl =
   process.env.VITE_GRAPH_WORKSPACE_URL ?? "risk-graph-workspace/"
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm"

@@ -12,6 +12,7 @@
 - 交易所问询、诉讼、限制清单和深搜事件统一展示；
 - R05–R22 先按 CRITIC 形成五个客观维度分，再按 CRITIC 汇总为企业可用基准分；财报叙事按“管理层语调、创新多言寡行、有效信息与不确定性”三维度独立建约，待财报语料接入后评分，新闻不参与该评分；
 - 单项缺失不补零，也不阻断其余指标计算，权重在当前企业可用指标与维度内重新归一化；行业样本仅用于风险分位、客观权重和参考排名。
+- 投资研判和风险应对保留确定性规则结论，并可按需调用服务端 AI 增强模块补充尽调、核验和整改思路；AI不修改评分，也不读取新闻正文或图谱推演。
 
 ## 寒武纪知识图谱模块
 
@@ -112,6 +113,8 @@ http://127.0.0.1:5173
 - 本地评分 API：`http://127.0.0.1:5001`
 
 Vite 会把 `/api` 请求代理到本地评分 API，因此技术风险评分和技术基础量化可以在 localhost 环境直接使用。
+
+如需启用投资研判与风险应对页的“AI补充建议”，在被 Git 忽略的 `.env`、`.env.local` 或部署密钥中配置 `AI_GUIDANCE_PROVIDER`。当前支持 `deepseek` 和 `openai`：DeepSeek 使用独立的 `DEEPSEEK_API_KEY`，OpenAI 使用 `OPENAI_API_KEY`，程序禁止在两个 provider 之间自动复用 Key。`AI_GUIDANCE_MODEL`、`AI_GUIDANCE_BASE_URL`、`AI_GUIDANCE_RESPONSES_PATH`、`AI_GUIDANCE_REASONING_EFFORT` 和 `AI_GUIDANCE_VERBOSITY` 分别控制模型、Responses地址、路径、推理强度与输出详略；非本机地址必须使用可验证的 HTTPS。密钥不得写入前端变量或提交到仓库。未配置时原规则建议保持可用，AI端点明确返回503。AI请求使用结构化输出且不创建可续接会话。
 
 可以通过环境变量调整端口：
 

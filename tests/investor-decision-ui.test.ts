@@ -10,6 +10,13 @@ const styles = readFileSync(
   new URL("../src/styles/investor-operations.css", import.meta.url),
   "utf8"
 )
+const aiGuidanceSource = readFileSync(
+  new URL(
+    "../src/components/dashboard/ai-risk-guidance-panel.tsx",
+    import.meta.url
+  ),
+  "utf8"
+)
 
 test("投资研判呈现机构、个人和银行三类实际决策问题", () => {
   assert.doesNotMatch(eventsSource, /investor-decision__compact-overview/)
@@ -35,6 +42,21 @@ test("风险应对使用预警信号和可验证企业整改建议", () => {
   assert.match(eventsSource, /产出物/)
   assert.match(eventsSource, /验证标准/)
   assert.doesNotMatch(eventsSource, /责任人|责任部门|截止日期|任务状态|待处理/)
+})
+
+test("AI增强由用户主动触发且保持规则建议与证据边界", () => {
+  assert.match(eventsSource, /AiRiskGuidancePanel/)
+  assert.match(eventsSource, /perspective=\{perspective\}/)
+  assert.match(eventsSource, /perspective="enterprise-response"/)
+  assert.match(aiGuidanceSource, /生成AI补充建议/)
+  assert.match(aiGuidanceSource, /fetchIndustryRiskAiGuidance/)
+  assert.match(aiGuidanceSource, /不改变评分结果/)
+  assert.match(aiGuidanceSource, /response\.provider === "deepseek"/)
+  assert.match(aiGuidanceSource, /不发送新闻正文、图谱、付费原始响应/)
+  assert.doesNotMatch(
+    aiGuidanceSource,
+    /owner|dueDate|taskStatus|pendingAction|responsibleDepartment/
+  )
 })
 
 test("风险信号表保留可访问的横向滚动", () => {
