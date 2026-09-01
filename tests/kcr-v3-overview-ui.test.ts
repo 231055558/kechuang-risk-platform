@@ -28,7 +28,7 @@ test("all company overviews use the customer-facing industry workspace by defaul
   assert.match(panel, /风险总览/)
   assert.match(panel, /风险总览/)
   assert.match(customerOverview, /Top 3 风险驱动/)
-  assert.match(panel, /缺失不补零/)
+  assert.doesNotMatch(customerOverview, /缺失不补零|财报叙事风险/)
   assert.match(panel, /进入指标分析/)
 })
 

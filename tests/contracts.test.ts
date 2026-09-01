@@ -354,10 +354,11 @@ test("investor strategy and graph integration have no enterprise task workflows"
   assert.doesNotMatch(eventsSource, /TabsContent/)
   assert.match(eventsSource, /section === "investment"/)
   assert.match(eventsSource, /section === "advice"/)
-  assert.match(eventsSource, /<RiskPropagationGraph detail=\{detail\}/)
+  assert.match(eventsSource, /<RiskPropagationGraph \/>/)
   assert.match(graphSource, /KCR-RISK-GRAPH-2026\.08-v1/)
   assert.match(graphSource, /data-graph-ui="teammate-fee-kbg"/)
-  assert.match(graphSource, /stock_code/)
+  assert.doesNotMatch(graphSource, /stock_code/)
+  assert.match(graphSource, /teammateWorkspaceUrl\(initialTheme\)/)
   assert.doesNotMatch(
     `${eventsSource}\n${graphSource}`,
     /EventRegister|Governance|AutomaticRiskAdvice/
@@ -776,7 +777,7 @@ test("reading-heavy workflows use dense investor surfaces and removed pages stay
     intelligenceSource,
     /className="indicator-analysis__peer-matrix"/
   )
-  assert.match(eventsSource, /<RiskPropagationGraph detail=\{detail\}/)
+  assert.match(eventsSource, /<RiskPropagationGraph \/>/)
   assert.match(graphSource, /className="teammate-graph-workspace"/)
   assert.doesNotMatch(eventsSource, /event-register|governance-workspace/)
 

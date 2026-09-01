@@ -179,9 +179,6 @@ export function RealtimeTab({
       <header className="risk-news__header">
         <div>
           <h2>风险资讯</h2>
-          <p>
-            新闻、公告、诉讼与监管信息支持按风险重要度或发生时间排布。资讯用于投资者阅读和来源核验，不参与财报叙事评分。
-          </p>
         </div>
         <div>
           <strong>{filteredSignals.length}</strong>

@@ -392,10 +392,6 @@ function RiskReportContent({
               </a>
             ))}
           </div>
-          <p className="risk-report-disclaimer">
-            本页基于已收录公开材料和统一风险规则自动生成，用于投资风险研究与来源核验；不输出未经确认的买卖或收益预测。缺失项目不会显示为
-            0，也不会影响其他已具备数据的指标计算。
-          </p>
         </GlassPanel>
       </Reveal>
     </div>

@@ -3,6 +3,7 @@ import type {
   IndustryRiskCompanyDirectoryResponse,
   IndustryRiskMetricScore,
 } from "@/domain/industry-risk-v1"
+import { displayIndustryLabel } from "@/lib/industry-label"
 
 export interface InvestorPeerPosition {
   score: number | null
@@ -410,7 +411,7 @@ export function buildInvestmentPerspective(
       {
         label: "综合风险",
         value: scoreTextForPerspective(assessment.totalRiskScore),
-        detail: assessment.benchmarkGroupLabel,
+        detail: displayIndustryLabel(assessment.benchmarkGroupLabel),
       },
       {
         label: "P75以上信号",

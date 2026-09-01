@@ -369,9 +369,6 @@ export function NarrativeIndustryTrends({
   const selectedCompany =
     data.companies.find((item) => item.companyId === companyId) ??
     data.companies[0]
-  const selectedGroup = data.industryGroups.find(
-    (item) => item.industryGroupId === selectedCompany.industryGroupId
-  )
   const selectedDocuments = data.documents
     .filter((item) => item.companyId === selectedCompany.companyId)
     .sort((left, right) => left.year - right.year)
@@ -382,9 +379,6 @@ export function NarrativeIndustryTrends({
         <div>
           <span className="nr-eyebrow">94家企业 · 年报原始指数</span>
           <h2 id="nr-industry-title">行业叙事风险年度分布</h2>
-          <p>
-            折线保留原始指数；卡片右上角按企业各年度行业风险排名生成0—100展示分，并以最近年份权重5向前递减加权。
-          </p>
         </div>
         <Badge variant={data.sourceMode === "postgres" ? "secondary" : "outline"}>
           <DatabaseIcon /> 财报语料已归档
@@ -392,12 +386,10 @@ export function NarrativeIndustryTrends({
       </header>
 
       <div className="nr-industry-company-context" aria-label="当前研究对象">
-        <span>跟随左上角当前研究对象</span>
         <div className="nr-industry-company-summary">
           <Building2Icon />
           <div>
             <strong>{selectedCompany.companyName}</strong>
-            <span>{selectedGroup?.label} · {selectedCompany.includedYears.length}个年度</span>
           </div>
         </div>
       </div>

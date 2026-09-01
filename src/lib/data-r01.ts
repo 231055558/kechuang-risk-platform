@@ -36,6 +36,7 @@ import {
   deduplicatePublicEvents,
   toPublicEventCopy,
 } from "@/lib/public-event-copy"
+import { displayIndustryLabel } from "@/lib/industry-label"
 
 const dataset = attachIndustryRiskR08MilestoneEnrichment(
   attachIndustryRiskR20ControllerEnrichment(
@@ -433,9 +434,9 @@ function buildCompanyDetail(company: IndustryRiskCompany): CompanyDetail {
   return {
     id: company.id,
     name: company.shortName,
-    sector: assessment
-      ? `${assessment.benchmarkGroupLabel} · ${assessment.benchmarkSampleSize}家基准`
-      : (peerGroup?.label ?? company.chainSegment),
+    sector: displayIndustryLabel(
+      assessment?.benchmarkGroupLabel ?? peerGroup?.label ?? company.chainSegment
+    ),
     description: `${company.fullName}，纳入 ${peerGroup?.label ?? dataset.metadata.sectorLabel} R01–R22 统一风险样本。`,
     headquarters: "以公司正式披露为准",
     stage: "科创板上市运营",

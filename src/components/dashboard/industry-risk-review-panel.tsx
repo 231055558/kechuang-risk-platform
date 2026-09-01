@@ -22,6 +22,7 @@ import {
   fetchIndustryRiskAssessment,
   fetchIndustryRiskCompanies,
 } from "@/lib/industry-risk-api"
+import { displayIndustryLabel } from "@/lib/industry-label"
 import "@/styles/investor-overview.css"
 
 type DirectoryState =
@@ -143,12 +144,12 @@ export function IndustryRiskReviewPanel({
             </h2>
           </div>
           <div className="investor-overview__context">
-            <Badge variant="outline">
-              {summary?.benchmarkGroupLabel ?? "同业基准"}
+            <Badge
+              variant="outline"
+              className="investor-overview__industry-badge"
+            >
+              {displayIndustryLabel(summary?.benchmarkGroupLabel)}
             </Badge>
-            <span>{summary?.benchmarkSampleSize ?? 0} 家样本</span>
-            <span>数据截至 {directory.value.reportingPeriod}</span>
-            <span>缺失不补零</span>
           </div>
         </header>
       </Reveal>
@@ -252,10 +253,6 @@ function RiskOverviewContent({
           <ShieldCheckIcon aria-hidden="true" />
           <div>
             <h3>继续核对指标依据</h3>
-            <p>
-              查看 R05–R22
-              原值、同业风险分位、样本量、公式与来源；新闻只在资讯页展示，不参与财报叙事评分。
-            </p>
           </div>
           <Button onClick={() => onNavigate?.("intelligence")}>
             进入指标分析 <ArrowRightIcon data-icon="inline-end" />

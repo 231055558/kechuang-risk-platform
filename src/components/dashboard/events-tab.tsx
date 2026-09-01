@@ -26,7 +26,6 @@ import {
   buildInvestorRiskSignals,
   buildInvestmentPerspective,
   calculateInvestorPeerPosition,
-  deriveInvestorResearchReadiness,
   type InvestmentPerspectiveId,
   type InvestorRiskSignal,
 } from "@/lib/investor-decision"
@@ -67,7 +66,7 @@ export function EventsTab({ detail, section }: EventsTabProps) {
   if (section === "advice") {
     return <InvestorDecisionPanel detail={detail} mode="response" />
   }
-  return <RiskPropagationGraph detail={detail} />
+  return <RiskPropagationGraph />
 }
 
 function InvestorDecisionPanel({
@@ -132,10 +131,6 @@ function InvestmentResearchContent({
 }) {
   const [perspective, setPerspective] =
     useState<InvestmentPerspectiveId>("institution")
-  const readiness = useMemo(
-    () => deriveInvestorResearchReadiness(response.assessment),
-    [response.assessment]
-  )
   const perspectiveContent = useMemo(
     () => buildInvestmentPerspective(response.assessment, perspective),
     [perspective, response.assessment]
@@ -145,7 +140,7 @@ function InvestmentResearchContent({
       ...step,
       decisionQuestion:
         perspectiveContent.requiredChecks[index] ??
-        `综合前述证据，最终回答“${perspectiveContent.question}”。`,
+        "综合前述证据，形成最终研判结论。",
       operatingConstraint:
         perspectiveContent.operatingConstraints[index] ??
         "只有前述材料、产出物和验证结果形成闭环后，才可形成最终结论。",
@@ -157,15 +152,7 @@ function InvestmentResearchContent({
       <header className="investor-decision__header">
         <div>
           <h2>{response.company.shortName}投资研判</h2>
-          <p>
-            从风险位置、主要驱动、数据置信度和压力条件形成研究结论；不输出未经确认的买入、卖出或收益预测。
-          </p>
-        </div>
-        <div className="investor-decision__header-status">
-          <span>研究状态</span>
-          <Badge variant="outline" data-readiness={readiness.key}>
-            {readiness.label}
-          </Badge>
+          <p>依据风险位置、主要驱动和证据形成研判结论。</p>
         </div>
       </header>
 
@@ -215,7 +202,6 @@ function InvestmentResearchContent({
         <article className="investor-perspective__content">
           <header>
             <div>
-              <span className="eyebrow">{perspectiveContent.question}</span>
               <h3>{perspectiveContent.headline}</h3>
               <p>{perspectiveContent.summary}</p>
             </div>
@@ -237,7 +223,6 @@ function InvestmentResearchContent({
               <div>
                 <h4>研判执行方案</h4>
               </div>
-              <p>每一步同时回答研判问题、操作边界和证据要求。</p>
             </header>
             <div>
               {combinedExecutionSteps.map((step, index) => (
@@ -346,11 +331,8 @@ function RiskResponseContent({
       <header className="investor-decision__header">
         <div>
           <h2>{response.company.shortName}风险应对</h2>
-          <p>
-            将高风险指标转化为企业内部可执行的整改动作，并明确产出物、验证标准和实施阶段。
-          </p>
+          <p>将重点风险转化为分阶段整改动作。</p>
         </div>
-        <Badge variant="outline">企业风险消减建议</Badge>
       </header>
 
       <section className="risk-response__summary" aria-label="风险监测摘要">
@@ -380,7 +362,6 @@ function RiskResponseContent({
           <SlidersHorizontalIcon aria-hidden="true" />
           <span>整改建议</span>
           <strong>{displayedActionCount}</strong>
-          <small>本页优先展示 · 均由指标触发</small>
         </article>
       </section>
 
@@ -389,7 +370,6 @@ function RiskResponseContent({
           <div>
             <h3>关键风险信号</h3>
           </div>
-          <p>P75 以上标记为已触发，P60–P75 为临界观察。</p>
         </header>
         {topSignals.length ? (
           <div

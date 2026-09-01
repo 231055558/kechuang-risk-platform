@@ -109,7 +109,7 @@ test("investor analysis preserves missing values as an auditable state", () => {
   )
   const indicatorStyles = readProjectFile("src/styles/indicator-analysis.css")
 
-  assert.match(overviewSource, /缺失不补零/)
+  assert.doesNotMatch(overviewSource, /缺失不补零/)
   assert.match(indicatorSource, /data-missing=\{metric\.riskPercentile === null\}/)
   assert.match(indicatorSource, /metric\.rawValue === null[\s\S]*?"缺失"/)
   assert.match(

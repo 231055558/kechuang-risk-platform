@@ -39,6 +39,7 @@ import {
   fetchIndustryRiskAssessment,
   fetchIndustryRiskCompanies,
 } from "@/lib/industry-risk-api"
+import { displayIndustryLabel } from "@/lib/industry-label"
 import { riskHeatColor, riskHeatLabel } from "@/lib/risk-heat"
 import "@/styles/indicator-analysis.css"
 
@@ -127,14 +128,10 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
       <header className="indicator-analysis__header">
         <div>
           <h2>{response.company.shortName}指标分析</h2>
-          <p>
-            R05–R22
-            客观指标按统一同业口径呈现。颜色只编码同业风险分位，数值仍显示真实原值和风险分；缺失保持空值。
-          </p>
         </div>
         <div className="indicator-analysis__meta">
           <Badge variant="outline">
-            {response.assessment.benchmarkGroupLabel}
+            {displayIndustryLabel(response.assessment.benchmarkGroupLabel)}
           </Badge>
         </div>
       </header>

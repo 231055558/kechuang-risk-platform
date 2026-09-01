@@ -13,7 +13,7 @@ test("enterprise comparison uses a grouped 0-100 coordinate chart", () => {
   assert.match(source, /data-series=\{series\}/)
   assert.match(source, /data-series="left"/)
   assert.match(source, /data-series="right"/)
-  assert.match(source, /缺失项不画零分柱/)
+  assert.match(source, /className="compare-coordinate-missing"/)
   assert.doesNotMatch(source, /function ChartBar/)
   assert.doesNotMatch(source, /compare-bar-track/)
 })
@@ -33,4 +33,9 @@ test("coordinate chart keeps distinct enterprise colors and audit text", () => {
   assert.match(source, /aria-describedby="compare-dimension-chart-data"/)
   assert.match(source, /id="compare-dimension-chart-data" className="sr-only"/)
   assert.match(source, /同组柱并列比较；数值越高表示该维度风险越高/)
+  assert.equal(
+    source.match(/同组柱并列比较；数值越高表示该维度风险越高/g)
+      ?.length,
+    1
+  )
 })

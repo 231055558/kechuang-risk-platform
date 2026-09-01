@@ -20,6 +20,14 @@ const profileDeskSource = readFileSync(
   ),
   "utf8"
 )
+const overviewStyles = readFileSync(
+  new URL("../src/styles/investor-overview.css", import.meta.url),
+  "utf8"
+)
+const industryLabelSource = readFileSync(
+  new URL("../src/lib/industry-label.ts", import.meta.url),
+  "utf8"
+)
 
 test("industry workspace leads with a compact investor overview", () => {
   const customerOverviewSource = `${panelSource}\n${profileDeskSource}`
@@ -27,7 +35,7 @@ test("industry workspace leads with a compact investor overview", () => {
   assert.match(panelSource, /风险总览/)
   assert.match(customerOverviewSource, /Top 3 风险驱动/)
   assert.match(panelSource, /companyId/)
-  assert.match(panelSource, /缺失不补零/)
+  assert.doesNotMatch(panelSource, /缺失不补零|家样本|数据截至/)
   assert.match(panelSource, /近期事件/)
   assert.match(panelSource, /进入指标分析/)
   assert.doesNotMatch(
@@ -44,4 +52,15 @@ test("every enterprise mounts the unified industry workspace in its default rout
   assert.match(overviewSource, /onNavigate=\{onNavigate\}/)
   assert.doesNotMatch(overviewSource, /KcrV3AssessmentPanel/)
   assert.doesNotMatch(panelSource, /<IndustryRiskKnowledgeGraph/)
+})
+
+test("overview presents a concise and prominent industry label", () => {
+  assert.match(panelSource, /displayIndustryLabel/)
+  assert.match(industryLabelSource, /replace\(\/\\s\*\[（\(\]/)
+  assert.match(industryLabelSource, /家\(\?:样本\|基准\)/)
+  assert.match(panelSource, /investor-overview__industry-badge/)
+  assert.match(
+    overviewStyles,
+    /\.investor-overview__context \.investor-overview__industry-badge\s*\{[^}]*font-size: 15px;[^}]*font-weight: 650;/s
+  )
 })

@@ -29,7 +29,7 @@ const semidriveSnapshot = JSON.parse(
 }
 
 test("风险传导页直接挂载同学原版图谱工作站", () => {
-  assert.match(eventsTab, /<RiskPropagationGraph detail=\{detail\} \/>/)
+  assert.match(eventsTab, /<RiskPropagationGraph \/>/)
   assert.doesNotMatch(eventsTab, /GraphIntegrationPanel/)
   assert.match(component, /data-graph-ui="teammate-fee-kbg"/)
   assert.match(component, /VITE_GRAPH_WORKSPACE_URL/)
@@ -37,7 +37,7 @@ test("风险传导页直接挂载同学原版图谱工作站", () => {
   assert.match(component, /GRAPH_WORKSPACE_UI_REVISION/)
   assert.match(component, /DEFAULT_GRAPH_WORKSPACE_URL = "risk-graph-workspace\/"/)
   assert.doesNotMatch(component, /http:\/\/127\.0\.0\.1:876[56]\//)
-  assert.match(component, /stock_code/)
+  assert.doesNotMatch(component, /stock_code/)
   assert.match(component, /url\.searchParams\.set\(\s*"revision"/)
   assert.match(component, /url\.searchParams\.set\("theme", theme\)/)
   assert.match(component, /kechuang-risk-graph-theme/)
@@ -90,6 +90,24 @@ test("同学原版图谱按股票代码定位且缺失时不回退到其他企�
   assert.match(teammateWorkspace, /不会复用其他企业的关系/)
 })
 
+test("平台内图谱企业选择独立且使用紧凑的多企业下拉框", () => {
+  assert.match(component, /teammateWorkspaceUrl\(initialTheme\)/)
+  assert.doesNotMatch(component, /teammateWorkspaceUrl\(detail\.id/)
+  assert.doesNotMatch(component, /CompanyDetail|detail\.name/)
+  assert.match(teammateWorkspace, /class="company-control"/)
+  assert.match(
+    teammateWorkspace,
+    /\.company-control\{width:min\(320px,100%\);flex:0 1 320px\}/
+  )
+  assert.match(
+    teammateWorkspace,
+    /company\.addEventListener\('change',loadOverview\)/
+  )
+  assert.match(teammateWorkspace, /data\.companies\.map/)
+  assert.match(teammateWorkspace, /c\.attributes\?\.short_name\|\|c\.label/)
+  assert.match(teammateWorkspace, /semidriveChineseText/)
+})
+
 test("本地统一图谱服务加载寒武纪与芯驰两个独立快照", () => {
   assert.match(devScript, /cambricon_fee_kbg_20260826_v1=/)
   assert.match(devScript, /semidrive_fee_kbg_20260827_v1=/)
@@ -137,7 +155,7 @@ test("风险传导使用收束后的高密度图谱交互", () => {
   assert.match(teammateWorkspace, /risk_category_impacts_company/)
   assert.match(teammateWorkspace, /node-hover-tag/)
   assert.match(teammateWorkspace, /class="graph-boundary"/)
-  assert.match(teammateWorkspace, /\.graph-boundary\{display:none\}/)
+  assert.match(teammateWorkspace, /\.graph-boundary,\.hint\{display:none\}/)
   assert.match(
     teammateWorkspace,
     /graph-wrap:not\(\.panorama-view\) \.lane-label\{transform:translateY\(-102px\)\}/

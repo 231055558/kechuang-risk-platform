@@ -52,7 +52,6 @@ export function NarrativeRiskTab({ companyId }: { companyId: string }) {
         </div>
         <div className="nr-hero__meta" aria-label="数据状态">
           <span>数据截至 {trends.asOfDate}</span>
-          <span>年度财报原始指数 · 不合成总分</span>
         </div>
       </header>
 

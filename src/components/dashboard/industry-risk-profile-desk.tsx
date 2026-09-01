@@ -74,7 +74,6 @@ export function IndustryRiskProfileDesk({
     null
   )
   const { assessment } = response
-  const narrativeRisk = assessment.financialReportNarrativeRisk
   const totalScore = assessment.totalRiskScore
   const coveragePercent = Math.round(assessment.weightedDataCoverage * 100)
   const conclusion = buildIndustryRiskConclusion(assessment)
@@ -220,37 +219,12 @@ export function IndustryRiskProfileDesk({
     >
       <header className="risk-profile-desk__conclusion">
         <div>
-          <span className="eyebrow">系统自动结论</span>
           <h3>{conclusion}</h3>
-          <p>
-            综合指数和风险驱动由 R05–R22
-            客观指标自动计算；财报叙事独立评估，不混入客观总分。
-          </p>
         </div>
         <Badge variant="outline">
           {riskLevel(totalScore)} · {riskHeatLabel(totalRiskPercentile)}
         </Badge>
       </header>
-
-      <section
-        className="risk-profile-desk__narrative"
-        aria-label="财报叙事风险结构"
-      >
-        <div>
-          <strong>财报叙事风险</strong>
-          <small>财报语料接入后独立计算；新闻资讯不参与评分</small>
-        </div>
-        <ul>
-          {narrativeRisk.dimensions.map((dimension) => (
-            <li key={dimension.id}>
-              <span>{dimension.label}</span>
-              <Badge variant="outline">
-                {dimension.status === "assessable" ? "可评估" : "数据接入中"}
-              </Badge>
-            </li>
-          ))}
-        </ul>
-      </section>
 
       <div className="risk-profile-desk__matrix">
         <article className="risk-profile-desk__score">
@@ -263,7 +237,6 @@ export function IndustryRiskProfileDesk({
           <strong className="risk-profile-desk__score-value">
             <AnimatedValue value={totalScore} decimals={2} />
           </strong>
-          <p>数值越高，表示该企业在当前行业样本中的相对风险越突出。</p>
           <div className="risk-profile-desk__score-track" aria-hidden="true">
             <span data-growth-bar style={{ width: `${totalScore ?? 0}%` }} />
           </div>
@@ -315,7 +288,6 @@ export function IndustryRiskProfileDesk({
             <div>
               <h3>五大风险领域</h3>
             </div>
-            <Badge variant="outline">R05–R22</Badge>
           </div>
           <IndustryRiskRadar
             dimensions={assessment.dimensionScores}
