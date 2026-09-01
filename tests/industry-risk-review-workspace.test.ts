@@ -20,8 +20,8 @@ const profileDeskSource = readFileSync(
   ),
   "utf8"
 )
-const overviewStyles = readFileSync(
-  new URL("../src/styles/investor-overview.css", import.meta.url),
+const riskOsStyles = readFileSync(
+  new URL("../src/styles/risk-os.css", import.meta.url),
   "utf8"
 )
 const industryLabelSource = readFileSync(
@@ -58,9 +58,11 @@ test("overview presents a concise and prominent industry label", () => {
   assert.match(panelSource, /displayIndustryLabel/)
   assert.match(industryLabelSource, /replace\(\/\\s\*\[（\(\]/)
   assert.match(industryLabelSource, /家\(\?:样本\|基准\)/)
-  assert.match(panelSource, /investor-overview__industry-badge/)
+  assert.match(panelSource, /page-title-row/)
+  assert.match(panelSource, /page-title-industry-badge/)
+  assert.match(panelSource, /汇总综合风险、同业位置和主要风险驱动/)
   assert.match(
-    overviewStyles,
-    /\.investor-overview__context \.investor-overview__industry-badge\s*\{[^}]*font-size: 15px;[^}]*font-weight: 650;/s
+    riskOsStyles,
+    /\.risk-os-shell \.page-title-industry-badge\s*\{[^}]*font-size: 15px !important;[^}]*font-weight: 650 !important;/s
   )
 })

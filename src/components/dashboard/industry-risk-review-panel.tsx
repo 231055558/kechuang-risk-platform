@@ -138,19 +138,20 @@ export function IndustryRiskReviewPanel({
     <div className="investor-overview" aria-labelledby="industry-risk-title">
       <Reveal>
         <header className="investor-overview__header">
-          <div>
+          <div className="page-title-row">
             <h2 id="industry-risk-title">
               {summary?.companyName ?? "当前企业"}风险总览
             </h2>
-          </div>
-          <div className="investor-overview__context">
             <Badge
               variant="outline"
-              className="investor-overview__industry-badge"
+              className="page-title-industry-badge"
             >
               {displayIndustryLabel(summary?.benchmarkGroupLabel)}
             </Badge>
           </div>
+          <p className="page-title-description">
+            汇总综合风险、同业位置和主要风险驱动。
+          </p>
         </header>
       </Reveal>
 

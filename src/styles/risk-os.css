@@ -777,7 +777,33 @@ body::after {
   width: 100%;
   max-width: 1680px;
   margin: 0 auto;
-  padding: 22px 24px 40px;
+  padding: 16px 22px 28px;
+}
+
+.risk-os-shell .page-title-row {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 12px;
+}
+
+.risk-os-shell .page-title-row h2 {
+  margin-block: 2px 4px;
+}
+
+.risk-os-shell .page-title-industry-badge {
+  height: auto !important;
+  padding: 5px 11px !important;
+  font-size: 15px !important;
+  font-weight: 650 !important;
+  line-height: 1.2 !important;
+}
+
+.risk-os-shell .page-title-description {
+  margin: 0;
+  color: var(--risk-os-muted);
+  font-size: 13px;
+  line-height: 1.55;
 }
 
 .risk-os-shell
@@ -829,7 +855,7 @@ body::after {
 .risk-os-shell .page-stack,
 .risk-os-shell .tab-content-stack {
   display: grid;
-  gap: 16px;
+  gap: 12px;
   min-width: 0;
 }
 

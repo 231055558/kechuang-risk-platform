@@ -207,7 +207,6 @@ function RiskReportContent({
             <div>
               <span>客户报告</span>
               <h3>企业综合风险摘要</h3>
-              <p>包含风险结论、重点领域、事件摘要、数据口径及使用声明。</p>
             </div>
             <Button variant="outline" onClick={onOpenExports}>
               生成报告 <ArrowRightIcon data-icon="inline-end" />
@@ -218,7 +217,6 @@ function RiskReportContent({
             <div>
               <span>指标底稿</span>
               <h3>指标分析与来源</h3>
-              <p>查看 R05–R22 原值、同业分位、公式、样本量与证据限制。</p>
             </div>
             <Button
               variant="outline"
@@ -234,7 +232,6 @@ function RiskReportContent({
             <div>
               <span>持续跟踪</span>
               <h3>风险资讯</h3>
-              <p>浏览数据库收录的公告、报告、监管和媒体信息。</p>
             </div>
             <Button
               variant="outline"

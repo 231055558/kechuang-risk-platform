@@ -179,6 +179,7 @@ export function RealtimeTab({
       <header className="risk-news__header">
         <div>
           <h2>风险资讯</h2>
+          <p>按风险重要度或发生时间查看公开风险信息。</p>
         </div>
         <div>
           <strong>{filteredSignals.length}</strong>

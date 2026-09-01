@@ -12743,6 +12743,10 @@
   line-height: 1.75;
 }
 
+.customer-report-page .eyebrow {
+  font-size: 11px;
+}
+
 .risk-report-hero-actions {
   display: flex;
   flex-wrap: wrap;
@@ -12762,7 +12766,7 @@
 
 .risk-report-score-card > span {
   color: var(--text-soft);
-  font-size: 10px;
+  font-size: 11px;
 }
 .risk-report-score-card > strong {
   color: var(--text-strong);
@@ -12783,7 +12787,7 @@
 .risk-report-score-card small {
   margin-top: 7px;
   color: var(--text-soft);
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1.55;
 }
 
@@ -12810,18 +12814,12 @@
 .risk-report-product-grid h3 {
   margin: 3px 0 0;
   color: var(--text-strong);
-  font-size: 14px;
+  font-size: 15px;
 }
 .risk-report-product-grid span {
   color: var(--brand-strong);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
-}
-.risk-report-product-grid p {
-  margin: 6px 0 0;
-  color: var(--text-soft);
-  font-size: 9px;
-  line-height: 1.6;
 }
 .risk-report-product-grid [data-slot="button"] {
   grid-column: 1 / -1;
@@ -12856,7 +12854,7 @@
 }
 .risk-report-priority-list li > span {
   color: var(--text-soft);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
 }
 .risk-report-priority-list li > div {
@@ -12867,13 +12865,13 @@
 .risk-report-priority-list strong {
   overflow: hidden;
   color: var(--text-strong);
-  font-size: 11px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .risk-report-priority-list small {
   color: var(--text-soft);
-  font-size: 8px;
+  font-size: 11px;
 }
 .risk-report-priority-list b {
   color: var(--brand-strong);
@@ -12918,12 +12916,12 @@
 }
 .risk-report-event-list span {
   color: var(--text-soft);
-  font-size: 8px;
+  font-size: 11px;
 }
 .risk-report-event-list strong {
   overflow: hidden;
   color: var(--text-strong);
-  font-size: 10px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -12951,12 +12949,12 @@
 .risk-report-featured-material span,
 .risk-report-featured-material small {
   color: var(--text-soft);
-  font-size: 9px;
+  font-size: 11px;
 }
 .risk-report-featured-material h4 {
   margin: 0;
   color: var(--text-strong);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .risk-report-source-grid {
@@ -12977,20 +12975,20 @@
 }
 .risk-report-source-grid span {
   color: var(--brand-strong);
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 700;
 }
 .risk-report-source-grid strong {
   overflow: hidden;
   color: var(--text-strong);
-  font-size: 10px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .risk-report-source-grid small {
   overflow: hidden;
   color: var(--text-soft);
-  font-size: 8px;
+  font-size: 11px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -13012,7 +13010,7 @@
 .customer-risk-empty-copy {
   margin: 16px 0 0;
   color: var(--text-soft);
-  font-size: 10px;
+  font-size: 11px;
 }
 
 @media (max-width: 1160px) {

@@ -237,6 +237,7 @@ export function IndustryRiskProfileDesk({
           <strong className="risk-profile-desk__score-value">
             <AnimatedValue value={totalScore} decimals={2} />
           </strong>
+          <p>数值越高，表示该企业在当前行业样本中的相对风险越突出。</p>
           <div className="risk-profile-desk__score-track" aria-hidden="true">
             <span data-growth-bar style={{ width: `${totalScore ?? 0}%` }} />
           </div>

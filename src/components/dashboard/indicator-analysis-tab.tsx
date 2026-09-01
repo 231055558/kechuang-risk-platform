@@ -126,14 +126,15 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
   return (
     <div className="indicator-analysis page-stack">
       <header className="indicator-analysis__header">
-        <div>
+        <div className="page-title-row">
           <h2>{response.company.shortName}指标分析</h2>
-        </div>
-        <div className="indicator-analysis__meta">
-          <Badge variant="outline">
+          <Badge variant="outline" className="page-title-industry-badge">
             {displayIndustryLabel(response.assessment.benchmarkGroupLabel)}
           </Badge>
         </div>
+        <p className="page-title-description">
+          查看各项指标的风险分位、原始数值和证据依据。
+        </p>
       </header>
 
       <section className="indicator-analysis__overview">
