@@ -751,7 +751,6 @@ test("the investor workstation defines the shell and major workflow surfaces", (
   assert.match(indexStyles, /@import "\.\/styles\/risk-os\.css";/)
   assert.match(riskOsStyles, /\.risk-os-sidebar-surface/)
   assert.match(riskOsStyles, /\.risk-os-global-controls/)
-  assert.match(riskOsStyles, /\.risk-os-shell \.industry-graph-content/)
   assert.match(
     riskOsStyles,
     /\.risk-os-shell \.liquid-glass-surface\s*\{[\s\S]*?background:\s*transparent !important/

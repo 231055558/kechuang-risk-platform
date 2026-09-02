@@ -735,8 +735,7 @@ body::after {
 }
 
 .risk-os-shell [data-slot="button"],
-.risk-os-shell
-  button:not(.sidebar-nav-item):not(.industry-graph-view-switch button) {
+.risk-os-shell button:not(.sidebar-nav-item) {
   border-radius: 6px;
   box-shadow: none;
 }
@@ -1127,15 +1126,11 @@ body::after {
 }
 
 .risk-os-shell .industry-risk-scope-strip::-webkit-scrollbar,
-.risk-os-shell [data-slot="tabs-list"]::-webkit-scrollbar,
-.risk-os-shell .industry-graph-summary::-webkit-scrollbar,
-.risk-os-shell .industry-graph-hotspots ol::-webkit-scrollbar {
+.risk-os-shell [data-slot="tabs-list"]::-webkit-scrollbar {
   display: none;
 }
 
-.risk-os-shell [data-slot="tabs-list"],
-.risk-os-shell .industry-graph-summary,
-.risk-os-shell .industry-graph-hotspots ol {
+.risk-os-shell [data-slot="tabs-list"] {
   scrollbar-width: none;
 }
 
@@ -1633,61 +1628,6 @@ body::after {
   color: var(--risk-os-faint);
 }
 
-.risk-os-shell .automatic-action-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0;
-  overflow: hidden;
-  border: 1px solid var(--risk-os-border);
-  border-radius: var(--risk-os-radius);
-}
-
-.risk-os-shell .automatic-action-grid article {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: start;
-  gap: 10px;
-  min-width: 0;
-  padding: 14px;
-  border: 0;
-  border-left: 1px solid var(--risk-os-border);
-  border-radius: 0;
-  background: var(--risk-os-surface);
-}
-
-.risk-os-shell .automatic-action-grid article:first-child {
-  border-left: 0;
-}
-
-.risk-os-shell .automatic-action-index {
-  color: var(--risk-os-faint);
-  font-size: 10px;
-  font-variant-numeric: tabular-nums;
-  font-weight: 750;
-}
-
-.risk-os-shell .automatic-action-main > div {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--risk-os-muted);
-  font-size: 9px;
-}
-
-.risk-os-shell .automatic-action-main h4 {
-  margin: 10px 0 0;
-  font-size: 12px;
-  font-weight: 670;
-  line-height: 1.45;
-}
-
-.risk-os-shell .automatic-action-main p {
-  margin: 5px 0 0;
-  color: var(--risk-os-muted);
-  font-size: 10px;
-  line-height: 1.55;
-}
-
 .risk-os-shell .customer-risk-priority-grid,
 .risk-os-shell .industry-risk-metric-grid {
   display: grid;
@@ -1804,7 +1744,6 @@ body::after {
 /* Reports, feeds, events, research and compare */
 .risk-os-shell .risk-report-hero,
 .risk-os-shell .research-profile-hero,
-.risk-os-shell .automatic-advice-hero,
 .risk-os-shell .investment-stance {
   padding: 20px !important;
   border: 1px solid var(--risk-os-border);
@@ -1812,108 +1751,6 @@ body::after {
   background: var(--risk-os-surface);
   background-image: none !important;
   box-shadow: none;
-}
-
-.risk-os-shell .automatic-advice-hero {
-  display: grid;
-  grid-template-columns: 42px minmax(0, 1fr) minmax(150px, auto);
-  align-items: center;
-  gap: 18px;
-}
-
-.risk-os-shell .automatic-advice-hero-icon {
-  display: grid;
-  width: 42px;
-  height: 42px;
-  place-items: center;
-  border: 0;
-  border-radius: 7px;
-  background: var(--risk-os-blue) !important;
-  background-image: none !important;
-  box-shadow: none !important;
-  color: #ffffff;
-}
-
-.risk-os-shell .automatic-advice-hero-icon svg {
-  width: 18px;
-  height: 18px;
-}
-
-.risk-os-shell .automatic-advice-hero > div:nth-child(2) p {
-  margin: 7px 0 0;
-  color: var(--risk-os-muted);
-  font-size: 11px;
-  line-height: 1.6;
-}
-
-.risk-os-shell .automatic-advice-hero > article {
-  padding: 12px 14px;
-  border: 1px solid var(--risk-os-border) !important;
-  border-left: 3px solid var(--risk-os-warning) !important;
-  border-radius: var(--risk-os-radius) !important;
-  background: var(--risk-os-surface-muted) !important;
-  background-image: none !important;
-  box-shadow: none !important;
-}
-
-.risk-os-shell .automatic-advice-hero > article :where(span, small) {
-  display: block;
-  color: var(--risk-os-muted);
-  font-size: 9px;
-}
-
-.risk-os-shell .automatic-advice-hero > article strong {
-  display: block;
-  margin: 5px 0;
-  font-size: 32px;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.04em;
-}
-
-.risk-os-shell .automatic-advice-section,
-.risk-os-shell .automatic-advice-boundary {
-  padding: 17px;
-  border: 1px solid var(--risk-os-border) !important;
-  border-radius: var(--risk-os-radius-lg) !important;
-  background: var(--risk-os-surface) !important;
-  background-image: none !important;
-  box-shadow: none !important;
-}
-
-.risk-os-shell .automatic-advice-section > header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 13px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--risk-os-border);
-}
-
-.risk-os-shell .automatic-advice-section > header h3 {
-  margin: 0;
-  font-size: 16px;
-}
-
-.risk-os-shell .automatic-advice-section > header p,
-.risk-os-shell .automatic-advice-boundary p {
-  margin: 5px 0 0;
-  color: var(--risk-os-muted);
-  font-size: 10px;
-  line-height: 1.55;
-}
-
-.risk-os-shell .automatic-advice-boundary {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  padding: 12px 14px;
-}
-
-.risk-os-shell .automatic-advice-boundary strong {
-  color: var(--risk-os-blue);
-  font-size: 10px;
-  white-space: nowrap;
 }
 
 .risk-os-shell .risk-report-hero {
@@ -1924,7 +1761,6 @@ body::after {
 
 .risk-os-shell .risk-report-hero h2,
 .risk-os-shell .research-profile-hero h2,
-.risk-os-shell .automatic-advice-hero h2,
 .risk-os-shell .investment-stance h2 {
   margin: 0;
   font-size: 22px;
@@ -2187,445 +2023,6 @@ body::after {
   background: transparent !important;
 }
 
-/* Knowledge graph: full research canvas with a stable visual legend. */
-.risk-os-shell .industry-graph-glass {
-  margin-top: 16px;
-  border: 1px solid var(--risk-os-border) !important;
-  border-radius: var(--risk-os-radius-lg) !important;
-  overflow: hidden;
-  background: var(--risk-os-surface) !important;
-}
-
-.risk-os-shell .industry-graph {
-  padding: 0;
-  background: var(--risk-os-surface);
-}
-
-.risk-os-shell #industry-graph-title {
-  scroll-margin-top: 128px;
-}
-
-.risk-os-shell .industry-graph-header {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: start;
-  gap: 20px;
-  padding: 18px 20px 15px;
-  border-bottom: 1px solid var(--risk-os-border);
-}
-
-.risk-os-shell .industry-graph-header h2 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 680;
-  letter-spacing: -0.025em;
-}
-
-.risk-os-shell .industry-graph-header p {
-  max-width: 80ch;
-  margin: 6px 0 0;
-  color: var(--risk-os-muted);
-  font-size: 10px;
-  line-height: 1.6;
-}
-
-.risk-os-shell .industry-graph-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 5px;
-}
-
-.risk-os-shell .industry-graph-toolbar [data-slot="button"] {
-  min-height: 30px;
-  padding-inline: 8px;
-  background: var(--risk-os-surface);
-  font-size: 9px;
-}
-
-.risk-os-shell .industry-graph-view-switch {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  padding: 0 20px;
-  border-bottom: 1px solid var(--risk-os-border);
-  background: var(--risk-os-surface-muted);
-}
-
-.risk-os-shell .industry-graph-view-switch button {
-  position: relative;
-  min-height: 52px;
-  padding: 8px 12px;
-  border: 0;
-  border-left: 1px solid var(--risk-os-border);
-  border-radius: 0;
-  background: transparent;
-  color: var(--risk-os-muted);
-  text-align: left;
-}
-
-.risk-os-shell .industry-graph-view-switch button:last-child {
-  border-right: 1px solid var(--risk-os-border);
-}
-
-.risk-os-shell .industry-graph-view-switch button::after {
-  content: "";
-  position: absolute;
-  right: 10px;
-  bottom: -1px;
-  left: 10px;
-  height: 2px;
-  background: transparent;
-}
-
-.risk-os-shell .industry-graph-view-switch button[data-active="true"] {
-  background: var(--risk-os-surface);
-  color: var(--risk-os-ink);
-}
-
-.risk-os-shell .industry-graph-view-switch button[data-active="true"]::after {
-  background: var(--risk-os-blue);
-}
-
-.risk-os-shell .industry-graph-view-switch strong,
-.risk-os-shell .industry-graph-view-switch span {
-  display: block;
-}
-
-.risk-os-shell .industry-graph-view-switch strong {
-  font-size: 11px;
-  font-weight: 670;
-}
-
-.risk-os-shell .industry-graph-view-switch span {
-  margin-top: 2px;
-  color: var(--risk-os-faint);
-  font-size: 9px;
-}
-
-.risk-os-shell .industry-graph-summary {
-  display: flex;
-  min-height: 38px;
-  align-items: center;
-  gap: 5px;
-  padding: 7px 20px;
-  overflow-x: auto;
-  border-bottom: 1px solid var(--risk-os-border);
-  white-space: nowrap;
-}
-
-.risk-os-shell .industry-graph-hotspots {
-  display: grid;
-  grid-template-columns: minmax(150px, 0.55fr) minmax(0, 2.45fr);
-  min-height: 60px;
-  border-bottom: 1px solid var(--risk-os-border);
-}
-
-.risk-os-shell .industry-graph-hotspots-heading {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 7px;
-  padding: 9px 14px;
-  border-right: 1px solid var(--risk-os-border);
-  background: var(--risk-os-surface-muted);
-}
-
-.risk-os-shell .industry-graph-hotspots-heading svg {
-  width: 14px;
-  height: 14px;
-  color: var(--risk-os-danger);
-}
-
-.risk-os-shell .industry-graph-hotspots-heading span,
-.risk-os-shell .industry-graph-hotspots-heading small {
-  color: var(--risk-os-muted);
-  font-size: 9px;
-}
-
-.risk-os-shell .industry-graph-hotspots-heading strong {
-  font-size: 17px;
-  font-variant-numeric: tabular-nums;
-}
-
-.risk-os-shell .industry-graph-hotspots ol {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(148px, 1fr);
-  margin: 0;
-  padding: 0;
-  overflow-x: auto;
-  list-style: none;
-}
-
-.risk-os-shell .industry-graph-hotspots li + li {
-  border-left: 1px solid var(--risk-os-border);
-}
-
-.risk-os-shell .industry-graph-hotspots li button {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  width: 100%;
-  height: 100%;
-  min-height: 59px;
-  align-items: center;
-  gap: 7px;
-  padding: 7px 10px;
-  border: 0;
-  background: transparent;
-  text-align: left;
-}
-
-.risk-os-shell .industry-graph-hotspots li button:hover {
-  background: var(--risk-os-surface-muted);
-}
-
-.risk-os-shell .industry-graph-hotspots li span {
-  color: var(--risk-os-faint);
-  font-size: 8px;
-  font-weight: 750;
-}
-
-.risk-os-shell .industry-graph-hotspots li b {
-  display: -webkit-box;
-  overflow: hidden;
-  font-size: 9px;
-  line-height: 1.35;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-}
-
-.risk-os-shell .industry-graph-hotspots li strong {
-  color: var(--risk-os-danger);
-  font-size: 13px;
-  font-variant-numeric: tabular-nums;
-}
-
-.risk-os-shell .industry-graph-content {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  min-height: 660px;
-  background: #f7f8fa;
-}
-
-.dark .risk-os-shell .industry-graph-content {
-  background: #111319;
-}
-
-.risk-os-shell .industry-graph-canvas-shell {
-  position: relative;
-  min-width: 0;
-  min-height: 660px;
-  overflow: hidden;
-  background-color: #f7f8fa;
-  background-image:
-    linear-gradient(#e7e9ed 1px, transparent 1px),
-    linear-gradient(90deg, #e7e9ed 1px, transparent 1px);
-  background-size: 28px 28px;
-}
-
-.dark .risk-os-shell .industry-graph-canvas-shell {
-  background-color: #111319;
-  background-image:
-    linear-gradient(#20242c 1px, transparent 1px),
-    linear-gradient(90deg, #20242c 1px, transparent 1px);
-}
-
-.risk-os-shell .industry-graph-cytoscape {
-  width: 100%;
-  height: 660px;
-  min-height: 660px;
-}
-
-.risk-os-shell .industry-graph-canvas-hint {
-  position: absolute;
-  right: 12px;
-  bottom: 11px;
-  padding: 5px 7px;
-  border: 1px solid var(--risk-os-border);
-  border-radius: 4px;
-  background: color-mix(in srgb, var(--risk-os-surface) 94%, transparent);
-  color: var(--risk-os-muted);
-  font-size: 8px;
-}
-
-.risk-os-shell .industry-graph-hover-card {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  display: grid;
-  gap: 3px;
-  width: min(240px, calc(100% - 24px));
-  padding: 10px;
-  border: 1px solid var(--risk-os-border);
-  border-radius: var(--risk-os-radius);
-  background: var(--risk-os-surface);
-  box-shadow: var(--risk-os-shadow-overlay);
-}
-
-.risk-os-shell .industry-graph-hover-card span,
-.risk-os-shell .industry-graph-hover-card small {
-  color: var(--risk-os-muted);
-  font-size: 9px;
-}
-
-.risk-os-shell .industry-graph-inspector {
-  position: relative;
-  width: 310px;
-  padding: 18px;
-  overflow: auto;
-  border-left: 1px solid var(--risk-os-border);
-  background: var(--risk-os-surface);
-  box-shadow: none;
-}
-
-.risk-os-shell .industry-graph-inspector h3 {
-  margin: 11px 0 0;
-  font-size: 15px;
-  line-height: 1.4;
-}
-
-.risk-os-shell .industry-graph-inspector > p {
-  margin: 6px 0 0;
-  color: var(--risk-os-muted);
-  font-size: 10px;
-  line-height: 1.6;
-}
-
-.risk-os-shell .industry-graph-inspector > strong {
-  display: block;
-  margin-top: 14px;
-  color: var(--risk-os-danger);
-  font-size: 24px;
-  font-variant-numeric: tabular-nums;
-}
-
-.risk-os-shell .industry-graph-inspector ul {
-  margin: 14px 0 0;
-  padding: 0;
-  border-top: 1px solid var(--risk-os-border);
-  list-style: none;
-}
-
-.risk-os-shell .industry-graph-inspector li {
-  display: grid;
-  gap: 3px;
-  padding: 9px 0;
-  border-bottom: 1px solid var(--risk-os-border);
-  font-size: 9px;
-}
-
-.risk-os-shell .industry-graph-inspector li span {
-  color: var(--risk-os-muted);
-  line-height: 1.5;
-}
-
-.risk-os-shell .industry-graph-inspector-close {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  display: grid;
-  width: 28px;
-  height: 28px;
-  place-items: center;
-  border: 1px solid var(--risk-os-border);
-  background: var(--risk-os-surface);
-}
-
-.risk-os-shell .industry-graph-legend {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 7px 13px;
-  min-height: 52px;
-  padding: 9px 20px;
-  border-top: 1px solid var(--risk-os-border);
-  background: var(--risk-os-surface);
-  color: var(--risk-os-muted);
-  font-size: 8px;
-}
-
-.risk-os-shell .industry-graph-legend > span {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.risk-os-shell .industry-graph-legend > span::before {
-  content: "";
-  width: 8px;
-  height: 8px;
-  border-radius: 2px;
-  background: #8c96a5;
-}
-
-.risk-os-shell .industry-graph-legend > span[data-kind="company"]::before {
-  background: #223f97;
-}
-
-.risk-os-shell .industry-graph-legend > span[data-kind="category"]::before {
-  background: #277b6f;
-}
-
-.risk-os-shell .industry-graph-legend > span[data-kind="indicator"]::before {
-  background: #bd3447;
-}
-
-.risk-os-shell .industry-graph-legend > span[data-kind="source"]::before {
-  background: #8064c9;
-}
-
-.risk-os-shell .industry-graph-legend > span[data-kind="event"]::before {
-  background: #c47b13;
-}
-
-.risk-os-shell .industry-graph-heat-legend,
-.risk-os-shell .industry-graph-narrative-legend {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.risk-os-shell .industry-graph-heat-legend i {
-  width: 96px;
-  height: 6px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, #4575b4, #f7c948, #bd3447);
-}
-
-.risk-os-shell .industry-graph-legend p {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  margin: 0 0 0 auto;
-}
-
-.risk-os-shell .industry-graph-content[data-immersive="true"] {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  grid-template-columns: minmax(0, 1fr) auto;
-  min-height: 100svh;
-}
-
-.risk-os-shell
-  .industry-graph-content[data-immersive="true"]
-  .industry-graph-canvas-shell,
-.risk-os-shell
-  .industry-graph-content[data-immersive="true"]
-  .industry-graph-cytoscape {
-  height: 100svh;
-  min-height: 100svh;
-}
-
-.risk-os-shell .industry-graph-immersive-exit {
-  position: fixed;
-  top: 14px;
-  left: 14px;
-  z-index: 3;
-  box-shadow: var(--risk-os-shadow-overlay);
-}
-
 /* Mobile */
 @media (max-width: 1279px) {
   .risk-os-command-context span:nth-of-type(2),
@@ -2684,47 +2081,11 @@ body::after {
     border-bottom: 1px solid var(--risk-os-border);
   }
 
-  .risk-os-shell .automatic-action-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .risk-os-shell .automatic-action-grid article {
-    border-top: 1px solid var(--risk-os-border);
-    border-left: 0;
-  }
-
-  .risk-os-shell .automatic-action-grid article:first-child {
-    border-top: 0;
-  }
-
   .risk-os-shell .customer-risk-priority-grid,
   .risk-os-shell .industry-risk-metric-grid,
   .risk-os-shell .customer-risk-dimension-grid,
   .risk-os-shell .industry-risk-dimension-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .risk-os-shell .industry-graph-header {
-    grid-template-columns: 1fr;
-  }
-
-  .risk-os-shell .industry-graph-toolbar {
-    justify-content: flex-start;
-  }
-
-  .risk-os-shell .industry-graph-content,
-  .risk-os-shell .industry-graph-content[data-immersive="true"] {
-    grid-template-columns: 1fr;
-  }
-
-  .risk-os-shell .industry-graph-inspector {
-    position: absolute;
-    inset: auto 0 0;
-    width: 100%;
-    max-height: 44%;
-    border-top: 1px solid var(--risk-os-border);
-    border-left: 0;
-    box-shadow: 0 -12px 36px rgb(15 23 42 / 14%);
   }
 }
 
@@ -2791,14 +2152,6 @@ body::after {
     grid-template-columns: 1fr;
   }
 
-  .risk-os-shell .automatic-advice-hero {
-    grid-template-columns: 42px minmax(0, 1fr);
-  }
-
-  .risk-os-shell .automatic-advice-hero > article {
-    grid-column: 1 / -1;
-  }
-
   .risk-os-shell .narrative-observation-grid {
     grid-template-columns: 1fr;
   }
@@ -2819,39 +2172,6 @@ body::after {
 
   .risk-os-shell .compare-chart-row .compare-bar-track:last-child {
     grid-column: 2;
-  }
-
-  .risk-os-shell .industry-graph-view-switch {
-    padding: 0;
-  }
-
-  .risk-os-shell .industry-graph-view-switch button {
-    padding-inline: 8px;
-  }
-
-  .risk-os-shell .industry-graph-view-switch span {
-    display: none;
-  }
-
-  .risk-os-shell .industry-graph-hotspots {
-    grid-template-columns: 1fr;
-  }
-
-  .risk-os-shell .industry-graph-hotspots-heading {
-    border-right: 0;
-    border-bottom: 1px solid var(--risk-os-border);
-  }
-
-  .risk-os-shell .industry-graph-content,
-  .risk-os-shell .industry-graph-canvas-shell,
-  .risk-os-shell .industry-graph-cytoscape {
-    min-height: 520px;
-    height: 520px;
-  }
-
-  .risk-os-shell .industry-graph-legend p {
-    width: 100%;
-    margin-left: 0;
   }
 }
 

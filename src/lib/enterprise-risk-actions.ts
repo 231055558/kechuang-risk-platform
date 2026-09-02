@@ -1,4 +1,4 @@
-import type { IndustryRiskCompanyAssessment } from "@/domain/industry-risk-v1"
+import type { IndustryRiskCompanyAssessment } from "../domain/industry-risk-v1/index.ts"
 import { buildInvestorRiskSignals } from "./investor-decision.ts"
 
 export type EnterpriseActionHorizon = "0–3个月" | "3–12个月" | "12个月以上"

@@ -307,7 +307,8 @@ test("assessment views distinguish technology scoring from rule-calculated indic
     compareSource,
     /dimension\.scoreBasis === "technology-auto-score"/
   )
-  assert.match(compareSource, /同一方法版本与维度口径/)
+  assert.match(compareSource, /年度行业排名加权分/)
+  assert.match(compareSource, /信息模糊性、叙事夸大性、风险披露充分性三项等权/)
   assert.match(compareSource, /技术自动评分/)
   assert.match(compareSource, /指标规则计算/)
 })

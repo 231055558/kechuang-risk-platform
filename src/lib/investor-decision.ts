@@ -2,8 +2,8 @@ import type {
   IndustryRiskCompanyAssessment,
   IndustryRiskCompanyDirectoryResponse,
   IndustryRiskMetricScore,
-} from "@/domain/industry-risk-v1"
-import { displayIndustryLabel } from "@/lib/industry-label"
+} from "../domain/industry-risk-v1/index.ts"
+import { displayIndustryLabel } from "./industry-label.ts"
 
 export interface InvestorPeerPosition {
   score: number | null
