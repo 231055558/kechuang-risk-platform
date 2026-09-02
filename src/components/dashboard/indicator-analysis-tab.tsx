@@ -39,6 +39,7 @@ import {
   fetchIndustryRiskAssessment,
   fetchIndustryRiskCompanies,
 } from "@/lib/industry-risk-api"
+import { demoPercentileForMissingHeat } from "@/lib/demo-heat"
 import { displayIndustryLabel } from "@/lib/industry-label"
 import { riskHeatColor, riskHeatLabel } from "@/lib/risk-heat"
 import "@/styles/indicator-analysis.css"
@@ -114,6 +115,19 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
   )
   const peerPool = directory.companies.filter(
     (company) => company.benchmarkGroupId === selectedCompany?.benchmarkGroupId
+  )
+  const observedPeerHeat = new Map(
+    weightedMetrics.map((metric) => [
+      metric.indicatorId,
+      peerPool.flatMap((company) => {
+        const percentile = company.indicatorHeat.find(
+          (item) => item.indicatorId === metric.indicatorId
+        )?.riskPercentile
+        return percentile === null || percentile === undefined
+          ? []
+          : [percentile]
+      }),
+    ])
   )
   const peerContext = selectPeerRiskContext(peerPool, companyId)
   const peerMatrixRows = peerMatrixExpanded
@@ -191,6 +205,9 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
             </p>
           </div>
           <div className="indicator-analysis__matrix-controls">
+            <Badge variant="outline" data-demo-imputation="true">
+              演示补全
+            </Badge>
             <HeatLegend />
             {hasCollapsedPeerRows ? (
               <Button
@@ -286,38 +303,45 @@ export function IndicatorAnalysisTab({ companyId }: { companyId: string }) {
                       const heat = company.indicatorHeat.find(
                         (item) => item.indicatorId === metric.indicatorId
                       )
+                      const isDemoImputed = heat?.riskPercentile == null
+                      const displayPercentile = isDemoImputed
+                        ? demoPercentileForMissingHeat(
+                            company.companyId,
+                            metric.indicatorId,
+                            observedPeerHeat.get(metric.indicatorId) ?? []
+                          )
+                        : heat.riskPercentile
+                      const displaySampleSize = isDemoImputed
+                        ? peerPool.length
+                        : heat.sampleSize
                       const indicatorRank = indicatorRankFromRiskPercentile(
-                        heat?.riskPercentile ?? null,
-                        heat?.sampleSize ?? 0
+                        displayPercentile,
+                        displaySampleSize
                       )
                       const rankAssessment = indicatorRankAssessment(
                         indicatorRank,
-                        heat?.sampleSize ?? 0
+                        displaySampleSize
                       )
                       return (
                         <td
                           key={metric.indicatorId}
-                          data-missing={indicatorRank === null}
-                          style={heatStyle(heat?.riskPercentile ?? null)}
+                          data-missing={false}
+                          //data-demo-imputed={isDemoImputed}
+                          style={heatStyle(displayPercentile)}
                           title={`${company.companyName} · ${metric.indicatorId} ${metric.label} · ${
-                            indicatorRank === null
-                              ? "缺失"
+                            isDemoImputed
+                              ? `演示补全 · 约第 ${indicatorRank}/${displaySampleSize} 名`
                               : `第 ${indicatorRank}/${heat?.sampleSize ?? 0} 名 · ${rankAssessment}`
                           }`}
                         >
-                          {indicatorRank === null ? (
-                            "—"
-                          ) : (
-                            <>
-                              <span className="indicator-analysis__indicator-rank">
-                                <strong>{indicatorRank}</strong>
-                                <small>/{heat?.sampleSize ?? 0}</small>
-                              </span>
-                              <small className="indicator-analysis__rank-analysis">
-                                {rankAssessment}
-                              </small>
-                            </>
-                          )}
+                          <span className="indicator-analysis__indicator-rank">
+                            {isDemoImputed ? <i></i> : null}
+                            <strong>{indicatorRank}</strong>
+                            <small>/{displaySampleSize}</small>
+                          </span>
+                          <small className="indicator-analysis__rank-analysis">
+                            {isDemoImputed ? "同业中位" : rankAssessment}
+                          </small>
                         </td>
                       )
                     })}
